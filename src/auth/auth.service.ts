@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { OtpService } from '../otp/otp.service';
 import { UsersService } from '../users/users.service';
@@ -20,6 +20,12 @@ export class AuthService {
   async requestOtp(requestOtpDto: RequestOtpDto): Promise<{ message: string; phoneNumber: string }> {
     const { phoneNumber } = requestOtpDto;
 
+    // Validate phone number format
+    const phoneRegex = /^09[0-9]{9}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      throw new BadRequestException('Invalid phone number format. Must be in format: 09XXXXXXXXX');
+    }
+
     // Check if there's a recent OTP request (within 2 minutes)
     const recentOtp = await this.otpService.findRecentOtp(phoneNumber, 'login');
     if (recentOtp) {
@@ -34,17 +40,19 @@ export class AuthService {
     // Generate a 6-digit OTP code
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Create OTP record
+    // Create OTP record with shorter expiration for security
     await this.otpService.create({
       phoneNumber,
       code: otpCode,
       context: 'login',
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes (reduced from 10)
     });
 
     // In a real application, you would send SMS here
     // For now, we'll just log it (in development)
-    console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
+    }
 
     return {
       message: 'OTP sent successfully',
@@ -54,6 +62,17 @@ export class AuthService {
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<AuthResponseDto> {
     const { phoneNumber, code } = verifyOtpDto;
+
+    // Validate phone number format
+    const phoneRegex = /^09[0-9]{9}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      throw new BadRequestException('Invalid phone number format');
+    }
+
+    // Validate OTP code format
+    if (!/^\d{6}$/.test(code)) {
+      throw new BadRequestException('Invalid OTP code format. Must be 6 digits');
+    }
 
     // Verify OTP
     const otp = await this.otpService.verifyOtp(phoneNumber, code, 'login');
@@ -75,14 +94,20 @@ export class AuthService {
       isNewUser = true;
     }
 
-    // Generate JWT token
+    // Generate JWT token with enhanced security
     const payload = {
       phoneNumber: user.phoneNumber,
-      userId: user._id,
+      userId: user._id.toString(),
       role: user.role,
+      iat: Math.floor(Date.now() / 1000), // Issued at
+      type: 'access', // Token type
     };
 
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+      issuer: 'loyalty-api',
+      audience: 'loyalty-users',
+    });
 
     return {
       accessToken,
@@ -101,10 +126,53 @@ export class AuthService {
 
   async validateToken(token: string): Promise<any> {
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verify(token, {
+        issuer: 'loyalty-api',
+        audience: 'loyalty-users',
+      });
       return payload;
     } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        throw new CustomUnauthorizedException('TOKEN_EXPIRED');
+      } else if (error.name === 'JsonWebTokenError') {
+        throw new CustomUnauthorizedException('TOKEN_INVALID');
+      } else if (error.name === 'NotBeforeError') {
+        throw new CustomUnauthorizedException('UNAUTHORIZED');
+      }
       throw new CustomUnauthorizedException('TOKEN_INVALID');
+    }
+  }
+
+  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        issuer: 'loyalty-api',
+        audience: 'loyalty-users',
+      });
+
+      // Validate refresh token type
+      if (payload.type !== 'refresh') {
+        throw new CustomUnauthorizedException('UNAUTHORIZED');
+      }
+
+      // Generate new access token
+      const newPayload = {
+        phoneNumber: payload.phoneNumber,
+        userId: payload.userId,
+        role: payload.role,
+        iat: Math.floor(Date.now() / 1000),
+        type: 'access',
+      };
+
+      const accessToken = this.jwtService.sign(newPayload, {
+        expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+        issuer: 'loyalty-api',
+        audience: 'loyalty-users',
+      });
+
+      return { accessToken };
+    } catch (error) {
+      throw new CustomUnauthorizedException('UNAUTHORIZED');
     }
   }
 }

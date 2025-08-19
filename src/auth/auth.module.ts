@@ -13,15 +13,35 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ 
+      defaultStrategy: 'jwt',
+      session: false, // Disable sessions for stateless JWT
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your-secret-key',
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        const expiresIn = configService.get<string>('JWT_EXPIRES_IN') || '7d';
+        
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is required');
+        }
+        
+        return {
+          secret,
+          signOptions: {
+            expiresIn,
+            issuer: 'loyalty-api',
+            audience: 'loyalty-users',
+            algorithm: 'HS256',
+          },
+          verifyOptions: {
+            issuer: 'loyalty-api',
+            audience: 'loyalty-users',
+            algorithms: ['HS256'],
+          },
+        };
+      },
       inject: [ConfigService],
     }),
     OtpModule,
