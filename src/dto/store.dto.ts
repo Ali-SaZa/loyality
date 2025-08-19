@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum, IsBoolean, Min, MaxLength, Matches, IsDateString } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, IsEnum, IsBoolean, Min, MaxLength, Matches, IsDateString, IsObject } from 'class-validator';
 
 export class CreateStoreDto {
   @ApiProperty({ description: 'Store name', maxLength: 100 })
@@ -18,44 +18,36 @@ export class CreateStoreDto {
   phoneNumber: string;
 
   @ApiProperty({ description: 'Store address' })
-  @IsString()
-  city: string;
+  @IsObject()
+  address: {
+    city: string;
+    street?: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+  };
 
-  @ApiProperty({ description: 'Street address', required: false })
-  @IsOptional()
-  @IsString()
-  street?: string;
+  @ApiProperty({ description: 'Loyalty settings' })
+  @IsObject()
+  loyaltySettings: {
+    tiers: Array<{
+      minAmount: number;
+      rewardType: 'discount' | 'cashback' | 'lottery';
+      value: number;
+      description?: string;
+    }>;
+    lotteryFrequency: 'weekly' | 'monthly' | 'none';
+    defaultCashbackRate: number;
+  };
 
-  @ApiProperty({ description: 'Latitude', required: false })
-  @IsOptional()
-  @IsNumber()
-  lat?: number;
-
-  @ApiProperty({ description: 'Longitude', required: false })
-  @IsOptional()
-  @IsNumber()
-  lng?: number;
-
-  @ApiProperty({ description: 'Loyalty tiers', required: false })
-  @IsOptional()
-  @IsArray()
-  loyaltyTiers?: Array<{
-    minAmount: number;
-    rewardType: 'discount' | 'cashback' | 'lottery';
-    value: number;
-    description?: string;
-  }>;
-
-  @ApiProperty({ description: 'Lottery frequency', enum: ['weekly', 'monthly', 'none'], default: 'none' })
-  @IsOptional()
-  @IsEnum(['weekly', 'monthly', 'none'])
-  lotteryFrequency?: 'weekly' | 'monthly' | 'none';
-
-  @ApiProperty({ description: 'Default cashback rate', minimum: 0, default: 0 })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  defaultCashbackRate?: number;
+  @ApiProperty({ description: 'Store plan' })
+  @IsObject()
+  plan: {
+    type: 'free' | 'premium';
+    startDate: Date;
+    endDate: Date;
+  };
 }
 
 export class UpdateStoreDto {
@@ -73,49 +65,43 @@ export class UpdateStoreDto {
 
   @ApiProperty({ description: 'Store address', required: false })
   @IsOptional()
-  @IsString()
-  city?: string;
+  @IsObject()
+  address?: {
+    city?: string;
+    street?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
+  };
 
-  @ApiProperty({ description: 'Street address', required: false })
+  @ApiProperty({ description: 'Loyalty settings', required: false })
   @IsOptional()
-  @IsString()
-  street?: string;
+  @IsObject()
+  loyaltySettings?: {
+    tiers?: Array<{
+      minAmount: number;
+      rewardType: 'discount' | 'cashback' | 'lottery';
+      value: number;
+      description?: string;
+    }>;
+    lotteryFrequency?: 'weekly' | 'monthly' | 'none';
+    defaultCashbackRate?: number;
+  };
 
-  @ApiProperty({ description: 'Latitude', required: false })
+  @ApiProperty({ description: 'Store plan', required: false })
   @IsOptional()
-  @IsNumber()
-  lat?: number;
-
-  @ApiProperty({ description: 'Longitude', required: false })
-  @IsOptional()
-  @IsNumber()
-  lng?: number;
-
-  @ApiProperty({ description: 'Loyalty tiers', required: false })
-  @IsOptional()
-  @IsArray()
-  loyaltyTiers?: Array<{
-    minAmount: number;
-    rewardType: 'discount' | 'cashback' | 'lottery';
-    value: number;
-    description?: string;
-  }>;
-
-  @ApiProperty({ description: 'Lottery frequency', required: false })
-  @IsOptional()
-  @IsEnum(['weekly', 'monthly', 'none'])
-  lotteryFrequency?: 'weekly' | 'monthly' | 'none';
-
-  @ApiProperty({ description: 'Default cashback rate', required: false })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  defaultCashbackRate?: number;
+  @IsObject()
+  plan?: {
+    type?: 'free' | 'premium';
+    startDate?: Date;
+    endDate?: Date;
+  };
 }
 
 export class StoreResponseDto {
   @ApiProperty()
-  _id: string;
+  id: string;
 
   @ApiProperty()
   name: string;

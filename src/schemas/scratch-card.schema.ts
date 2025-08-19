@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type ScratchCardDocument = ScratchCard & Document;
+export interface ScratchCardDocument extends ScratchCard, Document {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 @Schema({ _id: false })
 export class ScratchCardReward {

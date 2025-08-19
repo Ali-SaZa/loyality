@@ -4,6 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { StoresModule } from './stores/stores.module';
+import { ScratchCardsModule } from './scratch-cards/scratch-cards.module';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import { UsersModule } from './users/users.module';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/loyalty'),
     UsersModule,
+    StoresModule,
+    ScratchCardsModule,
+    OtpModule,
   ],
   controllers: [AppController],
   providers: [AppService],

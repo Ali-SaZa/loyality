@@ -1,53 +1,70 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsEnum, IsDateString, Min, Matches } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum, IsDateString, IsObject, IsMongoId } from 'class-validator';
 
 export class CreateScratchCardDto {
-  @ApiProperty({ description: '12-character alphanumeric code', example: 'ABCD12345678' })
+  @ApiProperty({ description: 'Unique 12-character code', example: 'ABC123DEF456' })
   @IsString()
-  @Matches(/^[A-Z0-9]{12}$/, { message: 'Code must be exactly 12 alphanumeric characters' })
   code: string;
 
   @ApiProperty({ description: 'Store ID' })
-  @IsString()
+  @IsMongoId()
   storeId: string;
 
-  @ApiProperty({ description: 'Reward type', enum: ['discount', 'cashback', 'lottery'] })
-  @IsEnum(['discount', 'cashback', 'lottery'])
-  rewardType: 'discount' | 'cashback' | 'lottery';
+  @ApiProperty({ description: 'Reward details' })
+  @IsObject()
+  reward: {
+    type: 'discount' | 'cashback' | 'lottery';
+    value: number;
+  };
 
-  @ApiProperty({ description: 'Reward value (percentage for discount, amount for cashback)', minimum: 0 })
-  @IsNumber()
-  @Min(0)
-  rewardValue: number;
+  @ApiProperty({ description: 'Entry method', enum: ['sms', 'qr'], required: false })
+  @IsOptional()
+  @IsEnum(['sms', 'qr'])
+  entryMethod?: 'sms' | 'qr';
 
-  @ApiProperty({ description: 'QR URL for the scratch card' })
+  @ApiProperty({ description: 'QR code URL' })
   @IsString()
   qrUrl: string;
 
   @ApiProperty({ description: 'Expiration date' })
   @IsDateString()
-  expiresAt: string;
+  expiresAt: Date;
+}
+
+export class UpdateScratchCardDto {
+  @ApiProperty({ description: 'Reward details', required: false })
+  @IsOptional()
+  @IsObject()
+  reward?: {
+    type?: 'discount' | 'cashback' | 'lottery';
+    value?: number;
+  };
+
+  @ApiProperty({ description: 'Entry method', required: false })
+  @IsOptional()
+  @IsEnum(['sms', 'qr'])
+  entryMethod?: 'sms' | 'qr';
+
+  @ApiProperty({ description: 'QR code URL', required: false })
+  @IsOptional()
+  @IsString()
+  qrUrl?: string;
+
+  @ApiProperty({ description: 'Expiration date', required: false })
+  @IsOptional()
+  @IsDateString()
+  expiresAt?: Date;
 }
 
 export class UseScratchCardDto {
-  @ApiProperty({ description: 'Scratch card code' })
-  @IsString()
-  @Matches(/^[A-Z0-9]{12}$/)
-  code: string;
-
-  @ApiProperty({ description: 'User phone number' })
-  @IsString()
-  @Matches(/^09[0-9]{9}$/)
-  phoneNumber: string;
-
-  @ApiProperty({ description: 'Entry method', enum: ['sms', 'qr'] })
-  @IsEnum(['sms', 'qr'])
-  entryMethod: 'sms' | 'qr';
+  @ApiProperty({ description: 'User ID' })
+  @IsMongoId()
+  userId: string;
 }
 
 export class ScratchCardResponseDto {
   @ApiProperty()
-  _id: string;
+  id: string;
 
   @ApiProperty()
   code: string;
@@ -55,10 +72,10 @@ export class ScratchCardResponseDto {
   @ApiProperty()
   storeId: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['unused', 'used', 'expired'] })
   status: 'unused' | 'used' | 'expired';
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   userId?: string;
 
   @ApiProperty()
@@ -67,13 +84,13 @@ export class ScratchCardResponseDto {
     value: number;
   };
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['sms', 'qr'], required: false })
   entryMethod?: 'sms' | 'qr';
 
   @ApiProperty()
   qrUrl: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   usedAt?: Date;
 
   @ApiProperty()

@@ -1,60 +1,84 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum, Matches } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsDateString, IsMongoId, Matches } from 'class-validator';
 
-export class SendOtpDto {
+export class CreateOtpDto {
   @ApiProperty({ description: 'Iranian mobile number', example: '09123456789' })
   @IsString()
   @Matches(/^09[0-9]{9}$/, { message: 'Phone number must be a valid Iranian mobile number' })
   phoneNumber: string;
 
-  @ApiProperty({ description: 'OTP context', enum: ['login', 'scratch'] })
-  @IsEnum(['login', 'scratch'])
-  context: 'login' | 'scratch';
-
-  @ApiProperty({ description: 'Scratch card code (required for scratch context)', required: false })
+  @ApiProperty({ description: 'User ID', required: false })
   @IsOptional()
-  @IsString()
-  scratchCode?: string;
-}
+  @IsMongoId()
+  userId?: string;
 
-export class VerifyOtpDto {
-  @ApiProperty({ description: 'Iranian mobile number' })
+  @ApiProperty({ description: '6-digit OTP code', example: '123456' })
   @IsString()
-  @Matches(/^09[0-9]{9}$/)
-  phoneNumber: string;
-
-  @ApiProperty({ description: '6-digit OTP code' })
-  @IsString()
-  @Matches(/^[0-9]{6}$/, { message: 'OTP must be exactly 6 digits' })
+  @Matches(/^[0-9]{6}$/, { message: 'OTP code must be exactly 6 digits' })
   code: string;
 
   @ApiProperty({ description: 'OTP context', enum: ['login', 'scratch'] })
   @IsEnum(['login', 'scratch'])
   context: 'login' | 'scratch';
 
-  @ApiProperty({ description: 'Scratch card code (required for scratch context)', required: false })
+  @ApiProperty({ description: 'Scratch code', required: false })
   @IsOptional()
   @IsString()
   scratchCode?: string;
+
+  @ApiProperty({ description: 'Expiration date' })
+  @IsDateString()
+  expiresAt: Date;
+}
+
+export class UpdateOtpDto {
+  @ApiProperty({ description: 'User ID', required: false })
+  @IsOptional()
+  @IsMongoId()
+  userId?: string;
+
+  @ApiProperty({ description: '6-digit OTP code', required: false })
+  @IsOptional()
+  @IsString()
+  @Matches(/^[0-9]{6}$/, { message: 'OTP code must be exactly 6 digits' })
+  code?: string;
+
+  @ApiProperty({ description: 'OTP context', required: false })
+  @IsOptional()
+  @IsEnum(['login', 'scratch'])
+  context?: 'login' | 'scratch';
+
+  @ApiProperty({ description: 'Scratch code', required: false })
+  @IsOptional()
+  @IsString()
+  scratchCode?: string;
+
+  @ApiProperty({ description: 'Expiration date', required: false })
+  @IsOptional()
+  @IsDateString()
+  expiresAt?: Date;
 }
 
 export class OtpResponseDto {
   @ApiProperty()
-  _id: string;
+  id: string;
 
   @ApiProperty()
   phoneNumber: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   userId?: string;
 
   @ApiProperty()
+  code: string;
+
+  @ApiProperty({ enum: ['login', 'scratch'] })
   context: 'login' | 'scratch';
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   scratchCode?: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['sent', 'verified', 'expired'] })
   status: 'sent' | 'verified' | 'expired';
 
   @ApiProperty()
@@ -62,4 +86,7 @@ export class OtpResponseDto {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }

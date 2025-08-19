@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type StoreDocument = Store & Document;
+export interface StoreDocument extends Store, Document {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 @Schema({ _id: false })
 export class LoyaltyTier {
