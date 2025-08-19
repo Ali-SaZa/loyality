@@ -30,6 +30,7 @@ import { UsersModule } from '../users/users.module';
   providers: [
     AuthService, 
     JwtStrategy,
+    GlobalAuthGuard,
     {
       provide: APP_GUARD,
       useClass: GlobalAuthGuard,
