@@ -52,10 +52,15 @@ export class AuthorizationService {
       return;
     }
 
-    // Store owners and customers can access scratch cards
-    // The actual validation of ownership/store membership will happen in the service layer
-    // after the scratch card is fetched from the database
-    if (user.role === 'store' || user.role === 'customer') {
+    // Store users can access scratch cards related to their store
+    // (this will be validated in the service layer to check storeId)
+    if (user.role === 'store') {
+      return;
+    }
+
+    // Customers can access scratch cards that belong to them
+    // (this will be validated in the service layer to check userId)
+    if (user.role === 'customer') {
       return;
     }
 
@@ -71,18 +76,18 @@ export class AuthorizationService {
       return;
     }
 
-    // Store owners can access their own store
+    // Store users can access their own store
     if (user.role === 'store' && resource.resourceId === user.storeId) {
       return;
     }
 
-    // Customers can view store information (read-only)
-    if (user.role === 'customer') {
+    // Store users can view other stores (read-only access)
+    if (user.role === 'store') {
       return;
     }
 
-    // Store owners can view other stores (read-only)
-    if (user.role === 'store') {
+    // Customers can view store information (read-only access)
+    if (user.role === 'customer') {
       return;
     }
 
@@ -98,13 +103,18 @@ export class AuthorizationService {
       return;
     }
 
-    // Users can only access their own data
+    // Users can only access their own profile information
     if (user.role === 'customer' && resource.resourceId === user.userId) {
       return;
     }
 
-    // Store owners can view customer data (this will be validated in the service layer)
-    // since we need to check if the customer has transactions with their store
+    // Store users can access their own user account
+    if (user.role === 'store' && resource.resourceId === user.userId) {
+      return;
+    }
+
+    // Store users can view customer data related to their store
+    // (this will be validated in the service layer to check if customer has transactions with their store)
     if (user.role === 'store') {
       return;
     }
@@ -126,8 +136,8 @@ export class AuthorizationService {
       return;
     }
 
-    // Store owners can view transactions (this will be validated in the service layer)
-    // since we need to check if the transaction belongs to their store
+    // Store users can view transactions related to their store
+    // (this will be validated in the service layer to check storeId)
     if (user.role === 'store') {
       return;
     }

@@ -112,7 +112,7 @@ export class UsersController {
   @Get(':id')
   @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user by ID (Self/Admin/Store Owner only)' })
+  @ApiOperation({ summary: 'Get user by ID (Self/Store Owner/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -122,9 +122,12 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
-    const user = await this.usersService.findOne(id);
-    return this.transformUserToResponse(user);
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<UserResponseDto> {
+    const userDoc = await this.usersService.findOne(id, user);
+    return this.transformUserToResponse(userDoc);
   }
 
   @Patch(':id')
@@ -143,50 +146,56 @@ export class UsersController {
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() user: any
   ): Promise<UserResponseDto> {
-    const user = await this.usersService.update(id, updateUserDto);
-    return this.transformUserToResponse(user);
+    const updatedUser = await this.usersService.update(id, updateUserDto, user);
+    return this.transformUserToResponse(updatedUser);
   }
 
   @Delete(':id')
-  @AdminAuth()
+  @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete user (Admin only)' })
+  @ApiOperation({ summary: 'Delete user (Self/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   @HttpCode(HttpStatus.OK)
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.usersService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<void> {
+    return this.usersService.remove(id, user);
   }
 
-  @Post(':id/purchases')
+  @Post(':id/purchase')
   @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Add a purchase to user (Self/Admin only)' })
+  @ApiOperation({ summary: 'Add purchase to user (Self/Store Owner/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
-    status: 200, 
+    status: 201, 
     description: 'Purchase added successfully',
     type: UserResponseDto 
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @HttpCode(HttpStatus.CREATED)
   async addPurchase(
     @Param('id') id: string,
     @Body() purchaseDto: PurchaseDto,
+    @CurrentUser() user: any
   ): Promise<UserResponseDto> {
-    const user = await this.usersService.addPurchase(id, purchaseDto);
-    return this.transformUserToResponse(user);
+    const updatedUser = await this.usersService.addPurchase(id, purchaseDto, user);
+    return this.transformUserToResponse(updatedUser);
   }
 
   @Patch(':id/consents')
   @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user consent preferences (Self/Admin only)' })
+  @ApiOperation({ summary: 'Update user consents (Self/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -198,13 +207,15 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   async updateConsents(
     @Param('id') id: string,
-    @Body() consents: { dataCollection: boolean; marketing: boolean },
+    @Body() consentsDto: { dataCollection: boolean; marketing: boolean },
+    @CurrentUser() user: any
   ): Promise<UserResponseDto> {
-    const user = await this.usersService.updateConsents(
-      id,
-      consents.dataCollection,
-      consents.marketing,
+    const updatedUser = await this.usersService.updateConsents(
+      id, 
+      consentsDto.dataCollection, 
+      consentsDto.marketing,
+      user
     );
-    return this.transformUserToResponse(user);
+    return this.transformUserToResponse(updatedUser);
   }
 }

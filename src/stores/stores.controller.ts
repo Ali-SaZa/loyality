@@ -13,6 +13,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@ne
 import { StoresService } from './stores.service';
 import { CreateStoreDto, UpdateStoreDto, StoreResponseDto } from '../dto';
 import { StoreAuth, AdminAuth } from '../common/security';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @ApiTags('stores')
 @Controller('stores')
@@ -51,7 +52,7 @@ export class StoresController {
   @Get(':id')
   @StoreAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get store by ID (Owner/Admin/Public read)' })
+  @ApiOperation({ summary: 'Get store by ID (Store Owner/Admin only)' })
   @ApiParam({ name: 'id', description: 'Store ID' })
   @ApiResponse({ 
     status: 200, 
@@ -61,14 +62,17 @@ export class StoresController {
   @ApiResponse({ status: 404, description: 'Store not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findOne(@Param('id') id: string): Promise<StoreResponseDto> {
-    return this.storesService.findOne(id);
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<StoreResponseDto> {
+    return this.storesService.findOne(id, user);
   }
 
   @Patch(':id')
   @StoreAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update store information (Owner/Admin only)' })
+  @ApiOperation({ summary: 'Update store information (Store Owner/Admin only)' })
   @ApiParam({ name: 'id', description: 'Store ID' })
   @ApiResponse({ 
     status: 200, 
@@ -81,21 +85,25 @@ export class StoresController {
   async update(
     @Param('id') id: string,
     @Body() updateStoreDto: UpdateStoreDto,
+    @CurrentUser() user: any
   ): Promise<StoreResponseDto> {
-    return this.storesService.update(id, updateStoreDto);
+    return this.storesService.update(id, updateStoreDto, user);
   }
 
   @Delete(':id')
-  @AdminAuth()
+  @StoreAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete store (Admin only)' })
+  @ApiOperation({ summary: 'Delete store (Store Owner/Admin only)' })
   @ApiParam({ name: 'id', description: 'Store ID' })
   @ApiResponse({ status: 200, description: 'Store deleted successfully' })
   @ApiResponse({ status: 404, description: 'Store not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   @HttpCode(HttpStatus.OK)
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.storesService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<void> {
+    return this.storesService.remove(id, user);
   }
 }

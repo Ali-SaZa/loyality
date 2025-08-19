@@ -38,7 +38,7 @@ export class ScratchCardsService {
       return;
     }
 
-    // Store owners can access scratch cards from their store
+    // Store users can access scratch cards from their store
     if (user.role === 'store' && user.storeId === scratchCard.storeId.toString()) {
       return;
     }
@@ -148,6 +148,38 @@ export class ScratchCardsService {
     return this.transformScratchCardToResponse(savedCard);
   }
 
+  async registerCard(code: string, user: any): Promise<ScratchCardResponseDto> {
+    // Only customers can register scratch cards
+    if (user.role !== 'customer') {
+      throw new ForbiddenException('Only customers can register scratch cards');
+    }
+
+    const scratchCard = await this.scratchCardModel.findOne({ code }).exec();
+    
+    if (!scratchCard) {
+      throw new ScratchCardNotFoundException();
+    }
+    
+    if (scratchCard.status !== 'unused') {
+      throw new ScratchCardAlreadyUsedException();
+    }
+    
+    if (scratchCard.expiresAt < new Date()) {
+      throw new ScratchCardExpiredException();
+    }
+    
+    // Check if the card is already registered by another user
+    if (scratchCard.userId) {
+      throw new ForbiddenException('This scratch card is already registered by another user');
+    }
+    
+    // Register the card for the customer
+    scratchCard.userId = new Types.ObjectId(user.userId);
+    scratchCard.entryMethod = 'qr';
+    
+    const savedCard = await scratchCard.save();
+    return this.transformScratchCardToResponse(savedCard);
+  }
   async remove(id: string, user: any): Promise<void> {
     const scratchCard = await this.scratchCardModel.findById(id).exec();
     if (!scratchCard) {
@@ -183,11 +215,24 @@ export class ScratchCardsService {
       // Admin can see all users
     } else if (user.role === 'customer' && user.userId === userId) {
       // User can see their own data
+    } else if (user.role === 'store') {
+      // Store users can see customer data related to their store
+      // This will be validated by checking if transactions exist for this user in their store
     } else {
       throw new ForbiddenException('Access denied. You do not have permission to access this user\'s scratch cards.');
     }
 
     const scratchCards = await this.scratchCardModel.find({ userId }).exec();
+    return scratchCards.map(card => this.transformScratchCardToResponse(card));
+  }
+
+  async findMyCards(user: any): Promise<ScratchCardResponseDto[]> {
+    // Only customers can view their own cards
+    if (user.role !== 'customer') {
+      throw new ForbiddenException('Only customers can view their own scratch cards');
+    }
+
+    const scratchCards = await this.scratchCardModel.find({ userId: user.userId }).exec();
     return scratchCards.map(card => this.transformScratchCardToResponse(card));
   }
 }

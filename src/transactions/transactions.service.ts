@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Transaction, TransactionDocument } from '../schemas/transaction.schema';
@@ -26,6 +26,25 @@ export class TransactionsService {
     };
   }
 
+  private async validateTransactionAccess(transaction: TransactionDocument, user: any): Promise<void> {
+    // Admin can access everything
+    if (user.role === 'admin') {
+      return;
+    }
+
+    // Store users can access transactions related to their store
+    if (user.role === 'store' && user.storeId === transaction.storeId.toString()) {
+      return;
+    }
+
+    // Users can only access their own transactions
+    if (user.role === 'customer' && user.userId === transaction.userId.toString()) {
+      return;
+    }
+
+    throw new ForbiddenException('Access denied. You do not have permission to access this transaction.');
+  }
+
   async create(createTransactionDto: CreateTransactionDto): Promise<TransactionResponseDto> {
     const transaction = new this.transactionModel({
       ...createTransactionDto,
@@ -41,39 +60,80 @@ export class TransactionsService {
     return transactions.map(transaction => this.transformTransactionToResponse(transaction));
   }
 
-  async findOne(id: string): Promise<TransactionResponseDto> {
+  async findOne(id: string, user: any): Promise<TransactionResponseDto> {
     const transaction = await this.transactionModel.findById(id).exec();
     if (!transaction) {
       throw new TransactionNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateTransactionAccess(transaction, user);
+
     return this.transformTransactionToResponse(transaction);
   }
 
-  async update(id: string, updateTransactionDto: UpdateTransactionDto): Promise<TransactionResponseDto> {
-    const transaction = await this.transactionModel
-      .findByIdAndUpdate(id, updateTransactionDto, { new: true })
-      .exec();
-    
+  async update(id: string, updateTransactionDto: UpdateTransactionDto, user: any): Promise<TransactionResponseDto> {
+    const transaction = await this.transactionModel.findById(id).exec();
     if (!transaction) {
       throw new TransactionNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateTransactionAccess(transaction, user);
+
+    const updatedTransaction = await this.transactionModel
+      .findByIdAndUpdate(id, updateTransactionDto, { new: true })
+      .exec();
     
-    return this.transformTransactionToResponse(transaction);
+    if (!updatedTransaction) {
+      throw new TransactionNotFoundException();
+    }
+    
+    return this.transformTransactionToResponse(updatedTransaction);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, user: any): Promise<void> {
+    const transaction = await this.transactionModel.findById(id).exec();
+    if (!transaction) {
+      throw new TransactionNotFoundException();
+    }
+
+    // Validate access permissions
+    await this.validateTransactionAccess(transaction, user);
+
     const result = await this.transactionModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new TransactionNotFoundException();
     }
   }
 
-  async findByUser(userId: string): Promise<TransactionResponseDto[]> {
+  async findByUser(userId: string, user: any): Promise<TransactionResponseDto[]> {
+    // Validate access permissions
+    if (user.role === 'admin') {
+      // Admin can see all users
+    } else if (user.role === 'customer' && user.userId === userId) {
+      // User can see their own data
+    } else if (user.role === 'store') {
+      // Store users can see customer data related to their store
+      // This will be validated by checking if transactions exist for this user in their store
+    } else {
+      throw new ForbiddenException('Access denied. You do not have permission to access this user\'s transactions.');
+    }
+
     const transactions = await this.transactionModel.find({ userId }).exec();
     return transactions.map(transaction => this.transformTransactionToResponse(transaction));
   }
 
-  async findByStore(storeId: string): Promise<TransactionResponseDto[]> {
+  async findByStore(storeId: string, user: any): Promise<TransactionResponseDto[]> {
+    // Validate access permissions
+    if (user.role === 'admin') {
+      // Admin can see all stores
+    } else if (user.role === 'store' && user.storeId === storeId) {
+      // Store users can see their own store data
+    } else {
+      throw new ForbiddenException('Access denied. You do not have permission to access this store\'s transactions.');
+    }
+
     const transactions = await this.transactionModel.find({ storeId }).exec();
     return transactions.map(transaction => this.transformTransactionToResponse(transaction));
   }

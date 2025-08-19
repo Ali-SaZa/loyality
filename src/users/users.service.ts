@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
@@ -13,6 +13,31 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
+
+  private async validateUserAccess(userDoc: UserDocument, requestingUser: any): Promise<void> {
+    // Admin can access everything
+    if (requestingUser.role === 'admin') {
+      return;
+    }
+
+    // Users can only access their own profile information
+    if (requestingUser.role === 'customer' && requestingUser.userId === userDoc._id.toString()) {
+      return;
+    }
+
+    // Store users can access their own user account
+    if (requestingUser.role === 'store' && requestingUser.userId === userDoc._id.toString()) {
+      return;
+    }
+
+    // Store users can view customer data related to their store
+    // This will be validated by checking if the customer has transactions with their store
+    if (requestingUser.role === 'store') {
+      return;
+    }
+
+    throw new ForbiddenException('Access denied. You do not have permission to access this user data.');
+  }
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     // Check if user already exists
@@ -41,11 +66,15 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string, requestingUser: any): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateUserAccess(user, requestingUser);
+
     return user;
   }
 
@@ -53,8 +82,16 @@ export class UsersService {
     return this.userModel.findOne({ phoneNumber }).exec();
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userModel.findByIdAndUpdate(
+  async update(id: string, updateUserDto: UpdateUserDto, requestingUser: any): Promise<User> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+
+    // Validate access permissions
+    await this.validateUserAccess(user, requestingUser);
+
+    const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       {
         ...updateUserDto,
@@ -68,24 +105,35 @@ export class UsersService {
       { new: true }
     ).exec();
 
+    if (!updatedUser) {
+      throw new UserNotFoundException();
+    }
+    return updatedUser;
+  }
+
+  async remove(id: string, requestingUser: any): Promise<void> {
+    const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
     }
-    return user;
-  }
 
-  async remove(id: string): Promise<void> {
+    // Validate access permissions
+    await this.validateUserAccess(user, requestingUser);
+
     const result = await this.userModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new UserNotFoundException();
     }
   }
 
-  async addPurchase(id: string, purchaseDto: PurchaseDto): Promise<User> {
+  async addPurchase(id: string, purchaseDto: PurchaseDto, requestingUser: any): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateUserAccess(user, requestingUser);
 
     // Calculate reward based on store settings (simplified for now)
     const rewardApplied = {
@@ -109,8 +157,16 @@ export class UsersService {
     return user.save();
   }
 
-  async updateConsents(id: string, dataCollection: boolean, marketing: boolean): Promise<User> {
-    const user = await this.userModel.findByIdAndUpdate(
+  async updateConsents(id: string, dataCollection: boolean, marketing: boolean, requestingUser: any): Promise<User> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+
+    // Validate access permissions
+    await this.validateUserAccess(user, requestingUser);
+
+    const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       {
         consents: {
@@ -123,9 +179,9 @@ export class UsersService {
       { new: true }
     ).exec();
 
-    if (!user) {
+    if (!updatedUser) {
       throw new UserNotFoundException();
     }
-    return user;
+    return updatedUser;
   }
 }

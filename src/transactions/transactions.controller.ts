@@ -14,6 +14,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth }
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto, UpdateTransactionDto, TransactionResponseDto } from '../dto';
 import { TransactionAuth, AdminAuth, StoreAuth, UserAuth } from '../common/security';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @ApiTags('transactions')
 @Controller('transactions')
@@ -73,10 +74,68 @@ export class TransactionsController {
     return this.transactionsService.getAnalytics(storeId, start, end);
   }
 
+  @Get(':id')
+  @TransactionAuth({ paramName: 'id' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get transaction by ID (Owner/Store Owner/Admin only)' })
+  @ApiParam({ name: 'id', description: 'Transaction ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Transaction found',
+    type: TransactionResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<TransactionResponseDto> {
+    return this.transactionsService.findOne(id, user);
+  }
+
+  @Patch(':id')
+  @TransactionAuth({ paramName: 'id' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update transaction (Owner/Store Owner/Admin only)' })
+  @ApiParam({ name: 'id', description: 'Transaction ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Transaction updated successfully',
+    type: TransactionResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateTransactionDto: UpdateTransactionDto,
+    @CurrentUser() user: any
+  ): Promise<TransactionResponseDto> {
+    return this.transactionsService.update(id, updateTransactionDto, user);
+  }
+
+  @Delete(':id')
+  @TransactionAuth({ paramName: 'id' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete transaction (Owner/Store Owner/Admin only)' })
+  @ApiParam({ name: 'id', description: 'Transaction ID' })
+  @ApiResponse({ status: 200, description: 'Transaction deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @HttpCode(HttpStatus.OK)
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<void> {
+    return this.transactionsService.remove(id, user);
+  }
+
   @Get('user/:userId')
   @UserAuth({ paramName: 'userId' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transactions by user (Self/Admin/Store Owner only)' })
+  @ApiOperation({ summary: 'Get transactions by user (Self/Store Owner/Admin only)' })
   @ApiParam({ name: 'userId', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -85,14 +144,17 @@ export class TransactionsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findByUser(@Param('userId') userId: string): Promise<TransactionResponseDto[]> {
-    return this.transactionsService.findByUser(userId);
+  async findByUser(
+    @Param('userId') userId: string,
+    @CurrentUser() user: any
+  ): Promise<TransactionResponseDto[]> {
+    return this.transactionsService.findByUser(userId, user);
   }
 
   @Get('store/:storeId')
   @StoreAuth({ paramName: 'storeId' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transactions by store (Owner/Admin only)' })
+  @ApiOperation({ summary: 'Get transactions by store (Store Owner/Admin only)' })
   @ApiParam({ name: 'storeId', description: 'Store ID' })
   @ApiResponse({ 
     status: 200, 
@@ -101,8 +163,11 @@ export class TransactionsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findByStore(@Param('storeId') storeId: string): Promise<TransactionResponseDto[]> {
-    return this.transactionsService.findByStore(storeId);
+  async findByStore(
+    @Param('storeId') storeId: string,
+    @CurrentUser() user: any
+  ): Promise<TransactionResponseDto[]> {
+    return this.transactionsService.findByStore(storeId, user);
   }
 
   @Get('type/:type')
@@ -119,56 +184,5 @@ export class TransactionsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findByType(@Param('type') type: 'purchase' | 'cashback' | 'lottery'): Promise<TransactionResponseDto[]> {
     return this.transactionsService.findByType(type);
-  }
-
-  @Get(':id')
-  @TransactionAuth({ paramName: 'id' })
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transaction by ID (Owner/Admin/Store Owner only)' })
-  @ApiParam({ name: 'id', description: 'Transaction ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Transaction found',
-    type: TransactionResponseDto 
-  })
-  @ApiResponse({ status: 404, description: 'Transaction not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findOne(@Param('id') id: string): Promise<TransactionResponseDto> {
-    return this.transactionsService.findOne(id);
-  }
-
-  @Patch(':id')
-  @AdminAuth()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update transaction information (Admin only)' })
-  @ApiParam({ name: 'id', description: 'Transaction ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Transaction updated successfully',
-    type: TransactionResponseDto 
-  })
-  @ApiResponse({ status: 404, description: 'Transaction not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
-  ): Promise<TransactionResponseDto> {
-    return this.transactionsService.update(id, updateTransactionDto);
-  }
-
-  @Delete(':id')
-  @AdminAuth()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete transaction (Admin only)' })
-  @ApiParam({ name: 'id', description: 'Transaction ID' })
-  @ApiResponse({ status: 200, description: 'Transaction deleted successfully' })
-  @ApiResponse({ status: 404, description: 'Transaction not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  @HttpCode(HttpStatus.OK)
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.transactionsService.remove(id);
   }
 }

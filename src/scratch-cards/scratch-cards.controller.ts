@@ -205,4 +205,40 @@ export class ScratchCardsController {
   ): Promise<ScratchCardResponseDto[]> {
     return this.scratchCardsService.findByUser(userId, user);
   }
+
+  @Post('register/:code')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Register scratch card by code (Customer only - for QR scanning)' })
+  @ApiParam({ name: 'code', description: 'Scratch card code from QR' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Scratch card registered successfully',
+    type: ScratchCardResponseDto 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Scratch card not found' })
+  @ApiResponse({ status: 400, description: 'Scratch card not available or expired' })
+  @HttpCode(HttpStatus.CREATED)
+  async registerCard(
+    @Param('code') code: string,
+    @CurrentUser() user: any
+  ): Promise<ScratchCardResponseDto> {
+    return this.scratchCardsService.registerCard(code, user);
+  }
+
+  @Get('my-cards')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user\'s scratch cards (Customer only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'List of user\'s scratch cards',
+    type: [ScratchCardResponseDto] 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Customer access only' })
+  async getMyCards(
+    @CurrentUser() user: any
+  ): Promise<ScratchCardResponseDto[]> {
+    return this.scratchCardsService.findMyCards(user);
+  }
 }

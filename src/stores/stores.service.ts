@@ -8,6 +8,7 @@ import {
   StorePhoneExistsException,
   CustomConflictException 
 } from '../common/errors';
+import { ForbiddenException } from '@nestjs/common';
 
 @Injectable()
 export class StoresService {
@@ -50,27 +51,47 @@ export class StoresService {
     return stores.map(store => this.transformStoreToResponse(store));
   }
 
-  async findOne(id: string): Promise<StoreResponseDto> {
+  async findOne(id: string, user: any): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
       throw new StoreNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateStoreAccess(store, user);
+
     return this.transformStoreToResponse(store);
   }
 
-  async update(id: string, updateStoreDto: UpdateStoreDto): Promise<StoreResponseDto> {
-    const store = await this.storeModel
-      .findByIdAndUpdate(id, updateStoreDto, { new: true })
-      .exec();
-    
+  async update(id: string, updateStoreDto: UpdateStoreDto, user: any): Promise<StoreResponseDto> {
+    const store = await this.storeModel.findById(id).exec();
     if (!store) {
       throw new StoreNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateStoreAccess(store, user);
+
+    const updatedStore = await this.storeModel
+      .findByIdAndUpdate(id, updateStoreDto, { new: true })
+      .exec();
     
-    return this.transformStoreToResponse(store);
+    if (!updatedStore) {
+      throw new StoreNotFoundException();
+    }
+    
+    return this.transformStoreToResponse(updatedStore);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, user: any): Promise<void> {
+    const store = await this.storeModel.findById(id).exec();
+    if (!store) {
+      throw new StoreNotFoundException();
+    }
+
+    // Validate access permissions
+    await this.validateStoreAccess(store, user);
+
     const result = await this.storeModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new StoreNotFoundException();
@@ -80,5 +101,19 @@ export class StoresService {
   async findByPhoneNumber(phoneNumber: string): Promise<StoreResponseDto | null> {
     const store = await this.storeModel.findOne({ phoneNumber }).exec();
     return store ? this.transformStoreToResponse(store) : null;
+  }
+
+  private async validateStoreAccess(store: StoreDocument, user: any): Promise<void> {
+    // Admin can access everything
+    if (user.role === 'admin') {
+      return;
+    }
+
+    // Store users can only modify their own store
+    if (user.role === 'store' && user.storeId === store._id.toString()) {
+      return;
+    }
+
+    throw new ForbiddenException('Access denied. You do not have permission to modify this store.');
   }
 }
