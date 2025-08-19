@@ -38,7 +38,10 @@ export class AuthService {
     }
 
     // Generate a 6-digit OTP code
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // For testing purposes, use fixed OTP code
+    const otpCode = '123456';
     
     // Create OTP record with shorter expiration for security
     await this.otpService.create({

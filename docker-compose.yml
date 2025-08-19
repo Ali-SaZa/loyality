@@ -29,6 +29,8 @@ services:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://admin:admin123@mongodb:27017/loyalty?authSource=admin
       - PORT=3000
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - JWT_EXPIRES_IN=7d
     depends_on:
       - mongodb
     networks:

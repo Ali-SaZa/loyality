@@ -31,7 +31,8 @@ export class OTPsSeeder extends BaseSeeder<OtpDocument> {
     return this.users.map(user => ({
       userId: user._id,
       phoneNumber: user.phoneNumber,
-      code: Math.floor(100000 + Math.random() * 900000).toString(),
+      // code: Math.floor(100000 + Math.random() * 900000).toString(),
+      code: '123456', // For testing purposes, use fixed OTP code
       context: 'login',
       status: 'sent',
       expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
