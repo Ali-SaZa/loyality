@@ -10,6 +10,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { GlobalAuthGuard } from './guards/global-auth.guard';
 import { OtpModule } from '../otp/otp.module';
 import { UsersModule } from '../users/users.module';
+import { AuthorizationService } from '../common/security/authorization.service';
+import { ResourceAuthGuard } from '../common/security/resource-auth.guard';
+import { Store, StoreSchema } from '../schemas/store.schema';
 
 @Module({
   imports: [
@@ -33,17 +36,18 @@ import { UsersModule } from '../users/users.module';
             expiresIn,
             issuer: 'loyalty-api',
             audience: 'loyalty-users',
-            algorithm: 'HS256',
           },
           verifyOptions: {
             issuer: 'loyalty-api',
             audience: 'loyalty-users',
-            algorithms: ['HS256'],
           },
         };
       },
       inject: [ConfigService],
     }),
+    MongooseModule.forFeature([
+      { name: Store.name, schema: StoreSchema }
+    ]),
     OtpModule,
     UsersModule,
   ],
@@ -51,12 +55,14 @@ import { UsersModule } from '../users/users.module';
     AuthService, 
     JwtStrategy,
     GlobalAuthGuard,
+    AuthorizationService,
+    ResourceAuthGuard,
     {
       provide: APP_GUARD,
       useClass: GlobalAuthGuard,
     },
   ],
   controllers: [AuthController],
-  exports: [AuthService, JwtStrategy, PassportModule],
+  exports: [AuthService, JwtStrategy, PassportModule, AuthorizationService, ResourceAuthGuard],
 })
 export class AuthModule {}

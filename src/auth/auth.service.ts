@@ -97,7 +97,7 @@ export class AuthService {
     // Generate JWT token with enhanced security
     const payload = {
       phoneNumber: user.phoneNumber,
-      userId: user._id.toString(),
+      userId: user._id.toString(), // Ensure userId is always included
       role: user.role,
       iat: Math.floor(Date.now() / 1000), // Issued at
       type: 'access', // Token type

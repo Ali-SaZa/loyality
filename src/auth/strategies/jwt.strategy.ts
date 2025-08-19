@@ -45,7 +45,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // Validate role
-    if (payload.role !== 'customer' && payload.role !== 'admin') {
+    if (payload.role !== 'customer' && payload.role !== 'admin' && payload.role !== 'store') {
       throw new UnauthorizedException('Invalid user role in token');
     }
 

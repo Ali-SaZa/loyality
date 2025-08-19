@@ -2,6 +2,9 @@ import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../users/users.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Store, StoreDocument } from '../../schemas/store.schema';
 
 @Injectable()
 export class GlobalAuthGuard implements CanActivate {
@@ -9,6 +12,7 @@ export class GlobalAuthGuard implements CanActivate {
     private reflector: Reflector,
     private jwtService: JwtService,
     private usersService: UsersService,
+    @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -46,10 +50,20 @@ export class GlobalAuthGuard implements CanActivate {
         throw new UnauthorizedException('User role mismatch');
       }
 
+      // For store owners, get their store information
+      let storeId: string | undefined;
+      if (payload.role === 'store') {
+        const store = await this.storeModel.findOne({ phoneNumber: payload.phoneNumber }).exec();
+        if (store) {
+          storeId = store._id.toString();
+        }
+      }
+
       // Attach user to request for use in controllers
       request.user = {
         ...user.toObject(),
         userId: payload.userId, // Ensure userId is available
+        storeId, // Include storeId for store owners
       };
       
       return true;

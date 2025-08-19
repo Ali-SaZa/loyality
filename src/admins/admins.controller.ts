@@ -9,9 +9,10 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto, UpdateAdminDto, AdminResponseDto } from '../dto';
+import { AdminAuth } from '../common/security';
 
 @ApiTags('admins')
 @Controller('admins')
@@ -19,30 +20,40 @@ export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new admin' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new admin (Super Admin only)' })
   @ApiResponse({ 
     status: 201, 
     description: 'Admin created successfully',
     type: AdminResponseDto 
   })
   @ApiResponse({ status: 409, description: 'Admin with this phone number already exists' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async create(@Body() createAdminDto: CreateAdminDto): Promise<AdminResponseDto> {
     return this.adminsService.create(createAdminDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all admins' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all admins (Admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'List of all admins',
     type: [AdminResponseDto] 
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findAll(): Promise<AdminResponseDto[]> {
     return this.adminsService.findAll();
   }
 
   @Get('permission/:permission')
-  @ApiOperation({ summary: 'Get admins by permission' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get admins by permission (Admin only)' })
   @ApiParam({ 
     name: 'permission', 
     description: 'Permission type',
@@ -53,6 +64,8 @@ export class AdminsController {
     description: 'List of admins with the specified permission',
     type: [AdminResponseDto] 
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findByPermission(
     @Param('permission') permission: 'manage_stores' | 'view_reports' | 'run_lottery' | 'manage_users'
   ): Promise<AdminResponseDto[]> {
@@ -60,7 +73,9 @@ export class AdminsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get admin by ID' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get admin by ID (Admin only)' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
   @ApiResponse({ 
     status: 200, 
@@ -68,12 +83,16 @@ export class AdminsController {
     type: AdminResponseDto 
   })
   @ApiResponse({ status: 404, description: 'Admin not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findOne(@Param('id') id: string): Promise<AdminResponseDto> {
     return this.adminsService.findOne(id);
   }
 
   @Get(':id/has-permission/:permission')
-  @ApiOperation({ summary: 'Check if admin has specific permission' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Check if admin has specific permission (Admin only)' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
   @ApiParam({ 
     name: 'permission', 
@@ -85,6 +104,8 @@ export class AdminsController {
     description: 'Permission check result',
     schema: { type: 'boolean' }
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async hasPermission(
     @Param('id') id: string,
     @Param('permission') permission: 'manage_stores' | 'view_reports' | 'run_lottery' | 'manage_users'
@@ -94,7 +115,9 @@ export class AdminsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update admin information' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update admin information (Admin only)' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
   @ApiResponse({ 
     status: 200, 
@@ -102,6 +125,8 @@ export class AdminsController {
     type: AdminResponseDto 
   })
   @ApiResponse({ status: 404, description: 'Admin not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async update(
     @Param('id') id: string,
     @Body() updateAdminDto: UpdateAdminDto,
@@ -110,7 +135,9 @@ export class AdminsController {
   }
 
   @Patch(':id/permissions')
-  @ApiOperation({ summary: 'Update admin permissions' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update admin permissions (Admin only)' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
   @ApiResponse({ 
     status: 200, 
@@ -118,6 +145,8 @@ export class AdminsController {
     type: AdminResponseDto 
   })
   @ApiResponse({ status: 404, description: 'Admin not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async updatePermissions(
     @Param('id') id: string,
     @Body() body: { permissions: Array<'manage_stores' | 'view_reports' | 'run_lottery' | 'manage_users'> },
@@ -126,10 +155,14 @@ export class AdminsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete admin' })
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete admin (Admin only)' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
   @ApiResponse({ status: 200, description: 'Admin deleted successfully' })
   @ApiResponse({ status: 404, description: 'Admin not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string): Promise<void> {
     return this.adminsService.remove(id);

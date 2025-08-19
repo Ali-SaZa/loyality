@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ScratchCard, ScratchCardDocument } from '../schemas/scratch-card.schema';
@@ -32,6 +32,25 @@ export class ScratchCardsService {
     };
   }
 
+  private async validateScratchCardAccess(scratchCard: ScratchCardDocument, user: any): Promise<void> {
+    // Admin can access everything
+    if (user.role === 'admin') {
+      return;
+    }
+
+    // Store owners can access scratch cards from their store
+    if (user.role === 'store' && user.storeId === scratchCard.storeId.toString()) {
+      return;
+    }
+
+    // Users can only access scratch cards they own
+    if (user.role === 'customer' && scratchCard.userId?.toString() === user.userId) {
+      return;
+    }
+
+    throw new ForbiddenException('Access denied. You do not have permission to access this scratch card.');
+  }
+
   async create(createScratchCardDto: CreateScratchCardDto): Promise<ScratchCardResponseDto> {
     const scratchCard = new this.scratchCardModel(createScratchCardDto);
     const savedScratchCard = await scratchCard.save();
@@ -43,11 +62,15 @@ export class ScratchCardsService {
     return scratchCards.map(card => this.transformScratchCardToResponse(card));
   }
 
-  async findOne(id: string): Promise<ScratchCardResponseDto> {
+  async findOne(id: string, user: any): Promise<ScratchCardResponseDto> {
     const scratchCard = await this.scratchCardModel.findById(id).exec();
     if (!scratchCard) {
       throw new ScratchCardNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateScratchCardAccess(scratchCard, user);
+
     return this.transformScratchCardToResponse(scratchCard);
   }
 
@@ -56,34 +79,50 @@ export class ScratchCardsService {
     return scratchCard ? this.transformScratchCardToResponse(scratchCard) : null;
   }
 
-  async update(id: string, updateScratchCardDto: UpdateScratchCardDto): Promise<ScratchCardResponseDto> {
-    const scratchCard = await this.scratchCardModel
-      .findByIdAndUpdate(id, updateScratchCardDto, { new: true })
-      .exec();
-    
+  async update(id: string, updateScratchCardDto: UpdateScratchCardDto, user: any): Promise<ScratchCardResponseDto> {
+    const scratchCard = await this.scratchCardModel.findById(id).exec();
     if (!scratchCard) {
       throw new ScratchCardNotFoundException();
     }
+
+    // Validate access permissions
+    await this.validateScratchCardAccess(scratchCard, user);
+
+    const updatedScratchCard = await this.scratchCardModel
+      .findByIdAndUpdate(id, updateScratchCardDto, { new: true })
+      .exec();
     
-    return this.transformScratchCardToResponse(scratchCard);
+    if (!updatedScratchCard) {
+      throw new ScratchCardNotFoundException();
+    }
+    
+    return this.transformScratchCardToResponse(updatedScratchCard);
   }
 
-  async updateStatus(id: string, status: 'unused' | 'used' | 'expired'): Promise<ScratchCardResponseDto> {
+  async updateStatus(id: string, status: 'unused' | 'used' | 'expired', user: any): Promise<ScratchCardResponseDto> {
+    const scratchCard = await this.scratchCardModel.findById(id).exec();
+    if (!scratchCard) {
+      throw new ScratchCardNotFoundException();
+    }
+
+    // Validate access permissions
+    await this.validateScratchCardAccess(scratchCard, user);
+
     const updateData: any = { status };
     
     if (status === 'used') {
       updateData.usedAt = new Date();
     }
     
-    const scratchCard = await this.scratchCardModel
+    const updatedScratchCard = await this.scratchCardModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
     
-    if (!scratchCard) {
+    if (!updatedScratchCard) {
       throw new ScratchCardNotFoundException();
     }
     
-    return this.transformScratchCardToResponse(scratchCard);
+    return this.transformScratchCardToResponse(updatedScratchCard);
   }
 
   async useCard(id: string, userId: string): Promise<ScratchCardResponseDto> {
@@ -109,19 +148,45 @@ export class ScratchCardsService {
     return this.transformScratchCardToResponse(savedCard);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, user: any): Promise<void> {
+    const scratchCard = await this.scratchCardModel.findById(id).exec();
+    if (!scratchCard) {
+      throw new ScratchCardNotFoundException();
+    }
+
+    // Validate access permissions
+    await this.validateScratchCardAccess(scratchCard, user);
+
     const result = await this.scratchCardModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new ScratchCardNotFoundException();
     }
   }
 
-  async findByStore(storeId: string): Promise<ScratchCardResponseDto[]> {
+  async findByStore(storeId: string, user: any): Promise<ScratchCardResponseDto[]> {
+    // Validate store access
+    if (user.role === 'admin') {
+      // Admin can see all stores
+    } else if (user.role === 'store' && user.storeId === storeId) {
+      // Store owner can see their own store
+    } else {
+      throw new ForbiddenException('Access denied. You do not have permission to access this store\'s scratch cards.');
+    }
+
     const scratchCards = await this.scratchCardModel.find({ storeId }).exec();
     return scratchCards.map(card => this.transformScratchCardToResponse(card));
   }
 
-  async findByUser(userId: string): Promise<ScratchCardResponseDto[]> {
+  async findByUser(userId: string, user: any): Promise<ScratchCardResponseDto[]> {
+    // Validate user access
+    if (user.role === 'admin') {
+      // Admin can see all users
+    } else if (user.role === 'customer' && user.userId === userId) {
+      // User can see their own data
+    } else {
+      throw new ForbiddenException('Access denied. You do not have permission to access this user\'s scratch cards.');
+    }
+
     const scratchCards = await this.scratchCardModel.find({ userId }).exec();
     return scratchCards.map(card => this.transformScratchCardToResponse(card));
   }

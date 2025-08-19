@@ -26,6 +26,7 @@ import { CreateUserDto, UpdateUserDto, PurchaseDto, UserResponseDto } from '../d
 import { UserNotFoundException } from '../common/errors';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { UserAuth, AdminAuth } from '../common/security';
 
 @ApiTags('Users')
 @Controller('users')
@@ -72,14 +73,19 @@ export class UsersController {
   }
 
   @Get()
+  @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Get all users (Admin only)' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 10)' })
+  @ApiQuery({ name: 'search', required: false, description: 'Search by name or phone number' })
   @ApiResponse({ 
     status: 200, 
     description: 'Users retrieved successfully',
     type: [UserResponseDto] 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.usersService.findAll();
     return users.map(user => this.transformUserToResponse(user));
@@ -104,8 +110,9 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiOperation({ summary: 'Get user by ID (Self/Admin/Store Owner only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -114,14 +121,16 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     const user = await this.usersService.findOne(id);
     return this.transformUserToResponse(user);
   }
 
   @Patch(':id')
+  @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user information' })
+  @ApiOperation({ summary: 'Update user information (Self/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -130,6 +139,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -139,20 +149,23 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete user' })
+  @ApiOperation({ summary: 'Delete user (Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string): Promise<void> {
     return this.usersService.remove(id);
   }
 
   @Post(':id/purchases')
+  @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Add a purchase to user' })
+  @ApiOperation({ summary: 'Add a purchase to user (Self/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -161,6 +174,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   async addPurchase(
     @Param('id') id: string,
     @Body() purchaseDto: PurchaseDto,
@@ -170,8 +184,9 @@ export class UsersController {
   }
 
   @Patch(':id/consents')
+  @UserAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user consent preferences' })
+  @ApiOperation({ summary: 'Update user consent preferences (Self/Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
@@ -180,6 +195,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   async updateConsents(
     @Param('id') id: string,
     @Body() consents: { dataCollection: boolean; marketing: boolean },
