@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import { CreateUserDto, UpdateUserDto, PurchaseDto } from '../dto';
+import { 
+  UserNotFoundException, 
+  CustomConflictException 
+} from '../common/errors';
 
 @Injectable()
 export class UsersService {
@@ -10,14 +14,14 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     // Check if user already exists
     const existingUser = await this.userModel.findOne({ 
       phoneNumber: createUserDto.phoneNumber 
     });
     
     if (existingUser) {
-      throw new ConflictException('User with this phone number already exists');
+      throw new CustomConflictException('User', 'USER_ALREADY_EXISTS');
     }
 
     const user = new this.userModel({
@@ -40,12 +44,12 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UserNotFoundException();
     }
     return user;
   }
 
-  async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
+  async findByPhoneNumber(phoneNumber: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ phoneNumber }).exec();
   }
 
@@ -65,7 +69,7 @@ export class UsersService {
     ).exec();
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UserNotFoundException();
     }
     return user;
   }
@@ -73,14 +77,14 @@ export class UsersService {
   async remove(id: string): Promise<void> {
     const result = await this.userModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException('User not found');
+      throw new UserNotFoundException();
     }
   }
 
   async addPurchase(id: string, purchaseDto: PurchaseDto): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UserNotFoundException();
     }
 
     // Calculate reward based on store settings (simplified for now)
@@ -120,7 +124,7 @@ export class UsersService {
     ).exec();
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UserNotFoundException();
     }
     return user;
   }

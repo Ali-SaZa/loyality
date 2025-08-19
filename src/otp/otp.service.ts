@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Otp, OtpDocument } from '../schemas/otp.schema';
 import { CreateOtpDto, UpdateOtpDto, OtpResponseDto } from '../dto';
+import { 
+  OTPNotFoundException,
+  InvalidOTPException
+} from '../common/errors';
 
 @Injectable()
 export class OtpService {
@@ -39,7 +43,7 @@ export class OtpService {
   async findOne(id: string): Promise<OtpResponseDto> {
     const otp = await this.otpModel.findById(id).exec();
     if (!otp) {
-      throw new NotFoundException('OTP not found');
+      throw new OTPNotFoundException();
     }
     return this.transformOtpToResponse(otp);
   }
@@ -60,13 +64,25 @@ export class OtpService {
     return otp ? this.transformOtpToResponse(otp) : null;
   }
 
+  async findRecentOtp(phoneNumber: string, context: 'login' | 'scratch'): Promise<OtpResponseDto | null> {
+    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+    
+    const otp = await this.otpModel.findOne({
+      phoneNumber,
+      context,
+      createdAt: { $gt: twoMinutesAgo }
+    }).sort({ createdAt: -1 }).exec();
+    
+    return otp ? this.transformOtpToResponse(otp) : null;
+  }
+
   async update(id: string, updateOtpDto: UpdateOtpDto): Promise<OtpResponseDto> {
     const otp = await this.otpModel
       .findByIdAndUpdate(id, updateOtpDto, { new: true })
       .exec();
     
     if (!otp) {
-      throw new NotFoundException('OTP not found');
+      throw new OTPNotFoundException();
     }
     
     return this.transformOtpToResponse(otp);
@@ -78,7 +94,7 @@ export class OtpService {
       .exec();
     
     if (!otp) {
-      throw new NotFoundException('OTP not found');
+      throw new OTPNotFoundException();
     }
     
     return this.transformOtpToResponse(otp);
@@ -94,7 +110,7 @@ export class OtpService {
     }).exec();
     
     if (!otp) {
-      throw new BadRequestException('Invalid or expired OTP');
+      throw new InvalidOTPException();
     }
     
     otp.status = 'verified';
@@ -109,7 +125,7 @@ export class OtpService {
       .exec();
     
     if (!otp) {
-      throw new NotFoundException('OTP not found');
+      throw new OTPNotFoundException();
     }
     
     return this.transformOtpToResponse(otp);
@@ -118,7 +134,7 @@ export class OtpService {
   async remove(id: string): Promise<void> {
     const result = await this.otpModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException('OTP not found');
+      throw new OTPNotFoundException();
     }
   }
 

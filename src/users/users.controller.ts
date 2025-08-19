@@ -8,10 +8,14 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, PurchaseDto, UserResponseDto } from '../dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserNotFoundException } from '../common/errors';
 
 @ApiTags('users')
 @Controller('users')
@@ -64,6 +68,25 @@ export class UsersController {
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.usersService.findAll();
     return users.map(user => this.transformUserToResponse(user));
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Current user profile',
+    type: UserResponseDto 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getCurrentUser(@CurrentUser() user: any): Promise<UserResponseDto> {
+    // Fetch the full user data from the database
+    const fullUser = await this.usersService.findByPhoneNumber(user.phoneNumber);
+    if (!fullUser) {
+      throw new UserNotFoundException();
+    }
+    return this.transformUserToResponse(fullUser);
   }
 
   @Get(':id')

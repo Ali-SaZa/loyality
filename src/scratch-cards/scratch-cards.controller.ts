@@ -12,6 +12,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ScratchCardsService } from './scratch-cards.service';
 import { CreateScratchCardDto, UpdateScratchCardDto, ScratchCardResponseDto } from '../dto';
+import { ScratchCardNotFoundException } from '../common/errors';
 
 @ApiTags('scratch-cards')
 @Controller('scratch-cards')
@@ -65,7 +66,7 @@ export class ScratchCardsController {
   async findByCode(@Param('code') code: string): Promise<ScratchCardResponseDto> {
     const card = await this.scratchCardsService.findByCode(code);
     if (!card) {
-      throw new Error('Scratch card not found');
+      throw new ScratchCardNotFoundException();
     }
     return card;
   }

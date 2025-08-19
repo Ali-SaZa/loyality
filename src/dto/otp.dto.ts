@@ -4,7 +4,7 @@ import { IsString, IsOptional, IsEnum, IsDateString, IsMongoId, Matches } from '
 export class CreateOtpDto {
   @ApiProperty({ description: 'Iranian mobile number', example: '09123456789' })
   @IsString()
-  @Matches(/^09[0-9]{9}$/, { message: 'Phone number must be a valid Iranian mobile number' })
+  @Matches(/^09[0-9]{9}$/)
   phoneNumber: string;
 
   @ApiProperty({ description: 'User ID', required: false })
@@ -14,7 +14,7 @@ export class CreateOtpDto {
 
   @ApiProperty({ description: '6-digit OTP code', example: '123456' })
   @IsString()
-  @Matches(/^[0-9]{6}$/, { message: 'OTP code must be exactly 6 digits' })
+  @Matches(/^[0-9]{6}$/)
   code: string;
 
   @ApiProperty({ description: 'OTP context', enum: ['login', 'scratch'] })
@@ -40,7 +40,7 @@ export class UpdateOtpDto {
   @ApiProperty({ description: '6-digit OTP code', required: false })
   @IsOptional()
   @IsString()
-  @Matches(/^[0-9]{6}$/, { message: 'OTP code must be exactly 6 digits' })
+  @Matches(/^[0-9]{6}$/)
   code?: string;
 
   @ApiProperty({ description: 'OTP context', required: false })

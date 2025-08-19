@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ScratchCard, ScratchCardDocument } from '../schemas/scratch-card.schema';
 import { CreateScratchCardDto, UpdateScratchCardDto, ScratchCardResponseDto } from '../dto';
+import { 
+  ScratchCardNotFoundException,
+  ScratchCardAlreadyUsedException,
+  ScratchCardExpiredException
+} from '../common/errors';
 
 @Injectable()
 export class ScratchCardsService {
@@ -41,7 +46,7 @@ export class ScratchCardsService {
   async findOne(id: string): Promise<ScratchCardResponseDto> {
     const scratchCard = await this.scratchCardModel.findById(id).exec();
     if (!scratchCard) {
-      throw new NotFoundException('Scratch card not found');
+      throw new ScratchCardNotFoundException();
     }
     return this.transformScratchCardToResponse(scratchCard);
   }
@@ -57,7 +62,7 @@ export class ScratchCardsService {
       .exec();
     
     if (!scratchCard) {
-      throw new NotFoundException('Scratch card not found');
+      throw new ScratchCardNotFoundException();
     }
     
     return this.transformScratchCardToResponse(scratchCard);
@@ -75,7 +80,7 @@ export class ScratchCardsService {
       .exec();
     
     if (!scratchCard) {
-      throw new NotFoundException('Scratch card not found');
+      throw new ScratchCardNotFoundException();
     }
     
     return this.transformScratchCardToResponse(scratchCard);
@@ -85,15 +90,15 @@ export class ScratchCardsService {
     const scratchCard = await this.scratchCardModel.findById(id).exec();
     
     if (!scratchCard) {
-      throw new NotFoundException('Scratch card not found');
+      throw new ScratchCardNotFoundException();
     }
     
     if (scratchCard.status !== 'unused') {
-      throw new BadRequestException('Scratch card is not available for use');
+      throw new ScratchCardAlreadyUsedException();
     }
     
     if (scratchCard.expiresAt < new Date()) {
-      throw new BadRequestException('Scratch card has expired');
+      throw new ScratchCardExpiredException();
     }
     
     scratchCard.status = 'used';
@@ -107,7 +112,7 @@ export class ScratchCardsService {
   async remove(id: string): Promise<void> {
     const result = await this.scratchCardModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException('Scratch card not found');
+      throw new ScratchCardNotFoundException();
     }
   }
 

@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 export class CreateUserDto {
   @ApiProperty({ description: 'Iranian mobile number', example: '09123456789' })
   @IsString()
-  @Matches(/^09[0-9]{9}$/, { message: 'Phone number must be a valid Iranian mobile number' })
+  @Matches(/^09[0-9]{9}$/)
   phoneNumber: string;
 
   @ApiProperty({ description: 'User name', required: false, maxLength: 100 })

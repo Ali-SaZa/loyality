@@ -10,6 +10,7 @@ import { OtpModule } from './otp/otp.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { AdminsModule } from './admins/admins.module';
 import { SeedingModule } from './seeding/seeding.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SeedingModule } from './seeding/seeding.module';
     TransactionsModule,
     AdminsModule,
     SeedingModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Admin, AdminDocument } from '../schemas/admin.schema';
 import { CreateAdminDto, UpdateAdminDto, AdminResponseDto } from '../dto';
+import { 
+  AdminNotFoundException,
+  CustomConflictException 
+} from '../common/errors';
 
 @Injectable()
 export class AdminsService {
@@ -29,7 +33,7 @@ export class AdminsService {
     });
     
     if (existingAdmin) {
-      throw new ConflictException('Admin with this phone number already exists');
+      throw new CustomConflictException('Admin', 'ADMIN_ALREADY_EXISTS');
     }
 
     const admin = new this.adminModel(createAdminDto);
@@ -45,7 +49,7 @@ export class AdminsService {
   async findOne(id: string): Promise<AdminResponseDto> {
     const admin = await this.adminModel.findById(id).exec();
     if (!admin) {
-      throw new NotFoundException('Admin not found');
+      throw new AdminNotFoundException();
     }
     return this.transformAdminToResponse(admin);
   }
@@ -61,7 +65,7 @@ export class AdminsService {
       .exec();
     
     if (!admin) {
-      throw new NotFoundException('Admin not found');
+      throw new AdminNotFoundException();
     }
     
     return this.transformAdminToResponse(admin);
@@ -73,7 +77,7 @@ export class AdminsService {
       .exec();
     
     if (!admin) {
-      throw new NotFoundException('Admin not found');
+      throw new AdminNotFoundException();
     }
     
     return this.transformAdminToResponse(admin);
@@ -82,7 +86,7 @@ export class AdminsService {
   async remove(id: string): Promise<void> {
     const result = await this.adminModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException('Admin not found');
+      throw new AdminNotFoundException();
     }
   }
 

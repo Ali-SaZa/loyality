@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { CreateStoreDto, UpdateStoreDto, StoreResponseDto } from '../dto';
+import { 
+  StoreNotFoundException, 
+  StorePhoneExistsException,
+  CustomConflictException 
+} from '../common/errors';
 
 @Injectable()
 export class StoresService {
@@ -32,7 +37,7 @@ export class StoresService {
     });
     
     if (existingStore) {
-      throw new ConflictException('Store with this phone number already exists');
+      throw new StorePhoneExistsException();
     }
 
     const store = new this.storeModel(createStoreDto);
@@ -48,7 +53,7 @@ export class StoresService {
   async findOne(id: string): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
-      throw new NotFoundException('Store not found');
+      throw new StoreNotFoundException();
     }
     return this.transformStoreToResponse(store);
   }
@@ -59,7 +64,7 @@ export class StoresService {
       .exec();
     
     if (!store) {
-      throw new NotFoundException('Store not found');
+      throw new StoreNotFoundException();
     }
     
     return this.transformStoreToResponse(store);
@@ -68,7 +73,7 @@ export class StoresService {
   async remove(id: string): Promise<void> {
     const result = await this.storeModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException('Store not found');
+      throw new StoreNotFoundException();
     }
   }
 
