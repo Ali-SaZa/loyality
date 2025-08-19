@@ -1,12 +1,14 @@
 import { Controller, Post, Get, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { SeedingService } from './seeding.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Database Seeding')
 @Controller('seeding')
 export class SeedingController {
   constructor(private readonly seedingService: SeedingService) {}
 
+  @Public()
   @Post('seed')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
