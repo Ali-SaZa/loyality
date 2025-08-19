@@ -74,13 +74,43 @@ The system includes 6 main collections:
 - `PATCH /users/:id/consents` - Update consent preferences
 
 ### Stores
-- Coming soon...
+- `POST /stores` - Create new store
+- `GET /stores` - List all stores
+- `GET /stores/:id` - Get store details
+- `PATCH /stores/:id` - Update store
+- `DELETE /stores/:id` - Delete store
 
 ### Scratch Cards
-- Coming soon...
+- `POST /scratch-cards` - Create new scratch card
+- `GET /scratch-cards` - List all scratch cards
+- `GET /scratch-cards/:id` - Get scratch card details
+- `PATCH /scratch-cards/:id` - Update scratch card
+- `DELETE /scratch-cards/:id` - Delete scratch card
+- `POST /scratch-cards/:id/use` - Use scratch card
 
 ### OTP
-- Coming soon...
+- `POST /otp` - Create new OTP
+- `GET /otp` - List all OTPs
+- `GET /otp/:id` - Get OTP details
+- `PATCH /otp/:id` - Update OTP
+- `DELETE /otp/:id` - Delete OTP
+- `POST /otp/verify` - Verify OTP code
+
+### Transactions
+- `POST /transactions` - Create new transaction
+- `GET /transactions` - List all transactions
+- `GET /transactions/:id` - Get transaction details
+- `PATCH /transactions/:id` - Update transaction
+- `DELETE /transactions/:id` - Delete transaction
+- `GET /transactions/analytics` - Get transaction analytics
+
+### Admins
+- `POST /admins` - Create new admin
+- `GET /admins` - List all admins
+- `GET /admins/:id` - Get admin details
+- `PATCH /admins/:id` - Update admin
+- `DELETE /admins/:id` - Delete admin
+- `PATCH /admins/:id/permissions` - Update admin permissions
 
 ## Development
 

@@ -7,6 +7,9 @@ import { UsersModule } from './users/users.module';
 import { StoresModule } from './stores/stores.module';
 import { ScratchCardsModule } from './scratch-cards/scratch-cards.module';
 import { OtpModule } from './otp/otp.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { AdminsModule } from './admins/admins.module';
+import { SeedingModule } from './seeding/seeding.module';
 
 @Module({
   imports: [
@@ -19,6 +22,9 @@ import { OtpModule } from './otp/otp.module';
     StoresModule,
     ScratchCardsModule,
     OtpModule,
+    TransactionsModule,
+    AdminsModule,
+    SeedingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

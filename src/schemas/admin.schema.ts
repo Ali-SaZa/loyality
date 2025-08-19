@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-export type AdminDocument = Admin & Document;
+export interface AdminDocument extends Admin, Document {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 @Schema({ timestamps: true })
 export class Admin {

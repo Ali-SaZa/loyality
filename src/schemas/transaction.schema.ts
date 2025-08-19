@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type TransactionDocument = Transaction & Document;
+export interface TransactionDocument extends Transaction, Document {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 @Schema({ timestamps: true })
 export class Transaction {
@@ -28,9 +32,6 @@ export class Transaction {
 
   @Prop({ required: false })
   description?: string;
-
-  @Prop({ default: Date.now, index: true })
-  createdAt: Date;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
