@@ -369,7 +369,7 @@ const Profile = () => {
               </div>
               <div className="w-full flex justify-end mt-10 mb-12">
                 <Button
-                  className="flex-grow md:flex-grow-0"
+                  className="grow md:grow-0"
                   iconEnd={<AngleDoubleLeftIcon />}
                   type="submit"
                 >
@@ -463,7 +463,7 @@ const Profile = () => {
                   قبلی
                 </Button>
                 <Button
-                  className="flex-grow md:flex-grow-0"
+                  className="grow md:grow-0"
                   iconEnd={<AngleDoubleLeftIcon />}
                   type="submit"
                 >

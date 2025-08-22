@@ -10,16 +10,14 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    turbo: {
-      rules: {
-        '*.scss': {
-          loaders: ['sass-loader'],
-          as: '*.css',
-        },
+  turbopack: {
+    rules: {
+      '*.scss': {
+        loaders: ['sass-loader'],
+        as: '*.css',
       },
     },
   },
 }
 
-module.exports = nextConfig
+export default nextConfig

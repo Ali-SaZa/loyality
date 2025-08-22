@@ -23,12 +23,11 @@ export const personalInformationFormValidation = z
       // .regex(/[A-Z]/, 'تکرار رمز عبور باید حداقل یک حرف بزرگ داشته باشد.')
       // .regex(/\d/, 'تکرار رمز عبور باید حداقل یک عدد داشته باشد.')
       .optional(),
-    birthdate: z.string({ invalid_type_error: 'تاریخ تولد نمی‌تواند مقدار نامعتبر داشته باشد.' }).optional(),
+    birthdate: z.string({ message: 'تاریخ تولد نمی‌تواند مقدار نامعتبر داشته باشد.' }).optional(),
     sex: z.enum(['S_Male', 'S_Female', 'S_Not_Specified']).optional(),
     stateId: z
       .string({
-        required_error: 'انتخاب استان محل سکونت الزامی است.',
-        invalid_type_error: 'استان نمی‌تواند مقدار نامعتبر داشته باشد.',
+        message: 'انتخاب استان محل سکونت الزامی است.',
       })
       .min(1, 'انتخاب استان محل سکونت الزامی است.')
       .refine((value) => value !== null, {
@@ -36,8 +35,7 @@ export const personalInformationFormValidation = z
       }),
     cityId: z
       .string({
-        required_error: 'انتخاب شهر محل سکونت الزامی است.',
-        invalid_type_error: 'شهر نمی‌تواند مقدار نامعتبر داشته باشد.',
+        message: 'انتخاب شهر محل سکونت الزامی است.',
       })
       .min(1, 'انتخاب شهر محل سکونت الزامی است.')
       .refine((value) => value !== null, {
@@ -69,8 +67,7 @@ export const educationalInformationFormValidation = z.object({
   educationName: z.string().optional(),
   educationLevel: z
     .string({
-      required_error: 'انتخاب سطح تحصیلی الزامی است.',
-      invalid_type_error: 'سطح تحصیلی نمی‌تواند مقدار نامعتبر داشته باشد.',
+      message: 'انتخاب سطح تحصیلی الزامی است.',
     })
     .min(1, 'انتخاب سطح تحصیلی الزامی است.')
     .refine((value) => value !== null, {
@@ -78,8 +75,7 @@ export const educationalInformationFormValidation = z.object({
     }),
   majorId: z
     .string({
-      required_error: 'انتخاب رشته الزامی است.',
-      invalid_type_error: 'رشته نمی‌تواند مقدار نامعتبر داشته باشد.',
+      message: 'انتخاب رشته الزامی است.',
     })
     .min(1, 'انتخاب رشته الزامی است.')
     .refine((value) => value !== null, {

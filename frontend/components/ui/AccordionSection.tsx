@@ -13,7 +13,7 @@ const AccordionSection = ({
   return (
     <Accordion
       defaultExpandedKeys={defaultExpanded ? ['1'] : []}
-      itemClasses={{ base: 'py-[3px] px-4 shadow-sm', content: 'py-4 px-0 md:px-4' }}
+      itemClasses={{ base: 'py-[3px] px-4 shadow-xs', content: 'py-4 px-0 md:px-4' }}
       variant="splitted"
     >
       <AccordionItem

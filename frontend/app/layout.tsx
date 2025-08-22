@@ -1,4 +1,4 @@
-import '@/styles/globals.scss'
+import '@/styles/tailwind.css'
 import clsx from 'clsx'
 import { Toaster } from 'react-hot-toast'
 import React from 'react'

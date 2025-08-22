@@ -48,7 +48,7 @@ const BrandList = () => {
           {brands.map((brand, index) => (
             <div
               key={index}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 alt={`Brand ${index}`}
@@ -60,7 +60,7 @@ const BrandList = () => {
           {brands.map((brand, index) => (
             <div
               key={`duplicate-${index}`}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 alt={`Brand ${index}`}

@@ -1,7 +1,5 @@
 @use "sass:meta";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 @include meta.load-css('input');
 

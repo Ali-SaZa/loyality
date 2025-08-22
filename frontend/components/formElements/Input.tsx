@@ -209,7 +209,7 @@ const Input = ({
                   <Button
                     iconOnly
                     aria-label="toggle password visibility"
-                    className="focus:outline-none rounded-full"
+                    className="focus:outline-hidden rounded-full"
                     color="default"
                     variant="light"
                     onClick={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -333,7 +333,6 @@ const Input = ({
                 <AutocompleteItem
                   key={option[selectKey]}
                   textValue={option[selectValue]}
-                  value={option[selectValue]}
                 >
                   {option[selectValue]}
                 </AutocompleteItem>
@@ -412,7 +411,6 @@ const Input = ({
                 <SelectItem
                   key={item[selectKey]}
                   textValue={item[selectValue]}
-                  value={item[selectValue]}
                 >
                   {item[selectValue]}
                 </SelectItem>

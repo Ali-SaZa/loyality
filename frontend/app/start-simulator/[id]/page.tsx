@@ -271,7 +271,7 @@ const StartSimulator = ({ params: promisedParams }: PropsWithParams) => {
       )}
       {!showQuizPage && (
         <div
-          className={`shadow-small flex justify-between py-6 px-4 gap-[10px] md:gap-0 fixed bg-white bottom-0 z-30 left-0`}
+          className={`shadow-xs flex justify-between py-6 px-4 gap-[10px] md:gap-0 fixed bg-white bottom-0 z-30 left-0`}
           id="start-simulator-navigation-buttons"
           style={{
             width: `calc(100% - ${width > 768 ? sidebarWidth : 0}px)`,

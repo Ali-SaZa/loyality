@@ -82,9 +82,9 @@ const UserSimulatorCard = ({ simulator, index }: UserSimulatorCardProps) => {
                 {simulator?.completedTaskCount}/{simulator?.totalTaskCount}
               </p>
             </div>
-            <div className="w-[95%] h-1 relative rounded-sm bg-background-50 overflow-hidden">
+            <div className="w-[95%] h-1 relative rounded-xs bg-background-50 overflow-hidden">
               <div
-                className={`bg-primary ${complete && 'bg-success'} absolute right-0 rounded-sm h-1`}
+                className={`bg-primary ${complete && 'bg-success'} absolute right-0 rounded-xs h-1`}
                 style={{ width: `${(simulator?.completedTaskCount / simulator?.totalTaskCount) * 100}%` }}
               />
             </div>

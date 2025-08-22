@@ -19,8 +19,7 @@ export const organizationFormValidation = z.object({
   employeeCount: z.number().optional(),
   industryId: z
     .string({
-      required_error: 'انتخاب تخصص الزامی است.',
-      invalid_type_error: 'تخصص نمی‌تواند مقدار نامعتبر داشته باشد.',
+      message: 'انتخاب تخصص الزامی است.',
     })
     .min(1, 'انتخاب تخصص الزامی است.')
     .refine((value) => value !== null, {

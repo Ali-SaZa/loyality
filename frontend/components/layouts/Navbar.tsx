@@ -47,7 +47,7 @@ const Navbar = () => {
   return (
     <>
       <NextUINavbar
-        className={`bg-background-primary fixed ${isMenuOpen ? 'bg-opacity-100' : 'bg-opacity-70'} [&_header]:!max-w-[1366px]`}
+        className={`bg-background-primary fixed ${isMenuOpen ? 'bg-background-primary' : 'bg-background-primary/70'} [&_header]:!max-w-[1366px]`}
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
