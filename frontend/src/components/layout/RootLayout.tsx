@@ -1,7 +1,6 @@
 'use client';
 
 import { HeroUIProvider } from '@heroui/react';
-import { herouiTheme } from '@/lib/theme';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -9,9 +8,9 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <HeroUIProvider theme={herouiTheme}>
+    <HeroUIProvider>
       <div 
-        className="min-h-screen bg-background"
+        className="min-h-screen bg-background-secondary"
         style={{
           '--caribbean-current': '#006d77',
           '--tiffany-blue': '#83c5be',
