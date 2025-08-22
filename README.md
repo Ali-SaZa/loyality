@@ -9,40 +9,57 @@ A comprehensive loyalty program system for Iranian businesses with frontend and 
 - npm 8+
 - Docker and Docker Compose (for database)
 
-### Development Options
+## 🏃‍♂️ How to Run
 
-You now have **multiple ways** to run the project:
-
-#### **Option 1: Hybrid Development (Recommended)**
+### **Option 1: Hybrid Development (Recommended for Daily Development)**
 ```bash
 ./start-hybrid.sh
 ```
-This will:
-1. ✅ **Start MongoDB database** in Docker (port 27017)
-2. 🚀 **Launch the NestJS backend** locally (port 3001)
-3. ⚛️ **Start the Next.js frontend** locally (port 3000)
-4. 🔗 **Ensure backend connects to the database**
+**What this does:**
+- ✅ Starts MongoDB database in Docker (port 27017)
+- 🚀 Launches NestJS backend locally (port 3001) with hot reloading
+- ⚛️ Starts Next.js frontend locally (port 3000) with hot reloading
+- 🔗 Ensures backend connects to the database automatically
 
-#### **Option 2: Database Only + Local Development**
+**Best for:** Daily development, debugging, and testing
+
+### **Option 2: Database Only + Manual Start**
 ```bash
-# Start just the database
+# Terminal 1: Start just the database
 ./start-db.sh
 
-# Then in another terminal, run frontend and backend
+# Terminal 2: Start frontend and backend locally
 npm run dev
 ```
+**What this does:**
+- ✅ Starts MongoDB database in Docker (port 27017)
+- 🚀 You manually start frontend + backend when ready
+- 🔗 Backend automatically connects to database
 
-#### **Option 3: Full Docker Setup**
+**Best for:** When you want more control over when services start
+
+### **Option 3: Full Docker Setup**
 ```bash
 ./start-docker.sh
 ```
-This runs everything in Docker containers.
+**What this does:**
+- ✅ Starts MongoDB database in Docker (port 27017)
+- 🚀 Runs NestJS backend in Docker container (port 3001)
+- ⚛️ Runs Next.js frontend in Docker container (port 3000)
+- 🔗 All services run in isolated containers
 
-#### **Option 4: Direct npm Commands**
+**Best for:** Production-like testing, CI/CD, or when you want full containerization
+
+### **Option 4: Direct npm Commands**
 ```bash
+# Start frontend and backend locally (requires MongoDB to be running separately)
 npm run dev
+
+# Start individual services
+npm run dev:frontend    # Frontend only (port 3000)
+npm run dev:backend     # Backend only (port 3001)
+npm run dev:db          # MongoDB only (Docker)
 ```
-This starts frontend and backend locally (requires MongoDB to be running separately).
 
 ## 📁 Project Structure
 
