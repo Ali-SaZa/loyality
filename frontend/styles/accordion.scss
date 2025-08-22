@@ -1,0 +1,11 @@
+@use 'variables';
+
+.custom-accordion {
+  .bg-divider.h-divider {
+    border: none; /* از border استفاده نمی‌کنیم */
+    background: linear-gradient(to right, variables.$secondary-color 30%, transparent 30%) repeat-x; /* Dash با طول 50% */
+    background-size: 20px 2px; /* طول Dash‌ها 30px و ضخامت 2px */
+    height: 2px; /* ارتفاع خط */
+    width: 90%; /* عرض دلخواه */
+  }
+}

@@ -1,0 +1,40 @@
+@use "sass:meta";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "leaflet/dist/leaflet.css";
+@include meta.load-css('input');
+
+/* برای مرورگرهای WebKit (Chrome, Safari) */
+// ::-webkit-scrollbar {
+//   display: none; /* مخفی کردن اسکرول‌بار */
+// }
+
+/* برای مرورگرهای WebKit مانند Chrome و Safari */
+::-webkit-scrollbar {
+  width: 8px; /* عرض اسکرول‌بار */
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #e9ebf4; /* رنگ پس‌زمینه اسکرول‌بار */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3a4d9a; /* رنگ اسکرول‌بار */
+  border-radius: 4px; /* گردی گوشه‌ها */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #364274; /* رنگ اسکرول‌بار در حالت هاور */
+}
+
+.no-reset * {
+  all: revert; /* بازگشت به استایل‌های پیش‌فرض مرورگر */
+}
+
+.center-with-absolute {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

@@ -1,0 +1,13 @@
+@use 'variables';
+
+.sidebar-links-active {
+  &:before {
+    content: '';
+    width: 5px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    background-color: variables.$primary-color;
+    border-radius: 10px;
+  }
+}

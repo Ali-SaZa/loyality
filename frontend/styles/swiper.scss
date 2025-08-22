@@ -1,0 +1,45 @@
+@use 'variables';
+
+/* لیست رنگ‌های مختلف */
+$colors: (
+        'primary': variables.$primary-color,
+        'secondary': variables.$secondary-color,
+        'success': variables.$success-color,
+        'warning': variables.$warning-color,
+        'danger': variables.$error-color,
+);
+
+.swiper {
+  .swiper-wrapper {
+    .swiper-slide {
+      width: auto !important;
+      //margin: 0 13px;
+      margin-left: 13px;
+    }
+  }
+
+  .swiper-pagination {
+    @apply max-w-[14rem] md:max-w-none;
+    width: fit-content !important;
+
+    .swiper-pagination-bullet {
+      transition: all ease 0.3s;
+      width: 15px !important;
+      height: 15px !important;
+    }
+
+    .swiper-pagination-bullet-active {
+      width: 45px !important;
+      border-radius: 9px !important;
+    }
+  }
+
+  /* برای هر رنگ یک کلاس جداگانه ایجاد می‌کنیم */
+  @each $name, $color in $colors {
+    &.#{$name} {
+      .swiper-pagination-bullet-active {
+        background-color: $color !important;
+      }
+    }
+  }
+}
