@@ -17,9 +17,22 @@ import { RateLimiterMiddleware } from './common/security/rate-limiter.middleware
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/loyalty'),
+    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/loyalty', {
+      connectionFactory: (connection) => {
+        connection.on('connected', () => {
+          console.log('✅ MongoDB connected successfully');
+        });
+        connection.on('error', (error) => {
+          console.error('❌ MongoDB connection error:', error);
+        });
+        connection.on('disconnected', () => {
+          console.log('⚠️ MongoDB disconnected');
+        });
+        return connection;
+      },
+    }),
     UsersModule,
     StoresModule,
     ScratchCardsModule,

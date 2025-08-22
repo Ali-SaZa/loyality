@@ -1,67 +1,127 @@
-# Loyalty Program Project
+# Loyalty Program
 
-A comprehensive loyalty system for small traditional businesses in Iran, consisting of a NestJS backend API and a Next.js frontend.
+A comprehensive loyalty program system for Iranian businesses with frontend and backend components.
 
-## Project Structure
+## 🚀 Quick Start
 
-```
-Loyalty/
-├── backend/                 # NestJS Backend API
-│   ├── src/                # Source code
-│   ├── package.json        # Backend dependencies
-│   ├── docker-compose.yml  # Docker configuration
-│   └── README.md          # Backend documentation
-├── frontend/               # Next.js Frontend
-│   ├── src/                # Source code
-│   ├── package.json        # Frontend dependencies
-│   └── README.md          # Frontend documentation
-├── FRONTEND_DEVELOPMENT_PLAN.md  # Frontend development roadmap
-└── README.md              # This file
-```
+### Prerequisites
+- Node.js 18+ 
+- npm 8+
 
-## Quick Start
+### Single Command Setup
 
-### Backend (NestJS API)
+To run the entire project (frontend and backend) with one command:
+
 ```bash
-cd backend
-npm install
-npm run start:dev
-```
-
-### Frontend (Next.js)
-```bash
-cd frontend
-npm install
 npm run dev
 ```
 
-## Features
+This command will:
+1. 🚀 **Launch the NestJS backend** on port 3001
+2. ⚛️ **Start the Next.js frontend** on port 3000
 
-- **Customer Management**: Register and manage customer accounts
-- **Store Management**: Manage store loyalty settings and tiers
-- **Scratch Card System**: Physical and digital scratch card support
-- **OTP Authentication**: SMS-based authentication
-- **Multi-store Support**: Customers can earn points across multiple stores
-- **Privacy Compliance**: Built-in consent management for Iran's privacy laws
+## 📁 Project Structure
 
-## Tech Stack
+```
+loyalty/
+├── frontend/          # Next.js React application
+├── backend/           # NestJS API server
+├── package.json       # Root package with dev scripts
+└── README.md         # This file
+```
 
-### Backend
-- NestJS (Node.js framework)
-- MongoDB with Mongoose
-- JWT authentication
-- Swagger/OpenAPI documentation
+## 🔧 Available Scripts
 
-### Frontend
-- Next.js 14+ with App Router
-- TypeScript
-- HeroUI (Tailwind CSS based)
-- Axios for API calls
+### **Development Commands**
+- `npm run dev` - Start frontend and backend locally
+- `npm run dev:frontend` - Frontend only
+- `npm run dev:backend` - Backend only
 
-## Development
+### **Production Commands**
+- `npm run build` - Build both frontend and backend
+- `npm run start` - Start production builds
 
-See individual README files in `backend/` and `frontend/` directories for detailed development instructions.
+### **Maintenance Commands**
+- `npm run install:all` - Install dependencies for all projects
+- `npm run clean` - Clean build artifacts and node_modules
+- `npm run reset` - Clean and reinstall everything
+- `npm run seed` - Seed the database with initial data
 
-## License
+## 🌐 Ports
 
-This project is licensed under the MIT License.
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:3001
+- **Swagger Docs**: http://localhost:3001/api
+
+## 🔒 Environment Variables
+
+### **Backend (.env.development)**
+```bash
+NODE_ENV=development
+PORT=3001
+MONGODB_URI=mongodb://admin:admin123@localhost:27017/loyalty?authSource=admin
+JWT_SECRET=dev-jwt-secret-key-change-in-production-environment
+JWT_EXPIRES_IN=7d
+```
+
+### **Frontend (env.local.example)**
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_AUTH_ENABLED=true
+NEXT_PUBLIC_APP_NAME=Loyalty Program
+```
+
+## 📚 API Documentation
+
+Once the backend is running, visit:
+- **Swagger UI**: http://localhost:3001/api
+- **API Base URL**: http://localhost:3001
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm run test
+
+# Backend tests only
+npm run test:backend
+
+# Frontend linting only
+npm run test:frontend
+```
+
+## 🚨 Troubleshooting
+
+### **Port Conflicts**
+If ports 3000 or 3001 are in use:
+```bash
+# Kill processes on specific ports
+lsof -ti:3000 | xargs kill -9
+lsof -ti:3001 | xargs kill -9
+```
+
+### **Clean Reset**
+```bash
+# Complete reset
+npm run reset
+npm run dev
+```
+
+## 📝 Development Notes
+
+- Backend runs on port 3001 to avoid conflicts with frontend
+- Frontend connects to backend via `NEXT_PUBLIC_API_URL`
+- Hot reloading enabled for both frontend and backend
+- You'll need to set up MongoDB locally or use a cloud service
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test with `npm run dev`
+5. Submit a pull request
+
+## 📄 License
+
+This project is proprietary and confidential.
