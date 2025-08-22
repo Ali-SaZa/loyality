@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Tab, Tabs } from '@nextui-org/tabs'
+import { Tab, Tabs } from '@heroui/tabs'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -124,7 +124,10 @@ const Auth = () => {
   const checkLoginOTP = async (data: typeof CheckOtpDefaultValues) => {
     try {
       setLoading(true)
-      const res = await CHECK_LOGIN_OTP({ mobile: sendOtpForm.getValues('mobile'), otpCode: data.code })
+      const res = await CHECK_LOGIN_OTP({
+        mobile: sendOtpForm.getValues('mobile'),
+        otpCode: data.code,
+      })
 
       if (res?.status === 200) {
         await saveUser(res?.data)
@@ -159,7 +162,10 @@ const Auth = () => {
   const checkOTP = async (data: typeof CheckOtpDefaultValues) => {
     try {
       setLoading(true)
-      const res = await CHECK_OTP({ mobile: sendOtpForm.getValues('mobile'), verifyCode: data.code })
+      const res = await CHECK_OTP({
+        mobile: sendOtpForm.getValues('mobile'),
+        verifyCode: data.code,
+      })
 
       if (res?.status === 200) {
         axiosInstance.defaults.headers['Authorization'] = `Bearer ${res?.data?.accessToken}`
@@ -181,7 +187,10 @@ const Auth = () => {
 
       if (response) {
         if (response?.data?.accessToken && response?.data?.refreshToken) {
-          await saveUser({ accessToken: response.data.accessToken, refreshToken: response.data.refreshToken })
+          await saveUser({
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+          })
         } else {
           updateUserFromOutside(data)
         }
@@ -363,15 +372,15 @@ const Auth = () => {
               {registerStep === 0 ? (
                 <>
                   {/* <div className="w-full h-[1px] bg-background-70 my-6"></div>
-                  <Button
-                    fullWidth
-                    variant="bordered"
-                    color="default"
-                    iconStart={<GoogleIcon />}
-                    className="border-1"
-                  >
-                    <p className="text-text-light-25">ثبت نام با گوگل</p>
-                  </Button> */}
+                   <Button
+                   fullWidth
+                   variant="bordered"
+                   color="default"
+                   iconStart={<GoogleIcon />}
+                   className="border-1"
+                   >
+                   <p className="text-text-light-25">ثبت نام با گوگل</p>
+                   </Button> */}
                 </>
               ) : registerStep === 1 ? (
                 <div className="text-sm text-text-light-25 mx-auto mt-6">
@@ -394,7 +403,10 @@ const Auth = () => {
                       </div>
                       <Button
                         variant="light"
-                        onClick={() => setRegisterStep(0)}
+                        onClick={() => {
+                          setLoginStep(0)
+                          setLoginOtpStep(0)
+                        }}
                       >
                         تغییر شماره تلفن
                       </Button>
@@ -411,8 +423,21 @@ const Auth = () => {
             title="ورود"
           >
             <div className="flex flex-col md:w-fit mx-auto min-w-[282px]">
-              <p className="mt-4">سلام! 👋</p>
-              <p>{loginStep === 0 ? 'لطفا شماره موبایل و رمز عبور خود را وارد کنید' : 'لطفا شماره موبایل خود را وارد کنید'}</p>
+              {loginStep === 0 ? (
+                <>
+                  <p className="mt-4">سلام! 👋</p>
+                  <p>لطفا شماره موبایل و رمز عبور خود را وارد کنید</p>
+                </>
+              ) : loginStep === 1 && loginOtpStep === 0 ? (
+                <>
+                  <p className="mt-4">سلام! 👋</p>
+                  <p>لطفا شماره موبایل خود را وارد کنید</p>
+                </>
+              ) : (
+                <>
+                  <p className="mt-4">کد تایید برای شماره {sendOtpForm.getValues('mobile')} پیامک شد.</p>
+                </>
+              )}
               {loginStep === 0 ? (
                 <FormProvider {...loginForm}>
                   <form
@@ -499,16 +524,45 @@ const Auth = () => {
               >
                 {loginStep === 0 ? <p>ورود با ارسال کد فعالسازی</p> : <p>ورود با نام کاربری</p>}
               </Button>
+              {loginOtpStep === 1 && (
+                <div className="text-sm text-text-light-25 mx-auto">
+                  {isTimerComplete ? (
+                    <Button
+                      color="secondary"
+                      variant="light"
+                      onClick={handleResendCode}
+                    >
+                      ارسال مجدد کد
+                    </Button>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <div>
+                        زمان باقی مانده تا دریافت مجدد کد :{' '}
+                        <CountdownTimer
+                          time={120000}
+                          onComplete={() => setIsTimerComplete(true)}
+                        />
+                      </div>
+                      <Button
+                        variant="light"
+                        onClick={() => setLoginOtpStep(0)}
+                      >
+                        تغییر شماره تلفن
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
               {/* <div className="w-full h-[1px] bg-background-70 my-6"></div>
-              <Button
-                fullWidth
-                variant="bordered"
-                color="default"
-                iconStart={<GoogleIcon />}
-                className="border-1"
-              >
-                <p className="text-text-light-25">ورود با گوگل</p>
-              </Button> */}
+               <Button
+               fullWidth
+               variant="bordered"
+               color="default"
+               iconStart={<GoogleIcon />}
+               className="border-1"
+               >
+               <p className="text-text-light-25">ورود با گوگل</p>
+               </Button> */}
             </div>
           </Tab>
         </Tabs>

@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { useDisclosure } from '@nextui-org/modal'
+import { useDisclosure } from '@heroui/modal'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,7 +12,7 @@ import { CommentFormValidation } from '@/validation/comment'
 import { SAVE_USER_COMMENT } from '@/services/simulationUser'
 import Modal from '@/components/modals/Modal'
 
-interface SimulatorSortModalProps {
+interface CommentModalProps {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   jobSimulationUserId: string
@@ -23,7 +23,7 @@ const CommentDefaultValues = {
   comment: '',
 }
 
-const CommentModal = ({ isOpen, setIsOpen, jobSimulationUserId, onCommentSent }: SimulatorSortModalProps) => {
+const CommentModal = ({ isOpen, setIsOpen, jobSimulationUserId, onCommentSent }: CommentModalProps) => {
   const { onOpenChange } = useDisclosure()
   const [isLoading, setIsLoading] = useState(false)
 

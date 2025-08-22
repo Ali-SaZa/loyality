@@ -6,6 +6,12 @@
   @apply font-semibold text-sm
 }
 
+[data-slot="input-wrapper"] {
+  &[data-focus="true"] {
+    @apply ring-0 ring-transparent !important;
+  }
+}
+
 input::placeholder {
   text-align: right;
   direction: rtl;

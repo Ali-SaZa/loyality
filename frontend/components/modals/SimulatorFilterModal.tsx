@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { useDisclosure } from '@nextui-org/modal'
-import { Checkbox } from '@nextui-org/checkbox'
-import { cn } from '@nextui-org/theme'
+import { useDisclosure } from '@heroui/modal'
+import { Checkbox } from '@heroui/checkbox'
+import { cn } from '@heroui/theme'
 
 import ChevronRightIcon from '../icons/ChevronRightIcon'
 

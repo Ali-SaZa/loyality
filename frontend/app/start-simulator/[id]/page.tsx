@@ -18,6 +18,7 @@ import StepTwo from '@/app/start-simulator/[id]/(steps)/StepTwo'
 import StepThree from '@/app/start-simulator/[id]/(steps)/StepThree'
 import StepFour from '@/app/start-simulator/[id]/(steps)/StepFour'
 import StepFive from '@/app/start-simulator/[id]/(steps)/StepFive'
+import { PropsWithParams } from '@/types'
 
 type jobSimulationUserTaskType = { taskId: string; uploadedAt: string; userFileId: string }
 

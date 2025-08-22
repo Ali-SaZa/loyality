@@ -6,6 +6,7 @@ import { siteConfig } from '@/config/site'
 import CheckBoxIcon from '@/components/icons/CheckBoxIcon'
 import CrossCircleIcon from '@/components/icons/CrossCircleIcon'
 import CrossExclamationIcon from '@/components/icons/CrossExclamationIcon'
+import { UserSidebarRoute } from '@/types'
 
 const globalDefaultValues = {
   data: undefined,

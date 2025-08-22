@@ -3,6 +3,7 @@ import qs from 'qs'
 import { API_ROUTES, HANDLE_ERROR } from './config'
 
 import axiosInstance from '@/config/axios'
+import { ApiWithParams } from '@/types'
 
 export const REGISTER_USER_IN_SIMULATION = async (data: { jobSimulationId: string }) => {
   try {

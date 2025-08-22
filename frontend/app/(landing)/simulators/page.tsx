@@ -1,5 +1,5 @@
 'use client'
-import { Input } from '@nextui-org/input'
+import { Input } from '@heroui/input'
 import React, { useEffect, useState } from 'react'
 
 import Button from '@/components/formElements/Button'
@@ -16,6 +16,7 @@ import SimulatorSortModal from '@/components/modals/SimulatorSortModal'
 import useLoading from '@/hooks/useLoading'
 import SimulatorFilterModal from '@/components/modals/SimulatorFilterModal'
 import EmptyListPlaceholder from '@/components/utils/EmptyListPlaceholder'
+import { ApiWithParams } from '@/types'
 
 export interface SortItem {
   name: string

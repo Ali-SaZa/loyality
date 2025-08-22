@@ -1,3 +1,5 @@
+import type { ColumnStaticSize } from '@react-types/table'
+
 type PropsWithParams = {
   params: Promise<{ id: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -33,3 +35,16 @@ type EvaluationDetailType = {
 }
 
 type NextUiColorType = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | undefined
+
+type PaginationListColumnType = {
+  label: string
+  field: string
+  sortable?: boolean
+  filterable?: boolean
+  type?: 'text' | 'number' | 'inputFromTo' | 'select' | 'date' | 'dateFromTo'
+  filterItems?: any[]
+  maxWidth?: ColumnStaticSize
+  minWidth?: ColumnStaticSize
+  width?: ColumnStaticSize
+  visibleForTitleFilter?: boolean
+}

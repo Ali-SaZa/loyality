@@ -1,5 +1,5 @@
-import { Button as NextUiButton } from '@nextui-org/button'
-import { Link } from '@nextui-org/link'
+import { Button as NextUiButton } from '@heroui/button'
+import { Link } from '@heroui/link'
 import React, { forwardRef } from 'react'
 
 interface ButtonProps {

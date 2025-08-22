@@ -58,6 +58,7 @@ const Footer = () => {
             <p className="font-bold text-lg">ارتباط با ما</p>
             <div className="flex flex-col gap-4">
               <p>شاهرود، بلوار دانشگاه، پارک علم و فناوری استان سمنان.مدیا پارک نیتک</p>
+              <p>مشهد،خیابان امام خمینی،خیابان شهید تولایی،پارک فاوا، طبقه چهارم، مدیا پارک نیتک</p>
               <div className="flex items-center justify-between">
                 <a href="tel:09422010070,907">
                   <Button

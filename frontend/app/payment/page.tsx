@@ -9,6 +9,7 @@ import DetailWithBorderCard from '@/components/card/DetailWithBorderCard'
 import { GET_EVALUATION_DETAIL_FOR_PAYMENT, START_EVALUATION_BANK_PAYMENT } from '@/services/simulationUser'
 import useLoading from '@/hooks/useLoading'
 import Loading from '@/components/layouts/Loading'
+import { EvaluationDetailType, PaymentDetailType } from '@/types'
 
 const Payment = () => {
   const searchParams = useSearchParams()

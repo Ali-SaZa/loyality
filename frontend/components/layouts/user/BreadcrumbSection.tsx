@@ -1,5 +1,5 @@
 'use client'
-import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/breadcrumbs'
+import { BreadcrumbItem, Breadcrumbs } from '@heroui/breadcrumbs'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -7,6 +7,7 @@ import AngleLeftIcon from '@/components/icons/AngleLeftIcon'
 import { siteConfig } from '@/config/site'
 import { isValidMongoId } from '@/helpers'
 import useGlobal from '@/hooks/useGlobal'
+import { UserSidebarRoute } from '@/types'
 
 interface Breadcrumb {
   title: string

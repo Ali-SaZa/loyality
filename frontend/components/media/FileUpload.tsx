@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { Progress } from '@nextui-org/progress'
+import { Progress } from '@heroui/progress'
 import toast from 'react-hot-toast'
 
 import CloudUploadIcon from '../icons/CloudUploadIcon'

@@ -1,5 +1,5 @@
 'use client'
-import { CircularProgress } from '@nextui-org/progress'
+import { CircularProgress } from '@heroui/progress'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
 

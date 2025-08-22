@@ -1,5 +1,5 @@
 import React from 'react'
-import { Progress } from '@nextui-org/progress'
+import { Progress } from '@heroui/progress'
 
 interface RatingProgressCardProps {
   title: string

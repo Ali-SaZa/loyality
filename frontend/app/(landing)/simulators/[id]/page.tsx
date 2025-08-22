@@ -1,5 +1,5 @@
 'use client'
-import { Tab, Tabs } from '@nextui-org/tabs'
+import { Tab, Tabs } from '@heroui/tabs'
 import { useRouter } from 'next/navigation'
 import React, { use, useEffect, useState } from 'react'
 import { SwiperSlide } from 'swiper/react'
@@ -26,6 +26,7 @@ import { GET_SIMULATION_BY_ID } from '@/services/simulations'
 import { GET_ALL_TASKS_BY_SIMULATION_ID_FOR_VISITORS } from '@/services/tasks'
 import { GET_SIMULATION_COMMENTS } from '@/services/simulationUser'
 import EmptyListPlaceholder from '@/components/utils/EmptyListPlaceholder'
+import { PropsWithParams } from '@/types'
 
 const SimulatorDetail = ({ params: promisedParams }: PropsWithParams) => {
   const params = use(promisedParams)
@@ -340,7 +341,7 @@ const SimulatorDetail = ({ params: promisedParams }: PropsWithParams) => {
                     <div className="flex flex-col items-center gap-3">
                       <p className="font-bold text-text-dark">مدرک کار آموزی مجازی</p>
                       <p className="text-text-light-25 text-center text-sm">
-                        میتونین مدرکی جهت تایید گذروندن دوره کارآموزی مجازی از طرف شرکت میزبان دریافت کنین
+                        {`میتونین مدرکی جهت تایید گذروندن دوره کارآموزی مجازی از طرف ${simulator?.organizationName} دریافت کنید `}
                       </p>
                     </div>
                   </div>

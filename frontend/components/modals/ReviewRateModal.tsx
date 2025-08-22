@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
-import { useDisclosure } from '@nextui-org/modal'
-import { CircularProgress } from '@nextui-org/progress'
+import { useDisclosure } from '@heroui/modal'
+import { CircularProgress } from '@heroui/progress'
 import toast from 'react-hot-toast'
 import { Rating } from '@smastrom/react-rating'
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { RadioGroup } from '@nextui-org/radio'
+import { RadioGroup } from '@heroui/radio'
 
 import Radio from '@/components/formElements/Radio'
 

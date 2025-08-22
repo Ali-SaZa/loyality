@@ -1,5 +1,5 @@
 import React from 'react'
-import { CheckboxGroup } from '@nextui-org/checkbox'
+import { CheckboxGroup } from '@heroui/checkbox'
 
 import Checkbox from '@/components/formElements/Checkbox'
 

@@ -35,7 +35,6 @@
       📁 [id]
         📄 page.tsx
       📄 page.tsx
-  📄 .DS_Store
   📁 auth
     📄 layout.tsx
     📄 page.tsx
@@ -119,13 +118,16 @@
     📄 AngleDoubleRightIcon.tsx
     📄 AngleDownIcon.tsx
     📄 AngleLeftIcon.tsx
+    📄 ArchiveIcon.tsx
     📄 ArrowLeftIcon.tsx
     📄 ArrowRightIcon.tsx
+    📄 ArrowsVIcon.tsx
     📄 BellIcon.tsx
     📄 BookmarkFillIcon.tsx
     📄 BookmarkIcon.tsx
     📄 BrainstormingIcon.tsx
     📄 CalendarIcon.tsx
+    📄 ChartHistogramIcon.tsx
     📄 ChartTreeIcon.tsx
     📄 ChatArrowGrowIcon.tsx
     📄 CheckBoxIcon.tsx
@@ -160,6 +162,7 @@
     📄 HeadphoneIcon.tsx
     📄 HeadsetIcon.tsx
     📄 HomeLocationIcon.tsx
+    📄 HourGlassEndIcon.tsx
     📄 InstagramIcon.tsx
     📄 JobIcon.tsx
     📄 JpgIcon.tsx
@@ -268,6 +271,7 @@
 📄 next-env.d.ts
 📄 next.config.js
 📄 package.json
+📄 pnpm-lock.yaml
 📄 postcss.config.js
 📁 public
   📄 .DS_Store
@@ -423,4 +427,4 @@
   📄 startEvaluationQuestions.ts
   📄 talk.ts
 
-59 directories, 365 files
+59 directories, 366 files

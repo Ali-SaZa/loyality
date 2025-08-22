@@ -1,5 +1,5 @@
 'use client'
-import { Tab, Tabs } from '@nextui-org/tabs'
+import { Tab, Tabs } from '@heroui/tabs'
 import React, { useEffect, useState } from 'react'
 
 import UserSimulatorCard from '@/components/card/UserSimulatorCard'
@@ -28,7 +28,6 @@ const Simulators = () => {
     }
     const response = await GET_USER_SIMULATIONS(params)
 
-    console.log(response)
     setTotalItemsCount(Number(response.data.response.totalItemsCount))
     setFilteredSimulations(response.data.data)
     setLoading(false)

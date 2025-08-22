@@ -1,12 +1,12 @@
 'use client'
 import React, { createContext, useState } from 'react'
-import { useDisclosure } from '@nextui-org/modal'
+import { useDisclosure } from '@heroui/modal'
 
 import Modal from '@/components/modals/Modal'
 
 interface AlertModalContextType {
-  showModal: (message: string, onConfirm?: (data?: any) => void, data?: any) => void
-  hideModal: () => void
+  showAlert: (message: string, onConfirm?: (data?: any) => void, data?: any) => void
+  hideAlert: () => void
 }
 
 export const AlertModalContext = createContext<AlertModalContextType | undefined>(undefined)
@@ -18,14 +18,14 @@ export const AlertModalProvider = ({ children }: { children: React.ReactNode }) 
   const [onConfirm, setOnConfirm] = useState<((data?: any) => void) | undefined>(undefined)
   const [confirmData, setConfirmData] = useState<any>(undefined)
 
-  const showModal = (msg: string, confirmCallback?: (data?: any) => void, data?: any) => {
+  const showAlert = (msg: string, confirmCallback?: (data?: any) => void, data?: any) => {
     setMessage(msg)
     setOnConfirm(() => confirmCallback)
     setConfirmData(data)
     setIsVisible(true)
   }
 
-  const hideModal = () => {
+  const hideAlert = () => {
     setIsVisible(false)
     setMessage('')
     setOnConfirm(undefined)
@@ -33,7 +33,7 @@ export const AlertModalProvider = ({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <AlertModalContext.Provider value={{ showModal, hideModal }}>
+    <AlertModalContext.Provider value={{ showAlert, hideAlert }}>
       {children}
       <Modal
         hideCloseButton
@@ -42,9 +42,9 @@ export const AlertModalProvider = ({ children }: { children: React.ReactNode }) 
         isOpen={isVisible}
         onAccept={() => {
           if (onConfirm) onConfirm(confirmData)
-          hideModal()
+          hideAlert()
         }}
-        onClose={hideModal}
+        onClose={hideAlert}
         onOpenChange={onOpenChange}
       >
         {message}

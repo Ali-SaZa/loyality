@@ -7,7 +7,7 @@ import { siteConfig } from '@/config/site'
 
 import '@/styles/userSidebar.scss'
 import React, { useState } from 'react'
-import { Tooltip } from '@nextui-org/tooltip'
+import { Tooltip } from '@heroui/tooltip'
 
 import { fileAddress, getFullName } from '@/helpers'
 import useAuth from '@/hooks/useAuth'

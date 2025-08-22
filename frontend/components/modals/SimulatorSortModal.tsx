@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useDisclosure } from '@nextui-org/modal'
+import { useDisclosure } from '@heroui/modal'
 
 import CheckIcon from '../icons/CheckIcon'
 

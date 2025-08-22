@@ -1,5 +1,5 @@
 'use client'
-import { Input } from '@nextui-org/input'
+import { Input } from '@heroui/input'
 import React, { useEffect, useState } from 'react'
 
 import Button from '@/components/formElements/Button'
@@ -16,6 +16,7 @@ import SimulatorFilterModal from '@/components/modals/SimulatorFilterModal'
 import EmptyListPlaceholder from '@/components/utils/EmptyListPlaceholder'
 import { GET_ALL_ORGANIZATIONS } from '@/services/organizations'
 import OrganizationCard from '@/components/card/OrganizationCard'
+import { ApiWithParams } from '@/types'
 
 export interface SortItem {
   name: string

@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Progress } from '@nextui-org/progress'
-import { RadioGroup } from '@nextui-org/radio'
+import { Progress } from '@heroui/progress'
+import { RadioGroup } from '@heroui/radio'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 

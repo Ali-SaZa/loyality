@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react'
-import { Modal as NextUiModal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
+import { Modal as NextUiModal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal'
 
 import Button from '@/components/formElements/Button'
 
@@ -8,6 +8,7 @@ interface ModalProps {
   onOpenChange: (isOpen: boolean) => void
   onClose?: () => void
   onAccept?: () => void
+  onReject?: () => void
   isLoading?: boolean
   title?: string
   acceptBtnText?: string
@@ -36,6 +37,7 @@ const Modal = ({
   onOpenChange,
   onClose,
   onAccept,
+  onReject,
   isLoading = false,
   title = '',
   children,
@@ -108,7 +110,7 @@ const Modal = ({
                       disabled={rejectBtnDisabled || isLoading}
                       isLoading={isLoading}
                       variant="light"
-                      onClick={onClose}
+                      onClick={onReject || onClose}
                     >
                       {rejectBtnText}
                     </Button>

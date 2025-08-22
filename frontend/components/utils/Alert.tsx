@@ -1,5 +1,5 @@
 import React from 'react'
-import { Alert as NextUiAlert } from '@nextui-org/alert'
+import { Alert as NextUiAlert } from '@heroui/alert'
 
 interface AlertProps {
   title: string

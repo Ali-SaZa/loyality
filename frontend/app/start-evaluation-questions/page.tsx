@@ -1,6 +1,6 @@
 'use client'
 import React, { useMemo, useState } from 'react'
-import { Progress } from '@nextui-org/progress'
+import { Progress } from '@heroui/progress'
 import { useRouter } from 'next/navigation'
 
 import Button from '@/components/formElements/Button'

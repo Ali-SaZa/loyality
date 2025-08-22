@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
-import { Radio as NextUiRadio, RadioProps } from '@nextui-org/radio'
-import { cn } from '@nextui-org/theme'
+import { Radio as NextUiRadio, RadioProps } from '@heroui/radio'
+import { cn } from '@heroui/theme'
 
 const Radio = ({ children, className, ...otherProps }: PropsWithChildren<RadioProps>) => {
   return (

@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useDisclosure } from '@nextui-org/modal'
+import { useDisclosure } from '@heroui/modal'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'

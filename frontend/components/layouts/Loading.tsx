@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useDisclosure } from '@nextui-org/modal'
+import { useDisclosure } from '@heroui/modal'
 
 import Modal from '@/components/modals/Modal'
 import useLoading from '@/hooks/useLoading'

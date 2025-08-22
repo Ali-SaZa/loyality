@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { useDisclosure } from '@nextui-org/modal'
+import { useDisclosure } from '@heroui/modal'
 import toast from 'react-hot-toast'
 
 import FileUpload from '../media/FileUpload'

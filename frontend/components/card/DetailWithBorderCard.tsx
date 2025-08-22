@@ -1,4 +1,5 @@
 import React from 'react'
+import { PaymentDetailType } from '@/types'
 
 const DetailWithBorderCard = ({ details }: { details: PaymentDetailType[] }) => {
   return (

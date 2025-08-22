@@ -1,7 +1,7 @@
 'use client'
-import { useDisclosure } from '@nextui-org/modal'
-import { CircularProgress } from '@nextui-org/progress'
-import { Tab, Tabs } from '@nextui-org/tabs'
+import { useDisclosure } from '@heroui/modal'
+import { CircularProgress } from '@heroui/progress'
+import { Tab, Tabs } from '@heroui/tabs'
 import React, { use, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -29,6 +29,7 @@ import CommentModal from '@/components/modals/CommentModal'
 import Participation from '@/components/certificate/participation'
 import useAuth from '@/hooks/useAuth'
 import Completion from '@/components/certificate/completion'
+import { PropsWithParams } from '@/types'
 
 const SimulatorDetails = ({ params: promisedParams }: PropsWithParams) => {
   const params = use(promisedParams)

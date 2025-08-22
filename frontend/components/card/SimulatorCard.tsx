@@ -58,7 +58,7 @@ const SimulatorCard = ({ simulator }: { simulator: any }) => {
         >
           {hasBookmark ? <BookmarkFillIcon className="size-4 text-primary" /> : <BookmarkIcon className="size-4 text-[#74757E]" />}
         </Button>
-        {!isEmptyObject(simulator?.rate ?? {}) && (
+        {!isEmptyObject(simulator?.rate ?? {}) && simulator?.rate?.count !== 0 && (
           <Button
             className="absolute top-3 right-3 font-normal"
             color="default"

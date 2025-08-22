@@ -7,12 +7,12 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-} from '@nextui-org/navbar'
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown'
-import { Button as NextUiButton } from '@nextui-org/button'
+} from '@heroui/navbar'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown'
+import { Button as NextUiButton } from '@heroui/button'
 import React, { useState } from 'react'
-import { Accordion, AccordionItem } from '@nextui-org/accordion'
-import { Link } from '@nextui-org/link'
+import { Accordion, AccordionItem } from '@heroui/accordion'
+import { Link } from '@heroui/link'
 import { usePathname } from 'next/navigation'
 
 import UserDropdown from '../ui/UserDropdown'
@@ -29,7 +29,7 @@ import useAlertModal from '@/hooks/useAlertModal'
 
 const Navbar = () => {
   const { user, logout } = useAuth()
-  const { showModal } = useAlertModal()
+  const { showAlert } = useAlertModal()
   const { width } = useWindowSize()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -213,7 +213,7 @@ const Navbar = () => {
               <Button
                 fullWidth
                 color="danger"
-                onClick={() => showModal('برای خروج مطمئن هستید؟', logout)}
+                onClick={() => showAlert('برای خروج مطمئن هستید؟', logout)}
               >
                 خروج
               </Button>

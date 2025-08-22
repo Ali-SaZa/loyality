@@ -1,20 +1,22 @@
 'use client'
-import { Checkbox } from '@nextui-org/checkbox'
-import { Input as NextUiInput, Textarea } from '@nextui-org/input'
-import { Radio, RadioGroup } from '@nextui-org/radio'
-import { Select, SelectItem } from '@nextui-org/select'
+import { Checkbox } from '@heroui/checkbox'
+import { Input as NextUiInput, Textarea } from '@heroui/input'
+import { Radio, RadioGroup } from '@heroui/radio'
+import { Select, SelectItem } from '@heroui/select'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Autocomplete, AutocompleteItem } from '@nextui-org/autocomplete'
+import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete'
 import persian from 'react-date-object/calendars/persian'
 import persian_fa from 'react-date-object/locales/persian_fa'
+import TimePicker from 'react-multi-date-picker/plugins/time_picker'
 import 'react-multi-date-picker/styles/layouts/mobile.css'
 import DatePicker from 'react-multi-date-picker'
 import qs from 'qs'
-import { InputOtp } from '@nextui-org/input-otp'
-import { DatePicker as NextUiDatePicker } from '@nextui-org/date-picker'
+import { InputOtp } from '@heroui/input-otp'
+import { DatePicker as NextUiDatePicker } from '@heroui/date-picker'
 import { I18nProvider } from '@react-aria/i18n'
 import { parseAbsoluteToLocal } from '@internationalized/date'
+import { Switch } from '@heroui/switch'
 
 import EyeIcon from '../icons/EyeIcon'
 import EyeCrossedIcon from '../icons/EyeCrossedIcon'
@@ -22,11 +24,22 @@ import EyeCrossedIcon from '../icons/EyeCrossedIcon'
 import Button from './Button'
 
 import axiosInstance from '@/config/axios'
-import { convertPersianToEnglish, convertToISOFormat, debounce } from '@/helpers'
+import { convertMinutesToTime, convertPersianToEnglish, convertTimeToMinutes, convertToISOFormat, debounce } from '@/helpers'
 import useWindowSize from '@/hooks/useWindowSize'
 
 interface CustomInputProps {
-  generalType: 'input' | 'checkbox' | 'radio' | 'textarea' | 'datePicker' | 'select' | 'combobox' | 'otp' | 'datePickerPro'
+  generalType:
+    | 'input'
+    | 'checkbox'
+    | 'radio'
+    | 'textarea'
+    | 'datePicker'
+    | 'select'
+    | 'combobox'
+    | 'otp'
+    | 'datePickerPro'
+    | 'timePicker'
+    | 'switch'
   name: string
   label?: string
   inputType?: 'text' | 'email' | 'number' | 'password' | 'tel'
@@ -34,6 +47,7 @@ interface CustomInputProps {
   description?: string | React.ReactNode
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  isOutsideFilter?: boolean
   autoFocus?: boolean
   disabled?: boolean
   required?: boolean
@@ -67,7 +81,7 @@ const Input = ({
   inputType,
   label,
   name,
-  placeholder,
+  placeholder: outerPlaceholder,
   description,
   className,
   iconStart,
@@ -93,9 +107,12 @@ const Input = ({
   minDate = '1300/1/1',
   selectOptions,
   radioOptions,
+  isOutsideFilter,
 }: PropsWithChildren<CustomInputProps>) => {
   const { width } = useWindowSize()
   const { control, getValues } = useFormContext()
+
+  const [placeholder] = useState(outerPlaceholder || label + ' را وارد کنید')
 
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false)
   const [options, setOptions] = useState<any[]>([])
@@ -110,14 +127,19 @@ const Input = ({
 
   const handleGetData = async (searchValue?: string) => {
     if (url) {
-      const params = {
-        filters: {
-          ...(filterValue ? { [filterName]: filterValue } : {}),
-          ...(searchValue ? { [selectValue]: searchValue } : {}),
-        },
-        page: paginateDetail.page,
-        pageSize: paginateDetail.pageSize,
-      }
+      const params = isOutsideFilter
+        ? {
+            ...(filterValue ? { [filterName]: filterValue } : {}),
+            ...(searchValue ? { [selectValue]: searchValue } : {}),
+          }
+        : {
+            filters: {
+              ...(filterValue ? { [filterName]: filterValue } : {}),
+              ...(searchValue ? { [selectValue]: searchValue } : {}),
+            },
+            page: paginateDetail.page,
+            pageSize: paginateDetail.pageSize,
+          }
 
       const response = await axiosInstance.get(url, {
         params,
@@ -317,9 +339,9 @@ const Input = ({
                 </AutocompleteItem>
               ))}
               {/* <CustomInfiniteScroll
-                    fetchMoreData={fetchData}
-                    hasMore={paginateDetail.hasMore}
-                  /> */}
+               fetchMoreData={fetchData}
+               hasMore={paginateDetail.hasMore}
+               /> */}
             </Autocomplete>
           )}
         />
@@ -389,6 +411,7 @@ const Input = ({
               {selectOptions!.map((item) => (
                 <SelectItem
                   key={item[selectKey]}
+                  textValue={item[selectValue]}
                   value={item[selectValue]}
                 >
                   {item[selectValue]}
@@ -445,6 +468,9 @@ const Input = ({
             <Checkbox
               {...field}
               className={className}
+              classNames={{
+                label: 'font-semibold text-sm',
+              }}
               isDisabled={disabled}
               isInvalid={!!error}
               isSelected={field.value}
@@ -453,6 +479,28 @@ const Input = ({
             >
               {label}
             </Checkbox>
+          )}
+        />
+      )
+
+    case 'switch':
+      return (
+        <Controller
+          control={control}
+          name={name}
+          render={({ field, fieldState: { error } }) => (
+            <Switch
+              {...field}
+              className={className}
+              classNames={{
+                label: 'font-semibold text-sm',
+              }}
+              isDisabled={disabled}
+              isSelected={field.value}
+              size={size}
+            >
+              {label}
+            </Switch>
           )}
         />
       )
@@ -470,6 +518,9 @@ const Input = ({
                 showMonthAndYearPickers
                 autoFocus={autoFocus}
                 className={className}
+                classNames={{
+                  label: 'font-semibold text-sm',
+                }}
                 description={description}
                 errorMessage={error?.message}
                 granularity="day"
@@ -483,7 +534,7 @@ const Input = ({
                 validationBehavior="aria"
                 value={field.value ? parseAbsoluteToLocal(field.value) : null}
                 variant="flat"
-                onChange={(value) =>
+                onChange={(value: any) =>
                   field.onChange(
                     value &&
                       `${String(value?.year).padStart(4, '0')}-${String(value?.month).padStart(2, '0')}-${String(value?.day).padStart(2, '0')}T00:00:00Z`
@@ -547,6 +598,64 @@ const Input = ({
                 onChange={(date) => field.onChange(date && convertToISOFormat(date))}
               />
               {error && <span className="text-red-500">{error?.message}</span>}
+              {description && <p>{description}</p>}
+            </div>
+          )}
+        />
+      )
+
+    case 'timePicker':
+      return (
+        <Controller
+          control={control}
+          name={name}
+          render={({ field, fieldState: { error } }) => (
+            <div className="flex flex-col relative">
+              <label
+                className="font-semibold pb-[6px] text-sm text-text-dark"
+                htmlFor=""
+              >
+                {label}
+                {required && <span className="text-error">*</span>}
+              </label>
+              <DatePicker
+                disableDayPicker
+                portal
+                calendar={persian}
+                calendarPosition="bottom-right"
+                className={width < 768 ? 'rmdp-mobile' : ''}
+                containerStyle={{
+                  width: '100%',
+                }}
+                disabled={disabled}
+                format="HH:mm"
+                locale={persian_fa}
+                placeholder={placeholder}
+                plugins={[
+                  <TimePicker
+                    key="timePicker"
+                    hideSeconds
+                  />,
+                ]}
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  height: '48px',
+                  borderRadius: '8px',
+                  background: '#f4f4f5',
+                  borderColor: '#f4f4f5',
+                  color: 'black',
+                  padding: '0 12px',
+                }}
+                value={new Date().setHours(
+                  Number(convertMinutesToTime(field.value).hours),
+                  Number(convertMinutesToTime(field.value).minutes),
+                  0,
+                  0
+                )}
+                onChange={(time) => field.onChange(convertTimeToMinutes(`${time?.hour}:${time?.minute}`))}
+              />
+              {error && <span className="text-danger text-tiny">{error?.message}</span>}
               {description && <p>{description}</p>}
             </div>
           )}

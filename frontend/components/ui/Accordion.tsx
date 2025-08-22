@@ -1,5 +1,5 @@
 'use client'
-import { Accordion as NextUiAccordion, AccordionItem } from '@nextui-org/accordion'
+import { Accordion as NextUiAccordion, AccordionItem } from '@heroui/accordion'
 import React, { useState } from 'react'
 
 import Button from '@/components/formElements/Button'

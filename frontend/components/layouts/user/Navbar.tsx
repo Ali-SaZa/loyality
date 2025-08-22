@@ -1,5 +1,5 @@
 'use client'
-import { Navbar as NextUINavbar, NavbarBrand, NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from '@nextui-org/navbar'
+import { Navbar as NextUINavbar, NavbarBrand, NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from '@heroui/navbar'
 import React, { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
@@ -26,7 +26,7 @@ const Navbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
   const { data } = useGlobal()
-  const { showModal } = useAlertModal()
+  const { showAlert } = useAlertModal()
   const { logout } = useAuth()
 
   const router = useRouter()
@@ -159,7 +159,7 @@ const Navbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
             <Button
               fullWidth
               color="danger"
-              onClick={() => showModal('برای خروج مطمئن هستید؟', logout)}
+              onClick={() => showAlert('برای خروج مطمئن هستید؟', logout)}
             >
               خروج
             </Button>

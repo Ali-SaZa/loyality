@@ -1,4 +1,4 @@
-import { Pagination as NextUiPagination } from '@nextui-org/pagination'
+import { Pagination as NextUiPagination } from '@heroui/pagination'
 import '@/styles/pagination.scss'
 import React from 'react'
 

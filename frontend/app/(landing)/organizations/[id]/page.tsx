@@ -20,6 +20,7 @@ import { GET_ORGANIZATION_BY_ID } from '@/services/organizations'
 import { fileAddress } from '@/helpers'
 import HtmlRenderer from '@/components/utils/HtmlRenderer'
 import FacebookIcon from '@/components/icons/FacebookIcon'
+import { PropsWithParams } from '@/types'
 
 const Map = dynamic(() => import('@/components/utils/Map'), { ssr: false })
 

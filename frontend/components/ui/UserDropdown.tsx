@@ -1,7 +1,7 @@
 'use client'
-import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/dropdown'
-import { NavbarItem } from '@nextui-org/navbar'
-import { User } from '@nextui-org/user'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@heroui/dropdown'
+import { NavbarItem } from '@heroui/navbar'
+import { User } from '@heroui/user'
 import React, { useMemo, useState } from 'react'
 
 import LogoutIcon from '../icons/LogoutIcon'
@@ -16,7 +16,7 @@ import useAlertModal from '@/hooks/useAlertModal'
 
 const UserDropdown = () => {
   const { user, logout } = useAuth()
-  const { showModal } = useAlertModal()
+  const { showAlert } = useAlertModal()
   const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] = useState(false)
 
   const disableKeys = useMemo(
@@ -118,7 +118,7 @@ const UserDropdown = () => {
             className="text-error"
             color="danger"
             startContent={<LogoutIcon className="size-4" />}
-            onPress={() => showModal('برای خروج مطمئن هستید؟', logout)}
+            onPress={() => showAlert('برای خروج مطمئن هستید؟', logout)}
           >
             خروج
           </DropdownItem>

@@ -13,6 +13,7 @@ import useGlobal from '@/hooks/useGlobal'
 import useLoading from '@/hooks/useLoading'
 import { GET_USER_SIMULATION_BY_ID, SEND_CHAT_MESSAGE_WITH_EVALUATOR } from '@/services/simulationUser'
 import { TalkFormValidation } from '@/validation/talk'
+import { PropsWithParams } from '@/types'
 
 const TalkDefaultValues = {
   message: '',

@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
-import { Checkbox as NextUiCheckbox } from '@nextui-org/checkbox'
-import { cn } from '@nextui-org/theme'
+import { Checkbox as NextUiCheckbox } from '@heroui/checkbox'
+import { cn } from '@heroui/theme'
 
 interface CheckboxProps {
   className?: string

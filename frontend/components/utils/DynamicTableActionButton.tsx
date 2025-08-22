@@ -1,14 +1,22 @@
-import { Tooltip } from '@nextui-org/tooltip'
+import { Tooltip } from '@heroui/tooltip'
 import React, { useEffect, useState } from 'react'
 
-import EyeIcon from '../icons/EyeIcon'
-import TrashIcon from '../icons/TrashIcon'
-import EditIcon from '../icons/EditIcon'
-
 import Button from '@/components/formElements/Button'
+import EyeIcon from '@/components/icons/EyeIcon'
+import TrashIcon from '@/components/icons/TrashIcon'
+import EditIcon from '@/components/icons/EditIcon'
+import UserIcon from '@/components/icons/UserIcon'
+import CoinIcon from '@/components/icons/CoinIcon'
+import LayersIcon from '@/components/icons/LayersIcon'
+import CommentIcon from '@/components/icons/CommentIcon'
+import ChartHistogramIcon from '@/components/icons/ChartHistogramIcon'
+import HeadsetIcon from '@/components/icons/HeadsetIcon'
+import ArchiveIcon from '@/components/icons/ArchiveIcon'
+import CloudDownloadIcon from '@/components/icons/CloudDownloadIcon'
 
 interface DynamicTableActionButtonProps {
   onClick?: () => void
+  disabled?: boolean
   type:
     | 'delete'
     | 'learnersList'
@@ -38,7 +46,7 @@ type actionDetailsType = {
   bgColor: string
 }
 
-const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonProps) => {
+const DynamicTableActionButton = ({ onClick, disabled = false, type }: DynamicTableActionButtonProps) => {
   const [actionDetails, setActionDetails] = useState<actionDetailsType | undefined>()
 
   useEffect(() => {
@@ -53,8 +61,8 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
         break
       case 'learnersList':
         setActionDetails({
-          tooltipContent: 'لیست دانشجویان',
-          icon: <TrashIcon className="size-4" />,
+          tooltipContent: 'لیست فراگیران',
+          icon: <UserIcon className="size-4" />,
           iconColor: 'text-[#47BEC6]',
           bgColor: 'bg-[#F0FEFF]',
         })
@@ -70,7 +78,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
       case 'analysisEvaluator':
         setActionDetails({
           tooltipContent: 'تحلیل ارزیاب',
-          icon: <TrashIcon className="size-4" />,
+          icon: <ChartHistogramIcon className="size-4" />,
           iconColor: 'text-[#FFB470]',
           bgColor: 'bg-[#FFF4DF]',
         })
@@ -78,7 +86,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
       case 'evaluator':
         setActionDetails({
           tooltipContent: 'ارزیاب',
-          icon: <TrashIcon className="size-4" />,
+          icon: <HeadsetIcon className="size-4" />,
           iconColor: 'text-[#EF5DA8]',
           bgColor: 'bg-[#FCDDEC]',
         })
@@ -93,8 +101,8 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
         break
       case 'simulation':
         setActionDetails({
-          tooltipContent: 'شبیه ساز',
-          icon: <TrashIcon className="size-4" />,
+          tooltipContent: 'تسک ها',
+          icon: <LayersIcon className="size-4" />,
           iconColor: 'text-[#3A4D9A]',
           bgColor: 'bg-[#D9DEF1]',
         })
@@ -126,7 +134,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
       case 'archive':
         setActionDetails({
           tooltipContent: 'انتقال به آرشیو',
-          icon: <TrashIcon className="size-4" />,
+          icon: <ArchiveIcon className="size-4" />,
           iconColor: 'text-[#D33030]',
           bgColor: 'bg-[#F2DEDE]',
         })
@@ -150,7 +158,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
       case 'download':
         setActionDetails({
           tooltipContent: 'دانلود',
-          icon: <TrashIcon className="size-4" />,
+          icon: <CloudDownloadIcon className="size-4" />,
           iconColor: 'text-[#3A4D9A]',
           bgColor: 'bg-[#D9DEF1]',
         })
@@ -182,7 +190,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
       case 'userComments':
         setActionDetails({
           tooltipContent: 'نظرات کاربران',
-          icon: <TrashIcon className="size-4" />,
+          icon: <CommentIcon className="size-4" />,
           iconColor: 'text-[#00B2DA]',
           bgColor: 'bg-[#F0FEFF]',
         })
@@ -190,7 +198,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
       case 'transactions':
         setActionDetails({
           tooltipContent: 'تراکنش ها',
-          icon: <TrashIcon className="size-4" />,
+          icon: <CoinIcon className="size-4" />,
           iconColor: 'text-[#703FC4]',
           bgColor: 'bg-[#E6D7FF]',
         })
@@ -208,6 +216,7 @@ const DynamicTableActionButton = ({ onClick, type }: DynamicTableActionButtonPro
         <Button
           iconOnly
           className={`${actionDetails?.bgColor} ${actionDetails?.iconColor}`}
+          disabled={disabled}
           size="sm"
           variant="flat"
           onClick={onClick}

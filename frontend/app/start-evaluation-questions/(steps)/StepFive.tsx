@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Chip } from '@nextui-org/chip'
+import { Chip } from '@heroui/chip'
 import toast from 'react-hot-toast'
 
 import { countryIdFormValidation } from '@/validation/startEvaluationQuestions'

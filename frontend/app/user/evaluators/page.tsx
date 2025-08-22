@@ -1,10 +1,10 @@
 'use client'
 // import Button from '@/components/formElements/Button'
-import { Chip } from '@nextui-org/chip'
+import { Chip } from '@heroui/chip'
 import React, { useEffect, useState } from 'react'
-import { RadioGroup } from '@nextui-org/radio'
-import { Calendar } from '@nextui-org/calendar'
-import { DatePicker } from '@nextui-org/date-picker'
+import { RadioGroup } from '@heroui/radio'
+import { Calendar } from '@heroui/calendar'
+import { DatePicker } from '@heroui/date-picker'
 import { I18nProvider } from '@react-aria/i18n'
 import { DateValue, parseAbsoluteToLocal } from '@internationalized/date'
 
@@ -14,13 +14,14 @@ import PaginatedList from '@/components/utils/PaginatedList' // import EditIcon 
 // import UserSimulatorCard from '@/components/ui/card/UserSimulatorCard'
 import DynamicTableActionButton from '@/components/utils/DynamicTableActionButton'
 import { convertToDateString, handleDownloadPdf } from '@/helpers'
-import useGlobal from '@/hooks/useGlobal' // import { Tab, Tabs } from '@nextui-org/tabs'
-// import { Tooltip } from '@nextui-org/tooltip'
+import useGlobal from '@/hooks/useGlobal' // import { Tab, Tabs } from '@heroui/tabs'
+// import { Tooltip } from '@heroui/tooltip'
 import Radio from '@/components/formElements/Radio'
 import Participation from '@/components/certificate/participation'
 import Button from '@/components/formElements/Button'
 import useAuth from '@/hooks/useAuth'
 import Completion from '@/components/certificate/completion'
+import { PaginationListColumnType } from '@/types'
 
 // const users = [
 //   {
@@ -232,11 +233,35 @@ const Evaluators = () => {
   const [selected, setSelected] = useState('true')
   let [date, setDate] = React.useState<DateValue | null | any>(parseAbsoluteToLocal('2001-02-02T20:30:00Z'))
 
-  const columns = [
-    { label: 'شناسه', field: 'id', sortable: true, filterable: true, type: 'number' },
-    { label: 'نام سازمان', field: 'organizationName', sortable: true, filterable: true, type: 'text' },
-    { label: 'عنوان شبیه ساز', field: 'title', sortable: true, filterable: true, type: 'text' },
-    { label: 'تعداد تسک', field: 'taskCount', sortable: true, filterable: true, type: 'inputFromTo' },
+  const columns: PaginationListColumnType[] = [
+    {
+      label: 'شناسه',
+      field: 'id',
+      sortable: true,
+      filterable: true,
+      type: 'number',
+    },
+    {
+      label: 'نام سازمان',
+      field: 'organizationName',
+      sortable: true,
+      filterable: true,
+      type: 'text',
+    },
+    {
+      label: 'عنوان شبیه ساز',
+      field: 'title',
+      sortable: true,
+      filterable: true,
+      type: 'text',
+    },
+    {
+      label: 'تعداد تسک',
+      field: 'taskCount',
+      sortable: true,
+      filterable: true,
+      type: 'inputFromTo',
+    },
     {
       label: 'زمان شبیه ساز(به ساعت)',
       field: 'totalTasksEstimatedHours',
@@ -253,8 +278,17 @@ const Evaluators = () => {
       filterItems: globalData.difficultyLevels,
     },
     // { label: 'تاریخ ایجاد', field: 'createdAt', sortable: true, filterable: true, type: 'date' },
-    { label: 'تاریخ ایجاد', field: 'createdAt', sortable: true, filterable: true, type: 'dateFromTo' },
-    { label: 'کنش ها', field: 'actions' },
+    {
+      label: 'تاریخ ایجاد',
+      field: 'createdAt',
+      sortable: true,
+      filterable: true,
+      type: 'dateFromTo',
+    },
+    {
+      label: 'کنش ها',
+      field: 'actions',
+    },
   ]
 
   useEffect(() => {
@@ -474,7 +508,11 @@ const Evaluators = () => {
             columns={columns}
             searchField="title"
             url="job-simulations/visitor"
-            urlParams={{ filters: { organizationId: '671e14b682da061541745d3e' }, page: 1, pageSize: 20 }}
+            urlParams={{
+              filters: { organizationId: '671e14b682da061541745d3e' },
+              page: 1,
+              pageSize: 20,
+            }}
           >
             {{
               difficultyLevel: (data: any, cellValue) => (
@@ -496,136 +534,136 @@ const Evaluators = () => {
             }}
           </PaginatedList>
           {/* <CustomTable
-            url="organizations/visitor"
-            columns={columns}
-            searchField="organizationName"
-            // staticData={users}
-            filterOptions={statusOptions}
-            // initialVisibleColumns={[
-            //   'id',
-            //   'jobSimulationId',
-            //   'jobSimulationTitle',
-            //   'userId',
-            //   'learnerFirstName',
-            //   'learnerLastName',
-            //   'organizationId',
-            //   'organizationName',
-            //   'status',
-            //   'actions',
-            // ]}
-          >
-            {{
-              status: (data: any, cellValue) => (
-                <Chip
-                  size="sm"
-                  variant="flat"
-                >
-                  {cellValue}
-                </Chip>
-              ),
-              actions: (data: any, cellValue) => (
-                <div className="relative flex justify-end items-center gap-2">
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                      >
-                        <VerticalDotsIcon className="size-5" />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu variant="faded">
-                      <DropdownSection
-                        title="کنش های اصلی"
-                        showDivider
-                      >
-                        <DropdownItem
-                          key="view"
-                          startContent={<SearchAltIcon />}
-                          description="نمایش همه"
-                        >
-                          نمایش
-                        </DropdownItem>
-                        <DropdownItem
-                          key="edit"
-                          startContent={<SearchAltIcon />}
-                          description="ویرایش همه"
-                        >
-                          ویرایش
-                        </DropdownItem>
-                      </DropdownSection>
-                      <DropdownSection title="کنش های بیشتر">
-                        <DropdownItem
-                          key="delete"
-                          startContent={<SearchAltIcon className="text-error size-6" />}
-                          color="danger"
-                          className="text-error"
-                          description="حذف همه"
-                        >
-                          حذف
-                        </DropdownItem>
-                      </DropdownSection>
-                    </DropdownMenu>
-                  </Dropdown>
-                </div>
-              ),
-            }}
-          </CustomTable> */}
+           url="organizations/visitor"
+           columns={columns}
+           searchField="organizationName"
+           // staticData={users}
+           filterOptions={statusOptions}
+           // initialVisibleColumns={[
+           //   'id',
+           //   'jobSimulationId',
+           //   'jobSimulationTitle',
+           //   'userId',
+           //   'learnerFirstName',
+           //   'learnerLastName',
+           //   'organizationId',
+           //   'organizationName',
+           //   'status',
+           //   'actions',
+           // ]}
+           >
+           {{
+           status: (data: any, cellValue) => (
+           <Chip
+           size="sm"
+           variant="flat"
+           >
+           {cellValue}
+           </Chip>
+           ),
+           actions: (data: any, cellValue) => (
+           <div className="relative flex justify-end items-center gap-2">
+           <Dropdown>
+           <DropdownTrigger>
+           <Button
+           isIconOnly
+           size="sm"
+           variant="light"
+           >
+           <VerticalDotsIcon className="size-5" />
+           </Button>
+           </DropdownTrigger>
+           <DropdownMenu variant="faded">
+           <DropdownSection
+           title="کنش های اصلی"
+           showDivider
+           >
+           <DropdownItem
+           key="view"
+           startContent={<SearchAltIcon />}
+           description="نمایش همه"
+           >
+           نمایش
+           </DropdownItem>
+           <DropdownItem
+           key="edit"
+           startContent={<SearchAltIcon />}
+           description="ویرایش همه"
+           >
+           ویرایش
+           </DropdownItem>
+           </DropdownSection>
+           <DropdownSection title="کنش های بیشتر">
+           <DropdownItem
+           key="delete"
+           startContent={<SearchAltIcon className="text-error size-6" />}
+           color="danger"
+           className="text-error"
+           description="حذف همه"
+           >
+           حذف
+           </DropdownItem>
+           </DropdownSection>
+           </DropdownMenu>
+           </Dropdown>
+           </div>
+           ),
+           }}
+           </CustomTable> */}
         </div>
       </div>
 
       {/* <div className="flex flex-col gap-2 md:gap-5 grow">
-        <Tabs
-          aria-label="Options"
-          variant="light"
-          key="light"
-          classNames={{
-            tab: 'border-2 border-primary data-[selected=true]:bg-primary data-[selected=true]:shadow-lg',
-            tabContent: 'text-primary font-bold group-data-[selected=true]:text-white',
-          }}
-        >
-          <Tab
-            key="all"
-            title="همه"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9">
-              <UserSimulatorCard
-                hasEvaluator
-                to="/user/evaluators/507f191e810c19729de860ea"
-              />
-              <UserSimulatorCard
-                hasEvaluator
-                to="/user/evaluators/507f191e810c19729de860ea"
-              />
-              <UserSimulatorCard
-                hasEvaluator
-                to="/user/evaluators/507f191e810c19729de860ea"
-              />
-              <UserSimulatorCard
-                hasEvaluator
-                to="/user/evaluators/507f191e810c19729de860ea"
-              />
-              <UserSimulatorCard
-                hasEvaluator
-                to="/user/evaluators/507f191e810c19729de860ea"
-              />
-              <UserSimulatorCard
-                hasEvaluator
-                to="/user/evaluators/507f191e810c19729de860ea"
-              />
-            </div>
-          </Tab>
-          <Tab
-            key="pending"
-            title="درحال تکمیل"
-          ></Tab>
-          <Tab
-            key="complete"
-            title="تکمیل شده"
-          ></Tab>
-        </Tabs>
-      </div> */}
+       <Tabs
+       aria-label="Options"
+       variant="light"
+       key="light"
+       classNames={{
+       tab: 'border-2 border-primary data-[selected=true]:bg-primary data-[selected=true]:shadow-lg',
+       tabContent: 'text-primary font-bold group-data-[selected=true]:text-white',
+       }}
+       >
+       <Tab
+       key="all"
+       title="همه"
+       >
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9">
+       <UserSimulatorCard
+       hasEvaluator
+       to="/user/evaluators/507f191e810c19729de860ea"
+       />
+       <UserSimulatorCard
+       hasEvaluator
+       to="/user/evaluators/507f191e810c19729de860ea"
+       />
+       <UserSimulatorCard
+       hasEvaluator
+       to="/user/evaluators/507f191e810c19729de860ea"
+       />
+       <UserSimulatorCard
+       hasEvaluator
+       to="/user/evaluators/507f191e810c19729de860ea"
+       />
+       <UserSimulatorCard
+       hasEvaluator
+       to="/user/evaluators/507f191e810c19729de860ea"
+       />
+       <UserSimulatorCard
+       hasEvaluator
+       to="/user/evaluators/507f191e810c19729de860ea"
+       />
+       </div>
+       </Tab>
+       <Tab
+       key="pending"
+       title="درحال تکمیل"
+       ></Tab>
+       <Tab
+       key="complete"
+       title="تکمیل شده"
+       ></Tab>
+       </Tabs>
+       </div> */}
     </section>
   )
 }

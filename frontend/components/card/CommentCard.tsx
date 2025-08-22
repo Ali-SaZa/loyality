@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover'
 
 import { fileAddress, getFullName, truncateText } from '@/helpers'
 import useWindowSize from '@/hooks/useWindowSize'

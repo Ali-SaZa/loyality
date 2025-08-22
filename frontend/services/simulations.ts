@@ -3,6 +3,7 @@ import qs from 'qs'
 import { API_ROUTES, HANDLE_ERROR } from './config'
 
 import axiosInstance from '@/config/axios'
+import { ApiWithParams } from '@/types'
 
 export const GET_ALL_SIMULATIONS = async (params?: ApiWithParams) => {
   try {

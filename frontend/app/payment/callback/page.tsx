@@ -12,6 +12,7 @@ import { convertToDateString, getFullName, getTimeFromDateString } from '@/helpe
 import useAuth from '@/hooks/useAuth'
 import { GET_EVALUATION_DETAIL_FOR_PAYMENT, START_EVALUATION_BANK_PAYMENT } from '@/services/simulationUser'
 import useLoading from '@/hooks/useLoading'
+import { EvaluationDetailType, PaymentDetailType } from '@/types'
 
 const SuccessPayment = () => {
   const router = useRouter()

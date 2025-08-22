@@ -42,7 +42,7 @@ const refreshAccessToken = async () => {
   const user = localStorage.getItem('user')
 
   if (!user) return null
-  const { refreshToken } = JSON.parse(user)
+  const { refreshToken } = await JSON.parse(user)
 
   try {
     const url = new URL('/token', SERVER_URL)
@@ -84,7 +84,7 @@ axiosInstance.interceptors.request.use(
       const user = localStorage.getItem('user')
 
       if (user) {
-        const { accessToken, AccessTokenExpireTime, refreshTokenExpireTime } = JSON.parse(user)
+        const { accessToken, AccessTokenExpireTime, refreshTokenExpireTime } = await JSON.parse(user)
 
         // بررسی اینکه آیا توکن منقضی شده است
         if (isTokenExpired(AccessTokenExpireTime)) {
@@ -114,7 +114,10 @@ axiosInstance.interceptors.request.use(
           } else {
             // اگر رفرش در حال انجام است، درخواست فعلی را به صف اضافه می‌کنیم
             return new Promise<InternalAxiosRequestConfig>((resolve, reject) => {
-              failedQueue.push({ resolve, reject })
+              failedQueue.push({
+                resolve,
+                reject,
+              })
             })
           }
         } else {
@@ -125,7 +128,7 @@ axiosInstance.interceptors.request.use(
             const accessTokenCookie = Cookies.get('accessToken')
 
             if (accessTokenCookie) {
-              const accessTokenCookieParsed = JSON.parse(accessTokenCookie).accessToken
+              const accessTokenCookieParsed = await JSON.parse(accessTokenCookie).accessToken
 
               config.headers['Authorization'] = `Bearer ${accessTokenCookieParsed}`
             }
@@ -144,6 +147,13 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('user')
+      Cookies.remove('accessToken')
+      window.location.href = '/auth'
+
+      return Promise.reject(error)
+    }
     return Promise.reject(error)
   }
 )

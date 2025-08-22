@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
-import { Chip } from '@nextui-org/chip'
-import { Snippet } from '@nextui-org/snippet'
+import { Chip } from '@heroui/chip'
+import { Snippet } from '@heroui/snippet'
 
 import PaginatedList from '@/components/utils/PaginatedList'
 import useGlobal from '@/hooks/useGlobal'
@@ -9,14 +9,39 @@ import { convertToDateString, formatDateToCustomTimezone, getTimeFromDateString 
 import CalendarIcon from '@/components/icons/CalendarIcon'
 import ClockIcon from '@/components/icons/ClockIcon'
 import DollarIcon from '@/components/icons/DollarIcon'
+import { PaginationListColumnType, NextUiColorType } from '@/types'
 
 const Transactions = () => {
   const { data: globalData } = useGlobal()
-  const columns = [
-    { label: 'کد پیگیری بانکی', field: 'bankTrackingCode', sortable: true, filterable: true, type: 'text' },
-    { label: 'کد پیگیری سایت', field: 'id', sortable: true, filterable: true, type: 'text' },
-    { label: 'هزینه پرداختی', field: 'amount', sortable: true, filterable: true, type: 'text' },
-    { label: 'تاریخ و زمان پرداخت', field: 'createdAt', sortable: true, filterable: true, type: 'dateFromTo' },
+  const columns: PaginationListColumnType[] = [
+    {
+      label: 'کد پیگیری بانکی',
+      field: 'bankTrackingCode',
+      sortable: true,
+      filterable: true,
+      type: 'text',
+    },
+    {
+      label: 'کد پیگیری سایت',
+      field: 'id',
+      sortable: true,
+      filterable: true,
+      type: 'text',
+    },
+    {
+      label: 'هزینه پرداختی',
+      field: 'amount',
+      sortable: true,
+      filterable: true,
+      type: 'text',
+    },
+    {
+      label: 'تاریخ و زمان پرداخت',
+      field: 'createdAt',
+      sortable: true,
+      filterable: true,
+      type: 'dateFromTo',
+    },
     {
       label: 'وضعیت',
       field: 'status',
