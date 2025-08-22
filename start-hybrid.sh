@@ -5,7 +5,7 @@ echo "🚀 Starting Hybrid Development Environment..."
 
 # Check if Docker is running
 if ! docker info > /dev/null 2>&1; then
-    echo "❌ Docker is not running. Please start Docker Desktop first."
+    echo "❌ Docker is not running. Please start Docker first."
     exit 1
 fi
 
@@ -20,19 +20,32 @@ if [ ! -f ".env" ]; then
     fi
 fi
 
+# Determine which docker compose command to use
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+else
+    echo "❌ Neither 'docker-compose' nor 'docker compose' command found."
+    echo "   Please install Docker Compose or ensure Docker is running."
+    exit 1
+fi
+
+echo "🔧 Using: $DOCKER_COMPOSE"
+
 # Start MongoDB in Docker
 echo "🗄️  Starting MongoDB in Docker..."
-docker-compose -f docker-compose.db.yml up -d
+$DOCKER_COMPOSE -f docker-compose.db.yml up -d
 
 # Wait a moment for MongoDB to be ready
 echo "⏳ Waiting for MongoDB to be ready..."
 sleep 5
 
 # Check if MongoDB is running
-if docker-compose -f docker-compose.db.yml ps mongodb | grep -q "Up"; then
+if $DOCKER_COMPOSE -f docker-compose.db.yml ps mongodb | grep -q "Up"; then
     echo "✅ MongoDB is running!"
 else
-    echo "❌ MongoDB failed to start. Check logs with: npm run dev:db:logs"
+    echo "❌ MongoDB failed to start. Check logs with: $DOCKER_COMPOSE -f docker-compose.db.yml logs -f"
     exit 1
 fi
 
