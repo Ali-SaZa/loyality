@@ -25,7 +25,7 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
 
   protected get data(): any[] {
     if (this.stores.length === 0) {
-      throw new Error('Stores must be set before seeding users');
+      throw new Error('فروشگاه‌ها باید قبل از بذرگذاری کاربران تنظیم شوند'); // translated to Persian
     }
 
     return [

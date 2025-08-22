@@ -34,7 +34,7 @@ export class RateLimiterMiddleware implements NestMiddleware {
       const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
       res.setHeader('Retry-After', retryAfter);
       throw new HttpException(
-        'Rate limit exceeded. Please try again later.',
+        'محدودیت نرخ درخواست. لطفاً بعداً تلاش کنید.', // translated to Persian
         HttpStatus.TOO_MANY_REQUESTS
       );
     }

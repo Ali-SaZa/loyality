@@ -48,7 +48,7 @@ export class ScratchCardsService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this scratch card.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این کارت تخفیف را ندارید.'); // translated to Persian
   }
 
   async create(createScratchCardDto: CreateScratchCardDto): Promise<ScratchCardResponseDto> {
@@ -151,7 +151,7 @@ export class ScratchCardsService {
   async registerCard(code: string, user: any): Promise<ScratchCardResponseDto> {
     // Only customers can register scratch cards
     if (user.role !== 'customer') {
-      throw new ForbiddenException('Only customers can register scratch cards');
+      throw new ForbiddenException('فقط مشتریان می‌توانند کارت تخفیف ثبت کنند'); // translated to Persian
     }
 
     const scratchCard = await this.scratchCardModel.findOne({ code }).exec();
@@ -170,7 +170,7 @@ export class ScratchCardsService {
     
     // Check if the card is already registered by another user
     if (scratchCard.userId) {
-      throw new ForbiddenException('This scratch card is already registered by another user');
+      throw new ForbiddenException('این کارت تخفیف قبلاً توسط کاربر دیگری ثبت شده است'); // translated to Persian
     }
     
     // Register the card for the customer
@@ -202,7 +202,7 @@ export class ScratchCardsService {
     } else if (user.role === 'store' && user.storeId === storeId) {
       // Store owner can see their own store
     } else {
-      throw new ForbiddenException('Access denied. You do not have permission to access this store\'s scratch cards.');
+      throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به کارت‌های تخفیف این فروشگاه را ندارید.'); // translated to Persian
     }
 
     const scratchCards = await this.scratchCardModel.find({ storeId }).exec();
@@ -219,7 +219,7 @@ export class ScratchCardsService {
       // Store users can see customer data related to their store
       // This will be validated by checking if transactions exist for this user in their store
     } else {
-      throw new ForbiddenException('Access denied. You do not have permission to access this user\'s scratch cards.');
+      throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به کارت‌های تخفیف این کاربر را ندارید.'); // translated to Persian
     }
 
     const scratchCards = await this.scratchCardModel.find({ userId }).exec();
@@ -229,7 +229,7 @@ export class ScratchCardsService {
   async findMyCards(user: any): Promise<ScratchCardResponseDto[]> {
     // Only customers can view their own cards
     if (user.role !== 'customer') {
-      throw new ForbiddenException('Only customers can view their own scratch cards');
+      throw new ForbiddenException('فقط مشتریان می‌توانند کارت‌های تخفیف خود را مشاهده کنند'); // translated to Persian
     }
 
     const scratchCards = await this.scratchCardModel.find({ userId: user.userId }).exec();

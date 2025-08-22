@@ -1,0 +1,283 @@
+// Main SCSS file for the Loyalty Program Frontend
+// This file imports all styles and sets up the base configuration
+
+// Import fonts first
+@use 'fonts' as *;
+
+// Import Tailwind CSS
+@import "tailwindcss";
+
+// Base font configuration
+:root {
+  // Font family variables
+  --font-family-sans: #{$font-family-sans};
+  --font-family-mono: #{$font-family-mono};
+  
+  // Font weight variables
+  --font-weight-light: #{$font-weight-light};
+  --font-weight-normal: #{$font-weight-normal};
+  --font-weight-medium: #{$font-weight-medium};
+  --font-weight-semibold: #{$font-weight-semibold};
+  --font-weight-bold: #{$font-weight-bold};
+  
+  // Font size variables
+  --font-size-xs: #{$font-size-xs};
+  --font-size-sm: #{$font-size-sm};
+  --font-size-base: #{$font-size-base};
+  --font-size-lg: #{$font-size-lg};
+  --font-size-xl: #{$font-size-xl};
+  --font-size-2xl: #{$font-size-2xl};
+  --font-size-3xl: #{$font-size-3xl};
+  --font-size-4xl: #{$font-size-4xl};
+  --font-size-5xl: #{$font-size-5xl};
+  
+  // Line height variables
+  --line-height-tight: #{$line-height-tight};
+  --line-height-snug: #{$line-height-snug};
+  --line-height-normal: #{$line-height-normal};
+  --line-height-relaxed: #{$line-height-relaxed};
+  --line-height-loose: #{$line-height-loose};
+  
+  // Letter spacing variables
+  --letter-spacing-tighter: #{$letter-spacing-tighter};
+  --letter-spacing-tight: #{$letter-spacing-tight};
+  --letter-spacing-normal: #{$letter-spacing-normal};
+  --letter-spacing-wide: #{$letter-spacing-wide};
+  --letter-spacing-wider: #{$letter-spacing-wider};
+  --letter-spacing-widest: #{$letter-spacing-widest};
+}
+
+// Theme configuration
+@theme {
+  // Color variables (keeping your existing color scheme)
+  --color-primary-50: #e6f7f9;
+  --color-primary-100: #001617;
+  --color-primary-200: #002b2f;
+  --color-primary-300: #004146;
+  --color-primary-400: #00565e;
+  --color-primary-500: #006d77; /* caribbean_current DEFAULT */
+  --color-primary-600: #00b4c4;
+  --color-primary-700: #13ebff;
+  --color-primary-800: #62f2ff;
+  --color-primary-900: #b0f8ff;
+  --color-primary: #006d77;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary-50: #f0f9f8;
+  --color-secondary-100: #152c2a;
+  --color-secondary-200: #2a5954;
+  --color-secondary-300: #3f857e;
+  --color-secondary-400: #56afa6;
+  --color-secondary-500: #83c5be; /* tiffany_blue DEFAULT */
+  --color-secondary-600: #9bd0cb;
+  --color-secondary-700: #b4dcd8;
+  --color-secondary-800: #cde7e5;
+  --color-secondary-900: #e6f3f2;
+  --color-secondary: #83c5be;
+  --color-secondary-foreground: #ffffff;
+
+  --color-background: #edf6f9; /* alice_blue DEFAULT */
+  --color-background-secondary: #e9ecef; /* anti-flash_white DEFAULT */
+  --color-background-tertiary: #f0f7fa; /* alice_blue 600 */
+
+  --color-foreground: #343a40; /* onyx DEFAULT */
+  --color-foreground-secondary: #58626c; /* onyx 600 */
+  --color-foreground-tertiary: #7d8995; /* onyx 700 */
+  --color-foreground-muted: #a9b0b8; /* onyx 800 */
+
+  --color-content1: #ffffff;
+  --color-content1-secondary: #f7fbfc; /* alice_blue 800 */
+
+  --color-success: #00b4c4; /* caribbean_current 600 */
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #f59e0b; /* standard warning orange */
+  --color-warning-foreground: #ffffff;
+
+  --color-danger: #ef4444; /* standard error red */
+  --color-danger-foreground: #ffffff;
+
+  /* Default colors for HeroUI components */
+  --color-default-50: #f8f9fa;
+  --color-default-100: #e9ecef; /* anti-flash_white DEFAULT */
+  --color-default-200: #dee2e6;
+  --color-default-300: #ced4da;
+  --color-default-400: #adb5bd;
+  --color-default-500: #6c757d;
+  --color-default-600: #495057;
+  --color-default-700: #343a40; /* onyx DEFAULT */
+  --color-default-800: #212529;
+  --color-default-900: #0b0c0d; /* onyx 100 */
+
+  /* Fonts - now using our custom Sans Web font */
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+}
+
+// Legacy variables for compatibility
+:root {
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
+  }
+  
+  :root {
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
+  }
+}
+
+// Base styles
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px; // Base font size for rem calculations
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+// Typography base styles
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+h1 {
+  @include heading-1;
+}
+
+h2 {
+  @include heading-2;
+}
+
+h3 {
+  @include heading-3;
+}
+
+h4 {
+  @include heading-4;
+}
+
+h5 {
+  @include heading-5;
+}
+
+h6 {
+  @include heading-6;
+}
+
+p {
+  @include body-medium;
+  margin: 0 0 1rem 0;
+}
+
+// Link styles
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: var(--color-primary-600);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// Button base styles
+button {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-medium);
+}
+
+// Input base styles
+input, textarea, select {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+}
+
+// Code and pre elements
+code, pre {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+// Selection styles
+::selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
+
+// Scrollbar styles (WebKit browsers)
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-default-300);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--color-default-400);
+  }
+}
+
+// Focus styles for accessibility
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+// Print styles
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  a, a:visited {
+    text-decoration: underline;
+  }
+  
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+}

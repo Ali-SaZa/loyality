@@ -94,25 +94,25 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private getErrorType(status: number): string {
     switch (status) {
       case HttpStatus.BAD_REQUEST:
-        return 'Bad Request';
+        return 'درخواست نامعتبر'; // translated to Persian
       case HttpStatus.UNAUTHORIZED:
-        return 'Unauthorized';
+        return 'دسترسی غیرمجاز'; // translated to Persian
       case HttpStatus.FORBIDDEN:
-        return 'Forbidden';
+        return 'دسترسی ممنوع'; // translated to Persian
       case HttpStatus.NOT_FOUND:
-        return 'Not Found';
+        return 'یافت نشد'; // translated to Persian
       case HttpStatus.CONFLICT:
-        return 'Conflict';
+        return 'تضاد'; // translated to Persian
       case HttpStatus.UNPROCESSABLE_ENTITY:
-        return 'Validation Error';
+        return 'خطای اعتبارسنجی'; // translated to Persian
       case HttpStatus.TOO_MANY_REQUESTS:
-        return 'Too Many Requests';
+        return 'تعداد درخواست بیش از حد'; // translated to Persian
       case HttpStatus.INTERNAL_SERVER_ERROR:
-        return 'Internal Server Error';
+        return 'خطای داخلی سرور'; // translated to Persian
       case HttpStatus.SERVICE_UNAVAILABLE:
-        return 'Service Unavailable';
+        return 'سرویس در دسترس نیست'; // translated to Persian
       default:
-        return 'Error';
+        return 'خطا'; // translated to Persian
     }
   }
 

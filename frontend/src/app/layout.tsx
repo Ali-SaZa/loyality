@@ -1,21 +1,26 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import RootLayout from "@/components/layout/RootLayout";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Loyalty Program",
   description: "Modern loyalty system for traditional businesses in Iran",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Loyalty Program",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#006d77',
 };
 
 export default function Layout({
@@ -25,9 +30,7 @@ export default function Layout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <RootLayout>
           {children}
         </RootLayout>

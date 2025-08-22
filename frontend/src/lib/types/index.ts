@@ -140,7 +140,7 @@ export interface Transaction {
   amount: number;
   type: 'purchase' | 'reward' | 'refund';
   status: 'pending' | 'completed' | 'failed';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }

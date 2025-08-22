@@ -28,7 +28,7 @@ export class GlobalAuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
     
     if (!token) {
-      throw new UnauthorizedException('Access token is required');
+      throw new UnauthorizedException('توکن دسترسی الزامی است'); // translated to Persian
     }
 
     try {
@@ -36,18 +36,18 @@ export class GlobalAuthGuard implements CanActivate {
       
       // Validate payload structure
       if (!payload.phoneNumber || !payload.userId || !payload.role) {
-        throw new UnauthorizedException('Invalid token payload');
+        throw new UnauthorizedException('محتوای توکن نامعتبر است'); // translated to Persian
       }
 
       const user = await this.usersService.findByPhoneNumber(payload.phoneNumber);
       
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException('کاربر یافت نشد'); // translated to Persian
       }
 
       // Verify user is still active (you can add more checks here)
       if (user.role !== payload.role) {
-        throw new UnauthorizedException('User role mismatch');
+        throw new UnauthorizedException('نقش کاربر مطابقت ندارد'); // translated to Persian
       }
 
       // For store owners, get their store information
@@ -76,12 +76,12 @@ export class GlobalAuthGuard implements CanActivate {
       console.error('JWT validation error:', error.message);
       
       if (error.name === 'TokenExpiredError') {
-        throw new UnauthorizedException('Token has expired');
+        throw new UnauthorizedException('توکن منقضی شده است'); // translated to Persian
       } else if (error.name === 'JsonWebTokenError') {
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException('توکن نامعتبر است'); // translated to Persian
       }
       
-      throw new UnauthorizedException('Authentication failed');
+      throw new UnauthorizedException('احراز هویت ناموفق بود'); // translated to Persian
     }
   }
 

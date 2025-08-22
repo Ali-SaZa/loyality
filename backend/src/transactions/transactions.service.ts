@@ -42,7 +42,7 @@ export class TransactionsService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this transaction.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تراکنش را ندارید.'); // translated to Persian
   }
 
   async create(createTransactionDto: CreateTransactionDto): Promise<TransactionResponseDto> {
@@ -117,7 +117,7 @@ export class TransactionsService {
       // Store users can see customer data related to their store
       // This will be validated by checking if transactions exist for this user in their store
     } else {
-      throw new ForbiddenException('Access denied. You do not have permission to access this user\'s transactions.');
+      throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به تراکنش‌های این کاربر را ندارید.'); // translated to Persian
     }
 
     const transactions = await this.transactionModel.find({ userId }).exec();
@@ -131,7 +131,7 @@ export class TransactionsService {
     } else if (user.role === 'store' && user.storeId === storeId) {
       // Store users can see their own store data
     } else {
-      throw new ForbiddenException('Access denied. You do not have permission to access this store\'s transactions.');
+      throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به تراکنش‌های این فروشگاه را ندارید.'); // translated to Persian
     }
 
     const transactions = await this.transactionModel.find({ storeId }).exec();

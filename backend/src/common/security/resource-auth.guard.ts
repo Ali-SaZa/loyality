@@ -30,7 +30,7 @@ export class ResourceAuthGuard implements CanActivate {
     const user = request.user as UserContext;
 
     if (!user) {
-      throw new ForbiddenException('User context not found');
+      throw new ForbiddenException('متن کاربر یافت نشد'); // translated to Persian
     }
 
     // For admin resources, we don't need a resource ID
@@ -52,7 +52,7 @@ export class ResourceAuthGuard implements CanActivate {
     const userId = resourceAuth.userIdParam ? request.params[resourceAuth.userIdParam] : undefined;
 
     if (!resourceId) {
-      throw new ForbiddenException('Resource ID not found in request');
+      throw new ForbiddenException('شناسه منبع در درخواست یافت نشد'); // translated to Persian
     }
 
     // Create resource access object

@@ -25,14 +25,14 @@ export class ScratchCardsController {
   @Post()
   @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new scratch card (Admin/Store Owner only)' })
+  @ApiOperation({ summary: 'ایجاد کارت تخفیف جدید (فقط مدیر/مالک فروشگاه)' })
   @ApiResponse({ 
     status: 201, 
-    description: 'Scratch card created successfully',
+    description: 'کارت تخفیف با موفقیت ایجاد شد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   async create(@Body() createScratchCardDto: CreateScratchCardDto): Promise<ScratchCardResponseDto> {
     return this.scratchCardsService.create(createScratchCardDto);
   }
@@ -40,14 +40,14 @@ export class ScratchCardsController {
   @Get()
   @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all scratch cards (Admin only)' })
+  @ApiOperation({ summary: 'دریافت تمام کارت‌های تخفیف (فقط مدیر)' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of all scratch cards',
+    description: 'لیست تمام کارت‌های تخفیف',
     type: [ScratchCardResponseDto] 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی مدیر الزامی است' })
   async findAll(): Promise<ScratchCardResponseDto[]> {
     return this.scratchCardsService.findAll();
   }
@@ -55,16 +55,16 @@ export class ScratchCardsController {
   @Get(':id')
   @ScratchCardAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get scratch card by ID (Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Scratch card ID' })
+  @ApiOperation({ summary: 'دریافت کارت تخفیف بر اساس شناسه (فقط مالک/مدیر)' })
+  @ApiParam({ name: 'id', description: 'شناسه کارت تخفیف' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Scratch card found',
+    description: 'کارت تخفیف یافت شد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   async findOne(
     @Param('id') id: string,
     @CurrentUser() user: any
@@ -74,14 +74,14 @@ export class ScratchCardsController {
 
   @Get('code/:code')
   @Public()
-  @ApiOperation({ summary: 'Get scratch card by code (Public - for QR scanning)' })
-  @ApiParam({ name: 'code', description: 'Scratch card code' })
+  @ApiOperation({ summary: 'دریافت کارت تخفیف بر اساس کد (عمومی - برای اسکن QR)' })
+  @ApiParam({ name: 'code', description: 'کد کارت تخفیف' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Scratch card found',
+    description: 'کارت تخفیف یافت شد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
   async findByCode(@Param('code') code: string): Promise<ScratchCardResponseDto> {
     const card = await this.scratchCardsService.findByCode(code);
     if (!card) {
@@ -93,16 +93,16 @@ export class ScratchCardsController {
   @Patch(':id')
   @ScratchCardAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update scratch card information (Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Scratch card ID' })
+  @ApiOperation({ summary: 'به‌روزرسانی اطلاعات کارت تخفیف (فقط مالک/مدیر)' })
+  @ApiParam({ name: 'id', description: 'شناسه کارت تخفیف' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Scratch card updated successfully',
+    description: 'کارت تخفیف با موفقیت به‌روزرسانی شد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   async update(
     @Param('id') id: string,
     @Body() updateScratchCardDto: UpdateScratchCardDto,
@@ -114,16 +114,16 @@ export class ScratchCardsController {
   @Patch(':id/status')
   @ScratchCardAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update scratch card status (Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Scratch card ID' })
+  @ApiOperation({ summary: 'به‌روزرسانی وضعیت کارت تخفیف (فقط مالک/مدیر)' })
+  @ApiParam({ name: 'id', description: 'شناسه کارت تخفیف' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Status updated successfully',
+    description: 'وضعیت با موفقیت به‌روزرسانی شد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   async updateStatus(
     @Param('id') id: string,
     @Body() body: { status: 'unused' | 'used' | 'expired' },
@@ -134,16 +134,16 @@ export class ScratchCardsController {
 
   @Post(':id/use')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Use a scratch card (Authenticated user)' })
-  @ApiParam({ name: 'id', description: 'Scratch card ID' })
+  @ApiOperation({ summary: 'استفاده از کارت تخفیف (کاربر احراز هویت شده)' })
+  @ApiParam({ name: 'id', description: 'شناسه کارت تخفیف' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Scratch card used successfully',
+    description: 'کارت تخفیف با موفقیت استفاده شد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
-  @ApiResponse({ status: 400, description: 'Scratch card not available or expired' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
+  @ApiResponse({ status: 400, description: 'کارت تخفیف در دسترس نیست یا منقضی شده' })
   async useCard(
     @Param('id') id: string,
     @CurrentUser() user: any
@@ -154,12 +154,12 @@ export class ScratchCardsController {
   @Delete(':id')
   @ScratchCardAuth({ paramName: 'id' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete scratch card (Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Scratch card ID' })
-  @ApiResponse({ status: 200, description: 'Scratch card deleted successfully' })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiOperation({ summary: 'حذف کارت تخفیف (فقط مالک/مدیر)' })
+  @ApiParam({ name: 'id', description: 'شناسه کارت تخفیف' })
+  @ApiResponse({ status: 200, description: 'کارت تخفیف با موفقیت حذف شد' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   @HttpCode(HttpStatus.OK)
   async remove(
     @Param('id') id: string,
@@ -171,15 +171,15 @@ export class ScratchCardsController {
   @Get('store/:storeId')
   @StoreAuth({ paramName: 'storeId' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get scratch cards by store (Store Owner/Admin only)' })
-  @ApiParam({ name: 'storeId', description: 'Store ID' })
+  @ApiOperation({ summary: 'دریافت کارت‌های تخفیف بر اساس فروشگاه (فقط مالک فروشگاه/مدیر)' })
+  @ApiParam({ name: 'storeId', description: 'شناسه فروشگاه' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of scratch cards for the store',
+    description: 'لیست کارت‌های تخفیف برای فروشگاه',
     type: [ScratchCardResponseDto] 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   async findByStore(
     @Param('storeId') storeId: string,
     @CurrentUser() user: any
@@ -190,15 +190,15 @@ export class ScratchCardsController {
   @Get('user/:userId')
   @UserAuth({ paramName: 'userId' })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get scratch cards by user (Self/Admin only)' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiOperation({ summary: 'دریافت کارت‌های تخفیف بر اساس کاربر (خود/مدیر)' })
+  @ApiParam({ name: 'userId', description: 'شناسه کاربر' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of scratch cards for the user',
+    description: 'لیست کارت‌های تخفیف برای کاربر',
     type: [ScratchCardResponseDto] 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - دسترسی کافی نیست' })
   async findByUser(
     @Param('userId') userId: string,
     @CurrentUser() user: any
@@ -208,16 +208,16 @@ export class ScratchCardsController {
 
   @Post('register/:code')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Register scratch card by code (Customer only - for QR scanning)' })
-  @ApiParam({ name: 'code', description: 'Scratch card code from QR' })
+  @ApiOperation({ summary: 'ثبت نام کارت تخفیف بر اساس کد (فقط مشتری - برای اسکن QR)' })
+  @ApiParam({ name: 'code', description: 'کد کارت تخفیف از QR' })
   @ApiResponse({ 
     status: 201, 
-    description: 'Scratch card registered successfully',
+    description: 'کارت تخفیف با موفقیت ثبت نام کرد',
     type: ScratchCardResponseDto 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Scratch card not found' })
-  @ApiResponse({ status: 400, description: 'Scratch card not available or expired' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 404, description: 'کارت تخفیف یافت نشد' })
+  @ApiResponse({ status: 400, description: 'کارت تخفیف در دسترس نیست یا منقضی شده' })
   @HttpCode(HttpStatus.CREATED)
   async registerCard(
     @Param('code') code: string,
@@ -228,14 +228,14 @@ export class ScratchCardsController {
 
   @Get('my-cards')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user\'s scratch cards (Customer only)' })
+  @ApiOperation({ summary: 'دریافت کارت‌های تخفیف فعلی کاربر (فقط مشتری)' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of user\'s scratch cards',
+    description: 'لیست کارت‌های تخفیف کاربر',
     type: [ScratchCardResponseDto] 
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Customer access only' })
+  @ApiResponse({ status: 401, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 403, description: 'دسترسی ممنوع - فقط مشتری مجاز است' })
   async getMyCards(
     @CurrentUser() user: any
   ): Promise<ScratchCardResponseDto[]> {

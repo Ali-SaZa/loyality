@@ -13,7 +13,7 @@
 ## 📖 EXECUTIVE SUMMARY (READ THIS FOR QUICK UNDERSTANDING)
 
 ### What This Project Is
-A **Loyalty Program System** - a backend API that manages customer rewards, store operations, and transaction tracking for businesses that want to offer scratch card rewards and loyalty points to their customers.
+A **Loyalty Program System** - a full-stack application that manages customer rewards, store operations, and transaction tracking for businesses that want to offer scratch card rewards and loyalty points to their customers.
 
 ### Core Business Logic
 1. **Users** register and earn loyalty points through purchases
@@ -25,6 +25,7 @@ A **Loyalty Program System** - a backend API that manages customer rewards, stor
 
 ### Technical Architecture
 - **Backend**: NestJS (Node.js + TypeScript) REST API
+- **Frontend**: Next.js (React + TypeScript) with modern UI components
 - **Database**: MongoDB with Mongoose ODM
 - **Containerization**: Docker for development and deployment
 - **Authentication**: JWT-based authentication with OTP verification
@@ -32,26 +33,32 @@ A **Loyalty Program System** - a backend API that manages customer rewards, stor
 - **Structure**: Modular architecture with separate modules for each business domain
 
 ### Current State
-- **Foundation**: 100% Complete (project structure, schemas, DTOs, modules)
-- **Implementation**: 100% Complete (all services, controllers, and business logic implemented)
-- **Security**: 100% Complete (comprehensive authorization and security measures)
-- **Scratch Card Flow**: 100% Complete (full QR code registration and access flow)
-- **Ready For**: Testing, deployment, and production use
+- **Backend Foundation**: 100% Complete (project structure, schemas, DTOs, modules)
+- **Backend Implementation**: 100% Complete (all services, controllers, and business logic implemented)
+- **Backend Security**: 100% Complete (comprehensive authorization and security measures)
+- **Backend Scratch Card Flow**: 100% Complete (full QR code registration and access flow)
+- **Frontend Foundation**: 100% Complete (Next.js project structure, routing, components)
+- **Frontend Implementation**: 🔄 In Progress (UI components, forms, authentication)
+- **Ready For**: Frontend completion, testing, deployment, and production use
 
 ### What You Need to Do Next
-1. ✅ **Business Logic** - All services fully implemented
-2. ✅ **API Endpoints** - All controllers complete with Swagger docs
-3. ✅ **Security System** - Comprehensive authorization and access control
-4. ✅ **Scratch Card Flow** - Complete QR code registration system
-5. 🔄 **Testing** - Set up and run unit/integration tests
-6. 🔄 **Deployment** - Test Docker setup and deploy
+1. ✅ **Backend Business Logic** - All services fully implemented
+2. ✅ **Backend API Endpoints** - All controllers complete with Swagger docs
+3. ✅ **Backend Security System** - Comprehensive authorization and access control
+4. ✅ **Backend Scratch Card Flow** - Complete QR code registration system
+5. ✅ **Frontend Project Structure** - Next.js setup with proper routing
+6. 🔄 **Frontend Implementation** - Complete UI components and authentication
+7. 🔄 **Testing** - Set up and run unit/integration tests
+8. 🔄 **Deployment** - Test Docker setup and deploy
 
 ### Key Files to Understand
-- `src/schemas/` - Database models (User, Store, ScratchCard, Transaction, OTP, Admin)
-- `src/dto/` - Data validation and transfer objects
-- `src/users/`, `src/stores/`, `src/scratch-cards/` - Core business modules
-- `src/common/security/` - Authorization and security system
-- `docker-compose.yml` - Development environment setup
+- **Backend**: `backend/src/schemas/` - Database models (User, Store, ScratchCard, Transaction, OTP, Admin)
+- **Backend**: `backend/src/dto/` - Data validation and transfer objects
+- **Backend**: `backend/src/users/`, `backend/src/stores/`, `backend/src/scratch-cards/` - Core business modules
+- **Backend**: `backend/src/common/security/` - Authorization and security system
+- **Frontend**: `frontend/src/app/` - Next.js app router structure
+- **Frontend**: `frontend/src/components/` - UI components and business logic
+- **Docker**: `docker-compose.yml` - Development environment setup
 
 **This summary gives you everything you need to understand the project and continue development immediately.**
 
@@ -60,8 +67,8 @@ A **Loyalty Program System** - a backend API that manages customer rewards, stor
 ## 📋 PROJECT OVERVIEW
 
 **Project Name:** Loyalty Program System  
-**Technology Stack:** NestJS (Node.js), MongoDB, Docker  
-**Project Type:** Backend API for a loyalty/rewards program system  
+**Technology Stack:** NestJS (Backend), Next.js (Frontend), MongoDB, Docker  
+**Project Type:** Full-stack loyalty/rewards program system  
 
 ## 🎯 BUSINESS REQUIREMENTS
 
@@ -73,6 +80,7 @@ Based on the business consultation document, this system should handle:
 - OTP verification
 - Admin functionality
 - **NEW**: Complete scratch card QR code registration flow
+- **NEW**: Modern web interface for all operations
 
 ## 🏗️ ARCHITECTURE & STRUCTURE
 
@@ -81,34 +89,63 @@ Based on the business consultation document, this system should handle:
 - **MongoDB** - NoSQL database with Mongoose ODM
 - **Docker** - Containerization for development and deployment
 
+### Frontend Framework
+- **Next.js 14** - Modern React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Modern UI Components** - Reusable component library
+
 ### Project Structure
 ```
-src/
-├── app/                 # Main application module
-├── users/              # User management
-├── stores/             # Store management
-├── scratch-cards/      # Scratch card system
-├── transactions/       # Transaction tracking
-├── otp/               # OTP verification
-├── admins/            # Admin management
-├── seeding/           # Database seeding system
-├── schemas/           # MongoDB schemas
-└── common/            # Shared utilities
-    ├── errors/        # Error handling system
-    ├── filters/       # Global exception filters
-    └── security/      # Authorization and security
+├── backend/                 # Backend API (NestJS)
+│   ├── src/
+│   │   ├── app/            # Main application module
+│   │   ├── users/          # User management
+│   │   ├── stores/         # Store management
+│   │   ├── scratch-cards/  # Scratch card system
+│   │   ├── transactions/   # Transaction tracking
+│   │   ├── otp/            # OTP verification
+│   │   ├── admins/         # Admin management
+│   │   ├── seeding/        # Database seeding system
+│   │   ├── schemas/        # MongoDB schemas
+│   │   └── common/         # Shared utilities
+│   │       ├── errors/     # Error handling system
+│   │       ├── filters/    # Global exception filters
+│   │       └── security/   # Authorization and security
+│   └── Dockerfile          # Backend containerization
+├── frontend/                # Frontend Application (Next.js)
+│   ├── src/
+│   │   ├── app/            # Next.js app router
+│   │   │   ├── (auth)/     # Authentication routes
+│   │   │   ├── (dashboard)/ # Dashboard routes
+│   │   │   └── (public)/   # Public routes
+│   │   ├── components/     # UI components
+│   │   │   ├── business/   # Business logic components
+│   │   │   ├── forms/      # Form components
+│   │   │   ├── layout/     # Layout components
+│   │   │   └── ui/         # Base UI components
+│   │   ├── contexts/       # React contexts
+│   │   ├── hooks/          # Custom React hooks
+│   │   └── lib/            # Utilities and configurations
+│   │       ├── api/        # API client configuration
+│   │       ├── auth/       # Authentication utilities
+│   │       ├── theme/      # Theme configuration
+│   │       └── types/      # TypeScript type definitions
+│   └── Dockerfile          # Frontend containerization
+├── docker-compose.yml       # Multi-service orchestration
+└── docker-compose.db.yml    # Database service
 ```
 
 ## 📝 WORK COMPLETED
 
-### 1. Project Setup & Configuration
+### 1. Backend Setup & Configuration
 - ✅ Created NestJS project structure
 - ✅ Configured TypeScript and ESLint
 - ✅ Set up MongoDB connection
 - ✅ Created Docker configuration
 - ✅ Added comprehensive README documentation
 
-### 2. Database Schemas
+### 2. Backend Database Schemas
 - ✅ **User Schema** - User registration, authentication, loyalty points
 - ✅ **Store Schema** - Store information and management
 - ✅ **Scratch Card Schema** - Scratch card generation and redemption
@@ -116,14 +153,14 @@ src/
 - ✅ **OTP Schema** - One-time password verification
 - ✅ **Admin Schema** - Administrative functionality
 
-### 3. DTOs (Data Transfer Objects)
+### 3. Backend DTOs (Data Transfer Objects)
 - ✅ **User DTOs** - Registration, login, profile updates
 - ✅ **Store DTOs** - Store creation and management
 - ✅ **Scratch Card DTOs** - Card generation and redemption
 - ✅ **Transaction DTOs** - Transaction creation and queries
 - ✅ **OTP DTOs** - OTP verification requests
 
-### 4. Core Modules
+### 4. Backend Core Modules
 - ✅ **Users Module** - User management service and controller
 - ✅ **Stores Module** - Store management service and controller
 - ✅ **Scratch Cards Module** - Scratch card service and controller
@@ -131,7 +168,7 @@ src/
 - ✅ **Transactions Module** - Transaction service and controller
 - ✅ **Admins Module** - Admin management service and controller
 
-### 5. Docker Configuration
+### 5. Backend Docker Configuration
 - ✅ **Dockerfile** - Application containerization
 - ✅ **docker-compose.yml** - Multi-service orchestration
 - ✅ **mongo-init.js** - MongoDB initialization script
@@ -162,6 +199,15 @@ src/
 - ✅ **Custom Exception Classes** - Entity-specific error handling
 - ✅ **Global Exception Filter** - Consistent error responses
 - ✅ **MongoDB Integration** - Proper database error handling
+
+### 10. **NEW: Frontend Project Structure**
+- ✅ **Next.js 14 Setup** - Modern React framework with App Router
+- ✅ **TypeScript Configuration** - Type-safe development environment
+- ✅ **Project Structure** - Organized component and page architecture
+- ✅ **Routing Setup** - Authentication, dashboard, and public routes
+- ✅ **Component Architecture** - Business, forms, layout, and UI components
+- ✅ **Utility Setup** - API client, authentication, theme, and types
+- ✅ **Docker Configuration** - Frontend containerization ready
 
 ## 🔒 **COMPREHENSIVE SECURITY IMPLEMENTATION**
 
@@ -282,9 +328,55 @@ src/
 4. **Status Validation**: Only unused cards can be registered
 5. **Ownership Validation**: Customers can only view their own cards
 
+## 🎨 **FRONTEND IMPLEMENTATION STATUS**
+
+### **Project Structure Complete**
+- ✅ **Next.js 14 Setup** - Modern React framework with App Router
+- ✅ **TypeScript Configuration** - Full type safety
+- ✅ **Routing Architecture** - Authentication, dashboard, and public routes
+- ✅ **Component Organization** - Business, forms, layout, and UI components
+- ✅ **Utility Setup** - API client, authentication, theme, and types
+- ✅ **Docker Configuration** - Frontend containerization ready
+
+### **Frontend Components Architecture**
+```
+src/
+├── app/                    # Next.js app router
+│   ├── (auth)/            # Authentication routes
+│   ├── (dashboard)/       # Dashboard routes
+│   └── (public)/          # Public routes
+├── components/             # UI components
+│   ├── business/          # Business logic components
+│   ├── forms/             # Form components
+│   ├── layout/            # Layout components
+│   └── ui/                # Base UI components
+├── contexts/               # React contexts
+├── hooks/                  # Custom React hooks
+└── lib/                    # Utilities and configurations
+    ├── api/                # API client configuration
+    ├── auth/               # Authentication utilities
+    ├── theme/              # Theme configuration
+    └── types/              # TypeScript type definitions
+```
+
+### **What's Been Implemented**
+- ✅ **Project Foundation** - Complete Next.js setup with TypeScript
+- ✅ **Routing Structure** - Proper route organization with app router
+- ✅ **Component Architecture** - Organized component hierarchy
+- ✅ **Utility Setup** - API client, authentication, and theme configuration
+- ✅ **Docker Ready** - Frontend containerization configuration
+
+### **What Needs Implementation**
+- 🔄 **UI Components** - Complete business logic components
+- 🔄 **Authentication Forms** - Login, registration, and OTP forms
+- 🔄 **Dashboard Interface** - User and store management interfaces
+- 🔄 **API Integration** - Connect frontend to backend API
+- 🔄 **State Management** - User context and application state
+- 🔄 **Responsive Design** - Mobile and tablet optimization
+
 ## 🔧 TECHNICAL IMPLEMENTATION DETAILS
 
-### Database Models
+### Backend Database Models
 - **User Model**: Includes loyalty points, store association, transaction history
 - **Store Model**: Store details, location, operating hours
 - **Scratch Card Model**: Card generation, redemption status, value
@@ -292,12 +384,20 @@ src/
 - **OTP Model**: Time-based verification codes
 - **Admin Model**: Administrative privileges and access control
 
-### API Endpoints Structure
+### Backend API Endpoints Structure
 - **Users**: Registration, login, profile management, loyalty points
 - **Stores**: Store CRUD operations, location management
 - **Scratch Cards**: Generation, redemption, validation, QR registration
 - **Transactions**: Creation, history, reporting
 - **OTP**: Generation, verification, expiration handling
+
+### Frontend Architecture
+- **Next.js 14**: Modern React framework with App Router
+- **TypeScript**: Full type safety and development experience
+- **Component Library**: Organized business and UI components
+- **API Integration**: Centralized API client configuration
+- **Authentication**: JWT-based auth with React contexts
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
 
 ### Security Features
 - JWT-based authentication with enhanced security
@@ -310,26 +410,32 @@ src/
 ## 🚧 CURRENT STATUS
 
 ### What's Working
-- ✅ Complete project structure and architecture
-- ✅ All database schemas defined and implemented
-- ✅ All DTOs created with validation
-- ✅ All modules properly configured
-- ✅ All services fully implemented with business logic
-- ✅ All controllers complete with API endpoints
-- ✅ Swagger/OpenAPI documentation ready
-- ✅ Docker configuration ready
-- ✅ Comprehensive documentation
-- ✅ Input validation and error handling
-- ✅ **NEW**: Complete security system with authorization
-- ✅ **NEW**: Full scratch card QR code registration flow
-- ✅ **NEW**: Comprehensive database seeding system
-- ✅ **NEW**: Enhanced error handling with Persian support
+- ✅ **Backend**: Complete project structure and architecture
+- ✅ **Backend**: All database schemas defined and implemented
+- ✅ **Backend**: All DTOs created with validation
+- ✅ **Backend**: All modules properly configured
+- ✅ **Backend**: All services fully implemented with business logic
+- ✅ **Backend**: All controllers complete with API endpoints
+- ✅ **Backend**: Swagger/OpenAPI documentation ready
+- ✅ **Backend**: Docker configuration ready
+- ✅ **Backend**: Comprehensive documentation
+- ✅ **Backend**: Input validation and error handling
+- ✅ **Backend**: Complete security system with authorization
+- ✅ **Backend**: Full scratch card QR code registration flow
+- ✅ **Backend**: Comprehensive database seeding system
+- ✅ **Backend**: Enhanced error handling with Persian support
+- ✅ **Frontend**: Complete Next.js project structure and setup
+- ✅ **Frontend**: Proper routing architecture with app router
+- ✅ **Frontend**: Component organization and utility setup
+- ✅ **Frontend**: Docker configuration ready
+- ✅ **Infrastructure**: Multi-service Docker orchestration
 
 ### What Needs Implementation
-- 🔄 **Testing** - Unit and integration tests
-- ✅ **Global Exception Filters** - Enhanced error handling with Persian language support
-- ✅ **Rate Limiting** - API protection
-- ✅ **Security Headers** - Enhanced browser security
+- 🔄 **Frontend UI Components** - Complete business logic components
+- 🔄 **Frontend Authentication** - Login, registration, and OTP forms
+- 🔄 **Frontend Dashboard** - User and store management interfaces
+- 🔄 **Frontend API Integration** - Connect to backend API
+- 🔄 **Testing** - Unit and integration tests for both frontend and backend
 - 🔄 **Deployment** - Production environment setup
 
 ### What's Been Added
@@ -358,49 +464,59 @@ src/
   - Proper access control for registered cards
   - User ownership validation
   - Store relationship validation
+- ✅ **Frontend Project Structure** - Complete Next.js setup with modern architecture
+  - Next.js 14 with App Router
+  - TypeScript configuration
+  - Organized component architecture
+  - Proper routing structure
+  - Utility and configuration setup
+  - Docker containerization ready
 
 ## 📋 NEXT STEPS PRIORITY
 
 ### High Priority
-1. ✅ **Core service logic** - All modules fully implemented
-2. ✅ **API endpoints** - All controllers complete with Swagger docs
-3. ✅ **Request validation** - Using class-validator and class-transformer
-4. ✅ **Error handling** - Comprehensive Persian error messages with global exception filter
-5. ✅ **Security system** - Comprehensive authorization and access control
-6. ✅ **Scratch card flow** - Complete QR code registration system
-7. 🔄 **Testing** - Set up and run comprehensive tests
+1. ✅ **Backend Core service logic** - All modules fully implemented
+2. ✅ **Backend API endpoints** - All controllers complete with Swagger docs
+3. ✅ **Backend Security system** - Comprehensive authorization and access control
+4. ✅ **Backend Scratch card flow** - Complete QR code registration system
+5. ✅ **Frontend Project structure** - Next.js setup with proper routing
+6. 🔄 **Frontend Implementation** - Complete UI components and authentication
+7. 🔄 **Testing** - Set up and run comprehensive tests for both frontend and backend
 
 ### Medium Priority
-1. **Set up testing framework** with Jest
-2. **Add API documentation** with Swagger
-3. **Implement logging** and monitoring
-4. **Add rate limiting** and security headers
+1. **Complete frontend UI components** for all business operations
+2. **Implement frontend authentication flow** with JWT integration
+3. **Create dashboard interfaces** for users, stores, and admins
+4. **Set up testing framework** with Jest for both frontend and backend
+5. **Add API documentation** with Swagger
+6. **Implement logging** and monitoring
 
 ### Low Priority
 1. **Performance optimization** and caching
 2. **Advanced features** like analytics and reporting
 3. **Mobile app integration** considerations
+4. **PWA features** for mobile experience
 
 ## 🐳 DOCKER COMMANDS
 
 ### Development
 ```bash
-# Start all services
-./docker-scripts.sh start
+# Start all services (backend, frontend, database)
+./start-docker.sh
+
+# Start only database
+./start-db.sh
+
+# Start hybrid (database + backend)
+./start-hybrid.sh
 
 # Stop all services
-./docker-scripts.sh stop
-
-# View logs
-./docker-scripts.sh logs
-
-# Rebuild and restart
-./docker-scripts.sh rebuild
+docker-compose down
 ```
 
 ### Manual Docker Commands
 ```bash
-# Build and start
+# Build and start all services
 docker-compose up --build
 
 # Run in background
@@ -411,39 +527,56 @@ docker-compose down
 
 # View logs
 docker-compose logs -f
+
+# Frontend only
+docker-compose up frontend
+
+# Backend only
+docker-compose up backend
 ```
 
 ## 🔍 IMPORTANT FILES TO REFERENCE
 
 - **`Summary_of_Business_Consultation.markdown`** - Business requirements and use cases
 - **`Loyalty Program.docx`** - Original business specification
-- **`DOCKER_README.md`** - Docker setup and usage instructions
-- **`package.json`** - Dependencies and scripts
-- **`src/schemas/`** - Database models and relationships
-- **`src/common/security/`** - Authorization and security system
-- **`src/seeding/`** - Database seeding system
+- **`FRONTEND_DEVELOPMENT_PLAN.md`** - Frontend development roadmap
+- **`backend/package.json`** - Backend dependencies and scripts
+- **`frontend/package.json`** - Frontend dependencies and scripts
+- **`backend/src/schemas/`** - Database models and relationships
+- **`backend/src/common/security/`** - Authorization and security system
+- **`backend/src/seeding/`** - Database seeding system
+- **`frontend/src/app/`** - Next.js app router structure
+- **`frontend/src/components/`** - UI components and business logic
 
 ## 💡 DEVELOPMENT NOTES
 
 ### Code Style
-- Follow NestJS best practices and conventions
-- Use TypeScript strict mode
+- **Backend**: Follow NestJS best practices and conventions
+- **Frontend**: Follow Next.js and React best practices
+- Use TypeScript strict mode for both frontend and backend
 - Implement proper error handling and logging
 - Add comprehensive JSDoc comments
 
 ### Testing Strategy
-- Unit tests for all services
-- Integration tests for controllers
+- **Backend**: Unit tests for all services, integration tests for controllers
+- **Frontend**: Unit tests for components, integration tests for pages
 - E2E tests for critical user flows
 - Mock external dependencies
 
 ### Security Considerations
-- Validate all input data
-- Implement proper authentication
+- Validate all input data on both frontend and backend
+- Implement proper authentication with JWT
 - Use environment variables for secrets
 - Add rate limiting and CORS configuration
 - **NEW**: Comprehensive resource authorization
 - **NEW**: Role-based access control
+
+### Frontend Development
+- Use modern React patterns (hooks, contexts)
+- Implement responsive design with Tailwind CSS
+- Create reusable component library
+- Implement proper state management
+- Add loading states and error boundaries
 
 ---
 
@@ -451,14 +584,16 @@ docker-compose logs -f
 
 If you have questions about:
 - **Business Logic**: Refer to `Summary_of_Business_Consultation.markdown`
-- **Technical Implementation**: Check the existing code structure
-- **Docker Setup**: See `DOCKER_README.md`
-- **Database Schema**: Review files in `src/schemas/`
-- **Security System**: Check `src/common/security/`
-- **Seeding System**: Review `src/seeding/`
+- **Backend Implementation**: Check the existing code structure in `backend/src/`
+- **Frontend Implementation**: Check the existing code structure in `frontend/src/`
+- **Docker Setup**: See the various start scripts and docker-compose files
+- **Database Schema**: Review files in `backend/src/schemas/`
+- **Security System**: Check `backend/src/common/security/`
+- **Seeding System**: Review `backend/src/seeding/`
+- **Frontend Development**: Check `FRONTEND_DEVELOPMENT_PLAN.md`
 
 ---
 
 **Last Updated:** 28 Mordad 1403, 23:45 IRST (Iran Standard Time)  
-**Project Status:** Implementation Complete + Security System Complete + Scratch Card Flow Complete + Seeding Feature Added + Comprehensive Error Handling Fully Implemented (100%) - Ready for Testing & Production Deployment  
-**Next Major Milestone:** Comprehensive Testing & Production Deployment
+**Project Status:** Backend Complete (100%) + Frontend Foundation Complete (100%) + Frontend Implementation In Progress (🔄) - Ready for Frontend Completion & Testing  
+**Next Major Milestone:** Complete Frontend Implementation & Comprehensive Testing

@@ -27,7 +27,7 @@ import { Store, StoreSchema } from '../schemas/store.schema';
         const expiresIn = configService.get<string>('JWT_EXPIRES_IN') || '7d';
         
         if (!secret) {
-          throw new Error('JWT_SECRET environment variable is required');
+          throw new Error('متغیر محیطی JWT_SECRET الزامی است'); // translated to Persian
         }
         
         return {

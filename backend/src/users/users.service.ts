@@ -36,7 +36,7 @@ export class UsersService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this user data.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به اطلاعات این کاربر را ندارید.'); // translated to Persian
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {

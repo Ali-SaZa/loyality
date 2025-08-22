@@ -25,7 +25,7 @@ export class OTPsSeeder extends BaseSeeder<OtpDocument> {
 
   protected get data(): any[] {
     if (this.users.length === 0) {
-      throw new Error('Users must be set before seeding OTPs');
+      throw new Error('کاربران باید قبل از بذرگذاری کدهای تایید تنظیم شوند'); // translated to Persian
     }
 
     return this.users.map(user => ({

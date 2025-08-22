@@ -39,7 +39,7 @@ export class AuthorizationService {
         await this.checkAdminAccess(user, resource);
         break;
       default:
-        throw new ForbiddenException('Unknown resource type');
+        throw new ForbiddenException('نوع منبع نامشخص است'); // translated to Persian
     }
   }
 
@@ -64,7 +64,7 @@ export class AuthorizationService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this scratch card.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این کارت تخفیف را ندارید.'); // translated to Persian
   }
 
   /**
@@ -91,7 +91,7 @@ export class AuthorizationService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this store.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این فروشگاه را ندارید.'); // translated to Persian
   }
 
   /**
@@ -119,7 +119,7 @@ export class AuthorizationService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this user data.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به اطلاعات این کاربر را ندارید.'); // translated to Persian
   }
 
   /**
@@ -142,7 +142,7 @@ export class AuthorizationService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this transaction.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تراکنش را ندارید.'); // translated to Persian
   }
 
   /**
@@ -154,7 +154,7 @@ export class AuthorizationService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to access this admin resource.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این منبع مدیریتی را ندارید.'); // translated to Persian
   }
 
   /**

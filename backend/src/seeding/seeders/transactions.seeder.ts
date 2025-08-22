@@ -35,7 +35,7 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
 
   protected get data(): any[] {
     if (this.stores.length === 0 || this.users.length === 0) {
-      throw new Error('Stores and users must be set before seeding transactions');
+      throw new Error('فروشگاه‌ها و کاربران باید قبل از بذرگذاری تراکنش‌ها تنظیم شوند'); // translated to Persian
     }
 
     return [

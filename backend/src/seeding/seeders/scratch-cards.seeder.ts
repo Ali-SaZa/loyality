@@ -28,7 +28,7 @@ export class ScratchCardsSeeder extends BaseSeeder<ScratchCardDocument> {
 
   protected get data(): any[] {
     if (this.stores.length === 0 || this.users.length === 0) {
-      throw new Error('Stores and users must be set before seeding scratch cards');
+      throw new Error('فروشگاه‌ها و کاربران باید قبل از بذرگذاری کارت‌های تخفیف تنظیم شوند'); // translated to Persian
     }
 
     return [

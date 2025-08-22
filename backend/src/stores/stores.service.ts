@@ -114,6 +114,6 @@ export class StoresService {
       return;
     }
 
-    throw new ForbiddenException('Access denied. You do not have permission to modify this store.');
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز تغییر این فروشگاه را ندارید.'); // translated to Persian
   }
 }

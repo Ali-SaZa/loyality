@@ -10,14 +10,14 @@ async function bootstrap() {
   const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
   
   if (missingEnvVars.length > 0) {
-    throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
+    throw new Error(`متغیرهای محیطی الزامی وجود ندارد: ${missingEnvVars.join(', ')}`); // translated to Persian
   }
 
   // Validate JWT secret strength in production
   if (process.env.NODE_ENV === 'production') {
     const jwtSecret = process.env.JWT_SECRET;
     if (jwtSecret && jwtSecret.length < 32) {
-      throw new Error('JWT_SECRET must be at least 32 characters long in production');
+      throw new Error('JWT_SECRET باید حداقل 32 کاراکتر در محیط تولید باشد'); // translated to Persian
     }
   }
 

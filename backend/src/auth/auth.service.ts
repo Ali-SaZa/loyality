@@ -23,7 +23,7 @@ export class AuthService {
     // Validate phone number format
     const phoneRegex = /^09[0-9]{9}$/;
     if (!phoneRegex.test(phoneNumber)) {
-      throw new BadRequestException('Invalid phone number format. Must be in format: 09XXXXXXXXX');
+      throw new BadRequestException('فرمت شماره موبایل نامعتبر است. باید به فرمت 09XXXXXXXXX باشد'); // translated to Persian
     }
 
     // Check if there's a recent OTP request (within 2 minutes)
@@ -33,7 +33,7 @@ export class AuthService {
       const remainingTime = Math.ceil((2 * 60 * 1000 - timeDiff) / 1000); // 2 minutes in seconds
       
       if (timeDiff < 2 * 60 * 1000) { // 2 minutes
-        throw new CustomBadRequestException('OTP_ALREADY_SENT', `Please wait ${remainingTime} seconds before requesting another OTP code`);
+        throw new CustomBadRequestException('OTP_ALREADY_SENT', `لطفاً ${remainingTime} ثانیه صبر کنید قبل از درخواست کد تایید جدید`); // translated to Persian
       }
     }
 
@@ -69,12 +69,12 @@ export class AuthService {
     // Validate phone number format
     const phoneRegex = /^09[0-9]{9}$/;
     if (!phoneRegex.test(phoneNumber)) {
-      throw new BadRequestException('Invalid phone number format');
+      throw new BadRequestException('فرمت شماره موبایل نامعتبر است'); // translated to Persian
     }
 
     // Validate OTP code format
     if (!/^\d{6}$/.test(code)) {
-      throw new BadRequestException('Invalid OTP code format. Must be 6 digits');
+      throw new BadRequestException('فرمت کد تایید نامعتبر است. باید 6 رقم باشد'); // translated to Persian
     }
 
     // Verify OTP
