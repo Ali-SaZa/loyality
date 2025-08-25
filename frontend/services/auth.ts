@@ -1,91 +1,104 @@
-import { API_ROUTES, HANDLE_ERROR } from './config'
+import axiosInstance, { handleApiError } from '@/config/axios'
+import { API_CONFIG } from '@/config/api'
 
-import axiosInstance from '@/config/axios'
+// Types for authentication
+export interface RequestOtpRequest {
+  phoneNumber: string
+}
 
-export const SEND_OTP = async (data: { mobile: string }) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.SEND_OTP, data)
+export interface RequestOtpResponse {
+  message: string
+  phoneNumber: string
+}
 
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
+export interface VerifyOtpRequest {
+  phoneNumber: string
+  code: string
+}
+
+export interface User {
+  _id: string
+  phoneNumber: string
+  name?: string
+  totalPoints: number
+  role: string
+  tags?: string[]
+  lastActivity?: string
+}
+
+export interface VerifyOtpResponse {
+  accessToken: string
+  user: User
+  isNewUser: boolean
+}
+
+export interface UserProfileResponse {
+  message: string
+  user: {
+    phoneNumber: string
+    userId: string
+    role: string
   }
 }
 
-export const CHECK_OTP = async (data: { mobile: string; verifyCode: string }) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.CHECK_OTP(data.mobile), { verifyCode: data.verifyCode })
+// Authentication service functions
+export const authService = {
+  // Request OTP code
+  async requestOtp(data: RequestOtpRequest): Promise<RequestOtpResponse> {
+    try {
+      const response = await axiosInstance.post<RequestOtpResponse>(
+        API_CONFIG.ENDPOINTS.AUTH.REQUEST_OTP,
+        data
+      )
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
+  },
 
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
+  // Verify OTP and authenticate user
+  async verifyOtp(data: VerifyOtpRequest): Promise<VerifyOtpResponse> {
+    try {
+      const response = await axiosInstance.post<VerifyOtpResponse>(
+        API_CONFIG.ENDPOINTS.AUTH.VERIFY_OTP,
+        data
+      )
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
+  },
+
+  // Get current user profile
+  async getProfile(): Promise<UserProfileResponse> {
+    try {
+      const response = await axiosInstance.get<UserProfileResponse>(
+        API_CONFIG.ENDPOINTS.AUTH.PROFILE
+      )
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
+  },
+
+  // Validate token (optional - can be used to check if token is still valid)
+  async validateToken(): Promise<boolean> {
+    try {
+      await this.getProfile()
+      return true
+    } catch (error) {
+      return false
+    }
   }
 }
 
-export const SEND_LOGIN_OTP = async (data: { mobile: string }) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.SEND_LOGIN_OTP, data)
+// Export individual functions for convenience
+export const requestOtp = authService.requestOtp
+export const verifyOtp = authService.verifyOtp
+export const getProfile = authService.getProfile
+export const validateToken = authService.validateToken
 
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
-  }
-}
-
-export const CHECK_LOGIN_OTP = async (data: { mobile: string; otpCode: string }) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.CHECK_LOGIN_OTP, data)
-
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
-  }
-}
-
-export const LOGIN = async (data: { username: string; password: string }) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.LOGIN, data)
-
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
-  }
-}
-
-export const LOGOUT = async () => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.LOGOUT)
-
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
-  }
-}
-
-export const CHANGE_USER_PASSWORD = async (data: { oldPassword: string; newPassword: string }) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.CHANGE_PASSWORD, data)
-
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
-  }
-}
-
-export const SEND_VERIFY_CODE_TO_MOBILE_AGAIN = async (mobile: string) => {
-  try {
-    const response = await axiosInstance.post(API_ROUTES.AUTH.SEND_VERIFY_CODE(mobile))
-
-    return response
-  } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
-  }
-}
+export default authService

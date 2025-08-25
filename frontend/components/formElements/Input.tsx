@@ -93,7 +93,7 @@ const Input = ({
   apiField = 'data',
   searchMode = 'api',
   pageSize = 20,
-  otpLength = 4,
+  otpLength = 6,
   url,
   size,
   autoFocus,

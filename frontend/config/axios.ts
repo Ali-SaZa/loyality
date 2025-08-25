@@ -1,161 +1,108 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { jwtDecode } from 'jwt-decode'
-import Router from 'next/router'
-import Cookies from 'js-cookie'
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios'
+import { API_CONFIG } from './api'
 
-import { SERVER_URL } from './env'
-
-let isRefreshing = false
-let failedQueue: {
-  resolve: (value: InternalAxiosRequestConfig<any> | PromiseLike<InternalAxiosRequestConfig<any>>) => void
-  reject: (reason?: any) => void
-}[] = []
-
-const processQueue = (error: AxiosError | null, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      prom.resolve(token as unknown as InternalAxiosRequestConfig<any>)
-    }
-  })
-  failedQueue = []
-}
-
+// Create axios instance with base configuration
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: SERVER_URL,
+  baseURL: API_CONFIG.BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// بررسی سمت کلاینت
-const isClient = typeof window !== 'undefined'
-
-// تابعی برای بررسی انقضای توکن
-const isTokenExpired = (expireTime: number) => {
-  return Date.now() >= expireTime
-}
-
-const refreshAccessToken = async () => {
-  if (!isClient) return null
-  const user = localStorage.getItem('user')
-
-  if (!user) return null
-  const { refreshToken } = await JSON.parse(user)
-
-  try {
-    const url = new URL('/token', SERVER_URL)
-    const { data }: AxiosResponse<{ accessToken: string }> = await axios.post(url.href, { refreshToken })
-    const decodedAccessToken: { exp: number; u_id: string } = await jwtDecode(data.accessToken)
-    const decodedRefreshToken: { exp: number; u_id: string } = await jwtDecode(refreshToken)
-    const storageData = {
-      accessToken: data.accessToken,
-      refreshToken,
-      userId: decodedAccessToken.u_id,
-      AccessTokenExpireTime: decodedAccessToken.exp * 1000, // ذخیره زمان انقضای توکن
-      refreshTokenExpireTime: decodedRefreshToken.exp * 1000,
-    }
-
-    localStorage.setItem('user', JSON.stringify(storageData))
-
-    // محاسبه زمان انقضای کوکی (تبدیل به ثانیه)
-    const expireInSeconds = Math.floor((decodedRefreshToken.exp * 1000 - Date.now()) / 1000)
-
-    Cookies.set('accessToken', JSON.stringify(data.accessToken), { expires: expireInSeconds / 86400 })
-
-    return data.accessToken
-  } catch (error) {
-    if (isClient) {
-      localStorage.removeItem('user')
-      Cookies.remove('accessToken')
-      // window.location.href = '/auth'
-      Router.replace('/auth')
-      // window.next.router.replace('/auth')
-    }
-
-    return Promise.reject(error)
-  }
-}
-
+// Request interceptor to add auth token
 axiosInstance.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    if (isClient) {
-      const user = localStorage.getItem('user')
-
-      if (user) {
-        const { accessToken, AccessTokenExpireTime, refreshTokenExpireTime } = await JSON.parse(user)
-
-        // بررسی اینکه آیا توکن منقضی شده است
-        if (isTokenExpired(AccessTokenExpireTime)) {
-          // اگر توکن دسترسی منقضی شده و نیاز به رفرش دارد
-          if (isTokenExpired(refreshTokenExpireTime)) {
-            localStorage.removeItem('user')
-            Cookies.remove('accessToken')
-            // اگر رفرش توکن هم منقضی شده باشد، کاربر را به صفحه لاگین هدایت می‌کنیم
-            Router.push('/auth')
-
-            return Promise.reject(new AxiosError('Refresh token expired'))
-          }
-
-          if (!isRefreshing) {
-            isRefreshing = true
-            const newToken = await refreshAccessToken()
-
-            if (newToken) {
-              axiosInstance.defaults.headers['Authorization'] = `Bearer ${newToken}`
-              config.headers['Authorization'] = `Bearer ${newToken}`
-              processQueue(null, newToken) // صف درخواست‌ها را پردازش می‌کنیم
-            } else {
-              processQueue(new AxiosError('Token refresh failed'), null)
-            }
-
-            isRefreshing = false
-          } else {
-            // اگر رفرش در حال انجام است، درخواست فعلی را به صف اضافه می‌کنیم
-            return new Promise<InternalAxiosRequestConfig>((resolve, reject) => {
-              failedQueue.push({
-                resolve,
-                reject,
-              })
-            })
-          }
-        } else {
-          // اگر توکن معتبر است، آن را به درخواست اضافه می‌کنیم
-          if (accessToken && config.headers) {
-            config.headers['Authorization'] = `Bearer ${accessToken}`
-          } else {
-            const accessTokenCookie = Cookies.get('accessToken')
-
-            if (accessTokenCookie) {
-              const accessTokenCookieParsed = await JSON.parse(accessTokenCookie).accessToken
-
-              config.headers['Authorization'] = `Bearer ${accessTokenCookieParsed}`
-            }
-          }
-        }
+  (config) => {
+    // Add auth token if available
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('authToken')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
       }
     }
-
     return config
   },
-  (error: AxiosError) => {
+  (error) => {
     return Promise.reject(error)
   }
 )
 
+// Response interceptor for error handling
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response: AxiosResponse) => {
+    return response
+  },
   (error: AxiosError) => {
+    // Handle authentication errors
     if (error.response?.status === 401) {
-      localStorage.removeItem('user')
-      Cookies.remove('accessToken')
-      window.location.href = '/auth'
-
-      return Promise.reject(error)
+      // Clear invalid token and redirect to auth
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('user')
+        window.location.href = '/auth'
+      }
     }
+    
+    // Handle network errors
+    if (!error.response) {
+      console.error('Network error:', error.message)
+    }
+    
     return Promise.reject(error)
   }
 )
+
+// Helper function to handle API errors
+export const handleApiError = (error: any): string => {
+  if (axios.isAxiosError(error)) {
+    // Axios error with response
+    if (error.response?.data?.message) {
+      return error.response.data.message
+    }
+    
+    // HTTP status error
+    if (error.response?.status) {
+      switch (error.response.status) {
+        case 400:
+          return 'درخواست نامعتبر است'
+        case 401:
+          return 'احراز هویت ناموفق بود'
+        case 403:
+          return 'دسترسی غیرمجاز'
+        case 404:
+          return 'منبع مورد نظر یافت نشد'
+        case 429:
+          return 'تعداد درخواست‌ها بیش از حد مجاز است'
+        case 500:
+          return 'خطای داخلی سرور'
+        default:
+          return 'خطای نامشخص رخ داده است'
+      }
+    }
+    
+    // Network error
+    if (error.code === 'ECONNABORTED') {
+      return 'درخواست به دلیل تاخیر لغو شد'
+    }
+    
+    if (error.code === 'ERR_NETWORK') {
+      return 'خطا در ارتباط با سرور'
+    }
+  }
+  
+  // Generic error
+  return 'خطای نامشخص رخ داده است'
+}
+
+
+
+// Helper function to logout
+export const logout = () => {
+  if (typeof window === 'undefined') return
+  
+  localStorage.removeItem('authToken')
+  localStorage.removeItem('user')
+  window.location.href = '/auth'
+}
 
 export default axiosInstance

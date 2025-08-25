@@ -58,7 +58,7 @@ export class AuthService {
     }
 
     return {
-      message: 'OTP sent successfully',
+      message: 'کد تایید با موفقیت ارسال شد',
       phoneNumber,
     };
   }

@@ -12,8 +12,8 @@ export const API_ROUTES = {
     SEND_VERIFY_CODE: (mobile: string) => `users/${mobile}/send-verify-code`,
   },
   USER: {
-    GET_USER: 'obs_user/profile',
-    UPDATE_PROFILE: 'obs_user/profile',
+    GET_USER: 'auth/profile',
+    UPDATE_PROFILE: 'auth/profile',
     UPDATE_AVATAR: 'user/image',
     JOB_SIMULATION_EVALUATION: 'obs_user/profile/job-simulation-evaluation',
   },

@@ -4,16 +4,10 @@ import { createContext, ReactNode, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import Cookies from 'js-cookie'
 
-import { GET_USER } from '@/services/user'
-import { LOGIN, LOGOUT } from '@/services/auth'
 import axiosInstance from '@/config/axios'
 import useLoading from '@/hooks/useLoading' // تعریف نوع اطلاعات کاربر
 
-// تعریف نوع اطلاعات کاربر
-interface LoginData {
-  username: string
-  password: string
-}
+
 
 interface User {
   accessToken: string
@@ -33,7 +27,6 @@ interface SaveUserData {
 // تعریف نوع AuthContext
 interface AuthContextType {
   user: User | null
-  login: (userData: LoginData) => Promise<void>
   logout: () => Promise<void>
   saveUser: (data: SaveUserData) => Promise<void>
   updateUserFromOutside: (data: any) => void
@@ -60,11 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         let res = { data: {} }
 
-        if (!storedUserDoc.firstName) {
-          res = await GET_USER()
-        }
-
-        const storageData = { ...res?.data, ...storedUserDoc }
+        const storageData = { ...storedUserDoc }
 
         setUser(storageData)
         localStorage.setItem('user', JSON.stringify(storageData))
@@ -77,7 +66,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   useEffect(() => {
-    fetchUser()
+    // Don't fetch user data on auth page to prevent unnecessary API calls
+    if (typeof window !== 'undefined' && window.location.pathname !== '/auth') {
+      fetchUser()
+    }
   }, [setLoading])
 
   const saveUser = async (data: SaveUserData) => {
@@ -89,10 +81,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const decodedAccessToken: { exp: number; u_id: string } = await jwtDecode(accessToken)
       const decodedRefreshToken: { exp: number; u_id: string } = await jwtDecode(refreshToken)
 
-      const res = await GET_USER()
-
+      // For Loyalty Program, we'll use the user data from the auth response
+      // instead of making an additional API call
       const storageData = {
-        ...res?.data,
         accessToken,
         refreshToken,
         userId: decodedAccessToken.u_id,
@@ -112,27 +103,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  const login = async (userData: LoginData) => {
-    try {
-      const { username, password } = userData
-      const res = await LOGIN({ username, password })
-
-      if (res?.status === 200) {
-        await saveUser(res?.data)
-      }
-    } catch (error) {
-      throw error
-    }
-  }
-
   const logout = async () => {
     try {
-      await LOGOUT()
+      // Simple logout without API call for Loyalty Program
     } catch (error) {
       throw error
     } finally {
       setUser(null)
       Cookies.remove('accessToken')
+      // Clear the authToken cookie for middleware
+      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
       localStorage.clear()
       window.location.href = '/'
       toast.success('خروج موفقیت آمیز بود')
@@ -147,5 +127,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(updatedData)
   }
 
-  return <AuthContext.Provider value={{ user, login, logout, saveUser, updateUserFromOutside }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, logout, saveUser, updateUserFromOutside }}>{children}</AuthContext.Provider>
 }
