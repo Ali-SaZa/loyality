@@ -21,34 +21,34 @@ export const siteConfig = {
     //   isShortAccess: true,
     //   children: [],
     // },
-    {
-      title: 'شبیه ساز ها',
-      icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-      link: '/user/simulators',
-      isShortAccess: true,
-      children: [
-        {
-          title: 'اطلاعات شبیه ساز',
-          icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-          link: '/user/simulators/:id',
-          isShortAccess: false,
-        },
-      ],
-    },
-    {
-      title: 'تراکنش ها',
-      icon: (className: string = 'size-6') => <CoinIcon className={className} />,
-      link: '/user/transactions',
-      isShortAccess: true,
-      children: [],
-    },
-    {
-      title: 'نشان شده ها',
-      icon: (className: string = 'size-6') => <BookmarkIcon className={className} />,
-      link: '/user/bookmarks',
-      isShortAccess: true,
-      children: [],
-    },
+    // {
+    //   title: 'شبیه ساز ها',
+    //   icon: (className: string = 'size-6') => <LayersIcon className={className} />,
+    //   link: '/user/simulators',
+    //   isShortAccess: true,
+    //   children: [
+    //     {
+    //       title: 'اطلاعات شبیه ساز',
+    //       icon: (className: string = 'size-6') => <LayersIcon className={className} />,
+    //       link: '/user/simulators/:id',
+    //       isShortAccess: false,
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'تراکنش ها',
+    //   icon: (className: string = 'size-6') => <LayersIcon className={className} />,
+    //   link: '/user/transactions',
+    //   isShortAccess: true,
+    //   children: [],
+    // },
+    // {
+    //   title: 'نشان شده ها',
+    //   icon: (className: string = 'size-6') => <BookmarkIcon className={className} />,
+    //   link: '/user/bookmarks',
+    //   isShortAccess: true,
+    //   children: [],
+    // },
     {
       title: 'بلاگ ها',
       icon: (className: string = 'size-6') => <CommentAltIcon className={className} />,
@@ -120,25 +120,25 @@ export const siteConfig = {
     },
   ],
   landingNavbar: [
-    {
-      type: 'button',
-      title: 'شبیه ساز ها',
-      link: '/simulators',
-    },
-    {
-      type: 'select',
-      title: 'کسب و کار ها',
-      items: [
-        {
-          title: 'تمامی کسب و کار ها',
-          link: '/organizations',
-        },
-        {
-          title: 'درخواست شبیه ساز',
-          link: '/organizations/request',
-        },
-      ],
-    },
+    // {
+    //   type: 'button',
+    //   title: 'شبیه ساز ها',
+    //   link: '/simulators',
+    // },
+    // {
+    //   type: 'select',
+    //   title: 'کسب و کار ها',
+    //   items: [
+    //     {
+    //       title: 'تمامی کسب و کار ها',
+    //       link: '/organizations',
+    //     },
+    //     {
+    //       title: 'درخواست شبیه ساز',
+    //       link: '/organizations/request',
+    //     },
+    //   ],
+    // },
     {
       type: 'button',
       title: 'مسیر مهارت آموزی',

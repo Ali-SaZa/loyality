@@ -20,6 +20,7 @@ interface UserData {
 export default function DashboardPage() {
   const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -27,19 +28,27 @@ export default function DashboardPage() {
     const token = localStorage.getItem('authToken')
     const userData = localStorage.getItem('user')
 
+    console.log('🔍 Auth check - Token:', !!token, 'User data:', !!userData)
+
     if (!token || !userData) {
-      router.push('/auth')
+      console.log('🚫 No auth token or user data found, redirecting to /auth')
+      setIsRedirecting(true)
+      router.replace('/auth')
       return
     }
 
     try {
       const parsedUser = JSON.parse(userData)
+      console.log('🔍 Parsed user data:', parsedUser)
+      console.log('🔍 User totalPoints:', parsedUser.totalPoints, 'Type:', typeof parsedUser.totalPoints)
       setUser(parsedUser)
     } catch (error) {
       console.error('Error parsing user data:', error)
       localStorage.removeItem('authToken')
       localStorage.removeItem('user')
-      router.push('/auth')
+      console.log('🚫 Error parsing user data, redirecting to /auth')
+      setIsRedirecting(true)
+      router.replace('/auth')
     } finally {
       setLoading(false)
     }
@@ -49,7 +58,8 @@ export default function DashboardPage() {
     logout()
   }
 
-  if (loading) {
+  // Don't show loading spinner if we're redirecting
+  if (loading && user && !isRedirecting) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -60,8 +70,26 @@ export default function DashboardPage() {
     )
   }
 
-  if (!user) {
+  // Don't render anything if we're redirecting
+  if (isRedirecting) {
     return null
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">اطلاعات کاربر یافت نشد</p>
+          <Button
+            color="primary"
+            className="mt-4"
+            onPress={() => router.push('/auth')}
+          >
+            بازگشت به صفحه ورود
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -88,7 +116,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-4">
               <User
                 name={user.name || 'کاربر'}
-                description={user.phoneNumber}
+                description={user.phoneNumber || 'شماره موبایل'}
                 avatarProps={{
                   src: `https://ui-avatars.com/api/?name=${user.name || 'کاربر'}&background=random`,
                   size: "lg"
@@ -96,7 +124,7 @@ export default function DashboardPage() {
               />
               <div className="ml-auto text-right">
                 <p className="text-sm text-gray-500">نقش</p>
-                <p className="font-medium capitalize">{user.role}</p>
+                <p className="font-medium capitalize">{user.role || 'customer'}</p>
               </div>
             </div>
           </CardBody>
@@ -110,12 +138,26 @@ export default function DashboardPage() {
           <CardBody>
             <div className="text-center">
               <div className="text-4xl font-bold text-blue-600 mb-2">
-                {user.totalPoints.toLocaleString()}
+                {(user.totalPoints || 0).toLocaleString()}
               </div>
               <p className="text-gray-600">امتیاز کل</p>
             </div>
           </CardBody>
         </Card>
+
+        {/* Debug Info (Remove in production) */}
+        {process.env.NODE_ENV === 'development' && (
+          <Card className="mb-6">
+            <CardHeader>
+              <h2 className="text-xl font-semibold text-yellow-600">Debug Info</h2>
+            </CardHeader>
+            <CardBody>
+              <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
+                {JSON.stringify(user, null, 2)}
+              </pre>
+            </CardBody>
+          </Card>
+        )}
 
         {/* Quick Actions */}
         <Card>

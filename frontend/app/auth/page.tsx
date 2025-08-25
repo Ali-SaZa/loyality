@@ -24,6 +24,7 @@ const CheckOtpDefaultValues = {
 
 
 const Auth = () => {
+  console.log('🔍 Auth page - Component rendering')
   const { saveUser, updateUserFromOutside } = useAuth()
   const router = useRouter()
 
@@ -52,11 +53,8 @@ const Auth = () => {
 
 
 
-  const routerBackWithRefresh = () => {
-    router.back()
-    setTimeout(() => {
-      router.refresh() // رفرش صفحه مقصد
-    }, 100)
+  const redirectToDashboard = () => {
+    router.push('/')
   }
 
   const sendLoginOTP = async (data: { mobile: string }) => {
@@ -109,7 +107,7 @@ const Auth = () => {
           refreshToken: res.accessToken // Using accessToken as refreshToken for now
         })
 
-        routerBackWithRefresh()
+        redirectToDashboard()
       }
     } catch (error) {
       console.error('❌ OTP Verification - Error:', error)
@@ -148,6 +146,8 @@ const Auth = () => {
     setIsTimerComplete(false) // تنظیم مجدد وضعیت تایمر
   }
 
+  console.log('🔍 Auth page - About to render UI')
+  
   return (
     <div className="h-full flex flex-col md:flex-row gap-8">
       <div className="flex-1">

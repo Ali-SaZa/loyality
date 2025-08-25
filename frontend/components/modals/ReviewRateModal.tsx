@@ -12,13 +12,13 @@ import { SAVE_USER_REVIEW_FOR_SIMULATION } from '@/services/simulationUser'
 
 import '@smastrom/react-rating/style.css'
 
-interface SimulatorSortModalProps {
+interface ReviewRateModalProps {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   jobSimulationUserId: string
 }
 
-const ReviewRateModal = ({ isOpen, setIsOpen, jobSimulationUserId }: SimulatorSortModalProps) => {
+const ReviewRateModal = ({ isOpen, setIsOpen, jobSimulationUserId }: ReviewRateModalProps) => {
   const { onOpenChange } = useDisclosure()
 
   const [isLoading, setIsLoading] = useState(false)

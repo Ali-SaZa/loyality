@@ -65,20 +65,20 @@ const Header = () => {
       />
       <div className="z-10 top-28 md:top-[150px] md:right-[100px] lg:top-[300px] lg:right-[200px] text-center md:text-right text-white absolute px-4">
         <h1 className="font-medium md:font-bold text-3xl md:text-4xl leading-10 md:leading-[68px] text-center md:text-right">
-          شبیه ساز شغلی OBS، هوشمندانه تجربه کن
+          برنامه وفاداری، هوشمندانه پاداش بگیر
         </h1>
         <p className=" max-w-[400px] mt-6 text-medium md:text-lg font-normal leading-7 text-center md:text-right">
-          با شبیه سازهای ما، که با مشارکت کسب و کارهای بزرگ طراحی شدن، کار کردن با برندهای معتبر رو لمس کن{' '}
+          با برنامه وفاداری ما، امتیازات خود را جمع کنید و از کارت‌های جایزه و پاداش‌های ویژه بهره‌مند شوید{' '}
         </p>
         <Button
           className="mt-6 w-full md:w-fit text-white"
           color="default"
           iconEnd={<AngleDoubleLeftIcon />}
           size="lg"
-          to="/evaluation-questions"
+          to="/auth"
           variant="bordered"
         >
-          میخوام تجربه کنم
+          ورود به سیستم
         </Button>
       </div>
     </header>
