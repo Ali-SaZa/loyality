@@ -1,38 +1,16 @@
 'use client'
-import React from 'react'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
-import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 import DashboardIcon from '@/components/icons/DashboardIcon'
-import StoreIcon from '@/components/icons/ChartTreeIcon'
 import UserIcon from '@/components/icons/UserIcon'
-import WalletIcon from '@/components/icons/WalletIcon'
 import ListIcon from '@/components/icons/ListIcon'
-import useAuth from '@/hooks/useAuth'
+import WalletIcon from '@/components/icons/WalletIcon'
 
 const StoreDashboard = () => {
-  const { user, redirectIfUnauthorized } = useAuth()
   const router = useRouter()
-
-  // Simple one-liner for role-based access control
-  useEffect(() => {
-    redirectIfUnauthorized('store')
-  }, [redirectIfUnauthorized])
-
-  // Show loading while checking auth
-  if (!user || user.role !== 'store') {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-text-light">در حال بارگذاری...</p>
-        </div>
-      </div>
-    )
-  }
 
   const stats = [
     {
@@ -103,7 +81,7 @@ const StoreDashboard = () => {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <StoreIcon className="size-8 text-success" />
+        <DashboardIcon className="size-8 text-success" />
         <div>
           <h1 className="text-2xl font-bold text-text-dark">داشبورد فروشگاه</h1>
           <p className="text-text-light">مدیریت کسب و کار و مشتریان</p>

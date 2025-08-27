@@ -3,7 +3,7 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 import UserSidebar from '@/components/layouts/user/Sidebar'
 import UserNavbar from '@/components/layouts/user/Navbar'
-import RouteGuard from '@/components/auth/RouteGuard'
+import RoleGuard from '@/components/auth/RoleGuard'
 
 interface UserLayoutProps {
   children: React.ReactNode
@@ -23,7 +23,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
   const requiredRole = getRequiredRole(pathname)
 
   return (
-    <RouteGuard requiredRole={requiredRole}>
+    <RoleGuard requiredRole={requiredRole}>
       <div className="flex h-screen bg-background-50 overflow-hidden">
         <UserSidebar />
         <div className="flex-1 flex flex-col min-w-0">
@@ -33,7 +33,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
           </main>
         </div>
       </div>
-    </RouteGuard>
+    </RoleGuard>
   )
 }
 
