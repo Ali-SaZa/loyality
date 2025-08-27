@@ -148,10 +148,14 @@ const Auth = () => {
 
   console.log('🔍 Auth page - About to render UI')
   
-  return (
-    <div className="h-full flex flex-col md:flex-row gap-8">
-      <div className="flex-1">
-        <ObsLogo />
+  // Simple fallback to test if component is rendering
+  try {
+    console.log('🔍 Auth page - About to render UI')
+    
+    return (
+      <div className="h-full flex flex-col md:flex-row gap-8">
+        <div className="flex-1">
+          <ObsLogo />
 
         <div className="w-full justify-center mt-10">
           <div className="flex flex-col md:w-fit mx-auto min-w-[282px]">
