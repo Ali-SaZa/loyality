@@ -41,6 +41,9 @@ interface AuthContextType {
   saveUser: (data: SaveUserData) => Promise<void>
   updateUserFromOutside: (data: Partial<User>) => void
   refreshToken: () => Promise<boolean>
+  checkAccess: (requiredRole?: 'admin' | 'store' | 'customer') => boolean
+  redirectToDashboard: () => void
+  redirectIfUnauthorized: (requiredRole?: 'admin' | 'store' | 'customer') => void
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -112,15 +115,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false
       }
 
-      // For now, we'll use the existing access token as refresh token
-      // In a real implementation, you'd make an API call to refresh
-      const decodedRefresh = jwtDecode<{ exp: number; u_id: string }>(user.refreshToken)
-      
-      if (decodedRefresh.exp * 1000 < Date.now()) {
-        await logout()
-        return false
-      }
-
       // Token is still valid, update axios headers
       axiosInstance.defaults.headers['Authorization'] = `Bearer ${user.accessToken}`
       return true
@@ -134,30 +128,40 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Fetch user data from storage
   const fetchUser = useCallback(async () => {
     try {
+      console.log('🔍 fetchUser: Starting to fetch user data')
       setIsLoading(true)
       const storedUser = localStorage.getItem('user')
 
       if (storedUser) {
         const userData: User = JSON.parse(storedUser)
+        console.log('🔍 fetchUser: Found stored user:', { role: userData.role, hasToken: !!userData.accessToken })
         
         // Check if access token is expired
         if (isTokenExpired(userData.accessToken)) {
+          console.log('🔍 fetchUser: Access token expired, attempting refresh')
           // Try to refresh token
           const refreshed = await refreshToken()
           if (!refreshed) {
+            console.log('🔍 fetchUser: Token refresh failed, clearing user data')
             localStorage.removeItem('user')
             setUser(null)
             return
           }
+          console.log('🔍 fetchUser: Token refresh successful')
+        } else {
+          console.log('🔍 fetchUser: Access token is valid')
         }
 
         // Set axios default headers
         axiosInstance.defaults.headers['Authorization'] = `Bearer ${userData.accessToken}`
         
         setUser(userData)
+        console.log('🔍 fetchUser: User data set successfully')
+      } else {
+        console.log('🔍 fetchUser: No stored user found')
       }
     } catch (error) {
-      console.error('Error fetching user data:', error)
+      console.error('🔍 fetchUser: Error fetching user data:', error)
       localStorage.removeItem('user')
       setUser(null)
     } finally {
@@ -234,6 +238,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(updatedData)
   }
 
+  // Role-based routing methods
+  const checkAccess = useCallback((requiredRole?: 'admin' | 'store' | 'customer'): boolean => {
+    if (!user) return false
+    if (!requiredRole) return true
+    return user.role === requiredRole
+  }, [user])
+
+  const redirectToDashboard = useCallback(() => {
+    if (!user) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth'
+      }
+      return
+    }
+    
+    const dashboardUrl = `/${user.role}`
+    if (typeof window !== 'undefined') {
+      window.location.href = dashboardUrl
+    }
+  }, [user])
+
+  const redirectIfUnauthorized = useCallback((requiredRole?: 'admin' | 'store' | 'customer') => {
+    if (!user) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth'
+      }
+      return
+    }
+
+    if (requiredRole && user.role !== requiredRole) {
+      const dashboardUrl = `/${user.role}`
+      if (typeof window !== 'undefined') {
+        window.location.href = dashboardUrl
+      }
+    }
+  }, [user])
+
   const contextValue: AuthContextType = {
     user,
     isLoading,
@@ -242,6 +283,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     saveUser,
     updateUserFromOutside,
     refreshToken,
+    checkAccess,
+    redirectToDashboard,
+    redirectIfUnauthorized,
   }
 
   return (

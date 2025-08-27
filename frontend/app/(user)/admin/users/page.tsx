@@ -13,25 +13,13 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import useAuth from '@/hooks/useAuth'
 
 const AdminUsers = () => {
-  const { user } = useAuth()
+  const { user, redirectIfUnauthorized } = useAuth()
   const router = useRouter()
 
-  // Redirect if user is not admin
+  // Simple one-liner for role-based access control
   useEffect(() => {
-    if (user) {
-      // Redirect non-admin users to their appropriate dashboard
-      if (user.role === 'store') {
-        router.replace('/store')
-      } else if (user.role === 'customer') {
-        router.replace('/customer')
-      } else {
-        router.replace('/auth')
-      }
-    } else {
-      // No user, redirect to auth
-      router.replace('/auth')
-    }
-  }, [user, router])
+    redirectIfUnauthorized('admin')
+  }, [redirectIfUnauthorized])
 
   // Show loading while checking auth
   if (!user || user.role !== 'admin') {

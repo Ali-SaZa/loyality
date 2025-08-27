@@ -14,25 +14,13 @@ import ListIcon from '@/components/icons/ListIcon'
 import useAuth from '@/hooks/useAuth'
 
 const StoreDashboard = () => {
-  const { user } = useAuth()
+  const { user, redirectIfUnauthorized } = useAuth()
   const router = useRouter()
 
-  // Redirect if user is not a store
+  // Simple one-liner for role-based access control
   useEffect(() => {
-    if (user) {
-      // Redirect non-store users to their appropriate dashboard
-      if (user.role === 'admin') {
-        router.replace('/admin')
-      } else if (user.role === 'customer') {
-        router.replace('/customer')
-      } else {
-        router.replace('/auth')
-      }
-    } else {
-      // No user, redirect to auth
-      router.replace('/auth')
-    }
-  }, [user, router])
+    redirectIfUnauthorized('store')
+  }, [redirectIfUnauthorized])
 
   // Show loading while checking auth
   if (!user || user.role !== 'store') {

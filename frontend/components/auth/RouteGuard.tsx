@@ -47,6 +47,7 @@ export default function RouteGuard({
 
     // Check if user has any of the allowed roles
     if (allowedRoles && !allowedRoles.includes(user.role)) {
+      console.log('🔍 RouteGuard: User role not in allowed roles, redirecting')
       // Redirect to appropriate dashboard based on user role
       const dashboardUrl = `/${user.role === 'admin' ? 'admin' : user.role === 'store' ? 'store' : 'customer'}`
       router.replace(dashboardUrl)
