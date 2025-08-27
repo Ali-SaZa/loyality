@@ -63,7 +63,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
             {pathname !== '/user' && !showBrand && (
               <Button
                 iconOnly
-                className="!rounded-full border-1 ml-2"
+                className="!rounded-full border-1 ml-2 hidden md:flex"
                 color="default"
                 variant="bordered"
                 onClick={() => router.back()}

@@ -57,7 +57,7 @@ const UserSidebar = () => {
       {/* Mobile Toggle Button */}
       <button
         onClick={toggleMobileMenu}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-primary text-white rounded-lg shadow-lg hover:bg-primary/90 transition-colors"
+        className="md:hidden fixed top-4 right-4 z-[60] p-2 bg-primary text-white rounded-lg shadow-lg hover:bg-primary/90 transition-colors"
         aria-label="Toggle sidebar menu"
       >
         {isMobileOpen ? <CloseIcon className="size-5" /> : <MenuBurgerIcon className="size-5" />}
@@ -66,7 +66,7 @@ const UserSidebar = () => {
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          className="md:hidden fixed inset-0 bg-black/50 z-45"
           onClick={toggleMobileMenu}
         />
       )}
@@ -76,7 +76,7 @@ const UserSidebar = () => {
         sidebar bg-white flex flex-col h-[100dvh] min-w-[250px] max-w-[250px] 
         border-l border-divider shadow-xl
         transition-transform duration-300 ease-in-out
-        fixed md:relative top-0 z-40
+        fixed md:relative top-0 z-50
         md:shadow-none md:border-r md:border-l-0
         ${isMobileOpen ? 'right-0 translate-x-0' : 'right-0 translate-x-full md:translate-x-0'}
         md:right-auto md:left-0

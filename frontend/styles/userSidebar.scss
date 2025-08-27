@@ -28,6 +28,7 @@
   // RTL mobile positioning - sidebar slides in from right
   @media (max-width: 768px) {
     right: 0;
+    z-index: 50; // Higher than navbar
     
     // When closed, slide to the right (translate-x-full)
     &.translate-x-full {
@@ -45,6 +46,7 @@
     left: 0;
     right: auto;
     transform: translateX(0) !important;
+    z-index: auto; // Normal stacking context on desktop
   }
   
   // Smooth scrollbar styling
