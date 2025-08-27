@@ -1,6 +1,6 @@
 'use client'
 import { jwtDecode } from 'jwt-decode'
-import { createContext, ReactNode, useEffect, useState, useCallback } from 'react'
+import { createContext, ReactNode, useEffect, useState, useCallback, useRef } from 'react'
 import toast from 'react-hot-toast'
 import Cookies from 'js-cookie'
 
@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { setLoading } = useLoading()
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const fetchUserRef = useRef<() => Promise<void> | undefined>(undefined)
 
   // Check if token is expired
   const isTokenExpired = useCallback((token: string): boolean => {
@@ -61,6 +62,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return decoded.exp * 1000 < Date.now()
     } catch {
       return true
+    }
+  }, [])
+
+  // Logout function - defined early to avoid dependency issues
+  const logout = useCallback(async () => {
+    try {
+      // Clear user state
+      setUser(null)
+      
+      // Clear localStorage
+      localStorage.removeItem('user')
+      
+      // Clear cookies
+      Cookies.remove('accessToken')
+      Cookies.remove('app_token')
+      
+      // Clear axios headers
+      delete axiosInstance.defaults.headers['Authorization']
+      
+      // Clear authToken cookie for middleware
+      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      
+      // Redirect to home
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
+      
+      toast.success('خروج موفقیت آمیز بود')
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Force logout even if there's an error
+      setUser(null)
+      localStorage.removeItem('user')
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
     }
   }, [])
 
@@ -92,7 +129,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await logout()
       return false
     }
-  }, [user, isTokenExpired])
+  }, [user?.refreshToken, user?.accessToken, isTokenExpired, logout])
 
   // Fetch user data from storage
   const fetchUser = useCallback(async () => {
@@ -128,6 +165,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [isTokenExpired, refreshToken])
 
+  // Store fetchUser in ref to avoid dependency issues
+  fetchUserRef.current = fetchUser
+
   // Auto-refresh token before expiration
   useEffect(() => {
     if (!user) return
@@ -141,16 +181,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Check every minute
     const interval = setInterval(checkTokenExpiry, 60000)
     return () => clearInterval(interval)
-  }, [user, isTokenExpired, refreshToken])
+  }, [user?.accessToken, isTokenExpired, refreshToken])
 
   useEffect(() => {
     // Don't fetch user data on auth page to prevent unnecessary API calls
     if (typeof window !== 'undefined' && window.location.pathname !== '/auth') {
-      fetchUser()
+      fetchUserRef.current?.()
     } else {
       setIsLoading(false)
     }
-  }, [fetchUser])
+  }, []) // Empty dependency array since we're using ref
 
   const saveUser = async (data: SaveUserData) => {
     try {
@@ -183,41 +223,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       console.error('Error saving user data:', error)
       throw error
-    }
-  }
-
-  const logout = async () => {
-    try {
-      // Clear user state
-      setUser(null)
-      
-      // Clear localStorage
-      localStorage.removeItem('user')
-      
-      // Clear cookies
-      Cookies.remove('accessToken')
-      Cookies.remove('app_token')
-      
-      // Clear axios headers
-      delete axiosInstance.defaults.headers['Authorization']
-      
-      // Clear authToken cookie for middleware
-      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-      
-      // Redirect to home
-      if (typeof window !== 'undefined') {
-        window.location.href = '/'
-      }
-      
-      toast.success('خروج موفقیت آمیز بود')
-    } catch (error) {
-      console.error('Logout error:', error)
-      // Force logout even if there's an error
-      setUser(null)
-      localStorage.removeItem('user')
-      if (typeof window !== 'undefined') {
-        window.location.href = '/'
-      }
     }
   }
 
