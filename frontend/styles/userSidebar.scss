@@ -21,9 +21,31 @@
   }
 }
 
-// Improved sidebar transitions
+// Sidebar base styles with RTL support
 .sidebar {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // RTL mobile positioning - sidebar slides in from right
+  @media (max-width: 768px) {
+    right: 0;
+    
+    // When closed, slide to the right (translate-x-full)
+    &.translate-x-full {
+      transform: translateX(100%);
+    }
+    
+    // When open, show normally (translate-x-0)
+    &.translate-x-0 {
+      transform: translateX(0);
+    }
+  }
+  
+  // Desktop positioning - sidebar is always visible on the left
+  @media (min-width: 769px) {
+    left: 0;
+    right: auto;
+    transform: translateX(0) !important;
+  }
   
   // Smooth scrollbar styling
   &::-webkit-scrollbar {
@@ -58,16 +80,30 @@
   }
 }
 
-// Sidebar slide animation
+// Sidebar slide animation for RTL layout
 .sidebar-slide {
-  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInRTL 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes slideIn {
+@keyframes slideInRTL {
   from {
     transform: translateX(100%);
   }
   to {
     transform: translateX(0);
+  }
+}
+
+// Sidebar slide out animation for RTL layout
+.sidebar-slide-out {
+  animation: slideOutRTL 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideOutRTL {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
   }
 }

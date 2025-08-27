@@ -76,9 +76,10 @@ const UserSidebar = () => {
         sidebar bg-white flex flex-col h-[100dvh] min-w-[250px] max-w-[250px] 
         border-l border-divider shadow-xl
         transition-transform duration-300 ease-in-out
-        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        fixed md:relative right-0 top-0 z-40
+        fixed md:relative top-0 z-40
         md:shadow-none md:border-r md:border-l-0
+        ${isMobileOpen ? 'right-0 translate-x-0' : 'right-0 translate-x-full md:translate-x-0'}
+        md:right-auto md:left-0
       `}>
         {/* Header */}
         <div className="py-4 px-6 flex items-center justify-center border-b border-divider bg-gradient-to-b from-background-50 to-white">
