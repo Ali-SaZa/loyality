@@ -25,6 +25,40 @@ interface UserData {
   [key: string]: any
 }
 
+// Helper function to get user level display info
+const getUserLevelInfo = (role: string) => {
+  switch (role) {
+    case 'admin':
+      return {
+        title: 'مدیر سیستم',
+        description: 'دسترسی کامل به تمام بخش‌ها',
+        color: 'bg-red-500',
+        textColor: 'text-red-600',
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200'
+      }
+    case 'store':
+      return {
+        title: 'صاحب فروشگاه',
+        description: 'مدیریت فروشگاه و مشتریان',
+        color: 'bg-blue-500',
+        textColor: 'text-blue-600',
+        bgColor: 'bg-blue-50',
+        borderColor: 'border-blue-200'
+      }
+    case 'customer':
+    default:
+      return {
+        title: 'مشتری',
+        description: 'استفاده از خدمات وفاداری',
+        color: 'bg-green-500',
+        textColor: 'text-green-600',
+        bgColor: 'bg-green-50',
+        borderColor: 'border-green-200'
+      }
+  }
+}
+
 function DashboardContent() {
   const { user, logout } = useAuth()
   const router = useRouter()
@@ -37,6 +71,8 @@ function DashboardContent() {
   }, [user, router])
 
   const handleLogout = () => {
+    // Clear the auth cookie for middleware
+    document.cookie = 'app_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     logout()
   }
 
@@ -45,9 +81,34 @@ function DashboardContent() {
     return null
   }
 
+  const userLevelInfo = getUserLevelInfo(user.role || 'customer')
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-4xl mx-auto">
+        {/* User Level Banner - Prominently displayed at the top */}
+        <div className={`mb-6 p-4 rounded-lg border-2 ${userLevelInfo.bgColor} ${userLevelInfo.borderColor}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${userLevelInfo.color}`}></div>
+              <div>
+                <h2 className={`text-lg font-bold ${userLevelInfo.textColor}`}>
+                  {userLevelInfo.title}
+                </h2>
+                <p className="text-gray-600 text-sm">
+                  {userLevelInfo.description}
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">سطح کاربری</p>
+              <p className={`font-semibold ${userLevelInfo.textColor}`}>
+                {user.role === 'admin' ? 'Admin' : user.role === 'store' ? 'Store' : 'Customer'}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">داشبورد برنامه وفاداری</h1>

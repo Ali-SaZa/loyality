@@ -43,6 +43,7 @@ const Auth = () => {
   const [loginOtpStep, setLoginOtpStep] = useState(0)
   const [isTimerComplete, setIsTimerComplete] = useState(false)
   const [timerKey, setTimerKey] = useState(0)
+  const [isAutoVerifying, setIsAutoVerifying] = useState(false)
 
   const sendOtpForm = useForm<z.infer<typeof SendOtpFormValidation>>({
     resolver: zodResolver(SendOtpFormValidation),
@@ -97,6 +98,7 @@ const Auth = () => {
     try {
       console.log('🔍 OTP Verification - Starting...', { data, phoneNumber: sendOtpForm.getValues('mobile') })
       setLoading(true)
+      setIsAutoVerifying(true)
       
       const res = await authService.verifyOtp({
         phoneNumber: sendOtpForm.getValues('mobile'),
@@ -106,13 +108,17 @@ const Auth = () => {
       console.log('✅ OTP Verification - Success:', res)
 
       if (res) {
-        // Store the token in localStorage only (more secure than cookies)
+        // Store the token in localStorage and set cookie for middleware
         localStorage.setItem('authToken', res.accessToken)
         localStorage.setItem('user', JSON.stringify(res.user))
         
+        // Set cookie for middleware authentication
+        document.cookie = `app_token=${res.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        
         await saveUser({
           accessToken: res.accessToken,
-          refreshToken: res.accessToken // Using accessToken as refreshToken for now
+          refreshToken: res.accessToken, // Using accessToken as refreshToken for now
+          user: res.user
         })
 
         redirectToDashboard()
@@ -122,6 +128,7 @@ const Auth = () => {
       toast.error(error instanceof Error ? error.message : 'خطا در تایید کد')
     } finally {
       setLoading(false)
+      setIsAutoVerifying(false)
     }
   }
 
@@ -215,6 +222,17 @@ const Auth = () => {
                       name="code"
                       placeholder="کد تایید"
                     />
+                    
+                    {/* Auto-verification indicator */}
+                    {isAutoVerifying && (
+                      <div className="text-center mb-4">
+                        <div className="inline-flex items-center gap-2 text-sm text-blue-600">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                          <span>در حال تایید خودکار...</span>
+                        </div>
+                      </div>
+                    )}
+                    
                     <Button
                       fullWidth
                       isLoading={loading}

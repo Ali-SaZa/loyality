@@ -284,6 +284,19 @@ const Input = ({
                 radius="md"
                 size={size}
                 validationBehavior="aria"
+                onValueChange={(value: string) => {
+                  field.onChange(value)
+                  // Auto-submit when OTP is complete
+                  if (value.length === otpLength) {
+                    // Trigger form submission after a small delay to ensure the value is set
+                    setTimeout(() => {
+                      const form = field.name ? document.querySelector(`[name="${field.name}"]`)?.closest('form') : null
+                      if (form) {
+                        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+                      }
+                    }, 100)
+                  }
+                }}
               />
             </div>
           )}

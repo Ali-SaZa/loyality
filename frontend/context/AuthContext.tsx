@@ -9,19 +9,32 @@ import useLoading from '@/hooks/useLoading' // تعریف نوع اطلاعات 
 
 
 
+// Updated User interface to include only necessary fields
 interface User {
   accessToken: string
   refreshToken: string
   userId: string
   AccessTokenExpireTime: number
   refreshTokenExpireTime: number
-
+  // Only essential fields for user level display and basic info
+  _id?: string
+  phoneNumber?: string
+  name?: string
+  totalPoints?: number
+  role?: 'customer' | 'store' | 'admin'
   [key: string]: any
 }
 
 interface SaveUserData {
   accessToken: string
   refreshToken: string
+  user?: {
+    _id: string
+    phoneNumber: string
+    name?: string
+    totalPoints: number
+    role: 'customer' | 'store' | 'admin'
+  }
 }
 
 // تعریف نوع AuthContext
@@ -74,7 +87,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const saveUser = async (data: SaveUserData) => {
     try {
-      const { accessToken, refreshToken } = data
+      const { accessToken, refreshToken, user: userData } = data
 
       axiosInstance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
 
@@ -89,6 +102,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         userId: decodedAccessToken.u_id,
         AccessTokenExpireTime: decodedAccessToken.exp * 1000,
         refreshTokenExpireTime: decodedRefreshToken.exp * 1000,
+        // Include user data from auth response
+        ...(userData && {
+          _id: userData._id,
+          phoneNumber: userData.phoneNumber,
+          name: userData.name,
+          totalPoints: userData.totalPoints,
+          role: userData.role,
+        }),
       }
 
       localStorage.setItem('user', JSON.stringify(storageData))

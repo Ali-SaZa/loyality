@@ -21,9 +21,7 @@ export interface User {
   phoneNumber: string
   name?: string
   totalPoints: number
-  role: string
-  tags?: string[]
-  lastActivity?: string
+  role: 'customer' | 'store' | 'admin'  // Updated to include all three user levels
 }
 
 export interface VerifyOtpResponse {
