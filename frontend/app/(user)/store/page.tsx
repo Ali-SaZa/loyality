@@ -3,14 +3,49 @@ import React from 'react'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 import DashboardIcon from '@/components/icons/DashboardIcon'
 import StoreIcon from '@/components/icons/ChartTreeIcon'
 import UserIcon from '@/components/icons/UserIcon'
 import WalletIcon from '@/components/icons/WalletIcon'
 import ListIcon from '@/components/icons/ListIcon'
+import useAuth from '@/hooks/useAuth'
 
 const StoreDashboard = () => {
+  const { user } = useAuth()
+  const router = useRouter()
+
+  // Redirect if user is not a store
+  useEffect(() => {
+    if (user) {
+      // Redirect non-store users to their appropriate dashboard
+      if (user.role === 'admin') {
+        router.replace('/admin')
+      } else if (user.role === 'customer') {
+        router.replace('/customer')
+      } else {
+        router.replace('/auth')
+      }
+    } else {
+      // No user, redirect to auth
+      router.replace('/auth')
+    }
+  }, [user, router])
+
+  // Show loading while checking auth
+  if (!user || user.role !== 'store') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-text-light">در حال بارگذاری...</p>
+        </div>
+      </div>
+    )
+  }
+
   const stats = [
     {
       title: 'کل مشتریان',
@@ -149,6 +184,7 @@ const StoreDashboard = () => {
               variant="flat"
               startContent={<ListIcon className="size-5" />}
               className="justify-start h-12"
+              onPress={() => router.push('/store/scratch-cards')}
             >
               ایجاد کارت تخفیف
             </Button>
@@ -157,6 +193,7 @@ const StoreDashboard = () => {
               variant="flat"
               startContent={<UserIcon className="size-5" />}
               className="justify-start h-12"
+              onPress={() => router.push('/store/customers')}
             >
               مدیریت مشتریان
             </Button>
@@ -165,6 +202,7 @@ const StoreDashboard = () => {
               variant="flat"
               startContent={<WalletIcon className="size-5" />}
               className="justify-start h-12"
+              onPress={() => router.push('/store/transactions')}
             >
               مشاهده تراکنش‌ها
             </Button>

@@ -3,11 +3,71 @@
 .sidebar-links-active {
   &:before {
     content: '';
-    width: 5px;
+    width: 4px;
     height: 100%;
     position: absolute;
     right: 0;
-    background-color: variables.$primary-color;
-    border-radius: 10px;
+    top: 0;
+    background: linear-gradient(to bottom, variables.$primary-color, rgba(58, 77, 154, 0.8));
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Admin sidebar active link styling
+.sidebar.admin .sidebar-links-active {
+  &:before {
+    background: linear-gradient(to bottom, variables.$error-color, rgba(220, 38, 38, 0.8));
+  }
+}
+
+// Improved sidebar transitions
+.sidebar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Smooth scrollbar styling
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Mobile overlay animation
+.sidebar-overlay {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Sidebar slide animation
+.sidebar-slide {
+  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
   }
 }

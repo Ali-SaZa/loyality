@@ -1,8 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-
-import { useRouter } from 'next/navigation'
-import React, { Suspense, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { Suspense, useState, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
@@ -15,29 +14,24 @@ import CountdownTimer from '@/components/utils/CountdownTimer'
 import useAuth from '@/hooks/useAuth'
 import { authService } from '@/services/auth'
 import { CheckOtpFormValidation, SendOtpFormValidation } from '@/validation/auth'
-import axiosInstance from '@/config/axios'
 
 const CheckOtpDefaultValues = {
   code: '',
 }
 
-
-
 const Auth = () => {
-  console.log('🔍 Auth page - Component rendering')
-  const { saveUser, updateUserFromOutside } = useAuth()
+  const { saveUser, user } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/'
 
-  // Check if user is already authenticated and redirect to dashboard
-  React.useEffect(() => {
-    const token = localStorage.getItem('authToken')
-    const user = localStorage.getItem('user')
-    
-    if (token && user) {
-      console.log('✅ User already authenticated, redirecting to dashboard')
-      router.replace('/')
+  // Check if user is already authenticated and redirect
+  useEffect(() => {
+    if (user) {
+      console.log('✅ User already authenticated, redirecting to:', redirectTo)
+      router.replace(redirectTo)
     }
-  }, [router])
+  }, [user, redirectTo, router])
 
   const [loading, setLoading] = useState(false)
   const [loginOtpStep, setLoginOtpStep] = useState(0)
@@ -59,14 +53,8 @@ const Auth = () => {
     },
   })
 
-
-
-
-
-
-
   const redirectToDashboard = () => {
-    router.push('/')
+    router.replace(redirectTo)
   }
 
   const sendLoginOTP = async (data: { mobile: string }) => {
@@ -83,7 +71,6 @@ const Auth = () => {
       if (res) {
         setLoginOtpStep(1)
         setIsTimerComplete(false)
-        // Show success message from backend
         toast.success(res.message || 'کد تایید ارسال شد')
       }
     } catch (error) {
@@ -132,12 +119,6 @@ const Auth = () => {
     }
   }
 
-
-
-
-
-
-
   const handleResendCode = async () => {
     try {
       setLoading(true)
@@ -157,16 +138,19 @@ const Auth = () => {
   }
 
   const resetTimer = () => {
-    setTimerKey((prevKey) => prevKey + 1) // تغییر کلید برای ریست
-    setIsTimerComplete(false) // تنظیم مجدد وضعیت تایمر
+    setTimerKey((prevKey) => prevKey + 1)
+    setIsTimerComplete(false)
   }
 
-  console.log('🔍 Auth page - About to render UI')
+  // Don't render if user is already authenticated
+  if (user) {
+    return null
+  }
   
   return (
-      <div className="h-full flex flex-col md:flex-row gap-8">
-        <div className="flex-1">
-          <ObsLogo />
+    <div className="h-full flex flex-col md:flex-row gap-8">
+      <div className="flex-1">
+        <ObsLogo />
 
         <div className="w-full justify-center mt-10">
           <div className="flex flex-col md:w-fit mx-auto min-w-[282px]">

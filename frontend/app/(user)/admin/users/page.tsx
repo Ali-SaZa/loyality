@@ -4,12 +4,47 @@ import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 import UserIcon from '@/components/icons/UserIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
+import useAuth from '@/hooks/useAuth'
 
 const AdminUsers = () => {
+  const { user } = useAuth()
+  const router = useRouter()
+
+  // Redirect if user is not admin
+  useEffect(() => {
+    if (user) {
+      // Redirect non-admin users to their appropriate dashboard
+      if (user.role === 'store') {
+        router.replace('/store')
+      } else if (user.role === 'customer') {
+        router.replace('/customer')
+      } else {
+        router.replace('/auth')
+      }
+    } else {
+      // No user, redirect to auth
+      router.replace('/auth')
+    }
+  }, [user, router])
+
+  // Show loading while checking auth
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-text-light">در حال بارگذاری...</p>
+        </div>
+      </div>
+    )
+  }
+
   const users = [
     {
       id: '1',

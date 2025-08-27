@@ -1,10 +1,11 @@
+import React from 'react'
 import { siteConfig } from '@/config/site'
 
 export type UserRole = 'customer' | 'store' | 'admin'
 
 export interface MenuItem {
   title: string
-  icon: (className?: string) => JSX.Element
+  icon: (className?: string) => React.ReactElement
   link: string
   isShortAccess: boolean
   disable?: boolean

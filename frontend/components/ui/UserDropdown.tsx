@@ -6,13 +6,18 @@ import React, { useMemo, useState } from 'react'
 
 import LogoutIcon from '../icons/LogoutIcon'
 import EditIcon from '../icons/EditIcon'
+import DashboardIcon from '../icons/DashboardIcon'
 
 import { fileAddress, getFullName } from '@/helpers'
 import { getMenuByRole } from '@/helpers/menuUtils'
 import useAuth from '@/hooks/useAuth'
 import useAlertModal from '@/hooks/useAlertModal'
 
-const UserDropdown = () => {
+interface UserDropdownProps {
+  useNavbarItem?: boolean
+}
+
+const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
   const { user, logout } = useAuth()
   const { showAlert } = useAlertModal()
 
@@ -28,26 +33,37 @@ const UserDropdown = () => {
     [menuItems]
   )
 
+  // Render the trigger based on context
+  const renderTrigger = () => {
+    const userComponent = (
+      <User
+        avatarProps={{
+          src: user?.imageId
+            ? fileAddress(user?.imageId)
+            : user?.sex === 'S_Male'
+              ? '/images/placeholders/man-placeholder.webp'
+              : user?.sex === 'S_Female'
+                ? '/images/placeholders/woman-placeholder.webp'
+                : '/images/placeholders/portrait.webp',
+        }}
+        className="[&_span.bg-default]:!bg-transparent"
+        description={user?.mobile?.mobile}
+        name={getFullName(user?.firstName, user?.lastName)}
+      />
+    )
+
+    if (useNavbarItem) {
+      return <NavbarItem>{userComponent}</NavbarItem>
+    }
+
+    return userComponent
+  }
+
   return (
     <>
       <Dropdown placement="bottom-start">
         <DropdownTrigger>
-          <NavbarItem>
-            <User
-              avatarProps={{
-                src: user?.imageId
-                  ? fileAddress(user?.imageId)
-                  : user?.sex === 'S_Male'
-                    ? '/images/placeholders/man-placeholder.webp'
-                    : user?.sex === 'S_Female'
-                      ? '/images/placeholders/woman-placeholder.webp'
-                      : '/images/placeholders/portrait.webp',
-              }}
-              className="[&_span.bg-default]:!bg-transparent"
-              description={user?.mobile?.mobile}
-              name={getFullName(user?.firstName, user?.lastName)}
-            />
-          </NavbarItem>
+          {renderTrigger()}
         </DropdownTrigger>
 
         <DropdownMenu
@@ -59,7 +75,7 @@ const UserDropdown = () => {
             <DropdownItem
               key="user"
               className="h-14 gap-2"
-              href="/user"
+              href="/customer"
               textValue="user"
             >
               <User
@@ -69,7 +85,7 @@ const UserDropdown = () => {
                     : user?.sex === 'S_Male'
                       ? '/images/placeholders/man-placeholder.webp'
                       : user?.sex === 'S_Female'
-                        ? '/images/placeholders/woman-placeholder.webp'
+                        ? '/images/placeholders/portrait.webp'
                         : '/images/placeholders/portrait.webp',
                 }}
                 className="[&_span.bg-default]:!bg-transparent"
@@ -104,6 +120,13 @@ const UserDropdown = () => {
               startContent={<EditIcon className="size-4" />}
             >
               ویرایش پروفایل
+            </DropdownItem>
+            <DropdownItem
+              key="dashboard"
+              href="/customer"
+              startContent={<DashboardIcon className="size-4" />}
+            >
+              داشبورد
             </DropdownItem>
           </DropdownSection>
           <DropdownItem

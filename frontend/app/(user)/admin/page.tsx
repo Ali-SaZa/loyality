@@ -1,5 +1,6 @@
 'use client'
-import React from 'react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
@@ -10,16 +11,25 @@ import StoreIcon from '@/components/icons/ChartTreeIcon'
 import WalletIcon from '@/components/icons/WalletIcon'
 import ListIcon from '@/components/icons/ListIcon'
 import useAuth from '@/hooks/useAuth'
-import { useRouter } from 'next/navigation'
 
 const AdminDashboard = () => {
   const { user } = useAuth()
   const router = useRouter()
 
   // Redirect if user is not admin
-  React.useEffect(() => {
-    if (user && user.role !== 'admin') {
-      router.replace('/user')
+  useEffect(() => {
+    if (user) {
+      // Redirect non-admin users to their appropriate dashboard
+      if (user.role === 'store') {
+        router.replace('/store')
+      } else if (user.role === 'customer') {
+        router.replace('/customer')
+      } else {
+        router.replace('/auth')
+      }
+    } else {
+      // No user, redirect to auth
+      router.replace('/auth')
     }
   }, [user, router])
 
