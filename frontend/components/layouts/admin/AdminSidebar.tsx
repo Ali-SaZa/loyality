@@ -5,44 +5,20 @@ import React from 'react'
 import Button from '@/components/formElements/Button'
 import ObsLogo from '@/components/ui/ObsLogo'
 import { getMenuByRole } from '@/helpers/menuUtils'
-
-import '@/styles/userSidebar.scss'
 import useAuth from '@/hooks/useAuth'
 
-const UserSidebar = () => {
+import '@/styles/userSidebar.scss'
+
+const AdminSidebar = () => {
   const pathname = usePathname()
   const { user } = useAuth()
 
-  // Get menu items based on user role
-  const menuItems = getMenuByRole(user?.role || 'customer')
+  // Get admin menu items
+  const menuItems = getMenuByRole('admin')
 
   const isActive = (link: string) => {
     if (pathname === link) return true
     else return pathname.includes(link.split('/')[2])
-  }
-
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-800">
-            پنل ادمین
-          </span>
-        )
-      case 'store':
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-            پنل فروشگاه
-          </span>
-        )
-      case 'customer':
-      default:
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-            پنل مشتری
-          </span>
-        )
-    }
   }
 
   return (
@@ -51,7 +27,9 @@ const UserSidebar = () => {
         <div className="text-center">
           <ObsLogo iconSize={120} />
           <div className="mt-2">
-            {getRoleBadge(user?.role || 'customer')}
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-800">
+              پنل ادمین
+            </span>
           </div>
         </div>
       </div>
@@ -86,13 +64,11 @@ const UserSidebar = () => {
           <div className="text-center">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-2">
               <span className="text-white text-lg font-semibold">
-                {user?.name?.charAt(0) || user?.phoneNumber?.charAt(0) || 'U'}
+                {user?.name?.charAt(0) || 'A'}
               </span>
             </div>
-            <p className="text-sm font-medium text-text-dark">{user?.name || user?.phoneNumber || 'کاربر'}</p>
-            <p className="text-xs text-text-light">
-              نقش: {user?.role === 'admin' ? 'ادمین' : user?.role === 'store' ? 'فروشگاه' : 'مشتری'}
-            </p>
+            <p className="text-sm font-medium text-text-dark">{user?.name || 'ادمین'}</p>
+            <p className="text-xs text-text-light">نقش: ادمین</p>
           </div>
         </div>
       </div>
@@ -100,4 +76,4 @@ const UserSidebar = () => {
   )
 }
 
-export default UserSidebar
+export default AdminSidebar

@@ -8,7 +8,7 @@ import LogoutIcon from '../icons/LogoutIcon'
 import EditIcon from '../icons/EditIcon'
 
 import { fileAddress, getFullName } from '@/helpers'
-import { siteConfig } from '@/config/site'
+import { getMenuByRole } from '@/helpers/menuUtils'
 import useAuth from '@/hooks/useAuth'
 import useAlertModal from '@/hooks/useAlertModal'
 
@@ -16,22 +16,24 @@ const UserDropdown = () => {
   const { user, logout } = useAuth()
   const { showAlert } = useAlertModal()
 
+  // Get menu items based on user role
+  const menuItems = getMenuByRole(user?.role || 'customer')
+
   const disableKeys = useMemo(
     () =>
-      siteConfig.userSidebar
+      menuItems
         .filter((item) => item.isShortAccess)
         .map((item, index) => item?.disable && String(index))
         .filter((item) => item !== undefined),
-    [siteConfig.userSidebar]
+    [menuItems]
   )
 
   return (
     <>
       <Dropdown placement="bottom-start">
-        <NavbarItem>
-          <DropdownTrigger>
+        <DropdownTrigger>
+          <NavbarItem>
             <User
-              as="button"
               avatarProps={{
                 src: user?.imageId
                   ? fileAddress(user?.imageId)
@@ -41,11 +43,12 @@ const UserDropdown = () => {
                       ? '/images/placeholders/woman-placeholder.webp'
                       : '/images/placeholders/portrait.webp',
               }}
-              className="transition-transform bg-[#D9DEF1] border border-white py-1 px-2 text-text-dark [&_span]:!bg-[#D9DEF1]"
+              className="[&_span.bg-default]:!bg-transparent"
+              description={user?.mobile?.mobile}
               name={getFullName(user?.firstName, user?.lastName)}
             />
-          </DropdownTrigger>
-        </NavbarItem>
+          </NavbarItem>
+        </DropdownTrigger>
 
         <DropdownMenu
           aria-label="User Actions"
@@ -79,7 +82,7 @@ const UserDropdown = () => {
             showDivider
             title="صفحات پر کاربرد"
           >
-            {siteConfig.userSidebar
+            {menuItems
               .filter((item) => item.isShortAccess)
               .map((item, index) => (
                 <DropdownItem
@@ -105,10 +108,10 @@ const UserDropdown = () => {
           </DropdownSection>
           <DropdownItem
             key="logout"
-            className="text-error"
+            className="text-danger"
             color="danger"
             startContent={<LogoutIcon className="size-4" />}
-            onPress={() => showAlert('برای خروج مطمئن هستید؟', logout)}
+            onClick={() => showAlert('برای خروج مطمئن هستید؟', logout)}
           >
             خروج
           </DropdownItem>

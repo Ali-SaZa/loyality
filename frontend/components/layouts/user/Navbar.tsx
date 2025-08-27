@@ -3,12 +3,11 @@ import { Navbar as NextUINavbar, NavbarBrand, NavbarContent, NavbarMenu, NavbarM
 import React, { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { siteConfig } from '@/config/site'
+import { getMenuByRole } from '@/helpers/menuUtils'
 import Button from '@/components/formElements/Button'
 import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
 import CloseIcon from '@/components/icons/CloseIcon'
 import UserDropdown from '@/components/ui/UserDropdown'
-import { GET_USER } from '@/services/user'
 import ChevronRightIcon from '@/components/icons/ChevronRightIcon'
 import useGlobal from '@/hooks/useGlobal'
 import ObsLogo from '@/components/ui/ObsLogo'
@@ -22,23 +21,34 @@ interface NavbarProps {
   menuChildren?: React.ReactNode
 }
 
-const Navbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
+const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
   const { data } = useGlobal()
   const { showAlert } = useAlertModal()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
 
   const router = useRouter()
 
-  const handleClick = async () => {
-    const res = await GET_USER()
-  }
+  // Get menu items based on user role
+  const menuItems = getMenuByRole(user?.role || 'customer')
 
   const isActive = (link: string) => {
     if (pathname === link) return true
     else if (pathname.includes(link.split('/')[2])) return true
     else return false
+  }
+
+  const getRoleTitle = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'پنل مدیریت'
+      case 'store':
+        return 'پنل فروشگاه'
+      case 'customer':
+      default:
+        return 'پنل مشتری'
+    }
   }
 
   return (
@@ -66,7 +76,14 @@ const Navbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
                 <ObsLogo iconSize={140} />
               </div>
             ) : (
-              <p className="font-bold text-lg leading-8 text-white hidden md:block">{title || data.navbar.title}</p>
+              <div className="text-right">
+                <p className="font-bold text-lg leading-8 text-white hidden md:block">
+                  {title || data.navbar.title || getRoleTitle(user?.role || 'customer')}
+                </p>
+                <p className="text-sm text-white/80 hidden md:block">
+                  {user?.name || user?.phoneNumber || 'کاربر'}
+                </p>
+              </div>
             )}
           </NavbarBrand>
         </NavbarContent>
@@ -75,68 +92,21 @@ const Navbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
           className="md:hidden"
           justify="center"
         >
-          <p className="font-bold text-xs text-white">{truncateText(title || data.navbar.title, 20)}</p>
+          <p className="font-bold text-xs text-white">{truncateText(title || data.navbar.title || getRoleTitle(user?.role || 'customer'), 20)}</p>
         </NavbarContent>
 
         <NavbarContent
           className="hidden md:flex"
           justify="end"
         >
-          {/* <NavbarItem>
-            <Badge
-              content="جدید"
-              color="danger"
-              size="sm"
-            >
-              <Button
-                onClick={handleClick}
-                iconOnly
-                variant="bordered"
-                className="rounded-full"
-                color="default"
-              >
-                <CommentIcon className="size-4 text-white" />
-              </Button>
-            </Badge>
-          </NavbarItem>
-          <NavbarItem>
-            <Button
-              iconOnly
-              variant="bordered"
-              className="rounded-full"
-              color="default"
-            >
-              <BellIcon className="size-4 text-white" />
-            </Button>
-          </NavbarItem> */}
           <UserDropdown />
         </NavbarContent>
 
-        <NavbarContent
-          className="flex md:hidden "
-          justify="end"
-        >
-          <NavbarMenuToggle
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            className="md:hidden w-full justify-end"
-            icon={
-              !isMenuOpen ? (
-                <div className="size-10 rounded-full flex items-center justify-center border-2">
-                  <MenuBurgerIcon className="text-white size-6" />
-                </div>
-              ) : (
-                <div className="size-10 rounded-full flex items-center justify-center border-2">
-                  <CloseIcon className="text-white size-6" />
-                </div>
-              )
-            }
-          />
-        </NavbarContent>
-
+        {/* Mobile Menu */}
         <NavbarMenu className="bg-white pb-2">
           {menuChildren
             ? menuChildren
-            : siteConfig.userSidebar.map((item, index) => (
+            : menuItems.map((item, index) => (
                 <NavbarMenuItem
                   key={index}
                   className={`px-4 w-full relative ${isActive(item.link) && 'sidebar-links-active'}`}
@@ -164,28 +134,10 @@ const Navbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => {
               خروج
             </Button>
           </NavbarMenuItem>
-          {/* {siteConfig.userSidebar.map((item, index) => (
-            <NavbarMenuItem
-              key={index}
-              className={`px-4 w-full relative ${isActive(item.link) && 'sidebar-links-active'}`}
-            >
-              <CustomButton
-                fullWidth
-                iconStart={item.icon()}
-                variant={isActive(item.link) ? 'flat' : 'light'}
-                onClick={() => setIsMenuOpen(false)}
-                size="lg"
-                className="justify-start"
-                to={item.link}
-              >
-                <p className="text-sm text-text-dark leading-4 font-normal">{item.title}</p>
-              </CustomButton>
-            </NavbarMenuItem>
-          ))} */}
         </NavbarMenu>
       </NextUINavbar>
     </>
   )
 }
 
-export default Navbar
+export default UserNavbar
