@@ -1,95 +1,48 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { User } from '@heroui/user'
 import { useRouter } from 'next/navigation'
-import { logout } from '@/config/axios'
+import useAuth from '@/hooks/useAuth'
 
+// User data interface - using the one from AuthContext
 interface UserData {
-  _id: string
-  phoneNumber: string
+  accessToken: string
+  refreshToken: string
+  userId: string
+  AccessTokenExpireTime: number
+  refreshTokenExpireTime: number
+  // Additional fields from the auth response
+  _id?: string
+  phoneNumber?: string
   name?: string
-  totalPoints: number
-  role: string
+  totalPoints?: number
+  role?: string
   tags?: string[]
   lastActivity?: string
+  [key: string]: any
 }
 
-export default function DashboardPage() {
-  const [user, setUser] = useState<UserData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [isRedirecting, setIsRedirecting] = useState(false)
+function DashboardContent() {
+  const { user, logout } = useAuth()
   const router = useRouter()
 
+  // Redirect to auth if no user
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('authToken')
-    const userData = localStorage.getItem('user')
-
-    console.log('🔍 Auth check - Token:', !!token, 'User data:', !!userData)
-
-    if (!token || !userData) {
-      console.log('🚫 No auth token or user data found, redirecting to /auth')
-      setIsRedirecting(true)
+    if (!user) {
       router.replace('/auth')
-      return
     }
-
-    try {
-      const parsedUser = JSON.parse(userData)
-      console.log('🔍 Parsed user data:', parsedUser)
-      console.log('🔍 User totalPoints:', parsedUser.totalPoints, 'Type:', typeof parsedUser.totalPoints)
-      setUser(parsedUser)
-    } catch (error) {
-      console.error('Error parsing user data:', error)
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('user')
-      console.log('🚫 Error parsing user data, redirecting to /auth')
-      setIsRedirecting(true)
-      router.replace('/auth')
-    } finally {
-      setLoading(false)
-    }
-  }, [router])
+  }, [user, router])
 
   const handleLogout = () => {
     logout()
   }
 
-  // Don't show loading spinner if we're redirecting
-  if (loading && user && !isRedirecting) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Don't render anything if we're redirecting
-  if (isRedirecting) {
-    return null
-  }
-
+  // Don't render if user is not available
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">اطلاعات کاربر یافت نشد</p>
-          <Button
-            color="primary"
-            className="mt-4"
-            onPress={() => router.push('/auth')}
-          >
-            بازگشت به صفحه ورود
-          </Button>
-        </div>
-      </div>
-    )
+    return null
   }
 
   return (
@@ -115,10 +68,10 @@ export default function DashboardPage() {
           <CardBody>
             <div className="flex items-center gap-4">
               <User
-                name={user.name || 'کاربر'}
+                name={user.name || user.phoneNumber || 'کاربر'}
                 description={user.phoneNumber || 'شماره موبایل'}
                 avatarProps={{
-                  src: `https://ui-avatars.com/api/?name=${user.name || 'کاربر'}&background=random`,
+                  src: `https://ui-avatars.com/api/?name=${user.name || user.phoneNumber || 'کاربر'}&background=random`,
                   size: "lg"
                 }}
               />
@@ -207,4 +160,9 @@ export default function DashboardPage() {
       </div>
     </div>
   )
+}
+
+// Main dashboard page using context for authentication
+export default function DashboardPage() {
+  return <DashboardContent />
 }

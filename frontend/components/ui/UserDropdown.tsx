@@ -5,8 +5,6 @@ import { User } from '@heroui/user'
 import React, { useMemo, useState } from 'react'
 
 import LogoutIcon from '../icons/LogoutIcon'
-import PasswordIcon from '../icons/PasswordIcon'
-import ChangePasswordModal from '../modals/ChangePasswordModal'
 import EditIcon from '../icons/EditIcon'
 
 import { fileAddress, getFullName } from '@/helpers'
@@ -17,7 +15,6 @@ import useAlertModal from '@/hooks/useAlertModal'
 const UserDropdown = () => {
   const { user, logout } = useAuth()
   const { showAlert } = useAlertModal()
-  const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] = useState(false)
 
   const disableKeys = useMemo(
     () =>
@@ -105,13 +102,6 @@ const UserDropdown = () => {
             >
               ویرایش پروفایل
             </DropdownItem>
-            <DropdownItem
-              key="change-password"
-              startContent={<PasswordIcon className="size-5" />}
-              onPress={() => setIsOpenChangePasswordModal(true)}
-            >
-              تغییر رمز عبور
-            </DropdownItem>
           </DropdownSection>
           <DropdownItem
             key="logout"
@@ -124,10 +114,6 @@ const UserDropdown = () => {
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
-      <ChangePasswordModal
-        isOpen={isOpenChangePasswordModal}
-        setIsOpen={setIsOpenChangePasswordModal}
-      />
     </>
   )
 }

@@ -102,7 +102,10 @@ export const logout = () => {
   
   localStorage.removeItem('authToken')
   localStorage.removeItem('user')
-  window.location.href = '/auth'
+  // Use router.push for better navigation
+  if (typeof window !== 'undefined') {
+    window.location.href = '/auth'
+  }
 }
 
 export default axiosInstance

@@ -28,6 +28,17 @@ const Auth = () => {
   const { saveUser, updateUserFromOutside } = useAuth()
   const router = useRouter()
 
+  // Check if user is already authenticated and redirect to dashboard
+  React.useEffect(() => {
+    const token = localStorage.getItem('authToken')
+    const user = localStorage.getItem('user')
+    
+    if (token && user) {
+      console.log('✅ User already authenticated, redirecting to dashboard')
+      router.replace('/')
+    }
+  }, [router])
+
   const [loading, setLoading] = useState(false)
   const [loginOtpStep, setLoginOtpStep] = useState(0)
   const [isTimerComplete, setIsTimerComplete] = useState(false)
@@ -95,12 +106,9 @@ const Auth = () => {
       console.log('✅ OTP Verification - Success:', res)
 
       if (res) {
-        // Store the token in both localStorage and cookies for middleware access
+        // Store the token in localStorage only (more secure than cookies)
         localStorage.setItem('authToken', res.accessToken)
         localStorage.setItem('user', JSON.stringify(res.user))
-        
-        // Set cookie for middleware authentication check
-        document.cookie = `authToken=${res.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}` // 7 days
         
         await saveUser({
           accessToken: res.accessToken,
@@ -148,11 +156,7 @@ const Auth = () => {
 
   console.log('🔍 Auth page - About to render UI')
   
-  // Simple fallback to test if component is rendering
-  try {
-    console.log('🔍 Auth page - About to render UI')
-    
-    return (
+  return (
       <div className="h-full flex flex-col md:flex-row gap-8">
         <div className="flex-1">
           <ObsLogo />
