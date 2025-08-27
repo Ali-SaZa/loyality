@@ -8,7 +8,6 @@ import { getMenuByRole } from '@/helpers/menuUtils'
 import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
 import CloseIcon from '@/components/icons/CloseIcon'
 
-import '@/styles/userSidebar.scss'
 import useAuth from '@/hooks/useAuth'
 
 const UserSidebar = () => {
@@ -73,13 +72,16 @@ const UserSidebar = () => {
 
       {/* Sidebar */}
       <div className={`
-        sidebar bg-white flex flex-col h-[100dvh] min-w-[250px] max-w-[250px] 
+        bg-white flex flex-col h-[100dvh] min-w-[250px] max-w-[250px] 
         border-l border-divider shadow-xl
-        transition-transform duration-300 ease-in-out
+        transition-all duration-300 ease-in-out
         fixed md:relative top-0 z-50
         md:shadow-none md:border-r md:border-l-0
         ${isMobileOpen ? 'right-0 translate-x-0' : 'right-0 translate-x-full md:translate-x-0'}
         md:right-auto md:left-0
+        md:transform-none
+        overflow-y-auto
+        scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400
       `}>
         {/* Header */}
         <div className="py-4 px-6 flex items-center justify-center border-b border-divider bg-gradient-to-b from-background-50 to-white">
@@ -97,7 +99,15 @@ const UserSidebar = () => {
             {menuItems.map((item: any, index) => (
               <div
                 key={index}
-                className={`relative ${isActive(item.link) && 'sidebar-links-active'}`}
+                className={`relative ${
+                  isActive(item.link) 
+                    ? `after:content-[""] after:absolute after:top-0 after:right-0 after:w-1 after:h-full after:rounded-l after:shadow-lg ${
+                        user?.role === 'admin' 
+                          ? 'after:bg-gradient-to-b after:from-error after:to-error/80' 
+                          : 'after:bg-gradient-to-b after:from-primary after:to-primary/80'
+                      }`
+                    : ''
+                }`}
               >
                 <Button
                   fullWidth
