@@ -4,8 +4,8 @@ import axiosInstance, { handleApiError } from '@/config/axios'
 export interface User {
   id: string
   phoneNumber: string
-  firstname?: string
-  lastname?: string
+  firstName?: string
+  lastName?: string
   totalPoints: number
   role: string
   status?: 'active' | 'blocked' | 'deleted'
@@ -34,16 +34,16 @@ export interface Purchase {
 
 export interface CreateUserRequest {
   phoneNumber: string
-  firstname?: string
-  lastname?: string
+  firstName?: string
+  lastName?: string
   storeName?: string
   address?: string
   description?: string
 }
 
 export interface UpdateUserRequest {
-  firstname?: string
-  lastname?: string
+  firstName?: string
+  lastName?: string
   storeName?: string
   address?: string
   description?: string
@@ -72,8 +72,8 @@ export const usersService = {
       const users = response.data.map(user => ({
         id: user.id,
         phoneNumber: user.phoneNumber,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        firstName: user.firstName,
+        lastName: user.lastName,
         totalPoints: user.totalPoints || 0,
         role: user.role,
         status: user.status || 'active',

@@ -40,10 +40,10 @@ export default function UserIndexPage() {
         <CardBody>
           <div className="flex items-center gap-4">
             <User
-              name={user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : user.firstname || user.lastname || user.phoneNumber || 'کاربر'}
+              name={user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName || user.lastName || user.phoneNumber || 'کاربر'}
               description={user.phoneNumber || 'شماره موبایل'}
               avatarProps={{
-                src: `https://ui-avatars.com/api/?name=${user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : user.firstname || user.lastname || user.phoneNumber || 'کاربر'}&background=random`,
+                src: `https://ui-avatars.com/api/?name=${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName || user.lastName || user.phoneNumber || 'کاربر'}&background=random`,
                 size: "lg"
               }}
             />

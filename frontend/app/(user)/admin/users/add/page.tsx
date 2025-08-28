@@ -15,8 +15,8 @@ import { createUser, updateUser, getUserById, User } from '@/services/users'
 import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
 
 type FormData = Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'purchases' | 'lastActivity' | 'status' | 'role'> & {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   role: UserRole;
   status: UserStatus;
 }
@@ -32,8 +32,8 @@ const AddEditUser = () => {
   const methods = useForm<FormData>({
     defaultValues: {
       phoneNumber: '',
-      firstname: '',
-      lastname: '',
+          firstName: '',
+    lastName: '',
       role: UserRole.CUSTOMER,
       status: UserStatus.ACTIVE,
       totalPoints: 0,
@@ -57,8 +57,8 @@ const AddEditUser = () => {
       const user = await getUserById(userId!)
       reset({
         phoneNumber: user.phoneNumber,
-        firstname: user.firstname || '',
-        lastname: user.lastname || '',
+              firstName: user.firstName || '',
+      lastName: user.lastName || '',
         role: user.role as UserRole,
         status: user.status as UserStatus,
         totalPoints: user.totalPoints || 0,
@@ -90,8 +90,8 @@ const AddEditUser = () => {
       
       if (isEditMode) {
         await updateUser(userId!, {
-          firstname: data.firstname,
-          lastname: data.lastname,
+          firstName: data.firstName,
+          lastName: data.lastName,
           storeName: data.storeName,
           address: data.address,
           description: data.description
@@ -100,8 +100,8 @@ const AddEditUser = () => {
       } else {
         await createUser({
           phoneNumber: data.phoneNumber,
-          firstname: data.firstname,
-          lastname: data.lastname,
+          firstName: data.firstName,
+          lastName: data.lastName,
           storeName: data.storeName,
           address: data.address,
           description: data.description
@@ -174,7 +174,7 @@ const AddEditUser = () => {
               {/* First Name */}
               <Input
                 generalType="input"
-                name="firstname"
+                name="firstName"
                 label="نام"
                 inputType="text"
                 placeholder="نام کاربر را وارد کنید"
@@ -184,7 +184,7 @@ const AddEditUser = () => {
               {/* Last Name */}
               <Input
                 generalType="input"
-                name="lastname"
+                name="lastName"
                 label="نام خانوادگی"
                 inputType="text"
                 placeholder="نام خانوادگی کاربر را وارد کنید"

@@ -119,11 +119,11 @@ const UserSidebar = () => {
               <div className="text-center">
                 <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
                   <span className="text-white text-lg font-bold">
-                    {user?.firstname?.charAt(0) || user?.phoneNumber?.charAt(0) || 'U'}
+                    {user?.firstName?.charAt(0) || user?.phoneNumber?.charAt(0) || 'U'}
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-text-dark mb-1">
-                  {user?.firstname || user?.phoneNumber || 'کاربر'}
+                  {user?.firstName || user?.phoneNumber || 'کاربر'}
                 </p>
                 <p className="text-xs text-text-light bg-white/60 rounded-full px-2 py-1 inline-block">
                   نقش: {getRoleConfig(user?.role || 'customer').text}

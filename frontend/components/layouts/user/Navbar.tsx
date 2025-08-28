@@ -81,7 +81,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
                   {title || data.navbar.title || getRoleTitle(user?.role || 'customer')}
                 </p>
                 <p className="text-sm text-white/80 hidden md:block">
-                  {user?.firstname || user?.phoneNumber || 'کاربر'}
+                  {user?.firstName || user?.phoneNumber || 'کاربر'}
                 </p>
               </div>
             )}

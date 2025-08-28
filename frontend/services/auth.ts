@@ -19,8 +19,8 @@ export interface VerifyOtpRequest {
 export interface User {
   _id: string
   phoneNumber: string
-  firstname?: string
-  lastname?: string
+  firstName?: string
+  lastName?: string
   totalPoints: number
   role: 'customer' | 'store' | 'admin'  // Updated to include all three user levels
 }

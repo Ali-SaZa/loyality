@@ -38,8 +38,8 @@ const AdminUsers = () => {
       setFilteredUsers(users)
     } else {
       const filtered = users.filter(user => 
-        (user.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.lastname?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
         user.phoneNumber.includes(searchTerm)
       )
       setFilteredUsers(filtered)
@@ -70,7 +70,7 @@ const AdminUsers = () => {
 
     try {
       setDeleteLoading(true)
-      console.log('Starting delete process for user:', userToDelete.id, userToDelete.firstname, userToDelete.lastname)
+              console.log('Starting delete process for user:', userToDelete.id, userToDelete.firstName, userToDelete.lastName)
       
       await deleteUser(userToDelete.id)
       
@@ -258,14 +258,14 @@ const AdminUsers = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                           <span className="text-white text-sm font-semibold">
-                            {user.firstname?.charAt(0) || user.lastname?.charAt(0) || '?'}
+                            {user.firstName?.charAt(0) || user.lastName?.charAt(0) || '?'}
                           </span>
                         </div>
                         <span className="font-medium">
-                          {user.firstname && user.lastname 
-                            ? `${user.firstname} ${user.lastname}` 
-                            : user.firstname || user.lastname || 'نامشخص'
-                          }
+                                          {user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || 'نامشخص'
+                }
                         </span>
                       </div>
                     </TableCell>
@@ -334,9 +334,9 @@ const AdminUsers = () => {
           <ModalBody>
             <p>
               آیا از حذف کاربر <strong>
-                {userToDelete?.firstname && userToDelete?.lastname 
-                  ? `${userToDelete.firstname} ${userToDelete.lastname}` 
-                  : userToDelete?.firstname || userToDelete?.lastname || 'نامشخص'
+                                {userToDelete?.firstName && userToDelete?.lastName
+                  ? `${userToDelete.firstName} ${userToDelete.lastName}`
+                  : userToDelete?.firstName || userToDelete?.lastName || 'نامشخص'
                 }
               </strong> اطمینان دارید؟
             </p>

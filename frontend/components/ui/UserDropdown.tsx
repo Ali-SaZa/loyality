@@ -42,7 +42,7 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
         }}
         className="[&_span.bg-default]:!bg-transparent"
         description={user?.phoneNumber}
-        name={user?.firstname || user?.phoneNumber || 'کاربر'}
+                name={user?.firstName || user?.phoneNumber || 'کاربر'}
       />
     )
 
@@ -73,12 +73,12 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
               textValue="user"
             >
               <User
-                        avatarProps={{
-          src: '/images/placeholders/portrait.webp'
-        }}
-        className="[&_span.bg-default]:!bg-transparent"
-        description={user?.phoneNumber}
-        name={user?.firstname || user?.phoneNumber || 'کاربر'}
+                avatarProps={{
+                  src: '/images/placeholders/portrait.webp'
+                }}
+                className="[&_span.bg-default]:!bg-transparent"
+                description={user?.phoneNumber}
+                name={user?.firstName || user?.phoneNumber || 'کاربر'}
               />
             </DropdownItem>
           </DropdownSection>

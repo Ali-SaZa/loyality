@@ -47,10 +47,10 @@ export class User {
   phoneNumber: string;
 
   @Prop({ required: false, trim: true, maxlength: 100 })
-  firstname?: string;
+  firstName?: string;
 
   @Prop({ required: false, trim: true, maxlength: 100 })
-  lastname?: string;
+  lastName?: string;
 
   @Prop({ default: 0, min: 0 })
   totalPoints: number;

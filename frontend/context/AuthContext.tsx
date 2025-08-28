@@ -12,8 +12,8 @@ import { UserRole } from '@/types/enums'
 interface User {
   _id: string
   phoneNumber: string
-  firstname?: string
-  lastname?: string
+  firstName?: string
+  lastName?: string
   totalPoints: number
   role: UserRole
   accessToken: string
@@ -29,8 +29,8 @@ interface SaveUserData {
   user: {
     _id: string
     phoneNumber: string
-    firstname?: string
-    lastname?: string
+    firstName?: string
+    lastName?: string
     totalPoints: number
     role: UserRole
   }
