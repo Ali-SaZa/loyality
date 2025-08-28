@@ -30,7 +30,15 @@ export class OtpService {
   }
 
   async create(createOtpDto: CreateOtpDto): Promise<OtpResponseDto> {
-    const otp = new this.otpModel(createOtpDto);
+    // Convert string date to Date object if needed
+    const otpData = {
+      ...createOtpDto,
+      expiresAt: typeof createOtpDto.expiresAt === 'string' 
+        ? new Date(createOtpDto.expiresAt) 
+        : createOtpDto.expiresAt
+    };
+    
+    const otp = new this.otpModel(otpData);
     const savedOtp = await otp.save();
     return this.transformOtpToResponse(savedOtp);
   }

@@ -28,7 +28,7 @@ export class CreateOtpDto {
 
   @ApiProperty({ description: 'Expiration date' })
   @IsDateString()
-  expiresAt: Date;
+  expiresAt: string;
 }
 
 export class UpdateOtpDto {

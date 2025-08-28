@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, PurchaseDto, UserResponseDto } from '../dto';
+import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { UserNotFoundException } from '../common/errors';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -83,20 +84,39 @@ export class UsersController {
   @Get()
   @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all users (Admin only)' })
-  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)' })
-  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 10)' })
-  @ApiQuery({ name: 'search', required: false, description: 'Search by name or phone number' })
+  @ApiOperation({ summary: 'Get all users with pagination, sorting, and filtering (Admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'Users retrieved successfully',
-    type: [UserResponseDto] 
+    type: ListResponseDto 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.usersService.findAll();
-    return users.map(user => this.transformUserToResponse(user));
+  async findAll(
+    @Query() listRequest: ListRequestDto,
+    @CurrentUser() currentUser: any
+  ): Promise<ListResponseDto<UserResponseDto>> {
+    const response = await this.usersService.findAll(listRequest, { requestingUser: currentUser });
+    
+    // Transform the response data
+    const transformedData = response.data.map(user => this.transformUserToResponse(user));
+    
+    return {
+      ...response,
+      data: transformedData
+    };
+  }
+
+  @Get('filter-options')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get available filter options for users (Admin only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Filter options retrieved successfully'
+  })
+  async getFilterOptions() {
+    return this.usersService.getFilterOptions();
   }
 
   @Get('me')
@@ -199,8 +219,6 @@ export class UsersController {
     const updatedUser = await this.usersService.addPurchase(id, purchaseDto, user);
     return this.transformUserToResponse(updatedUser);
   }
-
-
 
   @Patch(':id/status')
   @AdminAuth()

@@ -3,16 +3,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import { CreateUserDto, UpdateUserDto, PurchaseDto } from '../dto';
+import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
+import { GenericListService } from '../common/services/generic-list.service';
 import { 
   UserNotFoundException, 
   CustomConflictException 
 } from '../common/errors';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends GenericListService<UserDocument> {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  ) {
+    super(userModel);
+  }
 
   private async validateUserAccess(userDoc: UserDocument, requestingUser: any): Promise<void> {
     // Admin can access everything
@@ -58,8 +62,16 @@ export class UsersService {
     return user.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  // Override the findAll method to add role-based filtering
+  async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<UserDocument>> {
+    // Add role-based access control
+    if (additionalFilters.requestingUser?.role === 'store') {
+      // Store users can only see customers who have transactions with their store
+      // This is a simplified example - you might want to implement more sophisticated logic
+      additionalFilters['purchases.storeId'] = additionalFilters.requestingUser.storeId;
+    }
+
+    return super.findAll(request, additionalFilters);
   }
 
   async findOne(id: string, requestingUser: any): Promise<User> {
@@ -149,8 +161,6 @@ export class UsersService {
     return user.save();
   }
 
-
-
   async updateStatus(id: string, status: 'active' | 'blocked' | 'deleted', requestingUser: any): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
@@ -173,5 +183,21 @@ export class UsersService {
       throw new UserNotFoundException();
     }
     return updatedUser;
+  }
+
+  // Get available filter options for the frontend
+  async getFilterOptions(): Promise<{
+    statuses: string[];
+    roles: string[];
+  }> {
+    const [statuses, roles] = await Promise.all([
+      this.getDistinctValues('status'),
+      this.getDistinctValues('role')
+    ]);
+
+    return {
+      statuses: statuses.filter(Boolean),
+      roles: roles.filter(Boolean)
+    };
   }
 }

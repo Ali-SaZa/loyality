@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { CreateStoreDto, UpdateStoreDto, StoreResponseDto } from '../dto';
+import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
+import { GenericListService } from '../common/services/generic-list.service';
 import { 
   StoreNotFoundException, 
   StorePhoneExistsException,
@@ -11,10 +13,12 @@ import {
 import { ForbiddenException } from '@nestjs/common';
 
 @Injectable()
-export class StoresService {
+export class StoresService extends GenericListService<StoreDocument> {
   constructor(
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
-  ) {}
+  ) {
+    super(storeModel);
+  }
 
   private transformStoreToResponse(store: StoreDocument): StoreResponseDto {
     return {
@@ -46,9 +50,15 @@ export class StoresService {
     return this.transformStoreToResponse(savedStore);
   }
 
-  async findAll(): Promise<StoreResponseDto[]> {
-    const stores = await this.storeModel.find().exec();
-    return stores.map(store => this.transformStoreToResponse(store));
+  // Override the findAll method to add role-based filtering
+  async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<StoreDocument>> {
+    // Add role-based access control
+    if (additionalFilters.requestingUser?.role === 'store') {
+      // Store users can only see their own store
+      additionalFilters['_id'] = additionalFilters.requestingUser.storeId;
+    }
+
+    return super.findAll(request, additionalFilters);
   }
 
   async findOne(id: string, user: any): Promise<StoreResponseDto> {
@@ -115,5 +125,21 @@ export class StoresService {
     }
 
     throw new ForbiddenException('دسترسی ممنوع. شما مجوز تغییر این فروشگاه را ندارید.'); // translated to Persian
+  }
+
+  // Get available filter options for the frontend
+  async getFilterOptions(): Promise<{
+    plans: string[];
+    roles: string[];
+  }> {
+    const [plans, roles] = await Promise.all([
+      this.getDistinctValues('plan'),
+      this.getDistinctValues('role')
+    ]);
+
+    return {
+      plans: plans.filter(Boolean),
+      roles: roles.filter(Boolean)
+    };
   }
 }

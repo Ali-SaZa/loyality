@@ -28,7 +28,7 @@ export class CreateScratchCardDto {
 
   @ApiProperty({ description: 'Expiration date' })
   @IsDateString()
-  expiresAt: Date;
+  expiresAt: string;
 }
 
 export class UpdateScratchCardDto {
@@ -53,7 +53,7 @@ export class UpdateScratchCardDto {
   @ApiProperty({ description: 'Expiration date', required: false })
   @IsOptional()
   @IsDateString()
-  expiresAt?: Date;
+  expiresAt?: string;
 }
 
 export class UseScratchCardDto {

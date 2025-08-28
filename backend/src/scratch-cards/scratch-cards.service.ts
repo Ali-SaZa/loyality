@@ -52,7 +52,15 @@ export class ScratchCardsService {
   }
 
   async create(createScratchCardDto: CreateScratchCardDto): Promise<ScratchCardResponseDto> {
-    const scratchCard = new this.scratchCardModel(createScratchCardDto);
+    // Convert string dates to Date objects if needed
+    const scratchCardData = {
+      ...createScratchCardDto,
+      expiresAt: typeof createScratchCardDto.expiresAt === 'string' 
+        ? new Date(createScratchCardDto.expiresAt) 
+        : createScratchCardDto.expiresAt
+    };
+    
+    const scratchCard = new this.scratchCardModel(scratchCardData);
     const savedScratchCard = await scratchCard.save();
     return this.transformScratchCardToResponse(savedScratchCard);
   }
@@ -88,8 +96,16 @@ export class ScratchCardsService {
     // Validate access permissions
     await this.validateScratchCardAccess(scratchCard, user);
 
+    // Convert string dates to Date objects if needed
+    const updateData = {
+      ...updateScratchCardDto,
+      expiresAt: updateScratchCardDto.expiresAt && typeof updateScratchCardDto.expiresAt === 'string' 
+        ? new Date(updateScratchCardDto.expiresAt) 
+        : updateScratchCardDto.expiresAt
+    };
+
     const updatedScratchCard = await this.scratchCardModel
-      .findByIdAndUpdate(id, updateScratchCardDto, { new: true })
+      .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
     
     if (!updatedScratchCard) {
