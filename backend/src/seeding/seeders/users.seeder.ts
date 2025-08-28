@@ -146,6 +146,41 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
         address: 'اصفهان، خیابان چهارباغ، پلاک 456',
         description: 'فروشگاه تخصصی در زمینه لوازم الکترونیکی و دیجیتال',
         purchases: []
+      },
+      {
+        phoneNumber: '09111234567',
+        firstName: 'Admin',
+        lastName: 'User',
+        totalPoints: 0,
+        role: 'admin',
+        purchases: []
+      },
+      {
+        phoneNumber: '09221234567',
+        firstName: 'Store',
+        lastName: 'Manager',
+        totalPoints: 0,
+        role: 'store',
+        storeName: 'فروشگاه نمونه',
+        address: 'تهران، خیابان انقلاب، پلاک 789',
+        description: 'فروشگاه نمونه برای تست سیستم',
+        purchases: []
+      },
+      {
+        phoneNumber: '09331234567',
+        firstName: 'Customer',
+        lastName: 'User',
+        totalPoints: 500,
+        role: 'customer',
+        purchases: [
+          {
+            storeId: this.stores[0]._id,
+            amount: 100000,
+            date: new Date('2024-03-01'),
+            entryMethod: 'sms',
+            rewardApplied: { type: 'discount', value: 5 }
+          }
+        ]
       }
     ];
   }
