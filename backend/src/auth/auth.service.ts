@@ -91,8 +91,6 @@ export class AuthService {
       // Create new user with minimal information
       user = await this.usersService.create({
         phoneNumber,
-        dataCollectionConsent: false,
-        marketingConsent: false,
       }) as UserDocument;
       isNewUser = true;
     }
@@ -117,10 +115,11 @@ export class AuthService {
       user: {
         _id: user._id,
         phoneNumber: user.phoneNumber,
-        name: user.name,
+        firstname: user.firstname,
+        lastname: user.lastname,
         totalPoints: user.totalPoints,
         role: user.role,
-        tags: user.tags,
+
         lastActivity: user.lastActivity,
       },
       isNewUser,

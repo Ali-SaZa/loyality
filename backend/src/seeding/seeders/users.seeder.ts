@@ -31,7 +31,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
     return [
       {
         phoneNumber: '09111111111',
-        name: 'Ali Ahmadi',
+        firstname: 'Ali',
+        lastname: 'Ahmadi',
         totalPoints: 1250,
         purchases: [
           {
@@ -48,17 +49,12 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
             entryMethod: 'qr',
             rewardApplied: { type: 'cashback', value: 10 }
           }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: true,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['premium', 'active']
+        ]
       },
       {
         phoneNumber: '09122222222',
-        name: 'Sara Karimi',
+        firstname: 'Sara',
+        lastname: 'Karimi',
         totalPoints: 850,
         purchases: [
           {
@@ -68,17 +64,12 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
             entryMethod: 'sms',
             rewardApplied: { type: 'discount', value: 3 }
           }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: false,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['regular']
+        ]
       },
       {
         phoneNumber: '09133333333',
-        name: 'Reza Mohammadi',
+        firstname: 'Reza',
+        lastname: 'Mohammadi',
         totalPoints: 2100,
         purchases: [
           {
@@ -95,17 +86,12 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
             entryMethod: 'sms',
             rewardApplied: { type: 'cashback', value: 10 }
           }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: true,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['vip', 'active']
+        ]
       },
       {
         phoneNumber: '09144444444',
-        name: 'Narges Hashemi',
+        firstname: 'Narges',
+        lastname: 'Hashemi',
         totalPoints: 450,
         purchases: [
           {
@@ -115,17 +101,12 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
             entryMethod: 'sms',
             rewardApplied: { type: 'discount', value: 3 }
           }
-        ],
-        consents: {
-          dataCollection: false,
-          marketing: false,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['new']
+        ]
       },
       {
         phoneNumber: '09155555555',
-        name: 'Amir Hosseini',
+        firstname: 'Amir',
+        lastname: 'Hosseini',
         totalPoints: 1800,
         purchases: [
           {
@@ -142,13 +123,29 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
             entryMethod: 'sms',
             rewardApplied: { type: 'cashback', value: 10 }
           }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: true,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['premium', 'loyal']
+        ]
+      },
+      {
+        phoneNumber: '09166666666',
+        firstname: 'Store',
+        lastname: 'One',
+        totalPoints: 0,
+        role: 'store',
+        storeName: 'فروشگاه مرکزی',
+        address: 'تهران، خیابان ولیعصر، پلاک 123',
+        description: 'فروشگاه مرکزی با بیش از 20 سال سابقه در ارائه خدمات با کیفیت',
+        purchases: []
+      },
+      {
+        phoneNumber: '09177777777',
+        firstname: 'Store',
+        lastname: 'Two',
+        totalPoints: 0,
+        role: 'store',
+        storeName: 'فروشگاه الکترونیک',
+        address: 'اصفهان، خیابان چهارباغ، پلاک 456',
+        description: 'فروشگاه تخصصی در زمینه لوازم الکترونیکی و دیجیتال',
+        purchases: []
       }
     ];
   }

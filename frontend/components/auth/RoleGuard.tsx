@@ -2,10 +2,11 @@
 import { useEffect, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import useAuth from '@/hooks/useAuth'
+import { UserRole } from '@/types/enums'
 
 interface RoleGuardProps {
   children: ReactNode
-  requiredRole?: 'admin' | 'store' | 'customer'
+  requiredRole?: UserRole
   fallback?: ReactNode
 }
 

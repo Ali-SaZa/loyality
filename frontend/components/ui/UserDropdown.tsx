@@ -8,7 +8,7 @@ import LogoutIcon from '../icons/LogoutIcon'
 import EditIcon from '../icons/EditIcon'
 import DashboardIcon from '../icons/DashboardIcon'
 
-import { fileAddress, getFullName } from '@/helpers'
+
 import { getMenuByRole } from '@/helpers/menuUtils'
 import useAuth from '@/hooks/useAuth'
 import useAlertModal from '@/hooks/useAlertModal'
@@ -38,17 +38,11 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
     const userComponent = (
       <User
         avatarProps={{
-          src: user?.imageId
-            ? fileAddress(user?.imageId)
-            : user?.sex === 'S_Male'
-              ? '/images/placeholders/man-placeholder.webp'
-              : user?.sex === 'S_Female'
-                ? '/images/placeholders/woman-placeholder.webp'
-                : '/images/placeholders/portrait.webp',
+          src: '/images/placeholders/portrait.webp'
         }}
         className="[&_span.bg-default]:!bg-transparent"
-        description={user?.mobile?.mobile}
-        name={getFullName(user?.firstName, user?.lastName)}
+        description={user?.phoneNumber}
+        name={user?.firstname || user?.phoneNumber || 'کاربر'}
       />
     )
 
@@ -79,18 +73,12 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
               textValue="user"
             >
               <User
-                avatarProps={{
-                  src: user?.imageId
-                    ? fileAddress(user?.imageId)
-                    : user?.sex === 'S_Male'
-                      ? '/images/placeholders/man-placeholder.webp'
-                      : user?.sex === 'S_Female'
-                        ? '/images/placeholders/portrait.webp'
-                        : '/images/placeholders/portrait.webp',
-                }}
-                className="[&_span.bg-default]:!bg-transparent"
-                description={user?.mobile?.mobile}
-                name={getFullName(user?.firstName, user?.lastName)}
+                        avatarProps={{
+          src: '/images/placeholders/portrait.webp'
+        }}
+        className="[&_span.bg-default]:!bg-transparent"
+        description={user?.phoneNumber}
+        name={user?.firstname || user?.phoneNumber || 'کاربر'}
               />
             </DropdownItem>
           </DropdownSection>

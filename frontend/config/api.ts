@@ -10,6 +10,14 @@ export const API_CONFIG = {
       VERIFY_OTP: '/auth/verify-otp',
       PROFILE: '/auth/profile',
     },
+    USERS: {
+      GET_ALL: '/users',
+      GET_BY_ID: '/users/:id',
+      CREATE: '/users',
+      UPDATE: '/users/:id',
+      DELETE: '/users/:id',
+      GET_CURRENT: '/users/me',
+    },
   },
   
   // Request timeout (in milliseconds)

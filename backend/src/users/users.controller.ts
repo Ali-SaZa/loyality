@@ -38,20 +38,28 @@ export class UsersController {
     return {
       id: user._id.toString(),
       phoneNumber: user.phoneNumber,
-      name: user.name,
+      firstname: user.firstname,
+      lastname: user.lastname,
       totalPoints: user.totalPoints,
-      purchases: user.purchases.map(purchase => ({
-        storeId: purchase.storeId.toString(),
+      purchases: user.purchases?.map(purchase => ({
+        storeId: purchase.storeId?.toString(),
         amount: purchase.amount,
         date: purchase.date,
         scratchCode: purchase.scratchCode,
         entryMethod: purchase.entryMethod,
-        rewardApplied: purchase.rewardApplied,
-      })),
-      consents: user.consents,
+        rewardApplied: purchase.rewardApplied ? {
+          type: purchase.rewardApplied.type,
+          value: purchase.rewardApplied.value
+        } : undefined,
+      })) || [],
+
       role: user.role,
+      status: user.status || 'active',
       lastActivity: user.lastActivity,
-      tags: user.tags,
+      storeName: user.storeName,
+      address: user.address,
+      description: user.description,
+
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
@@ -192,30 +200,27 @@ export class UsersController {
     return this.transformUserToResponse(updatedUser);
   }
 
-  @Patch(':id/consents')
-  @UserAuth({ paramName: 'id' })
+
+
+  @Patch(':id/status')
+  @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user consents (Self/Admin only)' })
+  @ApiOperation({ summary: 'Update user status (Admin only)' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Consents updated successfully',
+    description: 'User status updated successfully',
     type: UserResponseDto 
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async updateConsents(
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async updateStatus(
     @Param('id') id: string,
-    @Body() consentsDto: { dataCollection: boolean; marketing: boolean },
+    @Body() statusDto: { status: 'active' | 'blocked' | 'deleted' },
     @CurrentUser() user: any
   ): Promise<UserResponseDto> {
-    const updatedUser = await this.usersService.updateConsents(
-      id, 
-      consentsDto.dataCollection, 
-      consentsDto.marketing,
-      user
-    );
+    const updatedUser = await this.usersService.updateStatus(id, statusDto.status, user);
     return this.transformUserToResponse(updatedUser);
   }
 }

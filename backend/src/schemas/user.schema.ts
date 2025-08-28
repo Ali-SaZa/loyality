@@ -34,17 +34,7 @@ export class Purchase {
   };
 }
 
-@Schema({ _id: false })
-export class Consents {
-  @Prop({ required: true, default: false })
-  dataCollection: boolean;
 
-  @Prop({ required: true, default: false })
-  marketing: boolean;
-
-  @Prop({ required: false })
-  consentDate?: Date;
-}
 
 @Schema({ timestamps: true })
 export class User {
@@ -57,7 +47,10 @@ export class User {
   phoneNumber: string;
 
   @Prop({ required: false, trim: true, maxlength: 100 })
-  name?: string;
+  firstname?: string;
+
+  @Prop({ required: false, trim: true, maxlength: 100 })
+  lastname?: string;
 
   @Prop({ default: 0, min: 0 })
   totalPoints: number;
@@ -65,17 +58,33 @@ export class User {
   @Prop({ type: [Purchase], default: [] })
   purchases: Purchase[];
 
-  @Prop({ type: Consents, required: true })
-  consents: Consents;
 
-  @Prop({ enum: ['customer'], default: 'customer', required: true })
+
+  @Prop({ enum: ['customer', 'store', 'admin'], default: 'customer', required: true })
   role: string;
 
-  @Prop({ required: false })
-  lastActivity?: Date;
+  // Store-specific fields (only for store users)
+  @Prop({ required: false, trim: true, maxlength: 200 })
+  storeName?: string;
 
-  @Prop([{ type: String, trim: true }])
-  tags: string[];
+  @Prop({ required: false, trim: true, maxlength: 500 })
+  address?: string;
+
+  @Prop({ required: false, trim: true, maxlength: 1000 })
+  description?: string;
+
+  @Prop({ 
+    enum: ['active', 'blocked', 'deleted'], 
+    default: 'active', 
+    required: true,
+    index: true 
+  })
+  status: string;
+
+  @Prop({ required: true, default: Date.now })
+  lastActivity: Date;
+
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

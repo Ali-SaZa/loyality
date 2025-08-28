@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import Button from '@/components/formElements/Button'
 import ObsLogo from '@/components/ui/ObsLogo'
 import { getMenuByRole } from '@/helpers/menuUtils'
+import { UserRole, getRoleConfig } from '@/types/enums'
 import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
 import CloseIcon from '@/components/icons/CloseIcon'
 
@@ -23,29 +24,7 @@ const UserSidebar = () => {
     else return pathname.includes(link.split('/')[2])
   }
 
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return (
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-danger-100 text-danger-800 border border-danger-200">
-            پنل ادمین
-          </span>
-        )
-      case 'store':
-        return (
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-success-100 text-success-800 border border-success-200">
-            پنل فروشگاه
-          </span>
-        )
-      case 'customer':
-      default:
-        return (
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 border border-primary-200">
-            پنل مشتری
-          </span>
-        )
-    }
-  }
+  
 
   const toggleMobileMenu = () => {
     setIsMobileOpen(!isMobileOpen)
@@ -88,7 +67,9 @@ const UserSidebar = () => {
           <div className="text-center">
             <ObsLogo iconSize={100} />
             <div className="mt-3">
-              {getRoleBadge(user?.role || 'customer')}
+              <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getRoleConfig(user?.role || 'customer').bgColor} ${getRoleConfig(user?.role || 'customer').textColor} border ${getRoleConfig(user?.role || 'customer').borderColor}`}>
+              {getRoleConfig(user?.role || 'customer').title}
+            </span>
             </div>
           </div>
         </div>
@@ -102,7 +83,7 @@ const UserSidebar = () => {
                 className={`relative ${
                   isActive(item.link) 
                     ? `after:content-[""] after:absolute after:top-0 after:right-0 after:w-1 after:h-full after:rounded-l after:shadow-lg ${
-                        user?.role === 'admin' 
+                        user?.role === UserRole.ADMIN 
                           ? 'after:bg-gradient-to-b after:from-error after:to-error/80' 
                           : 'after:bg-gradient-to-b after:from-primary after:to-primary/80'
                       }`
@@ -138,14 +119,14 @@ const UserSidebar = () => {
               <div className="text-center">
                 <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
                   <span className="text-white text-lg font-bold">
-                    {user?.name?.charAt(0) || user?.phoneNumber?.charAt(0) || 'U'}
+                    {user?.firstname?.charAt(0) || user?.phoneNumber?.charAt(0) || 'U'}
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-text-dark mb-1">
-                  {user?.name || user?.phoneNumber || 'کاربر'}
+                  {user?.firstname || user?.phoneNumber || 'کاربر'}
                 </p>
                 <p className="text-xs text-text-light bg-white/60 rounded-full px-2 py-1 inline-block">
-                  نقش: {user?.role === 'admin' ? 'ادمین' : user?.role === 'store' ? 'فروشگاه' : 'مشتری'}
+                  نقش: {getRoleConfig(user?.role || 'customer').text}
                 </p>
               </div>
             </div>

@@ -7,6 +7,7 @@ import { Chip } from '@heroui/chip'
 
 import useAuth from '@/hooks/useAuth'
 import { getMenuByRole } from '@/helpers/menuUtils'
+import { UserRole, getRoleConfig } from '@/types/enums'
 
 // User data interface
 interface UserData {
@@ -20,12 +21,11 @@ interface UserData {
   name?: string
   totalPoints?: number
   role?: string
-  tags?: string[]
   lastActivity?: string
   [key: string]: any
 }
 
-// Helper function to get user level display info
+
 const getUserLevelInfo = (role: string) => {
   switch (role) {
     case 'admin':
@@ -67,7 +67,7 @@ function CustomerDashboardContent() {
     return null
   }
 
-  const userLevelInfo = getUserLevelInfo(user.role || 'customer')
+  const userLevelInfo = getRoleConfig(user.role || 'customer')
   const menuItems = getMenuByRole(user.role || 'customer')
 
   return (
@@ -88,9 +88,9 @@ function CustomerDashboardContent() {
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-500">سطح کاربری</p>
-            <p className={`font-semibold ${userLevelInfo.textColor}`}>
-              {user.role === 'admin' ? 'Admin' : user.role === 'store' ? 'Store' : 'Customer'}
-            </p>
+                          <p className={`font-semibold ${userLevelInfo.textColor}`}>
+                {user.role === UserRole.ADMIN ? 'Admin' : user.role === UserRole.STORE ? 'Store' : 'Customer'}
+              </p>
           </div>
         </div>
       </div>
@@ -99,11 +99,11 @@ function CustomerDashboardContent() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-800">داشبورد برنامه وفاداری</h1>
         <Chip
-          color={user.role === 'admin' ? 'danger' : user.role === 'store' ? 'success' : 'primary'}
+          color={getRoleConfig(user.role || 'customer').color}
           variant="flat"
           size="lg"
         >
-          {user.role === 'admin' ? 'پنل ادمین' : user.role === 'store' ? 'پنل فروشگاه' : 'پنل مشتری'}
+          {getRoleConfig(user.role || 'customer').title}
         </Chip>
       </div>
 
@@ -115,16 +115,16 @@ function CustomerDashboardContent() {
         <CardBody>
           <div className="flex items-center gap-4">
             <User
-              name={user.name || user.phoneNumber || 'کاربر'}
+              name={user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : user.firstname || user.lastname || user.phoneNumber || 'کاربر'}
               description={user.phoneNumber || 'شماره موبایل'}
               avatarProps={{
-                src: `https://ui-avatars.com/api/?name=${user.name || user.phoneNumber || 'کاربر'}&background=random`,
+                src: `https://ui-avatars.com/api/?name=${user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : user.firstname || user.lastname || user.phoneNumber || 'کاربر'}&background=random`,
                 size: "lg"
               }}
             />
             <div className="ml-auto text-right">
               <p className="text-sm text-gray-500">نقش</p>
-              <p className="font-medium capitalize">{user.role || 'customer'}</p>
+              <p className="font-medium capitalize">{getRoleConfig(user.role || 'customer').text}</p>
             </div>
           </div>
         </CardBody>

@@ -8,39 +8,35 @@ export class CreateUserDto {
   @Matches(/^09[0-9]{9}$/)
   phoneNumber: string;
 
-  @ApiProperty({ description: 'User name', required: false, maxLength: 100 })
+  @ApiProperty({ description: 'User first name', required: false, maxLength: 100 })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name?: string;
+  firstname?: string;
 
-  @ApiProperty({ description: 'Data collection consent', default: false })
+  @ApiProperty({ description: 'User last name', required: false, maxLength: 100 })
   @IsOptional()
-  @IsBoolean()
-  dataCollectionConsent?: boolean;
+  @IsString()
+  @MaxLength(100)
+  lastname?: string;
 
-  @ApiProperty({ description: 'Marketing consent', default: false })
-  @IsOptional()
-  @IsBoolean()
-  marketingConsent?: boolean;
+
 }
 
 export class UpdateUserDto {
-  @ApiProperty({ description: 'User name', required: false })
+  @ApiProperty({ description: 'User first name', required: false })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name?: string;
+  firstname?: string;
 
-  @ApiProperty({ description: 'Data collection consent' })
+  @ApiProperty({ description: 'User last name', required: false })
   @IsOptional()
-  @IsBoolean()
-  dataCollectionConsent?: boolean;
+  @IsString()
+  @MaxLength(100)
+  lastname?: string;
 
-  @ApiProperty({ description: 'Marketing consent' })
-  @IsOptional()
-  @IsBoolean()
-  marketingConsent?: boolean;
+
 }
 
 export class PurchaseDto {
@@ -71,7 +67,10 @@ export class UserResponseDto {
   phoneNumber: string;
 
   @ApiProperty()
-  name?: string;
+  firstname?: string;
+
+  @ApiProperty()
+  lastname?: string;
 
   @ApiProperty()
   totalPoints: number;
@@ -89,21 +88,27 @@ export class UserResponseDto {
     };
   }>;
 
-  @ApiProperty()
-  consents: {
-    dataCollection: boolean;
-    marketing: boolean;
-    consentDate?: Date;
-  };
+
 
   @ApiProperty()
   role: string;
 
-  @ApiProperty()
-  lastActivity?: Date;
+  @ApiProperty({ enum: ['active', 'blocked', 'deleted'] })
+  status: string;
 
   @ApiProperty()
-  tags: string[];
+  lastActivity: Date;
+
+  @ApiProperty({ description: 'Store name (for store users)', required: false })
+  storeName?: string;
+
+  @ApiProperty({ description: 'Store address (for store users)', required: false })
+  address?: string;
+
+  @ApiProperty({ description: 'Store description (for store users)', required: false })
+  description?: string;
+
+
 
   @ApiProperty()
   createdAt: Date;

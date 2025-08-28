@@ -7,41 +7,13 @@ import { Card, CardBody, CardHeader } from '@heroui/card'
 import useAuth from '@/hooks/useAuth'
 import ObsLogo from '@/components/ui/ObsLogo'
 import UserDropdown from '@/components/ui/UserDropdown'
+import { getRoleConfig } from '@/types/enums'
 
 export default function LandingPage() {
   const { user } = useAuth()
   const router = useRouter()
 
-  // Helper function to get role-specific info
-  const getRoleInfo = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return {
-          title: 'پنل مدیریت',
-          color: 'danger',
-          bgColor: 'bg-red-50',
-          borderColor: 'border-red-200',
-          textColor: 'text-red-600'
-        }
-      case 'store':
-        return {
-          title: 'پنل فروشگاه',
-          color: 'success',
-          bgColor: 'bg-success-50',
-          borderColor: 'border-success-200',
-          textColor: 'text-success-600'
-        }
-      case 'customer':
-      default:
-        return {
-          title: 'پنل مشتری',
-          color: 'primary',
-          bgColor: 'bg-primary-50',
-          borderColor: 'border-primary-200',
-          textColor: 'text-primary-600'
-        }
-    }
-  }
+
 
   // Show loading while checking auth (user is null during initial load)
   if (user === null) {
@@ -55,7 +27,7 @@ export default function LandingPage() {
     )
   }
 
-  const roleInfo = user ? getRoleInfo(user.role || 'customer') : null
+  const roleInfo = user ? getRoleConfig(user.role || 'customer') : null
 
   // Landing page for all users (authenticated and non-authenticated)
   return (

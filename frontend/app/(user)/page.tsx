@@ -6,6 +6,7 @@ import { User } from '@heroui/user'
 import { Chip } from '@heroui/chip'
 
 import useAuth from '@/hooks/useAuth'
+import { getRoleConfig } from '@/types/enums'
 
 export default function UserIndexPage() {
   const { user } = useAuth()
@@ -15,40 +16,7 @@ export default function UserIndexPage() {
     return null
   }
 
-  const getRoleInfo = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return {
-          title: 'پنل مدیریت',
-          description: 'خوش آمدید به پنل مدیریت سیستم وفاداری',
-          color: 'danger',
-          bgColor: 'bg-red-50',
-          borderColor: 'border-red-200',
-          textColor: 'text-red-600'
-        }
-      case 'store':
-        return {
-          title: 'پنل فروشگاه',
-          description: 'خوش آمدید به پنل مدیریت فروشگاه',
-          color: 'success',
-          bgColor: 'bg-success-50',
-          borderColor: 'border-success-200',
-          textColor: 'text-success-600'
-        }
-      case 'customer':
-      default:
-        return {
-          title: 'پنل مشتری',
-          description: 'خوش آمدید به پنل مشتری',
-          color: 'primary',
-          bgColor: 'bg-primary-50',
-          borderColor: 'border-primary-200',
-          textColor: 'text-primary-600'
-        }
-    }
-  }
-
-  const roleInfo = getRoleInfo(user.role || 'customer')
+  const roleInfo = getRoleConfig(user.role || 'customer')
 
   return (
     <div className="p-6 space-y-6">
@@ -72,10 +40,10 @@ export default function UserIndexPage() {
         <CardBody>
           <div className="flex items-center gap-4">
             <User
-              name={user.name || user.phoneNumber || 'کاربر'}
+              name={user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : user.firstname || user.lastname || user.phoneNumber || 'کاربر'}
               description={user.phoneNumber || 'شماره موبایل'}
               avatarProps={{
-                src: `https://ui-avatars.com/api/?name=${user.name || user.phoneNumber || 'کاربر'}&background=random`,
+                src: `https://ui-avatars.com/api/?name=${user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : user.firstname || user.lastname || user.phoneNumber || 'کاربر'}&background=random`,
                 size: "lg"
               }}
             />

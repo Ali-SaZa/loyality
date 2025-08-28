@@ -51,11 +51,7 @@ export class UsersService {
 
     const user = new this.userModel({
       ...createUserDto,
-      consents: {
-        dataCollection: createUserDto.dataCollectionConsent || false,
-        marketing: createUserDto.marketingConsent || false,
-        consentDate: createUserDto.dataCollectionConsent ? new Date() : undefined,
-      },
+
       lastActivity: new Date(),
     });
 
@@ -95,11 +91,7 @@ export class UsersService {
       id,
       {
         ...updateUserDto,
-        consents: {
-          dataCollection: updateUserDto.dataCollectionConsent,
-          marketing: updateUserDto.marketingConsent,
-          consentDate: updateUserDto.dataCollectionConsent ? new Date() : undefined,
-        },
+
         lastActivity: new Date(),
       },
       { new: true }
@@ -157,7 +149,9 @@ export class UsersService {
     return user.save();
   }
 
-  async updateConsents(id: string, dataCollection: boolean, marketing: boolean, requestingUser: any): Promise<User> {
+
+
+  async updateStatus(id: string, status: 'active' | 'blocked' | 'deleted', requestingUser: any): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
@@ -169,11 +163,7 @@ export class UsersService {
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       {
-        consents: {
-          dataCollection,
-          marketing,
-          consentDate: dataCollection ? new Date() : undefined,
-        },
+        status,
         lastActivity: new Date(),
       },
       { new: true }

@@ -63,8 +63,8 @@ const Profile = () => {
   const alertsDetail = [
     {
       step: 0,
-      title: `${user?.firstName ? 'ویرایش' : 'ایجاد'} حساب کاربری`,
-      description: `${user?.firstName ? 'ویرایش' : 'ایجاد'} حساب کاربری ${user?.firstName ? '' : 'برای'} ${user?.firstName ? getFullName(user?.firstName, user?.lastName) : user?.mobile?.mobile}`,
+      title: `${user?.firstname ? 'ویرایش' : 'ایجاد'} حساب کاربری`,
+      description: `${user?.firstname ? 'ویرایش' : 'ایجاد'} حساب کاربری ${user?.firstname ? '' : 'برای'} ${user?.firstname && user?.lastname ? getFullName(user.firstname, user.lastname) : user?.phoneNumber}`,
     },
     {
       step: 1,
@@ -120,7 +120,7 @@ const Profile = () => {
         nationalCode: profileData.nationalCode,
       }
 
-      if (user?.firstName) {
+      if (user?.firstname) {
         delete newProfileData.password
       }
 
@@ -155,8 +155,8 @@ const Profile = () => {
     if (!user) return
 
     const personalInformationFormData = {
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
+      firstName: user.firstname ?? '',
+      lastName: user.lastname ?? '',
       password: user.password ?? '',
       birthdate: user.birthdate ?? '',
       sex: user.sex ?? undefined,
@@ -226,7 +226,7 @@ const Profile = () => {
                 (error) => {
                   const errorLength = Object.keys(error)?.length
 
-                  if (errorLength === 1 && error.password && user && user?.firstName) {
+                  if (errorLength === 1 && error.password && user && user?.firstname) {
                     setStep(step + 1)
                   }
                 }
@@ -252,7 +252,7 @@ const Profile = () => {
                   size="lg"
                 />
               </div>
-              {!user?.firstName && (
+              {!user?.firstname && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                   <Input
                     required

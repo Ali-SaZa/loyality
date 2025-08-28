@@ -6,14 +6,16 @@ import Cookies from 'js-cookie'
 
 import axiosInstance from '@/config/axios'
 import useLoading from '@/hooks/useLoading'
+import { UserRole } from '@/types/enums'
 
 // Updated User interface with proper typing
 interface User {
   _id: string
   phoneNumber: string
-  name?: string
+  firstname?: string
+  lastname?: string
   totalPoints: number
-  role: 'customer' | 'store' | 'admin'
+  role: UserRole
   accessToken: string
   refreshToken: string
   userId: string
@@ -27,9 +29,10 @@ interface SaveUserData {
   user: {
     _id: string
     phoneNumber: string
-    name?: string
+    firstname?: string
+    lastname?: string
     totalPoints: number
-    role: 'customer' | 'store' | 'admin'
+    role: UserRole
   }
 }
 
