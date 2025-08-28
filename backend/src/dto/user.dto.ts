@@ -28,13 +28,13 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  firstname?: string;
+  firstName?: string;
 
   @ApiProperty({ description: 'User last name', required: false })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  lastname?: string;
+  lastName?: string;
 
 
 }
@@ -67,10 +67,10 @@ export class UserResponseDto {
   phoneNumber: string;
 
   @ApiProperty()
-  firstname?: string;
+  firstName?: string;
 
   @ApiProperty()
-  lastname?: string;
+  lastName?: string;
 
   @ApiProperty()
   totalPoints: number;

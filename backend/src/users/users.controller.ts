@@ -38,8 +38,8 @@ export class UsersController {
     return {
       id: user._id.toString(),
       phoneNumber: user.phoneNumber,
-      firstname: user.firstname,
-      lastname: user.lastname,
+      firstName: user.firstName,
+      lastName: user.lastName,
       totalPoints: user.totalPoints,
       purchases: user.purchases?.map(purchase => ({
         storeId: purchase.storeId?.toString(),

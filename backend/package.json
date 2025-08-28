@@ -23,7 +23,8 @@
     "seed:clear": "ts-node src/seeding/seed-cli.ts --clear-only",
     "seed:status": "ts-node src/seeding/seed-cli.ts --status-only",
     "seed:stores": "ts-node src/seeding/seed-cli.ts --stores-only",
-    "seed:admins": "ts-node src/seeding/seed-cli.ts --admins-only"
+    "seed:admins": "ts-node src/seeding/seed-cli.ts --admins-only",
+    "migrate:user-fields": "ts-node scripts/run-migration.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

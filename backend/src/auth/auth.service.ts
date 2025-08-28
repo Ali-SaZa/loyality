@@ -115,8 +115,8 @@ export class AuthService {
       user: {
         _id: user._id,
         phoneNumber: user.phoneNumber,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        firstName: user.firstName,
+        lastName: user.lastName,
         totalPoints: user.totalPoints,
         role: user.role,
 

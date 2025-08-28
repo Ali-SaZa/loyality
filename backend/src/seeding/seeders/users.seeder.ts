@@ -31,8 +31,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
     return [
       {
         phoneNumber: '09111111111',
-        firstname: 'Ali',
-        lastname: 'Ahmadi',
+        firstName: 'Ali',
+        lastName: 'Ahmadi',
         totalPoints: 1250,
         purchases: [
           {
@@ -53,8 +53,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
       },
       {
         phoneNumber: '09122222222',
-        firstname: 'Sara',
-        lastname: 'Karimi',
+        firstName: 'Sara',
+        lastName: 'Karimi',
         totalPoints: 850,
         purchases: [
           {
@@ -68,8 +68,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
       },
       {
         phoneNumber: '09133333333',
-        firstname: 'Reza',
-        lastname: 'Mohammadi',
+        firstName: 'Reza',
+        lastName: 'Mohammadi',
         totalPoints: 2100,
         purchases: [
           {
@@ -90,8 +90,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
       },
       {
         phoneNumber: '09144444444',
-        firstname: 'Narges',
-        lastname: 'Hashemi',
+        firstName: 'Narges',
+        lastName: 'Hashemi',
         totalPoints: 450,
         purchases: [
           {
@@ -105,8 +105,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
       },
       {
         phoneNumber: '09155555555',
-        firstname: 'Amir',
-        lastname: 'Hosseini',
+        firstName: 'Amir',
+        lastName: 'Hosseini',
         totalPoints: 1800,
         purchases: [
           {
@@ -127,8 +127,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
       },
       {
         phoneNumber: '09166666666',
-        firstname: 'Store',
-        lastname: 'One',
+        firstName: 'Store',
+        lastName: 'One',
         totalPoints: 0,
         role: 'store',
         storeName: 'فروشگاه مرکزی',
@@ -138,8 +138,8 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
       },
       {
         phoneNumber: '09177777777',
-        firstname: 'Store',
-        lastname: 'Two',
+        firstName: 'Store',
+        lastName: 'Two',
         totalPoints: 0,
         role: 'store',
         storeName: 'فروشگاه الکترونیک',
