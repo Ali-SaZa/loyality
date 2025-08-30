@@ -10,7 +10,7 @@ import StoreIcon from '@/components/icons/ChartTreeIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
-import { getAllStores, getStoreStats, Store, StoreStats } from '@/services/stores'
+import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { StorePlanType, getStorePlanConfig } from '@/types/enums'
 
@@ -83,18 +83,18 @@ const AdminStores = () => {
   }
 
   const handleViewStore = (storeId: string) => {
-    router.push(`/admin/stores/${storeId}`)
+    router.push(`/admin/stores/${storeId}/view`)
   }
 
   const handleEditStore = (storeId: string) => {
-    router.push(`/admin/stores/${storeId}/edit`)
+    router.push(`/admin/stores/${storeId}`)
   }
 
   const handleDeleteStore = async (storeId: string) => {
     if (confirm('آیا از حذف این فروشگاه اطمینان دارید؟')) {
       try {
         setLoading(true)
-        // TODO: Implement delete store functionality
+        await deleteStore(storeId)
         await fetchStores() // Refresh the list
       } catch (err) {
         setError(err instanceof Error ? err.message : 'خطا در حذف فروشگاه')
