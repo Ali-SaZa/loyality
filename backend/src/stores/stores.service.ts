@@ -2,23 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
-import { CreateStoreDto, UpdateStoreDto, StoreResponseDto } from '../dto';
+import { User, UserDocument } from '../schemas/user.schema';
+import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
-import { GenericListService } from '../common/services/generic-list.service';
 import { 
   StoreNotFoundException, 
   StorePhoneExistsException,
   CustomConflictException 
 } from '../common/errors';
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, BadRequestException } from '@nestjs/common';
 
 @Injectable()
-export class StoresService extends GenericListService<StoreDocument> {
+export class StoresService {
   constructor(
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
-  ) {
-    super(storeModel);
-  }
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+  ) {}
 
   private transformStoreToResponse(store: StoreDocument): StoreResponseDto {
     return {
@@ -26,6 +25,7 @@ export class StoresService extends GenericListService<StoreDocument> {
       name: store.name,
       ownerName: store.ownerName,
       phoneNumber: store.phoneNumber,
+      userId: store.userId.toString(),
       address: store.address,
       loyaltySettings: store.loyaltySettings,
       plan: store.plan,
@@ -45,20 +45,132 @@ export class StoresService extends GenericListService<StoreDocument> {
       throw new StorePhoneExistsException();
     }
 
+    // Validate that the userId exists in the users collection
+    const user = await this.userModel.findById(createStoreDto.userId).exec();
+    if (!user) {
+      throw new BadRequestException('کاربر مورد نظر پیدا نشد.'); // translated to Persian
+    }
+
     const store = new this.storeModel(createStoreDto);
     const savedStore = await store.save();
     return this.transformStoreToResponse(savedStore);
   }
 
-  // Override the findAll method to add role-based filtering
+  async createStoreWithUser(createStoreWithUserDto: CreateStoreWithUserDto): Promise<StoreWithUserResponseDto> {
+    // Check if user with same phone number already exists
+    const existingUser = await this.userModel.findOne({
+      phoneNumber: createStoreWithUserDto.user.phoneNumber,
+    });
+    
+    if (existingUser) {
+      throw new BadRequestException('کاربری با این شماره تلفن قبلاً وجود دارد.'); // User with this phone number already exists
+    }
+
+    // Check if store with same phone number already exists
+    const existingStore = await this.storeModel.findOne({
+      phoneNumber: createStoreWithUserDto.store.phoneNumber,
+    });
+    
+    if (existingStore) {
+      throw new StorePhoneExistsException();
+    }
+
+    // Create the user first
+    const userData = {
+      ...createStoreWithUserDto.user,
+      role: 'store',
+      totalPoints: 0,
+      purchases: [],
+      status: 'active',
+      lastActivity: new Date()
+    };
+
+    const user = new this.userModel(userData);
+    const savedUser = await user.save();
+
+    // Create the store with the user's ID
+    const storeData = {
+      ...createStoreWithUserDto.store,
+      userId: savedUser._id,
+      role: 'store'
+    };
+
+    const store = new this.storeModel(storeData);
+    const savedStore = await store.save();
+
+    // Return both user and store
+    return {
+      user: {
+        id: savedUser._id.toString(),
+        phoneNumber: savedUser.phoneNumber,
+        firstName: savedUser.firstName || '',
+        lastName: savedUser.lastName || '',
+        role: savedUser.role,
+        createdAt: savedUser.createdAt,
+        updatedAt: savedUser.updatedAt
+      },
+      store: this.transformStoreToResponse(savedStore)
+    };
+  }
+
+  // Implement findAll method without generic service
   async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<StoreDocument>> {
+    const page = request.page || 1;
+    const limit = request.limit || 20;
+    const skip = (page - 1) * limit;
+
     // Add role-based access control
     if (additionalFilters.requestingUser?.role === 'store') {
       // Store users can only see their own store
-      additionalFilters['_id'] = additionalFilters.requestingUser.storeId;
+      additionalFilters['userId'] = additionalFilters.requestingUser._id;
     }
 
-    return super.findAll(request, additionalFilters);
+    // Build filter query
+    let filterQuery: any = {};
+    
+    // Add search functionality
+    if (request.search && request.searchFields && request.searchFields.length > 0) {
+      const searchQueries = request.searchFields.map(field => ({
+        [field]: { $regex: request.search, $options: 'i' }
+      }));
+      filterQuery.$or = searchQueries;
+    }
+
+    // Add additional filters
+    Object.assign(filterQuery, additionalFilters);
+
+    // Execute queries in parallel for better performance
+    const [data, total] = await Promise.all([
+      this.storeModel
+        .find(filterQuery)
+        .sort(this.buildSortQuery(request.sort))
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      this.storeModel.countDocuments(filterQuery).exec()
+    ]);
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      appliedFilters: {
+        search: request.search,
+        searchFields: request.searchFields,
+        sort: request.sort,
+        filters: request.filters
+      }
+    };
   }
 
   async findOne(id: string, user: any): Promise<StoreResponseDto> {
@@ -120,7 +232,7 @@ export class StoresService extends GenericListService<StoreDocument> {
     }
 
     // Store users can only modify their own store
-    if (user.role === 'store' && user.storeId === store._id.toString()) {
+    if (user.role === 'store' && user._id.toString() === store.userId.toString()) {
       return;
     }
 
@@ -141,5 +253,22 @@ export class StoresService extends GenericListService<StoreDocument> {
       plans: plans.filter(Boolean),
       roles: roles.filter(Boolean)
     };
+  }
+
+  // Helper method to get distinct values
+  private async getDistinctValues(field: string): Promise<any[]> {
+    return this.storeModel.distinct(field).exec();
+  }
+
+  private buildSortQuery(sort: any): any {
+    if (!sort || sort.length === 0) {
+      return { createdAt: -1 };
+    }
+
+    const sortQuery: any = {};
+    sort.forEach((item: any) => {
+      sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
+    });
+    return sortQuery;
   }
 }

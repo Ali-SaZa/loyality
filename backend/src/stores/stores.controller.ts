@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { StoresService } from './stores.service';
-import { CreateStoreDto, UpdateStoreDto, StoreResponseDto } from '../dto';
+import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
 import { StoreAuth, AdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -36,6 +36,22 @@ export class StoresController {
     return this.storesService.create(createStoreDto);
   }
 
+  @Post('with-user')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new store with user (Admin only)' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Store created successfully with user',
+    type: StoreWithUserResponseDto 
+  })
+  @ApiResponse({ status: 409, description: 'Store with this phone number already exists' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async createStoreWithUser(@Body() createStoreWithUserDto: CreateStoreWithUserDto): Promise<StoreWithUserResponseDto> {
+    return this.storesService.createStoreWithUser(createStoreWithUserDto);
+  }
+
   @Get()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all stores (Public read, Admin full access)' })
@@ -46,7 +62,20 @@ export class StoresController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(): Promise<StoreResponseDto[]> {
-    return this.storesService.findAll();
+    const result = await this.storesService.findAll({ page: 1, limit: 100 }, {});
+    return result.data.map(store => ({
+      id: store._id.toString(),
+      name: store.name,
+      ownerName: store.ownerName,
+      phoneNumber: store.phoneNumber,
+      userId: store.userId.toString(),
+      address: store.address,
+      loyaltySettings: store.loyaltySettings,
+      plan: store.plan,
+      role: store.role,
+      createdAt: store.createdAt,
+      updatedAt: store.updatedAt
+    }));
   }
 
   @Get(':id')

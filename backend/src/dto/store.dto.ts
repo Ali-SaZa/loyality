@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum, IsBoolean, Min, MaxLength, Matches, IsDateString, IsObject } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, IsEnum, IsBoolean, Min, MaxLength, Matches, IsDateString, IsObject, IsMongoId } from 'class-validator';
 
 export class CreateStoreDto {
   @ApiProperty({ description: 'Store name', maxLength: 100 })
@@ -16,6 +16,10 @@ export class CreateStoreDto {
   @IsString()
   @Matches(/^09[0-9]{9}$/)
   phoneNumber: string;
+
+  @ApiProperty({ description: 'User ID of the store manager', example: '507f1f77bcf86cd799439011' })
+  @IsMongoId()
+  userId: string;
 
   @ApiProperty({ description: 'Store address' })
   @IsObject()
@@ -62,6 +66,11 @@ export class UpdateStoreDto {
   @IsString()
   @MaxLength(100)
   ownerName?: string;
+
+  @ApiProperty({ description: 'User ID of the store manager', required: false, example: '507f1f77bcf86cd799439011' })
+  @IsOptional()
+  @IsMongoId()
+  userId?: string;
 
   @ApiProperty({ description: 'Store address', required: false })
   @IsOptional()
@@ -113,6 +122,9 @@ export class StoreResponseDto {
   phoneNumber: string;
 
   @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
   address: {
     city: string;
     street?: string;
@@ -149,4 +161,47 @@ export class StoreResponseDto {
 
   @ApiProperty()
   updatedAt: Date;
+}
+
+export class CreateStoreUserDto {
+  @ApiProperty({ description: 'Iranian mobile number', example: '09123456789' })
+  @IsString()
+  @Matches(/^09[0-9]{9}$/)
+  phoneNumber: string;
+
+  @ApiProperty({ description: 'First name', maxLength: 100 })
+  @IsString()
+  @MaxLength(100)
+  firstName: string;
+
+  @ApiProperty({ description: 'Last name', maxLength: 100 })
+  @IsString()
+  @MaxLength(100)
+  lastName: string;
+}
+
+export class CreateStoreWithUserDto {
+  @ApiProperty({ description: 'User information for the store manager' })
+  @IsObject()
+  user: CreateStoreUserDto;
+
+  @ApiProperty({ description: 'Store information' })
+  @IsObject()
+  store: CreateStoreDto;
+}
+
+export class StoreWithUserResponseDto {
+  @ApiProperty()
+  user: {
+    id: string;
+    phoneNumber: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+
+  @ApiProperty()
+  store: StoreResponseDto;
 }

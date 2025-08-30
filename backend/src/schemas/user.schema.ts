@@ -58,20 +58,8 @@ export class User {
   @Prop({ type: [Purchase], default: [] })
   purchases: Purchase[];
 
-
-
   @Prop({ enum: ['customer', 'store', 'admin'], default: 'customer', required: true })
   role: string;
-
-  // Store-specific fields (only for store users)
-  @Prop({ required: false, trim: true, maxlength: 200 })
-  storeName?: string;
-
-  @Prop({ required: false, trim: true, maxlength: 500 })
-  address?: string;
-
-  @Prop({ required: false, trim: true, maxlength: 1000 })
-  description?: string;
 
   @Prop({ 
     enum: ['active', 'blocked', 'deleted'], 
@@ -83,8 +71,6 @@ export class User {
 
   @Prop({ required: true, default: Date.now })
   lastActivity: Date;
-
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

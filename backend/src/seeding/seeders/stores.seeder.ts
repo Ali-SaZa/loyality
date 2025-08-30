@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Store, StoreDocument } from '../../schemas/store.schema';
+import { User, UserDocument } from '../../schemas/user.schema';
 import { BaseSeeder } from './base.seeder';
 
 @Injectable()
 export class StoresSeeder extends BaseSeeder<StoreDocument> {
+  private users: UserDocument[] = [];
+
   constructor(
     @InjectModel(Store.name) private storesModel: Model<StoreDocument>
   ) {
     super();
+  }
+
+  setUsers(users: UserDocument[]) {
+    this.users = users;
   }
 
   protected get model(): Model<StoreDocument> {
@@ -17,11 +24,23 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
   }
 
   protected get data(): any[] {
+    if (this.users.length === 0) {
+      throw new Error('Users must be set before seeding stores');
+    }
+
+    // Find store users (users with role 'store')
+    const storeUsers = this.users.filter(user => user.role === 'store');
+    
+    if (storeUsers.length < 3) {
+      throw new Error('Need at least 3 store users to seed stores');
+    }
+
     return [
       {
         name: 'Tehran Mall',
         ownerName: 'Ahmad Rezaei',
         phoneNumber: '09123456789',
+        userId: storeUsers[0]._id,
         address: {
           city: 'Tehran',
           street: 'Valiasr Street',
@@ -46,6 +65,7 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         name: 'Isfahan Bazaar',
         ownerName: 'Fatemeh Karimi',
         phoneNumber: '09187654321',
+        userId: storeUsers[1]._id,
         address: {
           city: 'Isfahan',
           street: 'Naqsh-e Jahan Square',
@@ -69,6 +89,7 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         name: 'Shiraz Market',
         ownerName: 'Hassan Mohammadi',
         phoneNumber: '09111223344',
+        userId: storeUsers[2]._id,
         address: {
           city: 'Shiraz',
           street: 'Vakil Bazaar',

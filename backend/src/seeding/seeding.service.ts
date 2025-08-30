@@ -31,9 +31,9 @@ export class SeedingService {
       }
 
       // Seed in order to maintain referential integrity
-      const stores = await this.seedStores();
       const admins = await this.seedAdmins();
-      const users = await this.seedUsers(stores);
+      const users = await this.seedUsers([]); // Pass empty array since stores are created after users
+      const stores = await this.seedStores(users);
       const scratchCards = await this.seedScratchCards(stores, users);
       const transactions = await this.seedTransactions(stores, users, scratchCards);
       await this.seedOTPs(users);
@@ -61,7 +61,8 @@ export class SeedingService {
     this.logger.log('All data cleared successfully');
   }
 
-  private async seedStores() {
+  private async seedStores(users: any[]) {
+    this.storesSeeder.setUsers(users);
     return this.storesSeeder.seed();
   }
 
@@ -70,7 +71,7 @@ export class SeedingService {
   }
 
   private async seedUsers(stores: any[]) {
-    this.usersSeeder.setStores(stores);
+    // Users are created without stores now
     return this.usersSeeder.seed();
   }
 
@@ -119,7 +120,7 @@ export class SeedingService {
   }
 
   async seedUsersOnly(stores: any[]): Promise<any[]> {
-    this.usersSeeder.setStores(stores);
+    // Users are created without stores now
     return this.usersSeeder.seed();
   }
 

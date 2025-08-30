@@ -4,19 +4,16 @@ import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import { CreateUserDto, UpdateUserDto, PurchaseDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
-import { GenericListService } from '../common/services/generic-list.service';
 import { 
   UserNotFoundException, 
   CustomConflictException 
 } from '../common/errors';
 
 @Injectable()
-export class UsersService extends GenericListService<UserDocument> {
+export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {
-    super(userModel);
-  }
+  ) {}
 
   private async validateUserAccess(userDoc: UserDocument, requestingUser: any): Promise<void> {
     // Admin can access everything
@@ -62,8 +59,12 @@ export class UsersService extends GenericListService<UserDocument> {
     return user.save();
   }
 
-  // Override the findAll method to add role-based filtering
+  // Implement findAll method without generic service
   async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<UserDocument>> {
+    const page = request.page || 1;
+    const limit = request.limit || 20;
+    const skip = (page - 1) * limit;
+
     // Add role-based access control
     if (additionalFilters.requestingUser?.role === 'store') {
       // Store users can only see customers who have transactions with their store
@@ -71,7 +72,52 @@ export class UsersService extends GenericListService<UserDocument> {
       additionalFilters['purchases.storeId'] = additionalFilters.requestingUser.storeId;
     }
 
-    return super.findAll(request, additionalFilters);
+    // Build filter query
+    let filterQuery: any = {};
+    
+    // Add search functionality
+    if (request.search && request.searchFields && request.searchFields.length > 0) {
+      const searchQueries = request.searchFields.map(field => ({
+        [field]: { $regex: request.search, $options: 'i' }
+      }));
+      filterQuery.$or = searchQueries;
+    }
+
+    // Add additional filters
+    Object.assign(filterQuery, additionalFilters);
+
+    // Execute queries in parallel for better performance
+    const [data, total] = await Promise.all([
+      this.userModel
+        .find(filterQuery)
+        .sort(this.buildSortQuery(request.sort))
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      this.userModel.countDocuments(filterQuery).exec()
+    ]);
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      appliedFilters: {
+        search: request.search,
+        searchFields: request.searchFields,
+        sort: request.sort,
+        filters: request.filters
+      }
+    };
   }
 
   async findOne(id: string, requestingUser: any): Promise<User> {
@@ -199,5 +245,23 @@ export class UsersService extends GenericListService<UserDocument> {
       statuses: statuses.filter(Boolean),
       roles: roles.filter(Boolean)
     };
+  }
+
+  // Helper method to get distinct values
+  private async getDistinctValues(field: string): Promise<any[]> {
+    return this.userModel.distinct(field).exec();
+  }
+
+  // Helper method to build sort query
+  private buildSortQuery(sort: any): any {
+    if (!sort || sort.length === 0) {
+      return { createdAt: -1 };
+    }
+
+    const sortQuery: any = {};
+    sort.forEach((item: any) => {
+      sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
+    });
+    return sortQuery;
   }
 }
