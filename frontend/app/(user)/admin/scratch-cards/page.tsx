@@ -9,6 +9,7 @@ import ListIcon from '@/components/icons/ListIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
+import { ScratchCardStatus, ScratchCardType, getScratchCardStatusConfig, getScratchCardTypeConfig } from '@/types/enums'
 import StoreIcon from '@/components/icons/ChartTreeIcon'
 
 const AdminScratchCards = () => {
@@ -57,55 +58,19 @@ const AdminScratchCards = () => {
   ]
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'success'
-      case 'expired':
-        return 'danger'
-      case 'depleted':
-        return 'warning'
-      case 'inactive':
-        return 'default'
-      default:
-        return 'default'
-    }
+    return getScratchCardStatusConfig(status).color
   }
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'فعال'
-      case 'expired':
-        return 'منقضی شده'
-      case 'depleted':
-        return 'تمام شده'
-      case 'inactive':
-        return 'غیرفعال'
-      default:
-        return 'نامشخص'
-    }
+    return getScratchCardStatusConfig(status).text
   }
 
   const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'percentage':
-        return 'primary'
-      case 'fixed':
-        return 'success'
-      default:
-        return 'default'
-    }
+    return getScratchCardTypeConfig(type).color
   }
 
   const getTypeText = (type: string) => {
-    switch (type) {
-      case 'percentage':
-        return 'درصدی'
-      case 'fixed':
-        return 'مبلغ ثابت'
-      default:
-        return 'سایر'
-    }
+    return getScratchCardTypeConfig(type).text
   }
 
   const getUsagePercentage = (used: number, max: number) => {

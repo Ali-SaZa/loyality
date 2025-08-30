@@ -62,6 +62,15 @@ export const API_ROUTES = {
   DASHBOARD: {
     GET_INDEX_PAGE_DATA: 'dashboard/index-page-data',
   },
+  STORES: {
+    GET_ALL: 'stores',
+    GET_BY_ID: (id: string) => `stores/${id}`,
+    CREATE: 'stores',
+    UPDATE: (id: string) => `stores/${id}`,
+    DELETE: (id: string) => `stores/${id}`,
+    GET_STATS: 'stores/stats',
+    GET_FILTER_OPTIONS: 'stores/filter-options',
+  },
   SKILLS: {
     GET_ALL_SKILLS: 'skills/all',
   },

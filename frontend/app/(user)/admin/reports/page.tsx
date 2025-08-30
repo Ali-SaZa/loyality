@@ -8,6 +8,7 @@ import ChartTreeIcon from '@/components/icons/ChartTreeIcon'
 import DownloadIcon from '@/components/icons/DownloadIcon'
 import CalendarIcon from '@/components/icons/CalendarIcon'
 import FilterIcon from '@/components/icons/FilterIcon'
+import { ReportStatus, ReportType, getReportStatusConfig, getReportTypeConfig } from '@/types/enums'
 
 const AdminReports = () => {
   const router = useRouter()
@@ -78,59 +79,19 @@ const AdminReports = () => {
   ]
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'success'
-      case 'processing':
-        return 'warning'
-      case 'failed':
-        return 'danger'
-      default:
-        return 'default'
-    }
+    return getReportStatusConfig(status).color
   }
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'تکمیل شده'
-      case 'processing':
-        return 'در حال پردازش'
-      case 'failed':
-        return 'ناموفق'
-      default:
-        return 'نامشخص'
-    }
+    return getReportStatusConfig(status).text
   }
 
   const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'daily':
-        return 'primary'
-      case 'weekly':
-        return 'success'
-      case 'monthly':
-        return 'warning'
-      case 'quarterly':
-        return 'danger'
-      default:
-        return 'default'
-    }
+    return getReportTypeConfig(type).color
   }
 
   const getTypeText = (type: string) => {
-    switch (type) {
-      case 'daily':
-        return 'روزانه'
-      case 'weekly':
-        return 'هفتگی'
-      case 'monthly':
-        return 'ماهانه'
-      case 'quarterly':
-        return 'فصلانه'
-      default:
-        return 'سایر'
-    }
+    return getReportTypeConfig(type).text
   }
 
   return (

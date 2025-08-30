@@ -15,7 +15,7 @@ const AdminDashboard = () => {
 
   const stats = [
     {
-      title: 'کل کاربران',
+      title: 'کل مشتریان',
       value: '1,234',
       icon: <UserIcon className="size-8 text-primary" />,
       change: '+12%',
@@ -174,9 +174,9 @@ const AdminDashboard = () => {
               variant="flat"
               startContent={<UserIcon className="size-5" />}
               className="justify-start h-12"
-              onPress={() => router.push('/admin/users')}
+              onPress={() => router.push('/admin/customers')}
             >
-              مدیریت کاربران
+              مدیریت مشتریان
             </Button>
             <Button
               color="success"

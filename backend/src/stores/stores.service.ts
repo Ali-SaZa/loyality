@@ -245,7 +245,7 @@ export class StoresService {
     roles: string[];
   }> {
     const [plans, roles] = await Promise.all([
-      this.getDistinctValues('plan'),
+      this.getDistinctValues('plan.type'),
       this.getDistinctValues('role')
     ]);
 
@@ -253,6 +253,11 @@ export class StoresService {
       plans: plans.filter(Boolean),
       roles: roles.filter(Boolean)
     };
+  }
+
+  // Count stores with optional filter
+  async count(filter: any = {}): Promise<number> {
+    return this.storeModel.countDocuments(filter).exec();
   }
 
   // Helper method to get distinct values

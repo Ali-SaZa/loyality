@@ -9,6 +9,7 @@ import WalletIcon from '@/components/icons/WalletIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
+import { TransactionType, TransactionStatus, getTransactionTypeConfig, getTransactionStatusConfig } from '@/types/enums'
 import UserIcon from '@/components/icons/UserIcon'
 import StoreIcon from '@/components/icons/ChartTreeIcon'
 
@@ -67,63 +68,19 @@ const AdminTransactions = () => {
   ]
 
   const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'purchase':
-        return 'success'
-      case 'redemption':
-        return 'warning'
-      case 'bonus':
-        return 'primary'
-      case 'refund':
-        return 'danger'
-      default:
-        return 'default'
-    }
+    return getTransactionTypeConfig(type).color
   }
 
   const getTypeText = (type: string) => {
-    switch (type) {
-      case 'purchase':
-        return 'خرید'
-      case 'redemption':
-        return 'استفاده از تخفیف'
-      case 'bonus':
-        return 'امتیاز هدیه'
-      case 'refund':
-        return 'بازگشت وجه'
-      default:
-        return 'سایر'
-    }
+    return getTransactionTypeConfig(type).text
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'success'
-      case 'pending':
-        return 'warning'
-      case 'failed':
-        return 'danger'
-      case 'cancelled':
-        return 'default'
-      default:
-        return 'default'
-    }
+    return getTransactionStatusConfig(status).color
   }
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'تکمیل شده'
-      case 'pending':
-        return 'در انتظار'
-      case 'failed':
-        return 'ناموفق'
-      case 'cancelled':
-        return 'لغو شده'
-      default:
-        return 'نامشخص'
-    }
+    return getTransactionStatusConfig(status).text
   }
 
   const formatAmount = (amount: number) => {

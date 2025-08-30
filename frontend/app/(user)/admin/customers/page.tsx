@@ -6,60 +6,60 @@ import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
 import { useRouter } from 'next/navigation'
 
-import StoreIcon from '@/components/icons/ChartTreeIcon'
+import UserIcon from '@/components/icons/UserIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
-import { getAllStores, getStoreStats, Store, StoreStats } from '@/services/stores'
+import { getAllUsers, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
-import { StorePlanType, getStorePlanConfig } from '@/types/enums'
+import { UserStatus, getStatusConfig } from '@/types/enums'
 
-const AdminStores = () => {
+const AdminCustomers = () => {
   const router = useRouter()
   const { setLoading } = useLoading()
   
-  const [stores, setStores] = useState<Store[]>([])
-  const [stats, setStats] = useState<StoreStats>({
+  const [customers, setCustomers] = useState<User[]>([])
+  const [stats, setStats] = useState({
     total: 0,
     active: 0,
-    pending: 0,
-    inactive: 0
+    blocked: 0,
+    deleted: 0
   })
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchStores()
-    fetchStats()
+    fetchCustomers()
   }, [])
 
-  const fetchStores = async () => {
+  const fetchCustomers = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await getAllStores({ page: 1, limit: 50 })
-      setStores(response.data)
+      const response = await getAllUsers(1, 50)
+      // Filter only customers (role === 'customer')
+      const customerUsers = response.users.filter(user => user.role === 'customer')
+      setCustomers(customerUsers)
+      
+      // Calculate stats
+      const total = customerUsers.length
+      const active = customerUsers.filter(c => c.status === 'active').length
+      const blocked = customerUsers.filter(c => c.status === 'blocked').length
+      const deleted = customerUsers.filter(c => c.status === 'deleted').length
+      
+      setStats({ total, active, blocked, deleted })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری فروشگاه‌ها')
+      setError(err instanceof Error ? err.message : 'خطا در بارگذاری مشتریان')
     } finally {
       setLoading(false)
     }
   }
 
-  const fetchStats = async () => {
-    try {
-      const statsData = await getStoreStats()
-      setStats(statsData)
-    } catch (err) {
-      console.error('Error fetching stats:', err)
-    }
+  const getStatusColor = (status: string) => {
+    return getStatusConfig(status).color
   }
 
-  const getStatusColor = (planType: string) => {
-    return getStorePlanConfig(planType).color
-  }
-
-  const getStatusText = (planType: string) => {
-    return getStorePlanConfig(planType).text
+  const getStatusText = (status: string) => {
+    return getStatusConfig(status).text
   }
 
   const formatDate = (dateString: string) => {
@@ -75,37 +75,30 @@ const AdminStores = () => {
     return phone
   }
 
-  const getAddressText = (address: Store['address']) => {
-    const parts = []
-    if (address.street) parts.push(address.street)
-    if (address.city) parts.push(address.city)
-    return parts.join('، ') || 'آدرس ثبت نشده'
+  const handleViewCustomer = (customerId: string) => {
+    router.push(`/admin/customers/${customerId}`)
   }
 
-  const handleViewStore = (storeId: string) => {
-    router.push(`/admin/stores/${storeId}`)
+  const handleEditCustomer = (customerId: string) => {
+    router.push(`/admin/customers/${customerId}/edit`)
   }
 
-  const handleEditStore = (storeId: string) => {
-    router.push(`/admin/stores/${storeId}/edit`)
-  }
-
-  const handleDeleteStore = async (storeId: string) => {
-    if (confirm('آیا از حذف این فروشگاه اطمینان دارید؟')) {
+  const handleDeleteCustomer = async (customerId: string) => {
+    if (confirm('آیا از حذف این مشتری اطمینان دارید؟')) {
       try {
         setLoading(true)
-        // TODO: Implement delete store functionality
-        await fetchStores() // Refresh the list
+        // TODO: Implement delete customer functionality
+        await fetchCustomers() // Refresh the list
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف فروشگاه')
+        setError(err instanceof Error ? err.message : 'خطا در حذف مشتری')
       } finally {
         setLoading(false)
       }
     }
   }
 
-  const handleAddStore = () => {
-    router.push('/admin/stores/new')
+  const handleAddCustomer = () => {
+    router.push('/admin/customers/new')
   }
 
   if (error) {
@@ -115,7 +108,7 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="text-center">
               <p className="text-danger mb-4">{error}</p>
-              <Button color="primary" onClick={fetchStores}>
+              <Button color="primary" onClick={fetchCustomers}>
                 تلاش مجدد
               </Button>
             </div>
@@ -130,18 +123,18 @@ const AdminStores = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <StoreIcon className="size-8 text-success" />
+          <UserIcon className="size-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-text-dark">مدیریت فروشگاه‌ها</h1>
-            <p className="text-text-light">مشاهده و مدیریت تمام فروشگاه‌های سیستم</p>
+            <h1 className="text-2xl font-bold text-text-dark">مدیریت مشتریان</h1>
+            <p className="text-text-light">مشاهده و مدیریت تمام مشتریان سیستم</p>
           </div>
         </div>
         <Button
-          color="success"
-          startContent={<StoreIcon className="size-5" />}
-          onClick={handleAddStore}
+          color="primary"
+          startContent={<UserIcon className="size-5" />}
+          onClick={handleAddCustomer}
         >
-          افزودن فروشگاه جدید
+          افزودن مشتری جدید
         </Button>
       </div>
 
@@ -151,10 +144,10 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کل فروشگاه‌ها</p>
+                <p className="text-sm text-text-light mb-1">کل مشتریان</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
               </div>
-              <StoreIcon className="size-8 text-success" />
+              <UserIcon className="size-8 text-primary" />
             </div>
           </CardBody>
         </Card>
@@ -163,10 +156,10 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">فروشگاه‌های پریمیوم</p>
+                <p className="text-sm text-text-light mb-1">مشتریان فعال</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
               </div>
-              <StoreIcon className="size-8 text-success" />
+              <UserIcon className="size-8 text-success" />
             </div>
           </CardBody>
         </Card>
@@ -175,10 +168,10 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">فروشگاه‌های رایگان</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.pending}</p>
+                <p className="text-sm text-text-light mb-1">مشتریان مسدود</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.blocked}</p>
               </div>
-              <StoreIcon className="size-8 text-warning" />
+              <UserIcon className="size-8 text-warning" />
             </div>
           </CardBody>
         </Card>
@@ -187,70 +180,71 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">غیرفعال</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.inactive}</p>
+                <p className="text-sm text-text-light mb-1">حذف شده</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
               </div>
-              <StoreIcon className="size-8 text-danger" />
+              <UserIcon className="size-8 text-danger" />
             </div>
           </CardBody>
         </Card>
       </div>
 
-      {/* Stores Table */}
+      {/* Customers Table */}
       <Card className="border-1">
         <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست فروشگاه‌ها</h3>
+          <h3 className="text-lg font-semibold text-text-dark">لیست مشتریان</h3>
         </CardHeader>
         <CardBody className="p-0">
-          <Table aria-label="لیست فروشگاه‌ها">
+          <Table aria-label="لیست مشتریان">
             <TableHeader>
-              <TableColumn>نام فروشگاه</TableColumn>
-              <TableColumn>صاحب فروشگاه</TableColumn>
-              <TableColumn>نوع پلن</TableColumn>
-              <TableColumn>آدرس</TableColumn>
-              <TableColumn>تاریخ عضویت</TableColumn>
+              <TableColumn>نام مشتری</TableColumn>
+              <TableColumn>شماره تلفن</TableColumn>
+              <TableColumn>وضعیت</TableColumn>
+              <TableColumn>امتیازات</TableColumn>
+              <TableColumn>خریدها</TableColumn>
+              <TableColumn>آخرین فعالیت</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
             <TableBody>
-              {stores.map((store) => (
-                <TableRow key={store.id}>
+              {customers.map((customer) => (
+                <TableRow key={customer.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-semibold">
-                          {store.name.charAt(0)}
+                          {customer.firstName?.charAt(0) || customer.phoneNumber.charAt(0)}
                         </span>
                       </div>
                       <div>
-                        <span className="font-medium">{store.name}</span>
-                        <p className="text-xs text-text-light">{formatPhoneNumber(store.phoneNumber)}</p>
+                        <span className="font-medium">
+                          {customer.firstName && customer.lastName 
+                            ? `${customer.firstName} ${customer.lastName}`
+                            : customer.firstName || 'نامشخص'
+                          }
+                        </span>
+                        <p className="text-xs text-text-light">ID: {customer.id}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <span className="font-medium">{store.ownerName}</span>
-                      <p className="text-xs text-text-light">ID: {store.userId}</p>
-                    </div>
+                    <span className="font-medium">{formatPhoneNumber(customer.phoneNumber)}</span>
                   </TableCell>
                   <TableCell>
                     <Chip
-                      color={getStatusColor(store.plan.type)}
+                      color={getStatusColor(customer.status || 'active')}
                       size="sm"
                       variant="flat"
                     >
-                      {getStatusText(store.plan.type)}
+                      {getStatusText(customer.status || 'active')}
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <span className="text-sm">{getAddressText(store.address)}</span>
-                      <p className="text-xs text-text-light">
-                        {store.loyaltySettings.tiers.length} سطح وفاداری
-                      </p>
-                    </div>
+                    <span className="font-medium">{customer.totalPoints.toLocaleString()}</span>
                   </TableCell>
-                  <TableCell>{formatDate(store.createdAt)}</TableCell>
+                  <TableCell>
+                    <span className="font-medium">{customer.purchases?.length || 0}</span>
+                  </TableCell>
+                  <TableCell>{formatDate(customer.lastActivity)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
@@ -259,7 +253,7 @@ const AdminStores = () => {
                         variant="light"
                         color="primary"
                         aria-label="مشاهده"
-                        onClick={() => handleViewStore(store.id)}
+                        onClick={() => handleViewCustomer(customer.id)}
                       >
                         <EyeIcon className="size-4" />
                       </Button>
@@ -269,7 +263,7 @@ const AdminStores = () => {
                         variant="light"
                         color="primary"
                         aria-label="ویرایش"
-                        onClick={() => handleEditStore(store.id)}
+                        onClick={() => handleEditCustomer(customer.id)}
                       >
                         <EditIcon className="size-4" />
                       </Button>
@@ -279,7 +273,7 @@ const AdminStores = () => {
                         variant="light"
                         color="danger"
                         aria-label="حذف"
-                        onClick={() => handleDeleteStore(store.id)}
+                        onClick={() => handleDeleteCustomer(customer.id)}
                       >
                         <TrashIcon className="size-4" />
                       </Button>
@@ -295,4 +289,4 @@ const AdminStores = () => {
   )
 }
 
-export default AdminStores
+export default AdminCustomers

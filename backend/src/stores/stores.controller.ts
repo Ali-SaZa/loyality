@@ -54,28 +54,57 @@ export class StoresController {
 
   @Get()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all stores (Public read, Admin full access)' })
+  @ApiOperation({ summary: 'Get all stores with pagination and filtering' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of all stores',
-    type: [StoreResponseDto] 
+    description: 'List of stores with pagination',
+    type: Object 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(): Promise<StoreResponseDto[]> {
-    const result = await this.storesService.findAll({ page: 1, limit: 100 }, {});
-    return result.data.map(store => ({
-      id: store._id.toString(),
-      name: store.name,
-      ownerName: store.ownerName,
-      phoneNumber: store.phoneNumber,
-      userId: store.userId.toString(),
-      address: store.address,
-      loyaltySettings: store.loyaltySettings,
-      plan: store.plan,
-      role: store.role,
-      createdAt: store.createdAt,
-      updatedAt: store.updatedAt
-    }));
+  async findAll(): Promise<any> {
+    return this.storesService.findAll({ page: 1, limit: 100 }, {});
+  }
+
+  @Get('stats')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get store statistics (Admin only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Store statistics',
+    type: Object 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async getStats(): Promise<{ total: number; active: number; pending: number; inactive: number }> {
+    const [total, premium, free, inactive] = await Promise.all([
+      this.storesService.count(),
+      this.storesService.count({ 'plan.type': 'premium' }),
+      this.storesService.count({ 'plan.type': 'free' }),
+      this.storesService.count({ 'plan.type': 'inactive' })
+    ]);
+
+    return {
+      total,
+      active: premium,
+      pending: free,
+      inactive
+    };
+  }
+
+  @Get('filter-options')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get store filter options (Admin only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Filter options',
+    type: Object 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async getFilterOptions(): Promise<{ plans: string[]; roles: string[] }> {
+    return this.storesService.getFilterOptions();
   }
 
   @Get(':id')
