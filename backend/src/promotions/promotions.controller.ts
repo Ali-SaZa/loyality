@@ -80,12 +80,6 @@ export class PromotionsController {
       requestingUser: user
     };
 
-    // Add query filters
-    if (query.storeId) additionalFilters.storeId = query.storeId;
-    if (query.type) additionalFilters.type = query.type;
-    if (query.status) additionalFilters.status = query.status;
-    if (query.includeDeleted === 'true') additionalFilters.includeDeleted = true;
-
     return this.promotionsService.findAll(request, additionalFilters);
   }
 

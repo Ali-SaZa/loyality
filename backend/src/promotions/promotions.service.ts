@@ -225,30 +225,14 @@ export class PromotionsService {
       }
     }
 
-    // Build filter query
-    let filterQuery: any = {};
-    
-    // Exclude deleted promotions by default
-    if (!additionalFilters.includeDeleted) {
-      filterQuery.status = { $ne: 'deleted' };
-    }
-    
-    // Add search functionality
-    if (request.search && request.searchFields && request.searchFields.length > 0) {
-      const searchQueries = request.searchFields.map(field => ({
-        [field]: { $regex: request.search, $options: 'i' }
-      }));
-      filterQuery.$or = searchQueries;
-    }
-
-    // Add additional filters
-    Object.assign(filterQuery, additionalFilters);
+    // Build filter query - simplified to only exclude deleted promotions
+    let filterQuery: any = { status: { $ne: 'deleted' } };
 
     // Execute queries in parallel for better performance
     const [data, total] = await Promise.all([
       this.promotionModel
         .find(filterQuery)
-        .sort(this.buildSortQuery(request.sort))
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .lean()
@@ -404,18 +388,6 @@ export class PromotionsService {
     if (!validTransitions[currentStatus]?.includes(newStatus)) {
       throw new BadRequestException(`Cannot change status from ${currentStatus} to ${newStatus}`);
     }
-  }
-
-  private buildSortQuery(sort: any): any {
-    if (!sort || sort.length === 0) {
-      return { createdAt: -1 };
-    }
-
-    const sortQuery: any = {};
-    sort.forEach((item: any) => {
-      sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
-    });
-    return sortQuery;
   }
 
   // Helper method to get promotion statistics
