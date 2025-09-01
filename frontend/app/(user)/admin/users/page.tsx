@@ -5,22 +5,28 @@ import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
 import { useRouter } from 'next/navigation'
+import { Select, SelectItem } from '@heroui/select'
 
 import UserIcon from '@/components/icons/UserIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
+import StoreIcon from '@/components/icons/ChartTreeIcon'
 import { getAllUsers, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
-import { UserStatus, getStatusConfig } from '@/types/enums'
+import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
 
-const AdminCustomers = () => {
+const AdminUsers = () => {
   const router = useRouter()
   const { setLoading } = useLoading()
   
-  const [customers, setCustomers] = useState<User[]>([])
+  const [users, setUsers] = useState<User[]>([])
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+  const [selectedRole, setSelectedRole] = useState<string>('all')
   const [stats, setStats] = useState({
     total: 0,
+    customers: 0,
+    stores: 0,
     active: 0,
     blocked: 0,
     deleted: 0
@@ -28,29 +34,41 @@ const AdminCustomers = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchCustomers()
+    fetchUsers()
   }, [])
 
-  const fetchCustomers = async () => {
+  useEffect(() => {
+    filterUsers()
+  }, [users, selectedRole])
+
+  const fetchUsers = async () => {
     try {
       setLoading(true)
       setError(null)
       const response = await getAllUsers(1, 50)
-      // Filter only customers (role === 'customer')
-      const customerUsers = response.users.filter(user => user.role === 'customer')
-      setCustomers(customerUsers)
+      setUsers(response.users)
       
       // Calculate stats
-      const total = customerUsers.length
-      const active = customerUsers.filter(c => c.status === 'active').length
-      const blocked = customerUsers.filter(c => c.status === 'blocked').length
-      const deleted = customerUsers.filter(c => c.status === 'deleted').length
+      const total = response.users.length
+      const customers = response.users.filter(u => u.role === 'customer').length
+      const stores = response.users.filter(u => u.role === 'store').length
+      const active = response.users.filter(u => u.status === 'active').length
+      const blocked = response.users.filter(u => u.status === 'blocked').length
+      const deleted = response.users.filter(u => u.status === 'deleted').length
       
-      setStats({ total, active, blocked, deleted })
+      setStats({ total, customers, stores, active, blocked, deleted })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری مشتریان')
+      setError(err instanceof Error ? err.message : 'خطا در بارگذاری کاربران')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const filterUsers = () => {
+    if (selectedRole === 'all') {
+      setFilteredUsers(users)
+    } else {
+      setFilteredUsers(users.filter(user => user.role === selectedRole))
     }
   }
 
@@ -60,6 +78,14 @@ const AdminCustomers = () => {
 
   const getStatusText = (status: string) => {
     return getStatusConfig(status).text
+  }
+
+  const getRoleColor = (role: string) => {
+    return getRoleConfig(role).color
+  }
+
+  const getRoleText = (role: string) => {
+    return getRoleConfig(role).text
   }
 
   const formatDate = (dateString: string) => {
@@ -75,30 +101,30 @@ const AdminCustomers = () => {
     return phone
   }
 
-  const handleViewCustomer = (customerId: string) => {
-    router.push(`/admin/customers/${customerId}`)
+  const handleViewUser = (userId: string) => {
+    router.push(`/admin/users/${userId}`)
   }
 
-  const handleEditCustomer = (customerId: string) => {
-    router.push(`/admin/customers/${customerId}/edit`)
+  const handleEditUser = (userId: string) => {
+    router.push(`/admin/users/${userId}/edit`)
   }
 
-  const handleDeleteCustomer = async (customerId: string) => {
-    if (confirm('آیا از حذف این مشتری اطمینان دارید؟')) {
+  const handleDeleteUser = async (userId: string) => {
+    if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
       try {
         setLoading(true)
-        // TODO: Implement delete customer functionality
-        await fetchCustomers() // Refresh the list
+        // TODO: Implement delete user functionality
+        await fetchUsers() // Refresh the list
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف مشتری')
+        setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
       } finally {
         setLoading(false)
       }
     }
   }
 
-  const handleAddCustomer = () => {
-    router.push('/admin/customers/new')
+  const handleAddUser = () => {
+    router.push('/admin/users/new')
   }
 
   if (error) {
@@ -108,7 +134,7 @@ const AdminCustomers = () => {
           <CardBody className="p-6">
             <div className="text-center">
               <p className="text-danger mb-4">{error}</p>
-              <Button color="primary" onClick={fetchCustomers}>
+              <Button color="primary" onClick={fetchUsers}>
                 تلاش مجدد
               </Button>
             </div>
@@ -125,26 +151,26 @@ const AdminCustomers = () => {
         <div className="flex items-center gap-3">
           <UserIcon className="size-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-text-dark">مدیریت مشتریان</h1>
-            <p className="text-text-light">مشاهده و مدیریت تمام مشتریان سیستم</p>
+            <h1 className="text-2xl font-bold text-text-dark">مدیریت کاربران</h1>
+            <p className="text-text-light">مشاهده و مدیریت تمام کاربران سیستم</p>
           </div>
         </div>
         <Button
           color="primary"
           startContent={<UserIcon className="size-5" />}
-          onClick={handleAddCustomer}
+          onClick={handleAddUser}
         >
-          افزودن مشتری جدید
+          افزودن کاربر جدید
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
         <Card className="border-1">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کل مشتریان</p>
+                <p className="text-sm text-text-light mb-1">کل کاربران</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
               </div>
               <UserIcon className="size-8 text-primary" />
@@ -156,7 +182,31 @@ const AdminCustomers = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">مشتریان فعال</p>
+                <p className="text-sm text-text-light mb-1">مشتریان</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.customers}</p>
+              </div>
+              <UserIcon className="size-8 text-primary" />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">فروشگاه‌ها</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.stores}</p>
+              </div>
+              <StoreIcon className="size-8 text-success" />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">کاربران فعال</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
               </div>
               <UserIcon className="size-8 text-success" />
@@ -168,7 +218,7 @@ const AdminCustomers = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">مشتریان مسدود</p>
+                <p className="text-sm text-text-light mb-1">کاربران مسدود</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.blocked}</p>
               </div>
               <UserIcon className="size-8 text-warning" />
@@ -189,16 +239,35 @@ const AdminCustomers = () => {
         </Card>
       </div>
 
-      {/* Customers Table */}
+      {/* Filter */}
+      <Card className="border-1">
+        <CardBody className="p-6">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-text-dark">فیلتر بر اساس نقش:</span>
+            <Select
+              selectedKeys={[selectedRole]}
+              onSelectionChange={(keys) => setSelectedRole(Array.from(keys)[0] as string)}
+              className="w-48"
+            >
+              <SelectItem key="all">همه کاربران</SelectItem>
+              <SelectItem key={UserRole.CUSTOMER}>{getRoleConfig(UserRole.CUSTOMER).text}</SelectItem>
+              <SelectItem key={UserRole.STORE}>{getRoleConfig(UserRole.STORE).text}</SelectItem>
+            </Select>
+          </div>
+        </CardBody>
+      </Card>
+
+      {/* Users Table */}
       <Card className="border-1">
         <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست مشتریان</h3>
+          <h3 className="text-lg font-semibold text-text-dark">لیست کاربران</h3>
         </CardHeader>
         <CardBody className="p-0">
-          <Table aria-label="لیست مشتریان">
+          <Table aria-label="لیست کاربران">
             <TableHeader>
-              <TableColumn>نام مشتری</TableColumn>
+              <TableColumn>نام کاربر</TableColumn>
               <TableColumn>شماره تلفن</TableColumn>
+              <TableColumn>نقش</TableColumn>
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>امتیازات</TableColumn>
               <TableColumn>خریدها</TableColumn>
@@ -206,45 +275,54 @@ const AdminCustomers = () => {
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
             <TableBody>
-              {customers.map((customer) => (
-                <TableRow key={customer.id}>
+              {filteredUsers.map((user) => (
+                <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-semibold">
-                          {customer.firstName?.charAt(0) || customer.phoneNumber.charAt(0)}
+                          {user.firstName?.charAt(0) || user.phoneNumber.charAt(0)}
                         </span>
                       </div>
                       <div>
                         <span className="font-medium">
-                          {customer.firstName && customer.lastName 
-                            ? `${customer.firstName} ${customer.lastName}`
-                            : customer.firstName || 'نامشخص'
+                          {user.firstName && user.lastName 
+                            ? `${user.firstName} ${user.lastName}`
+                            : user.firstName || 'نامشخص'
                           }
                         </span>
-                        <p className="text-xs text-text-light">ID: {customer.id}</p>
+                        <p className="text-xs text-text-light">ID: {user.id}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">{formatPhoneNumber(customer.phoneNumber)}</span>
+                    <span className="font-medium">{formatPhoneNumber(user.phoneNumber)}</span>
                   </TableCell>
                   <TableCell>
                     <Chip
-                      color={getStatusColor(customer.status || 'active')}
+                      color={getRoleColor(user.role)}
                       size="sm"
                       variant="flat"
                     >
-                      {getStatusText(customer.status || 'active')}
+                      {getRoleText(user.role)}
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">{customer.totalPoints.toLocaleString()}</span>
+                    <Chip
+                      color={getStatusColor(user.status || 'active')}
+                      size="sm"
+                      variant="flat"
+                    >
+                      {getStatusText(user.status || 'active')}
+                    </Chip>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">{customer.purchases?.length || 0}</span>
+                    <span className="font-medium">{user.totalPoints.toLocaleString()}</span>
                   </TableCell>
-                  <TableCell>{formatDate(customer.lastActivity)}</TableCell>
+                  <TableCell>
+                    <span className="font-medium">{user.purchases?.length || 0}</span>
+                  </TableCell>
+                  <TableCell>{formatDate(user.lastActivity)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
@@ -253,7 +331,7 @@ const AdminCustomers = () => {
                         variant="light"
                         color="primary"
                         aria-label="مشاهده"
-                        onClick={() => handleViewCustomer(customer.id)}
+                        onClick={() => handleViewUser(user.id)}
                       >
                         <EyeIcon className="size-4" />
                       </Button>
@@ -263,7 +341,7 @@ const AdminCustomers = () => {
                         variant="light"
                         color="primary"
                         aria-label="ویرایش"
-                        onClick={() => handleEditCustomer(customer.id)}
+                        onClick={() => handleEditUser(user.id)}
                       >
                         <EditIcon className="size-4" />
                       </Button>
@@ -273,7 +351,7 @@ const AdminCustomers = () => {
                         variant="light"
                         color="danger"
                         aria-label="حذف"
-                        onClick={() => handleDeleteCustomer(customer.id)}
+                        onClick={() => handleDeleteUser(user.id)}
                       >
                         <TrashIcon className="size-4" />
                       </Button>
@@ -289,4 +367,4 @@ const AdminCustomers = () => {
   )
 }
 
-export default AdminCustomers
+export default AdminUsers

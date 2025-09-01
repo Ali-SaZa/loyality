@@ -94,6 +94,32 @@ export interface UpdateStoreRequest {
   }
 }
 
+// New interfaces for store with user
+export interface CreateStoreUserRequest {
+  firstName: string
+  lastName: string
+  password: string
+  confirmPassword: string
+}
+
+export interface CreateStoreWithUserRequest {
+  user: CreateStoreUserRequest
+  store: Omit<CreateStoreRequest, 'userId'>
+}
+
+export interface StoreWithUserResponse {
+  user: {
+    id: string
+    phoneNumber: string
+    firstName: string
+    lastName: string
+    role: string
+    createdAt: string
+    updatedAt: string
+  }
+  store: Store
+}
+
 export interface StoreListResponse {
   data: Store[]
   total: number

@@ -35,6 +35,17 @@ const StoreBaseValidation = z.object({
   })
 })
 
+// User information validation (same as user registration)
+const UserInfoValidation = z.object({
+  firstName: z.string().min(2, 'نام حداقل باید ۲ کاراکتر باشد.'),
+  lastName: z.string().min(2, 'نام خانوادگی حداقل باید ۲ کاراکتر باشد.'),
+  password: z.string().min(6, 'رمز عبور باید حداقل 6 کاراکتر باشد.'),
+  confirmPassword: z.string().min(6, 'تکرار رمز عبور باید حداقل 6 کاراکتر باشد.')
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'رمز عبور و تکرار آن باید یکسان باشند.',
+  path: ['confirmPassword']
+})
+
 // Create validation with userId (for new stores)
 export const StoreFormValidation = StoreBaseValidation.extend({
   userId: z.string().min(1, 'شناسه کاربر الزامی است')
@@ -43,11 +54,13 @@ export const StoreFormValidation = StoreBaseValidation.extend({
 // Create validation without userId (for updates)
 export const StoreUpdateValidation = StoreBaseValidation
 
-// Type for the base store data
-export type StoreBaseData = z.infer<typeof StoreBaseValidation>
+// Create validation for store with user information
+export const StoreWithUserValidation = z.object({
+  user: UserInfoValidation,
+  store: StoreBaseValidation
+})
 
-// Type for store creation data
+// Type definitions
 export type StoreFormData = z.infer<typeof StoreFormValidation>
-
-// Type for store update data
 export type StoreUpdateData = z.infer<typeof StoreUpdateValidation>
+export type StoreWithUserData = z.infer<typeof StoreWithUserValidation>

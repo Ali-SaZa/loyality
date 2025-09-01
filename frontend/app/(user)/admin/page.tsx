@@ -174,9 +174,9 @@ const AdminDashboard = () => {
               variant="flat"
               startContent={<UserIcon className="size-5" />}
               className="justify-start h-12"
-              onPress={() => router.push('/admin/customers')}
+              onPress={() => router.push('/admin/users')}
             >
-              مدیریت مشتریان
+              مدیریت کاربران
             </Button>
             <Button
               color="success"

@@ -33,9 +33,9 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: 'مدیریت مشتریان',
+        title: 'مدیریت کاربران',
         icon: (className: string = 'size-6') => <UserIcon className={className} />,
-        link: '/admin/customers',
+        link: '/admin/users',
         isShortAccess: true,
         children: [],
       },
