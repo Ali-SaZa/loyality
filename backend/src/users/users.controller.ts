@@ -119,6 +119,33 @@ export class UsersController {
     return this.usersService.getFilterOptions();
   }
 
+  @Get('stats')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get user statistics (Admin only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User statistics',
+    type: Object 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async getStats(): Promise<{ total: number; active: number; blocked: number; deleted: number }> {
+    const [total, active, blocked, deleted] = await Promise.all([
+      this.usersService.count(),
+      this.usersService.count({ status: 'active' }),
+      this.usersService.count({ status: 'blocked' }),
+      this.usersService.count({ status: 'deleted' })
+    ]);
+
+    return {
+      total,
+      active,
+      blocked,
+      deleted
+    };
+  }
+
   @Get('me')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })

@@ -56,6 +56,29 @@ export interface UsersResponse {
   limit: number
 }
 
+export interface UserListResponse {
+  data: User[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+  appliedFilters: {
+    search?: string
+    searchFields?: string[]
+    sort?: any
+    filters?: any
+  }
+}
+
+export interface UserStats {
+  total: number
+  active: number
+  blocked: number
+  deleted: number
+}
+
 // Backend list response shape
 interface UsersListApiResponse {
   data: User[]
@@ -75,24 +98,30 @@ interface UsersListApiResponse {
 
 // Users service functions
 export const usersService = {
-  // Get all users (Admin only)
-  async getAllUsers(page: number = 1, limit: number = 10, search?: string): Promise<UsersResponse> {
+  // Get all users with pagination and filtering
+  async getAllUsers(params?: {
+    page?: number
+    limit?: number
+    search?: string
+    searchFields?: string[]
+    sort?: string
+    filters?: Record<string, any>
+  }): Promise<UserListResponse> {
     try {
-      const params = new URLSearchParams()
-      if (page) params.append('page', page.toString())
-      if (limit) params.append('limit', limit.toString())
-      if (search) params.append('search', search)
-
-      const response = await axiosInstance.get<UsersListApiResponse>(`/users?${params.toString()}`)
-      
-      const users = response.data.data || []
-      
-      return {
-        users,
-        total: response.data.total,
-        page: response.data.page,
-        limit: response.data.limit
+      const queryParams = new URLSearchParams()
+      if (params?.page) queryParams.append('page', params.page.toString())
+      if (params?.limit) queryParams.append('limit', params.limit.toString())
+      if (params?.search) queryParams.append('search', params.search)
+      if (params?.searchFields) queryParams.append('searchFields', params.searchFields.join(','))
+      if (params?.sort) queryParams.append('sort', params.sort)
+      if (params?.filters) {
+        Object.entries(params.filters).forEach(([key, value]) => {
+          queryParams.append(`filters[${key}]`, value.toString())
+        })
       }
+
+      const response = await axiosInstance.get<UserListResponse>(`/users?${queryParams.toString()}`)
+      return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)
       throw new Error(errorMessage)
@@ -162,6 +191,31 @@ export const usersService = {
       const errorMessage = handleApiError(error)
       throw new Error(errorMessage)
     }
+  },
+
+  // Get user statistics
+  async getUserStats(): Promise<UserStats> {
+    try {
+      const response = await axiosInstance.get<UserStats>('/users/stats')
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
+  },
+
+  // Get user filter options
+  async getUserFilterOptions(): Promise<{
+    statuses: string[]
+    roles: string[]
+  }> {
+    try {
+      const response = await axiosInstance.get('/users/filter-options')
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
   }
 }
 
@@ -172,3 +226,5 @@ export const createUser = usersService.createUser
 export const updateUser = usersService.updateUser
 export const deleteUser = usersService.deleteUser
 export const getCurrentUser = usersService.getCurrentUser
+export const getUserStats = usersService.getUserStats
+export const getUserFilterOptions = usersService.getUserFilterOptions

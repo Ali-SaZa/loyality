@@ -257,6 +257,11 @@ export class UsersService {
     return this.userModel.distinct(field).exec();
   }
 
+  // Count users with optional filter
+  async count(filter: any = {}): Promise<number> {
+    return this.userModel.countDocuments(filter).exec();
+  }
+
   // Helper method to build sort query
   private buildSortQuery(sort: any): any {
     if (!sort || sort.length === 0) {

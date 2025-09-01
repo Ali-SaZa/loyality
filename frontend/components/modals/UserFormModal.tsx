@@ -6,17 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
 import useLoading from '@/hooks/useLoading'
-import { CreateUserFormValidation, UpdateUserFormValidation } from '@/validation/user'
+import { CreateUserFormValidation, UpdateUserFormValidation, UserFormData, UserUpdateData } from '@/validation/user'
 import { UserRole, UserStatus } from '@/types/enums'
 import { User, getUserById, createUser, updateUser, usersService } from '@/services/users'
 
-type UserFormData = {
-  firstName?: string
-  lastName?: string
-  phoneNumber: string
-  role: UserRole
-  status: UserStatus
-}
+
 
 interface UserFormModalProps {
   isOpen: boolean
@@ -32,7 +26,7 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
 
   const isEditMode = !!userId
 
-  const methods = useForm<UserFormData>({
+  const methods = useForm<UserFormData | UserUpdateData>({
     resolver: zodResolver(isEditMode ? UpdateUserFormValidation : CreateUserFormValidation),
     defaultValues: {
       firstName: '',
@@ -83,7 +77,7 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
     }
   }
 
-  const onSubmit = async (data: UserFormData) => {
+  const onSubmit = async (data: UserFormData | UserUpdateData) => {
     try {
       setLoading(true)
       setError(null)
@@ -99,13 +93,13 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
         await updateUser(userId, userData)
         
         // Update status separately if it changed
-        if (user && user.status !== data.status) {
+        if (user && user.status !== data.status && data.status) {
           await usersService.updateUserStatus(userId, data.status)
         }
       } else {
         // Create new user
         const userData = {
-          phoneNumber: data.phoneNumber,
+          phoneNumber: data.phoneNumber!,
           firstName: data.firstName || undefined,
           lastName: data.lastName || undefined
         }

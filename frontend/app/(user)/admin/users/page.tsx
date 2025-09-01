@@ -5,58 +5,39 @@ import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
 import { useRouter } from 'next/navigation'
-import { Select, SelectItem } from '@heroui/select'
 
 import UserIcon from '@/components/icons/UserIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
-import StoreIcon from '@/components/icons/ChartTreeIcon'
-import { getAllUsers, deleteUser, User } from '@/services/users'
+import { getAllUsers, getUserStats, deleteUser, User, UserStats } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
-import Modal from '@/components/modals/Modal'
-import UserFormModal from '@/components/modals/UserFormModal'
 
 const AdminUsers = () => {
   const router = useRouter()
   const { setLoading } = useLoading()
   
   const [users, setUsers] = useState<User[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
-  const [selectedRole, setSelectedRole] = useState<string>('all')
-
+  const [stats, setStats] = useState<UserStats>({
+    total: 0,
+    active: 0,
+    blocked: 0,
+    deleted: 0
+  })
   const [error, setError] = useState<string | null>(null)
-  
-  // Delete modal state
-  const [deleteModal, setDeleteModal] = useState({
-    isOpen: false,
-    userId: '',
-    userName: '',
-    isLoading: false
-  })
-
-  // User form modal state
-  const [userFormModal, setUserFormModal] = useState({
-    isOpen: false,
-    userId: undefined as string | undefined
-  })
 
   useEffect(() => {
     fetchUsers()
+    fetchStats()
   }, [])
-
-  useEffect(() => {
-    filterUsers()
-  }, [users, selectedRole])
 
   const fetchUsers = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await getAllUsers(1, 50)
-      console.log(response.users)
-      setUsers(response.users)
+      const response = await getAllUsers({ page: 1, limit: 50 })
+      setUsers(response.data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در بارگذاری کاربران')
     } finally {
@@ -64,11 +45,12 @@ const AdminUsers = () => {
     }
   }
 
-  const filterUsers = () => {
-    if (selectedRole === 'all') {
-      setFilteredUsers(users)
-    } else {
-      setFilteredUsers(users.filter(user => user.role === selectedRole))
+  const fetchStats = async () => {
+    try {
+      const statsData = await getUserStats()
+      setStats(statsData)
+    } catch (err) {
+      console.error('Error fetching stats:', err)
     }
   }
 
@@ -88,49 +70,6 @@ const AdminUsers = () => {
     return getRoleConfig(role).text
   }
 
-  const handleDeleteClick = (user: User) => {
-    const userName = user.firstName && user.lastName 
-      ? `${user.firstName} ${user.lastName}` 
-      : user.phoneNumber
-    
-    setDeleteModal({
-      isOpen: true,
-      userId: user.id,
-      userName,
-      isLoading: false
-    })
-  }
-
-  const handleDeleteConfirm = async () => {
-    try {
-      setDeleteModal(prev => ({ ...prev, isLoading: true }))
-      await deleteUser(deleteModal.userId)
-      
-      // Refresh the users list to show updated status
-      await fetchUsers()
-      
-      // Close modal
-      setDeleteModal({
-        isOpen: false,
-        userId: '',
-        userName: '',
-        isLoading: false
-      })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
-      setDeleteModal(prev => ({ ...prev, isLoading: false }))
-    }
-  }
-
-  const handleDeleteCancel = () => {
-    setDeleteModal({
-      isOpen: false,
-      userId: '',
-      userName: '',
-      isLoading: false
-    })
-  }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('fa-IR')
@@ -145,25 +84,29 @@ const AdminUsers = () => {
   }
 
   const handleViewUser = (userId: string) => {
-    router.push(`/admin/users/${userId}`)
+    router.push(`/admin/users/${userId}/view`)
   }
 
   const handleEditUser = (userId: string) => {
-    setUserFormModal({
-      isOpen: true,
-      userId: userId
-    })
+    router.push(`/admin/users/${userId}`)
+  }
+
+  const handleDeleteUser = async (userId: string) => {
+    if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
+      try {
+        setLoading(true)
+        await deleteUser(userId)
+        await fetchUsers() // Refresh the list
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   const handleAddUser = () => {
-    setUserFormModal({
-      isOpen: true,
-      userId: undefined
-    })
-  }
-
-  const handleUserFormSuccess = () => {
-    fetchUsers() // Refresh the users list
+    router.push('/admin/users/new')
   }
 
   if (error) {
@@ -203,23 +146,56 @@ const AdminUsers = () => {
         </Button>
       </div>
 
-      {/* Filter */}
-      <Card className="border-1">
-        <CardBody className="p-6">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-text-dark">فیلتر بر اساس نقش:</span>
-            <Select
-              selectedKeys={[selectedRole]}
-              onSelectionChange={(keys) => setSelectedRole(Array.from(keys)[0] as string)}
-              className="w-48"
-            >
-              <SelectItem key="all">همه کاربران</SelectItem>
-              <SelectItem key={UserRole.CUSTOMER}>{getRoleConfig(UserRole.CUSTOMER).text}</SelectItem>
-              <SelectItem key={UserRole.STORE}>{getRoleConfig(UserRole.STORE).text}</SelectItem>
-            </Select>
-          </div>
-        </CardBody>
-      </Card>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">کل کاربران</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
+              </div>
+              <UserIcon className="size-8 text-primary" />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">کاربران فعال</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
+              </div>
+              <UserIcon className="size-8 text-success" />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">کاربران مسدود</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.blocked}</p>
+              </div>
+              <UserIcon className="size-8 text-warning" />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">کاربران حذف شده</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
+              </div>
+              <UserIcon className="size-8 text-danger" />
+            </div>
+          </CardBody>
+        </Card>
+      </div>
 
       {/* Users Table */}
       <Card className="border-1">
@@ -233,27 +209,25 @@ const AdminUsers = () => {
               <TableColumn>شماره تلفن</TableColumn>
               <TableColumn>نقش</TableColumn>
               <TableColumn>وضعیت</TableColumn>
-              <TableColumn>امتیازات</TableColumn>
-              <TableColumn>خریدها</TableColumn>
-              <TableColumn>آخرین فعالیت</TableColumn>
+              <TableColumn>امتیاز</TableColumn>
+              <TableColumn>تاریخ عضویت</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user) => (
+              {users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-semibold">
-                          {user.firstName?.charAt(0) || user.phoneNumber.charAt(0)}
+                          {user.firstName ? user.firstName.charAt(0) : user.phoneNumber.charAt(0)}
                         </span>
                       </div>
                       <div>
                         <span className="font-medium">
                           {user.firstName && user.lastName 
-                            ? `${user.firstName} ${user.lastName}`
-                            : user.firstName || 'نامشخص'
-                          }
+                            ? `${user.firstName} ${user.lastName}` 
+                            : 'نام ثبت نشده'}
                         </span>
                         <p className="text-xs text-text-light">ID: {user.id}</p>
                       </div>
@@ -283,10 +257,7 @@ const AdminUsers = () => {
                   <TableCell>
                     <span className="font-medium">{user.totalPoints.toLocaleString()}</span>
                   </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{user.purchases?.length || 0}</span>
-                  </TableCell>
-                  <TableCell>{formatDate(user.lastActivity)}</TableCell>
+                  <TableCell>{formatDate(user.createdAt)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
@@ -315,7 +286,7 @@ const AdminUsers = () => {
                         variant="light"
                         color="danger"
                         aria-label="حذف"
-                        onClick={() => handleDeleteClick(user)}
+                        onClick={() => handleDeleteUser(user.id)}
                       >
                         <TrashIcon className="size-4" />
                       </Button>
@@ -327,34 +298,6 @@ const AdminUsers = () => {
           </Table>
         </CardBody>
       </Card>
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onOpenChange={(isOpen) => !isOpen && handleDeleteCancel()}
-        onAccept={handleDeleteConfirm}
-        onReject={handleDeleteCancel}
-        isLoading={deleteModal.isLoading}
-        title="تأیید حذف کاربر"
-        acceptBtnText="حذف"
-        rejectBtnText="انصراف"
-        acceptBtnColor="danger"
-        size="md"
-      >
-        <div className="py-4">
-          <p className="text-lg mb-2">
-            آیا از حذف کاربر <span className="font-semibold">{deleteModal.userName}</span> اطمینان دارید؟
-          </p>
-        </div>
-      </Modal>
-
-      {/* User Form Modal */}
-      <UserFormModal
-        isOpen={userFormModal.isOpen}
-        onOpenChange={(isOpen) => setUserFormModal(prev => ({ ...prev, isOpen }))}
-        onSuccess={handleUserFormSuccess}
-        userId={userFormModal.userId}
-      />
     </div>
   )
 }
