@@ -228,7 +228,7 @@ export class PromoCodesService {
     return this.transformPromoCodeToResponse(updatedPromoCode);
   }
 
-  async validateCode(validateDto: ValidatePromoCodeDto): Promise<PromoCodeValidationResponseDto> {
+  async validateCode(validateDto: ValidatePromoCodeDto, user: any): Promise<PromoCodeValidationResponseDto> {
     const { code, storeId } = validateDto;
 
     // Find the promo code
@@ -284,6 +284,15 @@ export class PromoCodesService {
         isValid: false,
         message: 'Promo code is not valid for this store',
         errorCode: 'INVALID_STORE'
+      };
+    }
+
+    // For store users, ensure they can only validate codes for their own store
+    if (user.role === 'store' && user.storeId !== storeId) {
+      return {
+        isValid: false,
+        message: 'You can only validate promo codes for your own store',
+        errorCode: 'FORBIDDEN_STORE'
       };
     }
 
@@ -476,15 +485,20 @@ export class PromoCodesService {
     return this.transformPromoCodeToResponse(updatedPromoCode);
   }
 
-  async getUserPromoCodes(phoneNumber: string, storeId?: string): Promise<PromoCodeResponseDto[]> {
+  async getUserPromoCodes(phoneNumber: string, storeId?: string, requestingUser?: any): Promise<PromoCodeResponseDto[]> {
     // Find the user by phone number
-    const user = await this.userModel.findOne({ phoneNumber }).exec();
-    if (!user) {
+    const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
+    if (!targetUser) {
       throw new NotFoundException('User not found with this phone number');
     }
 
+    // For store users, ensure they can only access users related to their store
+    if (requestingUser?.role === 'store' && storeId && requestingUser.storeId !== storeId) {
+      throw new ForbiddenException('You can only access users related to your own store');
+    }
+
     // Build query for user's promo codes
-    let query: any = { userId: user._id };
+    let query: any = { userId: targetUser._id };
 
     // If storeId is provided, filter by promotions belonging to that store
     if (storeId) {

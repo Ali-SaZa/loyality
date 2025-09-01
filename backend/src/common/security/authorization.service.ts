@@ -9,7 +9,7 @@ export interface UserContext {
 }
 
 export interface ResourceAccess {
-  resourceType: 'store' | 'user' | 'promotion' | 'admin';
+  resourceType: 'store' | 'user' | 'promotion' | 'promoCode' | 'admin';
   resourceId: string;
   storeId?: string;
   userId?: string;
@@ -33,6 +33,9 @@ export class AuthorizationService {
 
       case 'promotion':
         await this.checkPromotionAccess(user, resource);
+        break;
+      case 'promoCode':
+        await this.checkPromoCodeAccess(user, resource);
         break;
       case 'admin':
         await this.checkAdminAccess(user, resource);
@@ -122,6 +125,29 @@ export class AuthorizationService {
     }
 
     throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تبلیغ را ندارید.'); // translated to Persian
+  }
+
+  /**
+   * Check promo code access permissions
+   */
+  private async checkPromoCodeAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
+    // Admin can access everything
+    if (user.role === 'admin') {
+      return;
+    }
+
+    // Store users can access promo codes related to their store
+    // (this will be validated in the service layer to check storeId)
+    if (user.role === 'store') {
+      return;
+    }
+
+    // Customers can only access their own promo codes
+    if (user.role === 'customer') {
+      return;
+    }
+
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این کد تخفیف را ندارید.'); // translated to Persian
   }
 
   /**

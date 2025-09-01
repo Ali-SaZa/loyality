@@ -36,6 +36,12 @@ export const PromotionAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType
   ResourceAuth('promotion', options);
 
 /**
+ * Decorator for promo code endpoints
+ */
+export const PromoCodeAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
+  ResourceAuth('promoCode', options);
+
+/**
  * Decorator for admin endpoints
  */
 export const AdminAuth = () => ResourceAuth('admin');
