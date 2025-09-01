@@ -2,7 +2,7 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
-import { CreateUserDto, UpdateUserDto, PurchaseDto } from '../dto';
+import { CreateUserDto, UpdateUserDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
   UserNotFoundException, 
@@ -72,7 +72,7 @@ export class UsersService {
       if (additionalFilters.requestingUser?.role === 'store' && additionalFilters.requestingUser?.storeId) {
         // Store users can only see customers related to their store
         // This is a simplified example - you might want to implement more sophisticated logic
-        safeAdditionalFilters['purchases.storeId'] = additionalFilters.requestingUser.storeId;
+        // Note: Store-specific filtering logic removed as purchases are no longer stored in user documents
       }
       // Do NOT copy `requestingUser` (or any other non-schema keys) into the Mongo filter
     }
@@ -181,36 +181,7 @@ export class UsersService {
     }
   }
 
-  async addPurchase(id: string, purchaseDto: PurchaseDto, requestingUser: any): Promise<User> {
-    const user = await this.userModel.findById(id).exec();
-    if (!user) {
-      throw new UserNotFoundException();
-    }
 
-    // Validate access permissions
-    await this.validateUserAccess(user, requestingUser);
-
-    // Calculate reward based on store settings (simplified for now)
-    const rewardApplied = {
-      type: 'cashback' as const,
-      value: Math.floor(purchaseDto.amount * 0.05), // 5% cashback example
-    };
-
-    const purchase = {
-      storeId: new Types.ObjectId(purchaseDto.storeId),
-      amount: purchaseDto.amount,
-      date: new Date(),
-      scratchCode: purchaseDto.scratchCode,
-      entryMethod: purchaseDto.entryMethod,
-      rewardApplied,
-    };
-
-    user.purchases.push(purchase);
-    user.totalPoints += Math.floor(purchaseDto.amount / 1000); // 1 point per 1000 IRR
-    user.lastActivity = new Date();
-
-    return user.save();
-  }
 
   async updateStatus(id: string, status: 'active' | 'blocked' | 'deleted', requestingUser: any): Promise<User> {
     const user = await this.userModel.findById(id).exec();

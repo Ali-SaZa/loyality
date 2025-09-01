@@ -123,8 +123,6 @@ export class StoresService {
     const userData = {
       ...createStoreWithUserDto.user,
       role: 'store',
-      totalPoints: 0,
-      purchases: [],
       status: 'active',
       lastActivity: new Date()
     };

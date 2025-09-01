@@ -55,7 +55,7 @@ export class AuthResponseDto {
       _id: '507f1f77bcf86cd799439011',
       phoneNumber: '09123456789',
       name: 'Ali Ahmadi',
-      totalPoints: 1250,
+
       role: 'customer'
     }
   })

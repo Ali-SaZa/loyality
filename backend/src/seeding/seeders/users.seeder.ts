@@ -18,80 +18,63 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
 
   protected get data(): any[] {
     return [
+      // Required users with specific phone numbers
       {
-        phoneNumber: '09111111111',
-        firstName: 'Ali',
-        lastName: 'Ahmadi',
-        totalPoints: 1250,
-        purchases: []
+        phoneNumber: '09121111111',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'admin'
       },
       {
         phoneNumber: '09122222222',
-        firstName: 'Sara',
-        lastName: 'Karimi',
-        totalPoints: 850,
-        purchases: []
+        firstName: 'Store',
+        lastName: 'Admin',
+        role: 'store'
+      },
+      {
+        phoneNumber: '09123333333',
+        firstName: 'Customer',
+        lastName: 'User',
+        role: 'customer'
+      },
+      // Additional sample users
+      {
+        phoneNumber: '09111111111',
+        firstName: 'Ali',
+        lastName: 'Ahmadi'
       },
       {
         phoneNumber: '09133333333',
         firstName: 'Reza',
-        lastName: 'Mohammadi',
-        totalPoints: 2100,
-        purchases: []
+        lastName: 'Mohammadi'
       },
       {
         phoneNumber: '09144444444',
         firstName: 'Narges',
-        lastName: 'Hashemi',
-        totalPoints: 450,
-        purchases: []
+        lastName: 'Hashemi'
       },
       {
         phoneNumber: '09155555555',
         firstName: 'Amir',
-        lastName: 'Hosseini',
-        totalPoints: 1800,
-        purchases: []
+        lastName: 'Hosseini'
       },
       {
         phoneNumber: '09166666666',
         firstName: 'Store',
         lastName: 'One',
-        totalPoints: 0,
-        role: 'store',
-        purchases: []
+        role: 'store'
       },
       {
         phoneNumber: '09177777777',
         firstName: 'Store',
         lastName: 'Two',
-        totalPoints: 0,
-        role: 'store',
-        purchases: []
-      },
-      {
-        phoneNumber: '09111234567',
-        firstName: 'Admin',
-        lastName: 'User',
-        totalPoints: 0,
-        role: 'admin',
-        purchases: []
+        role: 'store'
       },
       {
         phoneNumber: '09221234567',
         firstName: 'Store',
         lastName: 'Manager',
-        totalPoints: 0,
-        role: 'store',
-        purchases: []
-      },
-      {
-        phoneNumber: '09331234567',
-        firstName: 'Customer',
-        lastName: 'User',
-        totalPoints: 500,
-        role: 'customer',
-        purchases: []
+        role: 'store'
       }
     ];
   }

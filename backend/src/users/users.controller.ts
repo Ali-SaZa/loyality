@@ -22,7 +22,7 @@ import {
   ApiBody
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, PurchaseDto, UserResponseDto } from '../dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { UserNotFoundException } from '../common/errors';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -41,18 +41,7 @@ export class UsersController {
       phoneNumber: user.phoneNumber,
       firstName: user.firstName,
       lastName: user.lastName,
-      totalPoints: user.totalPoints,
-      purchases: user.purchases?.map(purchase => ({
-        storeId: purchase.storeId?.toString(),
-        amount: purchase.amount,
-        date: purchase.date,
-        scratchCode: purchase.scratchCode,
-        entryMethod: purchase.entryMethod,
-        rewardApplied: purchase.rewardApplied ? {
-          type: purchase.rewardApplied.type,
-          value: purchase.rewardApplied.value
-        } : undefined,
-      })) || [],
+
 
       role: user.role,
       status: user.status || 'active',
@@ -224,28 +213,7 @@ export class UsersController {
     return this.usersService.remove(id, user);
   }
 
-  @Post(':id/purchase')
-  @UserAuth({ paramName: 'id' })
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Add purchase to user (Self/Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'User ID' })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Purchase added successfully',
-    type: UserResponseDto 
-  })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  @HttpCode(HttpStatus.CREATED)
-  async addPurchase(
-    @Param('id') id: string,
-    @Body() purchaseDto: PurchaseDto,
-    @CurrentUser() user: any
-  ): Promise<UserResponseDto> {
-    const updatedUser = await this.usersService.addPurchase(id, purchaseDto, user);
-    return this.transformUserToResponse(updatedUser);
-  }
+
 
   @Patch(':id/status')
   @AdminAuth()

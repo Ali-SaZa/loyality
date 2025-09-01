@@ -39,25 +39,7 @@ export class UpdateUserDto {
 
 }
 
-export class PurchaseDto {
-  @ApiProperty({ description: 'Store ID' })
-  @IsString()
-  storeId: string;
 
-  @ApiProperty({ description: 'Purchase amount in IRR', minimum: 0 })
-  @IsNumber()
-  @Min(0)
-  amount: number;
-
-  @ApiProperty({ description: 'Scratch card code', required: false })
-  @IsOptional()
-  @IsString()
-  scratchCode?: string;
-
-  @ApiProperty({ description: 'Entry method', enum: ['sms', 'qr'] })
-  @IsEnum(['sms', 'qr'])
-  entryMethod: 'sms' | 'qr';
-}
 
 export class UserResponseDto {
   @ApiProperty()
@@ -72,21 +54,7 @@ export class UserResponseDto {
   @ApiProperty()
   lastName?: string;
 
-  @ApiProperty()
-  totalPoints: number;
 
-  @ApiProperty()
-  purchases: Array<{
-    storeId: string;
-    amount: number;
-    date: Date;
-    scratchCode?: string;
-    entryMethod: 'sms' | 'qr';
-    rewardApplied: {
-      type: 'discount' | 'cashback' | 'lottery';
-      value: number;
-    };
-  }>;
 
 
 

@@ -122,7 +122,7 @@ export class AuthService {
         phoneNumber: user.phoneNumber,
         firstName: user.firstName,
         lastName: user.lastName,
-        totalPoints: user.totalPoints,
+
         role: user.role,
 
         lastActivity: user.lastActivity,
