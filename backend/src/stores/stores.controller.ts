@@ -8,10 +8,12 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
-import { StoresService } from './stores.service';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { StoresService, StoreStats } from './stores.service';
 import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
+import { ListRequestDto } from '../common/dto/list.dto';
 import { StoreAuth, AdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -55,14 +57,20 @@ export class StoresController {
   @Get()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all stores with pagination and filtering' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
+  @ApiQuery({ name: 'search', required: false, description: 'Search term' })
   @ApiResponse({ 
     status: 200, 
     description: 'List of stores with pagination',
     type: Object 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(): Promise<any> {
-    return this.storesService.findAll({ page: 1, limit: 100 }, {});
+  async findAll(
+    @Query() listRequest: ListRequestDto,
+    @CurrentUser() user: any
+  ) {
+    return this.storesService.findAll(listRequest, { requestingUser: user });
   }
 
   @Get('stats')
@@ -72,39 +80,20 @@ export class StoresController {
   @ApiResponse({ 
     status: 200, 
     description: 'Store statistics',
-    type: Object 
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number' },
+        active: { type: 'number' },
+        pending: { type: 'number' },
+        inactive: { type: 'number' }
+      }
+    }
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async getStats(): Promise<{ total: number; active: number; pending: number; inactive: number }> {
-    const [total, active, pending, inactive] = await Promise.all([
-      this.storesService.count(),
-      this.storesService.count({ status: 'active' }),
-      this.storesService.count({ status: 'pending' }),
-      this.storesService.count({ status: 'suspended' })
-    ]);
-
-    return {
-      total,
-      active,
-      pending,
-      inactive
-    };
-  }
-
-  @Get('filter-options')
-  @AdminAuth()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get store filter options (Admin only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Filter options',
-    type: Object 
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async getFilterOptions(): Promise<{ statuses: string[] }> {
-    return this.storesService.getFilterOptions();
+  async getStats(): Promise<StoreStats> {
+    return this.storesService.getStats();
   }
 
   @Get(':id')

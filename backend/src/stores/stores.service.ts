@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
@@ -7,10 +7,21 @@ import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDt
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
   StoreNotFoundException, 
-  StorePhoneExistsException,
-  CustomConflictException 
+  StorePhoneExistsException
 } from '../common/errors';
-import { ForbiddenException, BadRequestException } from '@nestjs/common';
+
+interface UserContext {
+  _id: string;
+  role: string;
+  storeId?: string;
+}
+
+export interface StoreStats {
+  total: number;
+  active: number;
+  pending: number;
+  inactive: number;
+}
 
 @Injectable()
 export class StoresService {
@@ -19,6 +30,9 @@ export class StoresService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
+  /**
+   * Transform store document to response DTO
+   */
   private transformStoreToResponse(store: StoreDocument): StoreResponseDto {
     return {
       id: store._id.toString(),
@@ -38,45 +52,72 @@ export class StoresService {
     };
   }
 
-  async create(createStoreDto: CreateStoreDto): Promise<StoreResponseDto> {
-    // Check if store with same phone number already exists
-    const existingStore = await this.storeModel.findOne({
-      phoneNumber: createStoreDto.phoneNumber,
-    });
+  /**
+   * Consolidated validation for store creation
+   */
+  private async validateStoreCreation(phoneNumber: string, userId?: string): Promise<void> {
+    const [existingStore, user] = await Promise.all([
+      this.storeModel.findOne({ phoneNumber }).exec(),
+      userId ? this.userModel.findById(userId).exec() : Promise.resolve(null)
+    ]);
     
     if (existingStore) {
       throw new StorePhoneExistsException();
     }
-
-    // Validate that the userId exists in the users collection
-    const user = await this.userModel.findById(createStoreDto.userId).exec();
-    if (!user) {
-      throw new BadRequestException('کاربر مورد نظر پیدا نشد.'); // translated to Persian
+    
+    if (userId && !user) {
+      throw new BadRequestException('User not found');
     }
+  }
+
+  /**
+   * Validate user creation for store with user
+   */
+  private async validateUserCreation(phoneNumber: string): Promise<void> {
+    const existingUser = await this.userModel.findOne({ phoneNumber }).exec();
+    if (existingUser) {
+      throw new BadRequestException('User with this phone number already exists');
+    }
+  }
+
+  /**
+   * Sanitize search input to prevent regex injection
+   */
+  private sanitizeSearchQuery(search: string): string {
+    return search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  /**
+   * Standardized error handling
+   */
+  private handleStoreNotFound(): never {
+    throw new StoreNotFoundException();
+  }
+
+  private handleAccessDenied(): never {
+    throw new ForbiddenException('Access denied. You do not have permission to access this store.');
+  }
+
+  /**
+   * Create a new store
+   */
+  async create(createStoreDto: CreateStoreDto): Promise<StoreResponseDto> {
+    await this.validateStoreCreation(createStoreDto.phoneNumber, createStoreDto.userId);
 
     const store = new this.storeModel(createStoreDto);
     const savedStore = await store.save();
     return this.transformStoreToResponse(savedStore);
   }
 
+  /**
+   * Create a new store with user
+   */
   async createStoreWithUser(createStoreWithUserDto: CreateStoreWithUserDto): Promise<StoreWithUserResponseDto> {
-    // Check if user with same phone number already exists
-    const existingUser = await this.userModel.findOne({
-      phoneNumber: createStoreWithUserDto.user.phoneNumber,
-    });
-    
-    if (existingUser) {
-      throw new BadRequestException('کاربری با این شماره تلفن قبلاً وجود دارد.'); // User with this phone number already exists
-    }
-
-    // Check if store with same phone number already exists
-    const existingStore = await this.storeModel.findOne({
-      phoneNumber: createStoreWithUserDto.store.phoneNumber,
-    });
-    
-    if (existingStore) {
-      throw new StorePhoneExistsException();
-    }
+    // Validate both user and store creation
+    await Promise.all([
+      this.validateUserCreation(createStoreWithUserDto.user.phoneNumber),
+      this.validateStoreCreation(createStoreWithUserDto.store.phoneNumber)
+    ]);
 
     // Create the user first
     const userData = {
@@ -95,13 +136,12 @@ export class StoresService {
     const storeData = {
       ...createStoreWithUserDto.store,
       userId: savedUser._id,
-      status: 'active' // Set default status
+      status: 'active'
     };
 
     const store = new this.storeModel(storeData);
     const savedStore = await store.save();
 
-    // Return both user and store
     return {
       user: {
         id: savedUser._id.toString(),
@@ -116,25 +156,26 @@ export class StoresService {
     };
   }
 
-  // Implement findAll method without generic service
-  async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<StoreDocument>> {
+  /**
+   * Find all stores with pagination and filtering (optimized)
+   */
+  async findAll(request: ListRequestDto, additionalFilters: Record<string, any> = {}): Promise<ListResponseDto<StoreDocument>> {
     const page = request.page || 1;
-    const limit = request.limit || 20;
+    const limit = Math.min(request.limit || 20, 100); // Cap at 100 for performance
     const skip = (page - 1) * limit;
 
     // Add role-based access control
     if (additionalFilters.requestingUser?.role === 'store') {
-      // Store users can only see their own store
       additionalFilters['userId'] = additionalFilters.requestingUser._id;
     }
 
-    // Build filter query
-    let filterQuery: any = {};
+    // Build filter query with sanitized search
+    let filterQuery: Record<string, any> = {};
     
-    // Add search functionality
     if (request.search && request.searchFields && request.searchFields.length > 0) {
+      const sanitizedSearch = this.sanitizeSearchQuery(request.search);
       const searchQueries = request.searchFields.map(field => ({
-        [field]: { $regex: request.search, $options: 'i' }
+        [field]: { $regex: sanitizedSearch, $options: 'i' }
       }));
       filterQuery.$or = searchQueries;
     }
@@ -142,11 +183,13 @@ export class StoresService {
     // Add additional filters
     Object.assign(filterQuery, additionalFilters);
 
-    // Execute queries in parallel for better performance
+    // Execute queries in parallel with optimized population
     const [data, total] = await Promise.all([
       this.storeModel
         .find(filterQuery)
-        .sort(this.buildSortQuery(request.sort))
+        .populate('userId', 'firstName lastName phoneNumber role')
+        .populate('promotions', 'title type status')
+        .sort(this.buildSortQuery(request.sort || []))
         .skip(skip)
         .limit(limit)
         .lean()
@@ -154,10 +197,7 @@ export class StoresService {
       this.storeModel.countDocuments(filterQuery).exec()
     ]);
 
-    // Calculate pagination metadata
     const totalPages = Math.ceil(total / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
 
     return {
       data,
@@ -165,8 +205,8 @@ export class StoresService {
       page,
       limit,
       totalPages,
-      hasNextPage,
-      hasPrevPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
       appliedFilters: {
         search: request.search,
         searchFields: request.searchFields,
@@ -176,99 +216,115 @@ export class StoresService {
     };
   }
 
-  async findOne(id: string, user: any): Promise<StoreResponseDto> {
-    const store = await this.storeModel.findById(id).exec();
+  /**
+   * Find a store by ID with access control
+   */
+  async findOne(id: string, user: UserContext): Promise<StoreResponseDto> {
+    const store = await this.storeModel
+      .findById(id)
+      .populate('userId', 'firstName lastName phoneNumber role')
+      .populate('promotions', 'title type status')
+      .exec();
+    
     if (!store) {
-      throw new StoreNotFoundException();
+      this.handleStoreNotFound();
     }
 
-    // Validate access permissions
-    await this.validateStoreAccess(store, user);
-
+    this.validateStoreAccess(store, user);
     return this.transformStoreToResponse(store);
   }
 
-  async update(id: string, updateStoreDto: UpdateStoreDto, user: any): Promise<StoreResponseDto> {
+  /**
+   * Update a store with access control
+   */
+  async update(id: string, updateStoreDto: UpdateStoreDto, user: UserContext): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
-      throw new StoreNotFoundException();
+      this.handleStoreNotFound();
     }
 
-    // Validate access permissions
-    await this.validateStoreAccess(store, user);
+    this.validateStoreAccess(store, user);
 
     const updatedStore = await this.storeModel
       .findByIdAndUpdate(id, updateStoreDto, { new: true })
+      .populate('userId', 'firstName lastName phoneNumber role')
+      .populate('promotions', 'title type status')
       .exec();
     
     if (!updatedStore) {
-      throw new StoreNotFoundException();
+      this.handleStoreNotFound();
     }
     
     return this.transformStoreToResponse(updatedStore);
   }
 
-  async remove(id: string, user: any): Promise<void> {
+  /**
+   * Remove a store with access control
+   */
+  async remove(id: string, user: UserContext): Promise<void> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
-      throw new StoreNotFoundException();
+      this.handleStoreNotFound();
     }
 
-    // Validate access permissions
-    await this.validateStoreAccess(store, user);
+    this.validateStoreAccess(store, user);
 
     const result = await this.storeModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new StoreNotFoundException();
+      this.handleStoreNotFound();
     }
   }
 
+  /**
+   * Find store by phone number
+   */
   async findByPhoneNumber(phoneNumber: string): Promise<StoreResponseDto | null> {
-    const store = await this.storeModel.findOne({ phoneNumber }).exec();
+    const store = await this.storeModel
+      .findOne({ phoneNumber })
+      .populate('userId', 'firstName lastName phoneNumber role')
+      .exec();
+    
     return store ? this.transformStoreToResponse(store) : null;
   }
 
-  private async validateStoreAccess(store: StoreDocument, user: any): Promise<void> {
-    // Admin can access everything
+  /**
+   * Get store statistics (optimized)
+   */
+  async getStats(): Promise<StoreStats> {
+    const [total, active, pending, inactive] = await Promise.all([
+      this.storeModel.countDocuments().exec(),
+      this.storeModel.countDocuments({ status: 'active' }).exec(),
+      this.storeModel.countDocuments({ status: 'pending' }).exec(),
+      this.storeModel.countDocuments({ status: 'suspended' }).exec()
+    ]);
+
+    return { total, active, pending, inactive };
+  }
+
+  /**
+   * Validate store access permissions
+   */
+  private validateStoreAccess(store: StoreDocument, user: UserContext): void {
     if (user.role === 'admin') {
       return;
     }
 
-    // Store users can only modify their own store
-    if (user.role === 'store' && user._id.toString() === store.userId.toString()) {
+    if (user.role === 'store' && user._id === store.userId.toString()) {
       return;
     }
 
-    throw new ForbiddenException('دسترسی ممنوع. شما مجوز تغییر این فروشگاه را ندارید.'); // translated to Persian
+    this.handleAccessDenied();
   }
 
-  // Get available filter options for the frontend
-  async getFilterOptions(): Promise<{
-    statuses: string[];
-  }> {
-    const statuses = await this.getDistinctValues('status');
-
-    return {
-      statuses: statuses.filter(Boolean)
-    };
-  }
-
-  // Count stores with optional filter
-  async count(filter: any = {}): Promise<number> {
-    return this.storeModel.countDocuments(filter).exec();
-  }
-
-  // Helper method to get distinct values
-  private async getDistinctValues(field: string): Promise<any[]> {
-    return this.storeModel.distinct(field).exec();
-  }
-
-  private buildSortQuery(sort: any): any {
+  /**
+   * Build sort query from request
+   */
+  private buildSortQuery(sort: any[]): Record<string, 1 | -1> {
     if (!sort || sort.length === 0) {
       return { createdAt: -1 };
     }
 
-    const sortQuery: any = {};
+    const sortQuery: Record<string, 1 | -1> = {};
     sort.forEach((item: any) => {
       sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
     });
