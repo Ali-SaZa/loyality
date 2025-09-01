@@ -5,8 +5,8 @@ import { convertPersianToEnglish } from '@/helpers'
 import { UserRole, UserStatus } from '@/types/enums'
 
 export const CreateUserFormValidation = z.object({
-  firstName: z.string().min(2, 'نام حداقل باید ۲ کاراکتر باشد.').optional(),
-  lastName: z.string().min(2, 'نام خانوادگی حداقل باید ۲ کاراکتر باشد.').optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   phoneNumber: z.string().refine((val) => {
     const convertedValue = convertPersianToEnglish(val)
     return /^09\d{9}$/.test(convertedValue)
@@ -16,8 +16,8 @@ export const CreateUserFormValidation = z.object({
 })
 
 export const UpdateUserFormValidation = z.object({
-  firstName: z.string().min(2, 'نام حداقل باید ۲ کاراکتر باشد.').optional(),
-  lastName: z.string().min(2, 'نام خانوادگی حداقل باید ۲ کاراکتر باشد.').optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   phoneNumber: z.string().refine((val) => {
     const convertedValue = convertPersianToEnglish(val)
     return /^09\d{9}$/.test(convertedValue)

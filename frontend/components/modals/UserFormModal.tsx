@@ -154,8 +154,8 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
 
         <FormProvider {...methods}>
           <div className="space-y-6">
-            {/* First row: Phone number → Role */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* First row: Phone number */}
+            <div className="grid grid-cols-1 gap-6">
               <Input
                 generalType="input"
                 name="phoneNumber"
@@ -166,6 +166,20 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
                 disabled={isEditMode}
                 required={true}
               />
+            </div>
+
+            {/* Second row: Status → Role */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input
+                generalType="select"
+                name="status"
+                label="وضعیت"
+                placeholder="وضعیت کاربر را انتخاب کنید"
+                selectOptions={statusOptions}
+                selectKey="code"
+                selectValue="name"
+                required={true}
+              />
 
               <Input
                 generalType="select"
@@ -173,20 +187,6 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
                 label="نقش کاربر"
                 placeholder="نقش کاربر را انتخاب کنید"
                 selectOptions={roleOptions}
-                selectKey="code"
-                selectValue="name"
-                required={true}
-              />
-            </div>
-
-            {/* Second row: Status */}
-            <div className="grid grid-cols-1 gap-6">
-              <Input
-                generalType="select"
-                name="status"
-                label="وضعیت"
-                placeholder="وضعیت کاربر را انتخاب کنید"
-                selectOptions={statusOptions}
                 selectKey="code"
                 selectValue="name"
                 required={true}
