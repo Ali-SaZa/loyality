@@ -103,7 +103,7 @@ export class PromoCodesController {
         total: { type: 'number' },
         unused: { type: 'number' },
         used: { type: 'number' },
-        expired: { type: 'number' }
+        registered: { type: 'number' }
       }
     }
   })
@@ -115,7 +115,7 @@ export class PromoCodesController {
     total: number;
     unused: number;
     used: number;
-    expired: number;
+    registered: number;
   }> {
     return this.promoCodesService.getStats(promotionId, user);
   }
@@ -197,6 +197,42 @@ export class PromoCodesController {
     @Body() validateDto: ValidatePromoCodeDto
   ): Promise<PromoCodeValidationResponseDto> {
     return this.promoCodesService.validateCode(validateDto);
+  }
+
+  @Post('register')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Register a promo code to a user (for frontend customer registration)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Promo code registered successfully',
+    type: PromoCodeResponseDto 
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 404, description: 'Promo code or user not found' })
+  async registerCodeToUser(
+    @Body() registerDto: RegisterPromoCodeDto
+  ): Promise<PromoCodeResponseDto> {
+    return this.promoCodesService.registerCodeToUser(registerDto.code, registerDto.phoneNumber);
+  }
+
+  @Get('user/:phoneNumber')
+  @PromotionAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all promo codes registered to a user by phone number' })
+  @ApiParam({ name: 'phoneNumber', description: 'User phone number' })
+  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by specific store ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User promo codes retrieved successfully',
+    type: [PromoCodeResponseDto]
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getUserPromoCodes(
+    @Param('phoneNumber') phoneNumber: string,
+    @Query('storeId') storeId?: string
+  ): Promise<PromoCodeResponseDto[]> {
+    return this.promoCodesService.getUserPromoCodes(phoneNumber, storeId);
   }
 
   @Delete(':id')

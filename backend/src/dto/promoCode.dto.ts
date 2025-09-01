@@ -72,9 +72,9 @@ export class UpdatePromoCodeDto {
 export class ChangePromoCodeStatusDto {
   @ApiProperty({ 
     description: 'New status for the promo code', 
-    enum: ['unused', 'used', 'expired']
+    enum: ['unused', 'used']
   })
-  @IsEnum(['unused', 'used', 'expired'])
+  @IsEnum(['unused', 'used'])
   status: string;
 
   @ApiProperty({ 
@@ -118,17 +118,17 @@ export class PromoCodeResponseDto {
   @ApiProperty()
   promotionId: string;
 
-  @ApiProperty({ enum: ['unused', 'used', 'expired'] })
+  @ApiProperty({ enum: ['unused', 'used'] })
   status: string;
 
   @ApiProperty({ required: false })
   userId?: string;
 
   @ApiProperty({ required: false })
-  usedAt?: Date;
+  registeredAt?: Date;
 
   @ApiProperty({ required: false })
-  expiresAt?: Date;
+  usedAt?: Date;
 
   @ApiProperty({ required: false })
   notes?: string;

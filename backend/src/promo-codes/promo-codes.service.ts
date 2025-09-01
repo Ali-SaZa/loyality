@@ -37,8 +37,8 @@ export class PromoCodesService {
       promotionId: promoCode.promotionId.toString(),
       status: promoCode.status,
       userId: promoCode.userId?.toString(),
+      registeredAt: promoCode.registeredAt,
       usedAt: promoCode.usedAt,
-      expiresAt: promoCode.expiresAt,
       notes: promoCode.notes,
       createdAt: promoCode.createdAt,
       updatedAt: promoCode.updatedAt,
@@ -71,7 +71,7 @@ export class PromoCodesService {
   }
 
   async findAll(listRequest: ListRequestDto, user: any): Promise<PromoCodeListResponseDto> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'desc' } = listRequest;
+    const { page = 1, limit = 10, search, sort = [{ field: 'createdAt', direction: 'desc' }] } = listRequest;
     const skip = (page - 1) * limit;
 
     // Build query to only show promo codes for promotions belonging to user's stores
@@ -90,14 +90,20 @@ export class PromoCodesService {
       ];
     }
 
-    const sort: any = {};
-    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
+    const sortObj: any = {};
+    if (sort && sort.length > 0) {
+      sort.forEach(s => {
+        sortObj[s.field] = s.direction === 'desc' ? -1 : 1;
+      });
+    } else {
+      sortObj.createdAt = -1;
+    }
 
     const [promoCodes, total] = await Promise.all([
       this.promoCodeModel
         .find(query)
         .populate('promotionId', 'title type')
-        .sort(sort)
+        .sort(sortObj)
         .skip(skip)
         .limit(limit)
         .exec(),
@@ -154,14 +160,18 @@ export class PromoCodesService {
       throw new ForbiddenException('You do not have permission to update this promo code');
     }
 
-    // Prevent updating used or expired codes
-    if (promoCode.status === 'used' || promoCode.status === 'expired') {
-      throw new BadRequestException('Cannot update used or expired promo codes');
+    // Prevent updating used codes
+    if (promoCode.status === 'used') {
+      throw new BadRequestException('Cannot update used promo codes');
     }
 
     const updatedPromoCode = await this.promoCodeModel
       .findByIdAndUpdate(id, updatePromoCodeDto, { new: true })
       .exec();
+
+    if (!updatedPromoCode) {
+      throw new NotFoundException('Promo code not found');
+    }
 
     return this.transformPromoCodeToResponse(updatedPromoCode);
   }
@@ -188,33 +198,32 @@ export class PromoCodesService {
       throw new BadRequestException('Cannot change status of a used promo code');
     }
 
-    if (promoCode.status === 'expired' && changeStatusDto.status !== 'expired') {
-      throw new BadRequestException('Cannot change status of an expired promo code');
-    }
-
     // Validate required fields for status change
-    if (changeStatusDto.status === 'used' && !changeStatusDto.userId) {
-      throw new BadRequestException('User ID is required when marking code as used');
-    }
+    if (changeStatusDto.status === 'used') {
+      // Check if code is registered to a user
+      if (!promoCode.userId) {
+        throw new BadRequestException('Code must be registered to a user before it can be marked as used');
+      }
 
-    // Verify user exists if provided
-    if (changeStatusDto.userId) {
-      const userExists = await this.userModel.findById(changeStatusDto.userId).exec();
-      if (!userExists) {
-        throw new NotFoundException('User not found');
+      // If userId is provided, verify it matches the registered user
+      if (changeStatusDto.userId && promoCode.userId.toString() !== changeStatusDto.userId) {
+        throw new BadRequestException('User ID does not match the registered user for this code');
       }
     }
 
     const updateData: any = { status: changeStatusDto.status };
     
     if (changeStatusDto.status === 'used') {
-      updateData.userId = changeStatusDto.userId;
       updateData.usedAt = new Date();
     }
 
     const updatedPromoCode = await this.promoCodeModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
+
+    if (!updatedPromoCode) {
+      throw new NotFoundException('Promo code not found');
+    }
 
     return this.transformPromoCodeToResponse(updatedPromoCode);
   }
@@ -241,21 +250,12 @@ export class PromoCodesService {
       };
     }
 
-    // Check if code is expired
-    if (promoCode.status === 'expired') {
+    // Check if code is registered to a user
+    if (!promoCode.userId) {
       return {
         isValid: false,
-        message: 'Promo code has expired',
-        errorCode: 'CODE_EXPIRED'
-      };
-    }
-
-    // Check if code has specific expiration date
-    if (promoCode.expiresAt && promoCode.expiresAt < new Date()) {
-      return {
-        isValid: false,
-        message: 'Promo code has expired',
-        errorCode: 'CODE_EXPIRED'
+        message: 'Promo code must be registered to a user before it can be used',
+        errorCode: 'CODE_NOT_REGISTERED'
       };
     }
 
@@ -306,7 +306,7 @@ export class PromoCodesService {
     }
 
     // Check usage limits
-    if (promotion.usageLimit && promotion.currentUsageCount >= promotion.usageLimit) {
+    if (promotion.usageLimit && (promotion.currentUsageCount || 0) >= promotion.usageLimit) {
       return {
         isValid: false,
         message: 'Promotion usage limit has been reached',
@@ -359,7 +359,7 @@ export class PromoCodesService {
 
     // Generate unique codes
     for (let i = 0; i < count; i++) {
-      let code: string;
+      let code: string | undefined;
       let isUnique = false;
       let attempts = 0;
 
@@ -373,7 +373,7 @@ export class PromoCodesService {
         attempts++;
       }
 
-      if (!isUnique) {
+      if (!isUnique || !code) {
         throw new BadRequestException('Unable to generate unique promo codes. Please try again.');
       }
 
@@ -388,7 +388,7 @@ export class PromoCodesService {
     // Create all codes
     const createdCodes = await this.promoCodeModel.insertMany(codesToCreate);
     
-    return createdCodes.map(code => this.transformPromoCodeToResponse(code));
+    return createdCodes.map(code => this.transformPromoCodeToResponse(code as PromoCodeDocument));
   }
 
   async remove(id: string, user: any): Promise<void> {
@@ -432,29 +432,20 @@ export class PromoCodesService {
       throw new NotFoundException('Promo code not found');
     }
 
-    // Check if code is already used or expired
+    // Check if code is already used
     if (promoCode.status === 'used') {
       throw new BadRequestException('Promo code has already been used');
     }
 
-    if (promoCode.status === 'expired') {
-      throw new BadRequestException('Promo code has expired');
-    }
-
-    // Check if code has specific expiration date
-    if (promoCode.expiresAt && promoCode.expiresAt < new Date()) {
-      throw new BadRequestException('Promo code has expired');
+    // Check if code is already registered to a user
+    if (promoCode.userId) {
+      throw new BadRequestException('Promo code has already been registered to a user');
     }
 
     // Find the user by phone number
     const user = await this.userModel.findOne({ phoneNumber }).exec();
     if (!user) {
       throw new NotFoundException('User not found with this phone number');
-    }
-
-    // Check if user already has this code registered
-    if (promoCode.userId && promoCode.userId.toString() === user._id.toString()) {
-      throw new BadRequestException('User has already registered this promo code');
     }
 
     // Find the associated promotion to validate it's still active
@@ -477,8 +468,9 @@ export class PromoCodesService {
       throw new BadRequestException('Promotion has expired');
     }
 
-    // Register the code to the user (but don't mark as used yet)
+    // Register the code to the user (status remains 'unused')
     promoCode.userId = user._id;
+    promoCode.registeredAt = new Date();
     const updatedPromoCode = await promoCode.save();
 
     return this.transformPromoCodeToResponse(updatedPromoCode);
@@ -515,7 +507,7 @@ export class PromoCodesService {
     total: number;
     unused: number;
     used: number;
-    expired: number;
+    registered: number;
   }> {
     let query: any = {};
 
@@ -535,13 +527,13 @@ export class PromoCodesService {
       query.promotionId = promotionId;
     }
 
-    const [total, unused, used, expired] = await Promise.all([
+    const [total, unused, used, registered] = await Promise.all([
       this.promoCodeModel.countDocuments(query).exec(),
-      this.promoCodeModel.countDocuments({ ...query, status: 'unused' }).exec(),
+      this.promoCodeModel.countDocuments({ ...query, status: 'unused', userId: { $exists: false } }).exec(),
       this.promoCodeModel.countDocuments({ ...query, status: 'used' }).exec(),
-      this.promoCodeModel.countDocuments({ ...query, status: 'expired' }).exec(),
+      this.promoCodeModel.countDocuments({ ...query, status: 'unused', userId: { $exists: true } }).exec(),
     ]);
 
-    return { total, unused, used, expired };
+    return { total, unused, used, registered };
   }
 }
