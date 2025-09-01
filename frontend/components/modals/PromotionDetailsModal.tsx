@@ -1,39 +1,29 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
 import useLoading from '@/hooks/useLoading'
-import { CreatePromotionValidation, UpdatePromotionValidation, CreatePromotionData, UpdatePromotionData } from '@/validation/promotion'
-import { PromotionType } from '@/types/enums'
-import { Promotion, getPromotionById, createPromotion, updatePromotion } from '@/services/promotions'
-import { Store } from '@/services/stores'
+import { CreatePromotionValidation, CreatePromotionData } from '@/validation/promotion'
+import { PromotionType, PROMOTION_TYPE_OPTIONS } from '@/types/enums'
+import { createPromotion } from '@/services/promotions'
 
-interface PromotionFormModalProps {
+interface PromotionDetailsModalProps {
   isOpen: boolean
   onOpenChange: (isOpen: boolean) => void
   onSuccess?: () => void
-  promotionId?: string // If provided, it's edit mode
-  stores: Store[]
+  basicData: { storeId: string; type: string; title: string; description?: string }
 }
 
-const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stores }: PromotionFormModalProps) => {
+const PromotionDetailsModal = ({ isOpen, onOpenChange, onSuccess, basicData }: PromotionDetailsModalProps) => {
   const { setLoading } = useLoading()
-  const [promotion, setPromotion] = useState<Promotion | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [selectedType, setSelectedType] = useState<string>('')
 
-  const isEditMode = !!promotionId
-
-  const methods = useForm<CreatePromotionData | UpdatePromotionData>({
-    resolver: zodResolver(isEditMode ? UpdatePromotionValidation : CreatePromotionValidation),
+  const methods = useForm<Omit<CreatePromotionData, 'storeId' | 'type' | 'title' | 'description'>>({
+    resolver: zodResolver(CreatePromotionValidation.omit({ storeId: true, type: true, title: true, description: true })),
     defaultValues: {
-      storeId: '',
-      type: PromotionType.COUPON,
-      title: '',
-      description: '',
       value: undefined,
       minPurchaseAmount: undefined,
       maxDiscountAmount: undefined,
@@ -51,116 +41,39 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
     }
   })
 
-  const watchType = methods.watch('type')
-
-  useEffect(() => {
-    if (isOpen) {
-      if (isEditMode && promotionId) {
-        fetchPromotion(promotionId)
-      } else {
-        // Reset form for create mode
-        methods.reset({
-          storeId: '',
-          type: PromotionType.COUPON,
-          title: '',
-          description: '',
-          value: undefined,
-          minPurchaseAmount: undefined,
-          maxDiscountAmount: undefined,
-          code: '',
-          points: undefined,
-          startDate: '',
-          endDate: '',
-          usageLimit: undefined,
-          maxUsagePerCustomer: undefined,
-          isStackable: false,
-          stackableWith: [],
-          termsAndConditions: '',
-          requiresApproval: false,
-          applicableEvents: []
-        })
-        setSelectedType(PromotionType.COUPON)
-        setError(null)
-      }
-    }
-  }, [isOpen, isEditMode, promotionId])
-
-  useEffect(() => {
-    setSelectedType(watchType)
-  }, [watchType])
-
-  const fetchPromotion = async (promotionId: string) => {
+  const onSubmit = async (data: Omit<CreatePromotionData, 'storeId' | 'type' | 'title' | 'description'>) => {
     try {
-      setLoading(true)
-      setError(null)
-      
-      const promotionData = await getPromotionById(promotionId)
-      setPromotion(promotionData)
-      setSelectedType(promotionData.type)
-      
-      methods.reset({
-        title: promotionData.title,
-        description: promotionData.description || '',
-        value: promotionData.value,
-        minPurchaseAmount: promotionData.minPurchaseAmount,
-        maxDiscountAmount: promotionData.maxDiscountAmount,
-        usageLimit: promotionData.usageLimit,
-        maxUsagePerCustomer: promotionData.maxUsagePerCustomer,
-        isStackable: promotionData.isStackable || false,
-        stackableWith: promotionData.stackableWith || [],
-        termsAndConditions: promotionData.termsAndConditions || '',
-        requiresApproval: promotionData.requiresApproval || false,
-        applicableEvents: promotionData.applicableEvents || []
-      })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات تبلیغ')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const onSubmit = async (data: CreatePromotionData | UpdatePromotionData) => {
-    try {
-      console.log('Form submitted with data:', data)
+      console.log('Form submitted with data:', { ...basicData, ...data })
       setLoading(true)
       setError(null)
       
       // Transform the data for API
       const transformedData: any = {
+        ...basicData,
         ...data,
         // Convert string values to numbers where needed
         value: data.value ? Number(data.value) : undefined,
         minPurchaseAmount: data.minPurchaseAmount ? Number(data.minPurchaseAmount) : undefined,
         maxDiscountAmount: data.maxDiscountAmount ? Number(data.maxDiscountAmount) : undefined,
+        points: data.points ? Number(data.points) : undefined,
         usageLimit: data.usageLimit ? Number(data.usageLimit) : undefined,
         maxUsagePerCustomer: data.maxUsagePerCustomer ? Number(data.maxUsagePerCustomer) : undefined,
         // Handle boolean fields properly
         isStackable: Boolean(data.isStackable),
         requiresApproval: Boolean(data.requiresApproval),
         // For stackable type, ensure isStackable is true
-        ...(('type' in data && data.type === PromotionType.STACKABLE) && { isStackable: true })
-      }
-      
-      // Add points field only for CreatePromotionData
-      if ('points' in data) {
-        transformedData.points = data.points ? Number(data.points) : undefined
+        ...(basicData?.type === PromotionType.STACKABLE && { isStackable: true })
       }
       
       console.log('Transformed data:', transformedData)
       
-      if (isEditMode && promotionId) {
-        // Update existing promotion
-        await updatePromotion(promotionId, transformedData as UpdatePromotionData)
-      } else {
-        // Create new promotion
-        await createPromotion(transformedData as CreatePromotionData)
-      }
+      await createPromotion(transformedData as CreatePromotionData)
       
       onOpenChange(false)
       onSuccess?.()
     } catch (err) {
       console.error('Error submitting form:', err)
-      setError(err instanceof Error ? err.message : isEditMode ? 'خطا در بروزرسانی تبلیغ' : 'خطا در ایجاد تبلیغ')
+      setError(err instanceof Error ? err.message : 'خطا در ایجاد تبلیغ')
     } finally {
       setLoading(false)
     }
@@ -169,28 +82,12 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
   const handleClose = () => {
     onOpenChange(false)
     setError(null)
+    methods.reset()
   }
 
-  const storeOptions = stores.map(store => ({
-    code: store.id,
-    name: store.name
-  }))
+  const typeOptions = PROMOTION_TYPE_OPTIONS
 
-  const typeOptions = [
-    { code: PromotionType.COUPON, name: 'کوپن / کد تخفیف' },
-    { code: PromotionType.CASHBACK, name: 'کش بک' },
-    { code: PromotionType.REFERRAL, name: 'معرفی دوست' },
-    { code: PromotionType.CONDITIONAL, name: 'شرطی / پلکانی' },
-    { code: PromotionType.PERCENTAGE, name: 'درصدی' },
-    { code: PromotionType.FIXED, name: 'مبلغ ثابت' },
-    { code: PromotionType.FLASH_SALE, name: 'فروش فلش' },
-    { code: PromotionType.FREE_SHIPPING, name: 'ارسال رایگان' },
-    { code: PromotionType.LOYALTY_POINTS, name: 'امتیاز وفاداری' },
-    { code: PromotionType.BEHAVIORAL, name: 'رفتاری / رویداد محور' },
-    { code: PromotionType.STACKABLE, name: 'قابل ترکیب' }
-  ]
-
-  const stackableTypeOptions = typeOptions.filter(option => option.code !== selectedType)
+  const stackableTypeOptions = basicData ? typeOptions.filter(option => option.code !== basicData.type) : []
 
   const eventOptions = [
     { code: 'birthday', name: 'تولد مشتری' },
@@ -202,7 +99,9 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
   ]
 
   const renderTypeSpecificFields = () => {
-    switch (selectedType) {
+    if (!basicData) return null
+    
+    switch (basicData.type) {
       case PromotionType.COUPON:
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -375,10 +274,10 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       onClose={handleClose}
-      onAccept={methods.handleSubmit(onSubmit)}
+      onAccept={() => methods.handleSubmit(onSubmit)()}
       onReject={handleClose}
-      title={isEditMode ? 'ویرایش تبلیغ' : 'افزودن تبلیغ جدید'}
-      acceptBtnText={isEditMode ? 'بروزرسانی تبلیغ' : 'ایجاد تبلیغ'}
+      title={`جزئیات تبلیغ ${basicData ? typeOptions.find(t => t.code === basicData.type)?.name : ''}`}
+      acceptBtnText="ایجاد تبلیغ"
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
       size="2xl"
@@ -390,54 +289,29 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
           </div>
         )}
 
+        {/* Display basic info */}
+        <div className="p-4 bg-primary-50 border border-primary-200 rounded-lg">
+          <h3 className="font-semibold text-primary mb-2">اطلاعات اولیه</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-medium">فروشگاه:</span> {basicData.storeId}
+            </div>
+            <div>
+              <span className="font-medium">نوع:</span> {typeOptions.find(t => t.code === basicData.type)?.name}
+            </div>
+            <div>
+              <span className="font-medium">عنوان:</span> {basicData.title}
+            </div>
+            {basicData.description && (
+              <div>
+                <span className="font-medium">توضیحات:</span> {basicData.description}
+              </div>
+            )}
+          </div>
+        </div>
+
         <FormProvider {...methods}>
           <div className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                generalType="select"
-                name="storeId"
-                label="فروشگاه"
-                placeholder="فروشگاه را انتخاب کنید"
-                selectOptions={storeOptions}
-                selectKey="code"
-                selectValue="name"
-                required={true}
-                disabled={isEditMode}
-              />
-
-              <Input
-                generalType="select"
-                name="type"
-                label="نوع تبلیغ"
-                placeholder="نوع تبلیغ را انتخاب کنید"
-                selectOptions={typeOptions}
-                selectKey="code"
-                selectValue="name"
-                required={true}
-                disabled={isEditMode}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                generalType="input"
-                name="title"
-                label="عنوان تبلیغ"
-                placeholder="عنوان تبلیغ را وارد کنید"
-                inputType="text"
-                required={true}
-              />
-              
-              <Input
-                generalType="input"
-                name="description"
-                label="توضیحات"
-                placeholder="توضیحات تبلیغ (اختیاری)"
-                inputType="text"
-              />
-            </div>
-
             {/* Type-specific fields */}
             {renderTypeSpecificFields()}
 
@@ -472,29 +346,29 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
             </div>
 
             {/* Date fields for non-flash sale types */}
-            {selectedType !== PromotionType.FLASH_SALE && (
+            {basicData.type !== PromotionType.FLASH_SALE && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Input
-              generalType="input"
-              name="startDate"
-              label="تاریخ شروع (اختیاری)"
-              placeholder="تاریخ شروع را انتخاب کنید"
-              inputType="text"
-              description="فرمت: YYYY-MM-DD"
-            />
-            <Input
-              generalType="input"
-              name="endDate"
-              label="تاریخ پایان (اختیاری)"
-              placeholder="تاریخ پایان را انتخاب کنید"
-              inputType="text"
-              description="فرمت: YYYY-MM-DD"
-            />
+                <Input
+                  generalType="input"
+                  name="startDate"
+                  label="تاریخ شروع (اختیاری)"
+                  placeholder="تاریخ شروع را انتخاب کنید"
+                  inputType="text"
+                  description="فرمت: YYYY-MM-DD"
+                />
+                <Input
+                  generalType="input"
+                  name="endDate"
+                  label="تاریخ پایان (اختیاری)"
+                  placeholder="تاریخ پایان را انتخاب کنید"
+                  inputType="text"
+                  description="فرمت: YYYY-MM-DD"
+                />
               </div>
             )}
 
             {/* Stackable options */}
-            {selectedType !== PromotionType.STACKABLE && (
+            {basicData.type !== PromotionType.STACKABLE && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
                   generalType="select"
@@ -556,4 +430,4 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
   )
 }
 
-export default PromotionFormModal
+export default PromotionDetailsModal

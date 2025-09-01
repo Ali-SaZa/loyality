@@ -204,6 +204,21 @@ export const PROMOTION_TYPE_CONFIG = {
   }
 }
 
+// Full promotion type options for select dropdowns
+export const PROMOTION_TYPE_OPTIONS = [
+  { code: PromotionType.COUPON, name: 'کوپن / کد تخفیف' },
+  { code: PromotionType.CASHBACK, name: 'کش بک' },
+  { code: PromotionType.REFERRAL, name: 'معرفی دوست' },
+  { code: PromotionType.CONDITIONAL, name: 'شرطی / پلکانی' },
+  { code: PromotionType.PERCENTAGE, name: 'درصدی' },
+  { code: PromotionType.FIXED, name: 'مبلغ ثابت' },
+  { code: PromotionType.FLASH_SALE, name: 'فروش فلش' },
+  { code: PromotionType.FREE_SHIPPING, name: 'ارسال رایگان' },
+  { code: PromotionType.LOYALTY_POINTS, name: 'امتیاز وفاداری' },
+  { code: PromotionType.BEHAVIORAL, name: 'رفتاری / رویداد محور' },
+  { code: PromotionType.STACKABLE, name: 'قابل ترکیب' }
+]
+
 export const PROMOTION_STATUS_CONFIG = {
   [PromotionStatus.ACTIVE]: {
     text: 'فعال',

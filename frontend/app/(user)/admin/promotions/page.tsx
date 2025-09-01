@@ -14,6 +14,8 @@ import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
+import PromotionBasicModal from '@/components/modals/PromotionBasicModal'
+import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
 import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
@@ -35,6 +37,16 @@ const AdminPromotions = () => {
   const [promotionFormModal, setPromotionFormModal] = useState({
     isOpen: false,
     promotionId: undefined as string | undefined
+  })
+
+  // Two-step promotion creation state
+  const [basicModal, setBasicModal] = useState({
+    isOpen: false
+  })
+
+  const [detailsModal, setDetailsModal] = useState({
+    isOpen: false,
+    basicData: null as { storeId: string; type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'; title: string; description?: string } | null
   })
 
   // Promotion view modal state
@@ -153,13 +165,24 @@ const AdminPromotions = () => {
   }
 
   const handleAddPromotion = () => {
-    setPromotionFormModal({
-      isOpen: true,
-      promotionId: undefined
+    setBasicModal({
+      isOpen: true
     })
   }
 
-  const handlePromotionFormSuccess = () => {
+  const handleBasicModalNext = (data: { storeId: string; type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'; title: string; description?: string }) => {
+    setBasicModal({ isOpen: false })
+    setDetailsModal({
+      isOpen: true,
+      basicData: data
+    })
+  }
+
+  const handleDetailsModalSuccess = () => {
+    setDetailsModal({
+      isOpen: false,
+      basicData: null
+    })
     fetchPromotions() // Refresh the list
     fetchStats() // Refresh stats
   }
@@ -397,11 +420,26 @@ const AdminPromotions = () => {
         </CardBody>
       </Card>
 
-      {/* Promotion Form Modal */}
+      {/* Two-Step Promotion Creation Modals */}
+      <PromotionBasicModal
+        isOpen={basicModal.isOpen}
+        onOpenChange={(isOpen) => setBasicModal({ isOpen })}
+        onNext={handleBasicModalNext}
+        stores={stores}
+      />
+
+      <PromotionDetailsModal
+        isOpen={detailsModal.isOpen}
+        onOpenChange={(isOpen) => setDetailsModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleDetailsModalSuccess}
+        basicData={detailsModal.basicData!}
+      />
+
+      {/* Promotion Form Modal (for editing) */}
       <PromotionFormModal
         isOpen={promotionFormModal.isOpen}
         onOpenChange={(isOpen) => setPromotionFormModal(prev => ({ ...prev, isOpen }))}
-        onSuccess={handlePromotionFormSuccess}
+        onSuccess={handleDetailsModalSuccess}
         promotionId={promotionFormModal.promotionId}
         stores={stores}
       />

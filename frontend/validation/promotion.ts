@@ -1,5 +1,16 @@
 import { z } from 'zod'
 
+// Basic promotion validation for step 1
+export const BasicPromotionValidation = z.object({
+  storeId: z.string().min(1, 'شناسه فروشگاه الزامی است'),
+  type: z.enum([
+    'coupon', 'cashback', 'referral', 'conditional', 'percentage', 
+    'fixed', 'flashSale', 'freeShipping', 'loyaltyPoints', 'behavioral', 'stackable'
+  ]).refine((val) => val !== undefined, { message: 'نوع تبلیغ الزامی است' }),
+  title: z.string().min(2, 'عنوان تبلیغ حداقل باید ۲ کاراکتر باشد').max(100, 'عنوان تبلیغ حداکثر ۱۰۰ کاراکتر باشد'),
+  description: z.string().max(500, 'توضیحات حداکثر ۵۰۰ کاراکتر باشد').optional()
+})
+
 // Promotion validation schemas
 export const CreatePromotionValidation = z.object({
   storeId: z.string().min(1, 'شناسه فروشگاه الزامی است'),
