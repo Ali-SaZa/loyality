@@ -8,7 +8,7 @@ import Input from '@/components/formElements/Input'
 import useLoading from '@/hooks/useLoading'
 import { CreateUserFormValidation, UpdateUserFormValidation } from '@/validation/user'
 import { UserRole, UserStatus } from '@/types/enums'
-import { User, getUserById, createUser, updateUser } from '@/services/users'
+import { User, getUserById, createUser, updateUser, usersService } from '@/services/users'
 
 type UserFormData = {
   firstName?: string
@@ -89,13 +89,19 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
       setError(null)
       
       if (isEditMode && userId) {
-        // Update existing user
+        // Update existing user - handle both general update and status update
         const userData = {
           firstName: data.firstName || undefined,
           lastName: data.lastName || undefined
         }
         
+        // Update basic user info
         await updateUser(userId, userData)
+        
+        // Update status separately if it changed
+        if (user && user.status !== data.status) {
+          await usersService.updateUserStatus(userId, data.status)
+        }
       } else {
         // Create new user
         const userData = {
@@ -190,6 +196,7 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
                 selectKey="code"
                 selectValue="name"
                 required={true}
+                disabled={isEditMode} // Role cannot be changed in edit mode
               />
             </div>
 
