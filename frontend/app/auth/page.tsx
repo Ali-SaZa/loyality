@@ -9,7 +9,7 @@ import { z } from 'zod'
 import Button from '@/components/formElements/Button'
 import Input from '@/components/formElements/Input'
 import Loading from '@/components/layouts/Loading'
-import ObsLogo from '@/components/ui/ObsLogo'
+import LogoContainer from '@/components/ui/ObsLogo'
 import CountdownTimer from '@/components/utils/CountdownTimer'
 import useAuth from '@/hooks/useAuth'
 import { authService } from '@/services/auth'
@@ -150,7 +150,7 @@ const Auth = () => {
   return (
     <div className="h-full flex flex-col md:flex-row gap-8">
       <div className="flex-1">
-        <ObsLogo />
+        <LogoContainer />
 
         <div className="w-full justify-center mt-10">
           <div className="flex flex-col md:w-fit mx-auto min-w-[282px]">

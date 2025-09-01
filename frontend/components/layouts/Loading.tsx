@@ -5,7 +5,7 @@ import { useDisclosure } from '@heroui/modal'
 import Modal from '@/components/modals/Modal'
 import useLoading from '@/hooks/useLoading'
 import DotLoadingIcon from '@/components/icons/DotLoadingIcon'
-import ObsLogo from '@/components/ui/ObsLogo'
+import LogoContainer from '@/components/ui/ObsLogo'
 
 const Loading = () => {
   const { onOpenChange } = useDisclosure()
@@ -24,7 +24,7 @@ const Loading = () => {
       onOpenChange={onOpenChange}
     >
       <div className="flex items-center justify-center flex-col gap-4">
-        <ObsLogo disableClick />
+        <LogoContainer disableClick />
         <p className="flex gap-1 items-center justify-center">
           در حال بارگزاری اطلاعات <DotLoadingIcon />
         </p>

@@ -12,9 +12,11 @@ import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import StoreIcon from '@/components/icons/ChartTreeIcon'
-import { getAllUsers, User } from '@/services/users'
+import { getAllUsers, deleteUser, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
+import Modal from '@/components/modals/Modal'
+import UserFormModal from '@/components/modals/UserFormModal'
 
 const AdminUsers = () => {
   const router = useRouter()
@@ -23,15 +25,22 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([])
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [selectedRole, setSelectedRole] = useState<string>('all')
-  const [stats, setStats] = useState({
-    total: 0,
-    customers: 0,
-    stores: 0,
-    active: 0,
-    blocked: 0,
-    deleted: 0
-  })
+
   const [error, setError] = useState<string | null>(null)
+  
+  // Delete modal state
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    userId: '',
+    userName: '',
+    isLoading: false
+  })
+
+  // User form modal state
+  const [userFormModal, setUserFormModal] = useState({
+    isOpen: false,
+    userId: undefined as string | undefined
+  })
 
   useEffect(() => {
     fetchUsers()
@@ -46,17 +55,8 @@ const AdminUsers = () => {
       setLoading(true)
       setError(null)
       const response = await getAllUsers(1, 50)
+      console.log(response.users)
       setUsers(response.users)
-      
-      // Calculate stats
-      const total = response.users.length
-      const customers = response.users.filter(u => u.role === 'customer').length
-      const stores = response.users.filter(u => u.role === 'store').length
-      const active = response.users.filter(u => u.status === 'active').length
-      const blocked = response.users.filter(u => u.status === 'blocked').length
-      const deleted = response.users.filter(u => u.status === 'deleted').length
-      
-      setStats({ total, customers, stores, active, blocked, deleted })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در بارگذاری کاربران')
     } finally {
@@ -88,6 +88,49 @@ const AdminUsers = () => {
     return getRoleConfig(role).text
   }
 
+  const handleDeleteClick = (user: User) => {
+    const userName = user.firstName && user.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user.phoneNumber
+    
+    setDeleteModal({
+      isOpen: true,
+      userId: user.id,
+      userName,
+      isLoading: false
+    })
+  }
+
+  const handleDeleteConfirm = async () => {
+    try {
+      setDeleteModal(prev => ({ ...prev, isLoading: true }))
+      await deleteUser(deleteModal.userId)
+      
+      // Refresh the users list to show updated status
+      await fetchUsers()
+      
+      // Close modal
+      setDeleteModal({
+        isOpen: false,
+        userId: '',
+        userName: '',
+        isLoading: false
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
+      setDeleteModal(prev => ({ ...prev, isLoading: false }))
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteModal({
+      isOpen: false,
+      userId: '',
+      userName: '',
+      isLoading: false
+    })
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('fa-IR')
@@ -106,25 +149,21 @@ const AdminUsers = () => {
   }
 
   const handleEditUser = (userId: string) => {
-    router.push(`/admin/users/${userId}/edit`)
-  }
-
-  const handleDeleteUser = async (userId: string) => {
-    if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
-      try {
-        setLoading(true)
-        // TODO: Implement delete user functionality
-        await fetchUsers() // Refresh the list
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
-      } finally {
-        setLoading(false)
-      }
-    }
+    setUserFormModal({
+      isOpen: true,
+      userId: userId
+    })
   }
 
   const handleAddUser = () => {
-    router.push('/admin/users/new')
+    setUserFormModal({
+      isOpen: true,
+      userId: undefined
+    })
+  }
+
+  const handleUserFormSuccess = () => {
+    fetchUsers() // Refresh the users list
   }
 
   if (error) {
@@ -162,81 +201,6 @@ const AdminUsers = () => {
         >
           افزودن کاربر جدید
         </Button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل کاربران</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
-              </div>
-              <UserIcon className="size-8 text-primary" />
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">مشتریان</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.customers}</p>
-              </div>
-              <UserIcon className="size-8 text-primary" />
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">فروشگاه‌ها</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.stores}</p>
-              </div>
-              <StoreIcon className="size-8 text-success" />
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کاربران فعال</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
-              </div>
-              <UserIcon className="size-8 text-success" />
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کاربران مسدود</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.blocked}</p>
-              </div>
-              <UserIcon className="size-8 text-warning" />
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">حذف شده</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
-              </div>
-              <UserIcon className="size-8 text-danger" />
-            </div>
-          </CardBody>
-        </Card>
       </div>
 
       {/* Filter */}
@@ -351,7 +315,7 @@ const AdminUsers = () => {
                         variant="light"
                         color="danger"
                         aria-label="حذف"
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => handleDeleteClick(user)}
                       >
                         <TrashIcon className="size-4" />
                       </Button>
@@ -363,6 +327,34 @@ const AdminUsers = () => {
           </Table>
         </CardBody>
       </Card>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteModal.isOpen}
+        onOpenChange={(isOpen) => !isOpen && handleDeleteCancel()}
+        onAccept={handleDeleteConfirm}
+        onReject={handleDeleteCancel}
+        isLoading={deleteModal.isLoading}
+        title="تأیید حذف کاربر"
+        acceptBtnText="حذف"
+        rejectBtnText="انصراف"
+        acceptBtnColor="danger"
+        size="md"
+      >
+        <div className="py-4">
+          <p className="text-lg mb-2">
+            آیا از حذف کاربر <span className="font-semibold">{deleteModal.userName}</span> اطمینان دارید؟
+          </p>
+        </div>
+      </Modal>
+
+      {/* User Form Modal */}
+      <UserFormModal
+        isOpen={userFormModal.isOpen}
+        onOpenChange={(isOpen) => setUserFormModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleUserFormSuccess}
+        userId={userFormModal.userId}
+      />
     </div>
   )
 }

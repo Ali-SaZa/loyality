@@ -38,7 +38,7 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
     const userComponent = (
       <User
         avatarProps={{
-          src: '/images/placeholders/portrait.webp'
+          src: '/images/man-placeholder.webp'
         }}
         className="[&_span.bg-default]:!bg-transparent"
         description={user?.phoneNumber}
@@ -74,7 +74,7 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
             >
               <User
                 avatarProps={{
-                  src: '/images/placeholders/portrait.webp'
+                  src: '/images/man-placeholder.webp'
                 }}
                 className="[&_span.bg-default]:!bg-transparent"
                 description={user?.phoneNumber}

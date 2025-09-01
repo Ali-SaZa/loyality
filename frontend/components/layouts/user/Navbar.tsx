@@ -10,7 +10,7 @@ import CloseIcon from '@/components/icons/CloseIcon'
 import UserDropdown from '@/components/ui/UserDropdown'
 import ChevronRightIcon from '@/components/icons/ChevronRightIcon'
 import useGlobal from '@/hooks/useGlobal'
-import ObsLogo from '@/components/ui/ObsLogo'
+import LogoContainer from '@/components/ui/ObsLogo'
 import { truncateText } from '@/helpers'
 import useAlertModal from '@/hooks/useAlertModal'
 import useAuth from '@/hooks/useAuth'
@@ -73,7 +73,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
             )}
             {showBrand ? (
               <div className="border border-white bg-white/50 w-fit rounded-xl p-1">
-                <ObsLogo iconSize={140} />
+                <LogoContainer iconSize={140} />
               </div>
             ) : (
               <div className="text-right">

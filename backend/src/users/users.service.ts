@@ -65,11 +65,16 @@ export class UsersService {
     const limit = request.limit || 20;
     const skip = (page - 1) * limit;
 
-    // Add role-based access control
-    if (additionalFilters.requestingUser?.role === 'store') {
-      // Store users can only see customers who have transactions with their store
-      // This is a simplified example - you might want to implement more sophisticated logic
-      additionalFilters['purchases.storeId'] = additionalFilters.requestingUser.storeId;
+    // Add role-based access control without leaking non-schema fields into the Mongo filter
+    // Build a safe filters object and NEVER include arbitrary objects like `requestingUser`
+    const safeAdditionalFilters: any = {};
+    if (additionalFilters && typeof additionalFilters === 'object') {
+      if (additionalFilters.requestingUser?.role === 'store' && additionalFilters.requestingUser?.storeId) {
+        // Store users can only see customers who have transactions with their store
+        // This is a simplified example - you might want to implement more sophisticated logic
+        safeAdditionalFilters['purchases.storeId'] = additionalFilters.requestingUser.storeId;
+      }
+      // Do NOT copy `requestingUser` (or any other non-schema keys) into the Mongo filter
     }
 
     // Build filter query
@@ -83,8 +88,8 @@ export class UsersService {
       filterQuery.$or = searchQueries;
     }
 
-    // Add additional filters
-    Object.assign(filterQuery, additionalFilters);
+    // Add additional filters (only the safe subset)
+    Object.assign(filterQuery, safeAdditionalFilters);
 
     // Execute queries in parallel for better performance
     const [data, total] = await Promise.all([

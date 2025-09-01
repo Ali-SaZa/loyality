@@ -1,11 +1,11 @@
 import { Link } from '@heroui/link'
 
-interface ObsLogoProps {
+interface LogoContainerProps {
   iconSize?: number
   disableClick?: boolean
 }
 
-const ObsLogo = ({ iconSize = 180, disableClick = false }: ObsLogoProps) => {
+const LogoContainer = ({ iconSize = 180, disableClick = false }: LogoContainerProps) => {
   return (
     <Link
       className="flex items-center gap-2 cursor-pointer"
@@ -14,10 +14,10 @@ const ObsLogo = ({ iconSize = 180, disableClick = false }: ObsLogoProps) => {
     >
       <img
         alt="obs logo"
-        src="/images/OBS.webp"
+        src="/images/logo.png"
       />
     </Link>
   )
 }
 
-export default ObsLogo
+export default LogoContainer

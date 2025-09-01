@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation'
 import React, { useState } from 'react'
 
 import Button from '@/components/formElements/Button'
-import ObsLogo from '@/components/ui/ObsLogo'
+import LogoContainer from '@/components/ui/ObsLogo'
 import { getMenuByRole } from '@/helpers/menuUtils'
 import { UserRole, getRoleConfig } from '@/types/enums'
 import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
@@ -65,7 +65,7 @@ const UserSidebar = () => {
         {/* Header */}
         <div className="py-4 px-6 flex items-center justify-center border-b border-divider bg-gradient-to-b from-background-50 to-white">
           <div className="text-center">
-            <ObsLogo iconSize={100} />
+            <LogoContainer iconSize={100} />
             <div className="mt-3">
               <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getRoleConfig(user?.role || 'customer').bgColor} ${getRoleConfig(user?.role || 'customer').textColor} border ${getRoleConfig(user?.role || 'customer').borderColor}`}>
               {getRoleConfig(user?.role || 'customer').title}

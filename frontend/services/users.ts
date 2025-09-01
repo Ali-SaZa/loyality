@@ -56,6 +56,23 @@ export interface UsersResponse {
   limit: number
 }
 
+// Backend list response shape
+interface UsersListApiResponse {
+  data: User[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+  appliedFilters: {
+    search?: string
+    searchFields?: string[]
+    sort?: any
+    filters?: any
+  }
+}
+
 // Users service functions
 export const usersService = {
   // Get all users (Admin only)
@@ -66,31 +83,15 @@ export const usersService = {
       if (limit) params.append('limit', limit.toString())
       if (search) params.append('search', search)
 
-      const response = await axiosInstance.get<User[]>(`/users?${params.toString()}`)
+      const response = await axiosInstance.get<UsersListApiResponse>(`/users?${params.toString()}`)
       
-      // Transform the backend response to match our interface
-      const users = response.data.map(user => ({
-        id: user.id,
-        phoneNumber: user.phoneNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        totalPoints: user.totalPoints || 0,
-        role: user.role,
-        status: user.status || 'active',
-        lastActivity: user.lastActivity,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-        purchases: user.purchases || [],
-        storeName: user.storeName,
-        address: user.address,
-        description: user.description
-      }))
+      const users = response.data.data || []
       
       return {
         users,
-        total: users.length,
-        page: page,
-        limit: limit
+        total: response.data.total,
+        page: response.data.page,
+        limit: response.data.limit
       }
     } catch (error) {
       const errorMessage = handleApiError(error)

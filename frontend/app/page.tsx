@@ -5,7 +5,7 @@ import { Button } from '@heroui/button'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 
 import useAuth from '@/hooks/useAuth'
-import ObsLogo from '@/components/ui/ObsLogo'
+import LogoContainer from '@/components/ui/ObsLogo'
 import UserDropdown from '@/components/ui/UserDropdown'
 import { getRoleConfig } from '@/types/enums'
 
@@ -36,7 +36,7 @@ export default function LandingPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <ObsLogo />
+            <LogoContainer />
             <div className="flex items-center gap-4">
               {user ? (
                 // User dropdown for authenticated users
