@@ -13,6 +13,8 @@ import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllUsers, getUserStats, deleteUser, User, UserStats } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
+import UserFormModal from '@/components/modals/UserFormModal'
+import UserViewModal from '@/components/modals/UserViewModal'
 
 const AdminUsers = () => {
   const router = useRouter()
@@ -26,6 +28,18 @@ const AdminUsers = () => {
     deleted: 0
   })
   const [error, setError] = useState<string | null>(null)
+
+  // User form modal state
+  const [userFormModal, setUserFormModal] = useState({
+    isOpen: false,
+    userId: undefined as string | undefined
+  })
+
+  // User view modal state
+  const [userViewModal, setUserViewModal] = useState({
+    isOpen: false,
+    userId: undefined as string | undefined
+  })
 
   useEffect(() => {
     fetchUsers()
@@ -84,11 +98,17 @@ const AdminUsers = () => {
   }
 
   const handleViewUser = (userId: string) => {
-    router.push(`/admin/users/${userId}/view`)
+    setUserViewModal({
+      isOpen: true,
+      userId
+    })
   }
 
   const handleEditUser = (userId: string) => {
-    router.push(`/admin/users/${userId}`)
+    setUserFormModal({
+      isOpen: true,
+      userId
+    })
   }
 
   const handleDeleteUser = async (userId: string) => {
@@ -106,7 +126,31 @@ const AdminUsers = () => {
   }
 
   const handleAddUser = () => {
-    router.push('/admin/users/new')
+    setUserFormModal({
+      isOpen: true,
+      userId: undefined
+    })
+  }
+
+  const handleUserFormSuccess = () => {
+    fetchUsers() // Refresh the list
+    fetchStats() // Refresh stats
+  }
+
+  const handleUserViewEdit = (userId: string) => {
+    setUserFormModal({
+      isOpen: true,
+      userId
+    })
+  }
+
+  const handleUserViewDelete = (userId: string) => {
+    // This will be handled by the view modal itself
+  }
+
+  const handleUserViewSuccess = () => {
+    fetchUsers() // Refresh the list
+    fetchStats() // Refresh stats
   }
 
   if (error) {
@@ -298,6 +342,24 @@ const AdminUsers = () => {
           </Table>
         </CardBody>
       </Card>
+
+      {/* User Form Modal */}
+      <UserFormModal
+        isOpen={userFormModal.isOpen}
+        onOpenChange={(isOpen) => setUserFormModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleUserFormSuccess}
+        userId={userFormModal.userId}
+      />
+
+      {/* User View Modal */}
+      <UserViewModal
+        isOpen={userViewModal.isOpen}
+        onOpenChange={(isOpen) => setUserViewModal(prev => ({ ...prev, isOpen }))}
+        onEdit={handleUserViewEdit}
+        onDelete={handleUserViewDelete}
+        onSuccess={handleUserViewSuccess}
+        userId={userViewModal.userId}
+      />
     </div>
   )
 }

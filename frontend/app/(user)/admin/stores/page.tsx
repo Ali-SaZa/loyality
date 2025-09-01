@@ -13,6 +13,8 @@ import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { StorePlanType, getStorePlanConfig } from '@/types/enums'
+import StoreFormModal from '@/components/modals/StoreFormModal'
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
 const AdminStores = () => {
   const router = useRouter()
@@ -26,6 +28,20 @@ const AdminStores = () => {
     inactive: 0
   })
   const [error, setError] = useState<string | null>(null)
+
+  // Store form modal state
+  const [storeFormModal, setStoreFormModal] = useState({
+    isOpen: false,
+    storeId: undefined as string | undefined
+  })
+
+  // Delete confirmation modal state
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    storeId: '',
+    storeName: '',
+    isLoading: false
+  })
 
   useEffect(() => {
     fetchStores()
@@ -87,25 +103,50 @@ const AdminStores = () => {
   }
 
   const handleEditStore = (storeId: string) => {
-    router.push(`/admin/stores/${storeId}`)
+    setStoreFormModal({
+      isOpen: true,
+      storeId
+    })
   }
 
-  const handleDeleteStore = async (storeId: string) => {
-    if (confirm('آیا از حذف این فروشگاه اطمینان دارید؟')) {
-      try {
-        setLoading(true)
-        await deleteStore(storeId)
-        await fetchStores() // Refresh the list
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف فروشگاه')
-      } finally {
-        setLoading(false)
-      }
+  const handleDeleteStore = (storeId: string) => {
+    const store = stores.find(s => s.id === storeId)
+    setDeleteModal({
+      isOpen: true,
+      storeId,
+      storeName: store?.name || 'نامشخص',
+      isLoading: false
+    })
+  }
+
+  const handleDeleteConfirm = async () => {
+    try {
+      setDeleteModal(prev => ({ ...prev, isLoading: true }))
+      await deleteStore(deleteModal.storeId)
+      await fetchStores() // Refresh the list
+      await fetchStats() // Refresh stats
+      setDeleteModal({
+        isOpen: false,
+        storeId: '',
+        storeName: '',
+        isLoading: false
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'خطا در حذف فروشگاه')
+      setDeleteModal(prev => ({ ...prev, isLoading: false }))
     }
   }
 
   const handleAddStore = () => {
-    router.push('/admin/stores/new')
+    setStoreFormModal({
+      isOpen: true,
+      storeId: undefined
+    })
+  }
+
+  const handleStoreFormSuccess = () => {
+    fetchStores() // Refresh the list
+    fetchStats() // Refresh stats
   }
 
   if (error) {
@@ -291,6 +332,25 @@ const AdminStores = () => {
           </Table>
         </CardBody>
       </Card>
+
+      {/* Store Form Modal */}
+      <StoreFormModal
+        isOpen={storeFormModal.isOpen}
+        onOpenChange={(isOpen) => setStoreFormModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleStoreFormSuccess}
+        storeId={storeFormModal.storeId}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        onOpenChange={(isOpen) => setDeleteModal(prev => ({ ...prev, isOpen }))}
+        onConfirm={handleDeleteConfirm}
+        title="حذف فروشگاه"
+        message="آیا از حذف این فروشگاه اطمینان دارید؟"
+        itemName={deleteModal.storeName}
+        isLoading={deleteModal.isLoading}
+      />
     </div>
   )
 }
