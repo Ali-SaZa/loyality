@@ -23,16 +23,9 @@ export const PERSIAN_ERROR_MESSAGES = {
   STORE_ALREADY_EXISTS: 'فروشگاه قبلاً وجود دارد', // translated to Persian
   STORE_PHONE_EXISTS: 'فروشگاه با این شماره موبایل قبلاً وجود دارد', // translated to Persian
   
-  // Scratch card related messages
-  SCRATCH_CARD_NOT_FOUND: 'کارت تخفیف یافت نشد', // translated to Persian
-  SCRATCH_CARD_ALREADY_USED: 'کارت تخفیف قبلاً استفاده شده است', // translated to Persian
-  SCRATCH_CARD_EXPIRED: 'کارت تخفیف منقضی شده است', // translated to Persian
-  INVALID_CARD_VALUE: 'مقدار کارت نامعتبر است', // translated to Persian
+
   
-  // Transaction related messages
-  TRANSACTION_NOT_FOUND: 'تراکنش یافت نشد', // translated to Persian
-  TRANSACTION_FAILED: 'تراکنش ناموفق بود', // translated to Persian
-  INVALID_TRANSACTION_TYPE: 'نوع تراکنش نامعتبر است', // translated to Persian
+
   
   // Admin related messages
   ADMIN_NOT_FOUND: 'مدیر یافت نشد', // translated to Persian

@@ -143,8 +143,7 @@ export class SeedingController {
         users: { type: 'number', description: 'Number of users' },
         stores: { type: 'number', description: 'Number of stores' },
         admins: { type: 'number', description: 'Number of admins' },
-        scratchCards: { type: 'number', description: 'Number of scratch cards' },
-        transactions: { type: 'number', description: 'Number of transactions' },
+
         otps: { type: 'number', description: 'Number of OTPs' },
         timestamp: { type: 'string', format: 'date-time' }
       }

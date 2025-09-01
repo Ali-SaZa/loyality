@@ -54,7 +54,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('users', 'Customer management endpoints')
     .addTag('stores', 'Store management endpoints')
-    .addTag('scratch-cards', 'Scratch card operations')
+
     .addTag('otp', 'OTP verification endpoints')
     .addTag('auth', 'Authentication endpoints')
     .addBearerAuth(

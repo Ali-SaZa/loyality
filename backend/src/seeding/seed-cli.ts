@@ -26,8 +26,8 @@ async function bootstrap() {
       console.log(`  Users: ${status.users}`);
       console.log(`  Stores: ${status.stores}`);
       console.log(`  Admins: ${status.admins}`);
-      console.log(`  Scratch Cards: ${status.scratchCards}`);
-      console.log(`  Transactions: ${status.transactions}`);
+
+
       console.log(`  OTPs: ${status.otps}`);
       return;
     }
@@ -63,8 +63,8 @@ async function bootstrap() {
     console.log(`  Users: ${status.users}`);
     console.log(`  Stores: ${status.stores}`);
     console.log(`  Admins: ${status.admins}`);
-    console.log(`  Scratch Cards: ${status.scratchCards}`);
-    console.log(`  Transactions: ${status.transactions}`);
+
+
     console.log(`  OTPs: ${status.otps}`);
     
   } catch (error) {

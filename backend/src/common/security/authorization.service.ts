@@ -9,7 +9,7 @@ export interface UserContext {
 }
 
 export interface ResourceAccess {
-  resourceType: 'scratch-card' | 'store' | 'user' | 'transaction' | 'promotion' | 'admin';
+  resourceType: 'store' | 'user' | 'promotion' | 'admin';
   resourceId: string;
   storeId?: string;
   userId?: string;
@@ -23,18 +23,14 @@ export class AuthorizationService {
    */
   async checkResourceAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
     switch (resource.resourceType) {
-      case 'scratch-card':
-        await this.checkScratchCardAccess(user, resource);
-        break;
+
       case 'store':
         await this.checkStoreAccess(user, resource);
         break;
       case 'user':
         await this.checkUserAccess(user, resource);
         break;
-      case 'transaction':
-        await this.checkTransactionAccess(user, resource);
-        break;
+
       case 'promotion':
         await this.checkPromotionAccess(user, resource);
         break;
@@ -46,29 +42,7 @@ export class AuthorizationService {
     }
   }
 
-  /**
-   * Check scratch card access permissions
-   */
-  private async checkScratchCardAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
-    // Admin can access everything
-    if (user.role === 'admin') {
-      return;
-    }
 
-    // Store users can access scratch cards related to their store
-    // (this will be validated in the service layer to check storeId)
-    if (user.role === 'store') {
-      return;
-    }
-
-    // Customers can access scratch cards that belong to them
-    // (this will be validated in the service layer to check userId)
-    if (user.role === 'customer') {
-      return;
-    }
-
-    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این کارت تخفیف را ندارید.'); // translated to Persian
-  }
 
   /**
    * Check store access permissions
@@ -117,7 +91,7 @@ export class AuthorizationService {
     }
 
     // Store users can view customer data related to their store
-    // (this will be validated in the service layer to check if customer has transactions with their store)
+
     if (user.role === 'store') {
       return;
     }
@@ -125,28 +99,7 @@ export class AuthorizationService {
     throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به اطلاعات این کاربر را ندارید.'); // translated to Persian
   }
 
-  /**
-   * Check transaction access permissions
-   */
-  private async checkTransactionAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
-    // Admin can access everything
-    if (user.role === 'admin') {
-      return;
-    }
 
-    // Users can only access their own transactions
-    if (user.role === 'customer' && resource.userId === user.userId) {
-      return;
-    }
-
-    // Store users can view transactions related to their store
-    // (this will be validated in the service layer to check storeId)
-    if (user.role === 'store') {
-      return;
-    }
-
-    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تراکنش را ندارید.'); // translated to Persian
-  }
 
   /**
    * Check promotion access permissions
@@ -246,7 +199,7 @@ export class AuthorizationService {
     }
     
     if (user.role === 'store') {
-      return []; // Store owners can only see users who have transactions with their store
+      return []; // Store owners can only see users related to their store
     }
     
     return [];

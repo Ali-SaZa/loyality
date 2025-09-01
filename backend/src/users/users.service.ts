@@ -32,7 +32,7 @@ export class UsersService {
     }
 
     // Store users can view customer data related to their store
-    // This will be validated by checking if the customer has transactions with their store
+    // This will be validated by checking if the customer is related to their store
     if (requestingUser.role === 'store') {
       return;
     }
@@ -70,7 +70,7 @@ export class UsersService {
     const safeAdditionalFilters: any = {};
     if (additionalFilters && typeof additionalFilters === 'object') {
       if (additionalFilters.requestingUser?.role === 'store' && additionalFilters.requestingUser?.storeId) {
-        // Store users can only see customers who have transactions with their store
+        // Store users can only see customers related to their store
         // This is a simplified example - you might want to implement more sophisticated logic
         safeAdditionalFilters['purchases.storeId'] = additionalFilters.requestingUser.storeId;
       }

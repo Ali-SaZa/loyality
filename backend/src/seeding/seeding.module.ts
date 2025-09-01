@@ -6,14 +6,12 @@ import { User, UserSchema } from '../schemas/user.schema';
 import { Store, StoreSchema } from '../schemas/store.schema';
 import { Admin, AdminSchema } from '../schemas/admin.schema';
 import { PromoCode, PromoCodeSchema } from '../schemas/promoCode.schema';
-import { Transaction, TransactionSchema } from '../schemas/transaction.schema';
+
 import { Otp, OtpSchema } from '../schemas/otp.schema';
 import { 
   StoresSeeder, 
   AdminsSeeder, 
   UsersSeeder, 
-  ScratchCardsSeeder, 
-  TransactionsSeeder, 
   OTPsSeeder 
 } from './seeders';
 
@@ -24,7 +22,7 @@ import {
       { name: Store.name, schema: StoreSchema },
       { name: Admin.name, schema: AdminSchema },
       { name: PromoCode.name, schema: PromoCodeSchema },
-      { name: Transaction.name, schema: TransactionSchema },
+
       { name: Otp.name, schema: OtpSchema },
     ]),
   ],
@@ -33,8 +31,8 @@ import {
     StoresSeeder,
     AdminsSeeder,
     UsersSeeder,
-    ScratchCardsSeeder,
-    TransactionsSeeder,
+
+
     OTPsSeeder,
   ],
   controllers: [SeedingController],

@@ -6,9 +6,9 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { StoresModule } from './stores/stores.module';
 import { PromotionsModule } from './promotions/promotions.module';
-import { ScratchCardsModule } from './scratch-cards/scratch-cards.module';
+
 import { OtpModule } from './otp/otp.module';
-import { TransactionsModule } from './transactions/transactions.module';
+
 import { AdminsModule } from './admins/admins.module';
 import { SeedingModule } from './seeding/seeding.module';
 import { AuthModule } from './auth/auth.module';
@@ -37,9 +37,9 @@ import { RateLimiterMiddleware } from './common/security/rate-limiter.middleware
     UsersModule,
     StoresModule,
     PromotionsModule,
-    ScratchCardsModule,
+
     OtpModule,
-    TransactionsModule,
+
     AdminsModule,
     SeedingModule,
     AuthModule,

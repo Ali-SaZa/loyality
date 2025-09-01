@@ -5,7 +5,7 @@ This module provides comprehensive database seeding functionality for the Loyalt
 ## 🚀 Features
 
 - **Modular Architecture**: Separate seeder for each collection with clear responsibilities
-- **Complete Data Seeding**: Seeds all entities (Users, Stores, Admins, Scratch Cards, Transactions, OTPs)
+- **Complete Data Seeding**: Seeds all entities (Users, Stores, Admins, OTPs)
 - **Individual Collection Seeding**: Can seed specific collections independently
 - **Environment-Aware**: Different behavior for development vs production environments
 - **Data Relationships**: Maintains proper referential integrity between entities
@@ -33,15 +33,7 @@ This module provides comprehensive database seeding functionality for the Loyalt
 - **Narges Hashemi** - New customer with limited consents
 - **Amir Hosseini** - Premium customer with loyalty history
 
-### Scratch Cards (5 cards)
-- Various types: discount, cashback, lottery
-- Mix of redeemed and unredeemed cards
-- Proper store and user associations
 
-### Transactions (9 transactions)
-- Purchase transactions with points earned
-- Redemption transactions with points spent
-- Realistic amounts and descriptions
 
 ### OTPs (5 OTPs)
 - One OTP per user for verification
@@ -131,8 +123,7 @@ GET /seeding/status
   "users": 5,
   "stores": 3,
   "admins": 3,
-  "scratchCards": 5,
-  "transactions": 9,
+
   "otps": 5,
   "timestamp": "2024-01-15T10:30:00.000Z"
 }
@@ -198,8 +189,7 @@ src/seeding/
 │   ├── stores.seeder.ts  # Stores collection seeder
 │   ├── admins.seeder.ts  # Admins collection seeder
 │   ├── users.seeder.ts   # Users collection seeder
-│   ├── scratch-cards.seeder.ts # Scratch cards seeder
-│   ├── transactions.seeder.ts  # Transactions seeder
+
 │   └── otps.seeder.ts    # OTPs seeder
 └── README.md             # This file
 ```
