@@ -6,10 +6,11 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { StoresModule } from './stores/stores.module';
 import { PromotionsModule } from './promotions/promotions.module';
+import { PromoCodesModule } from './promo-codes/promo-codes.module';
 
 import { OtpModule } from './otp/otp.module';
 
-import { AdminsModule } from './admins/admins.module';
+
 import { SeedingModule } from './seeding/seeding.module';
 import { AuthModule } from './auth/auth.module';
 import { RateLimiterMiddleware } from './common/security/rate-limiter.middleware';
@@ -37,10 +38,11 @@ import { RateLimiterMiddleware } from './common/security/rate-limiter.middleware
     UsersModule,
     StoresModule,
     PromotionsModule,
+    PromoCodesModule,
 
     OtpModule,
 
-    AdminsModule,
+
     SeedingModule,
     AuthModule,
   ],

@@ -205,6 +205,51 @@ export class BulkCreatePromoCodesDto {
   notes?: string;
 }
 
+// Register Code to User DTO
+export class RegisterPromoCodeDto {
+  @ApiProperty({ 
+    description: 'Promo code to register', 
+    example: 'WELCOME50'
+  })
+  @IsString()
+  @Matches(/^[A-Z0-9]{6,12}$/, { 
+    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  })
+  code: string;
+
+  @ApiProperty({ 
+    description: 'User phone number', 
+    example: '09123456789'
+  })
+  @IsString()
+  @Matches(/^09[0-9]{9}$/, { 
+    message: 'Phone number must be in format 09xxxxxxxxx' 
+  })
+  phoneNumber: string;
+}
+
+// Get User Promo Codes DTO
+export class GetUserPromoCodesDto {
+  @ApiProperty({ 
+    description: 'User phone number', 
+    example: '09123456789'
+  })
+  @IsString()
+  @Matches(/^09[0-9]{9}$/, { 
+    message: 'Phone number must be in format 09xxxxxxxxx' 
+  })
+  phoneNumber: string;
+
+  @ApiProperty({ 
+    description: 'Store ID to filter by (optional)', 
+    required: false,
+    example: '507f1f77bcf86cd799439011'
+  })
+  @IsOptional()
+  @IsMongoId()
+  storeId?: string;
+}
+
 // List Response DTO
 export class PromoCodeListResponseDto {
   @ApiProperty({ type: [PromoCodeResponseDto] })

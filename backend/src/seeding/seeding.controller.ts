@@ -72,21 +72,7 @@ export class SeedingController {
     };
   }
 
-  @Post('seed/admins')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Seed admins collection only',
-    description: 'Populates only the admins collection with sample data'
-  })
-  async seedAdminsOnly() {
-    const admins = await this.seedingService.seedAdminsOnly();
-    
-    return {
-      message: 'Admins seeded successfully',
-      count: admins.length,
-      timestamp: new Date().toISOString()
-    };
-  }
+
 
   @Post('seed/users')
   @HttpCode(HttpStatus.OK)
@@ -142,7 +128,7 @@ export class SeedingController {
       properties: {
         users: { type: 'number', description: 'Number of users' },
         stores: { type: 'number', description: 'Number of stores' },
-        admins: { type: 'number', description: 'Number of admins' },
+
 
         otps: { type: 'number', description: 'Number of OTPs' },
         timestamp: { type: 'string', format: 'date-time' }

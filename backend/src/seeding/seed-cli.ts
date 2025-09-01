@@ -17,7 +17,7 @@ async function bootstrap() {
     const clearOnly = args.includes('--clear-only');
     const statusOnly = args.includes('--status-only');
     const storesOnly = args.includes('--stores-only');
-    const adminsOnly = args.includes('--admins-only');
+
     
     if (statusOnly) {
       console.log('📊 Getting database status...');
@@ -25,7 +25,7 @@ async function bootstrap() {
       console.log('Database Status:');
       console.log(`  Users: ${status.users}`);
       console.log(`  Stores: ${status.stores}`);
-      console.log(`  Admins: ${status.admins}`);
+
 
 
       console.log(`  OTPs: ${status.otps}`);
@@ -46,12 +46,7 @@ async function bootstrap() {
       return;
     }
     
-    if (adminsOnly) {
-      console.log('👨‍💼 Seeding admins only...');
-      const admins = await seedingService.seedAdminsOnly();
-      console.log(`✅ Created ${admins.length} admins`);
-      return;
-    }
+
     
     console.log(`🌱 Seeding database for ${environment} environment...`);
     await seedingService.seedAll(environment);
@@ -62,7 +57,7 @@ async function bootstrap() {
     console.log('\n📊 Final Database Status:');
     console.log(`  Users: ${status.users}`);
     console.log(`  Stores: ${status.stores}`);
-    console.log(`  Admins: ${status.admins}`);
+
 
 
     console.log(`  OTPs: ${status.otps}`);
@@ -91,7 +86,7 @@ Options:
   --clear-only                   # Only clear data, don't seed
   --status-only                  # Only show database status
   --stores-only                  # Seed only stores collection
-  --admins-only                  # Seed only admins collection
+
   --help, -h                    # Show this help message
 
 Examples:
@@ -100,7 +95,7 @@ Examples:
   npm run seed:clear            # Clear all data
   npm run seed:status           # Show current status
   npm run seed -- --stores-only # Seed only stores
-  npm run seed -- --admins-only # Seed only admins
+
 `);
   process.exit(0);
 }

@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { 
   StoresSeeder, 
-  AdminsSeeder, 
   UsersSeeder, 
- 
- 
   OTPsSeeder 
 } from './seeders';
 
@@ -14,10 +11,7 @@ export class SeedingService {
 
   constructor(
     private readonly storesSeeder: StoresSeeder,
-    private readonly adminsSeeder: AdminsSeeder,
     private readonly usersSeeder: UsersSeeder,
-
-
     private readonly otpsSeeder: OTPsSeeder,
   ) {}
 
@@ -31,15 +25,12 @@ export class SeedingService {
       }
 
       // Seed in order to maintain referential integrity
-      const admins = await this.seedAdmins();
       const users = await this.seedUsers([]); // Pass empty array since stores are created after users
       const stores = await this.seedStores(users);
-
-
       await this.seedOTPs(users);
 
       this.logger.log(`Seeding completed successfully for ${environment} environment`);
-      this.logger.log(`Created: ${stores.length} stores, ${admins.length} admins, ${users.length} users`);
+      this.logger.log(`Created: ${stores.length} stores, ${users.length} users`);
     } catch (error) {
       this.logger.error('Seeding failed:', error);
       throw error;
@@ -51,10 +42,7 @@ export class SeedingService {
     
     await Promise.all([
       this.storesSeeder.clear(),
-      this.adminsSeeder.clear(),
       this.usersSeeder.clear(),
-
-
       this.otpsSeeder.clear(),
     ]);
     
@@ -66,9 +54,7 @@ export class SeedingService {
     return this.storesSeeder.seed();
   }
 
-  private async seedAdmins() {
-    return this.adminsSeeder.seed();
-  }
+
 
   private async seedUsers(stores: any[]) {
     // Users are created without stores now
@@ -87,21 +73,15 @@ export class SeedingService {
   async getSeedingStatus(): Promise<{
     users: number;
     stores: number;
-    admins: number;
-
-
     otps: number;
   }> {
-    const [users, stores, admins, otps] = await Promise.all([
+    const [users, stores, otps] = await Promise.all([
       this.usersSeeder.count(),
       this.storesSeeder.count(),
-      this.adminsSeeder.count(),
-
-
       this.otpsSeeder.count(),
     ]);
 
-    return { users, stores, admins, otps };
+    return { users, stores, otps };
   }
 
   // Individual seeding methods for flexibility
@@ -109,9 +89,7 @@ export class SeedingService {
     return this.storesSeeder.seed();
   }
 
-  async seedAdminsOnly(): Promise<any[]> {
-    return this.adminsSeeder.seed();
-  }
+
 
   async seedUsersOnly(stores: any[]): Promise<any[]> {
     // Users are created without stores now
