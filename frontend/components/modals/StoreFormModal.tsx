@@ -7,8 +7,8 @@ import Modal from './Modal'
 import Input from '@/components/formElements/Input'
 import useLoading from '@/hooks/useLoading'
 import { StoreFormValidation, StoreUpdateValidation, StoreFormData, StoreUpdateData } from '@/validation/store'
-import { StorePlanType } from '@/types/enums'
-import { Store, getStoreById, createStore, updateStore, storesService } from '@/services/stores'
+import { StoreStatus } from '@/types/enums'
+import { Store, getStoreById, createStore, updateStore } from '@/services/stores'
 
 interface StoreFormModalProps {
   isOpen: boolean
@@ -28,33 +28,26 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
     resolver: zodResolver(isEditMode ? StoreUpdateValidation : StoreFormValidation),
     defaultValues: {
       name: '',
-      ownerName: '',
       phoneNumber: '',
       userId: '',
       address: {
+        province: '',
         city: '',
-        street: '',
-        coordinates: {
-          lat: 0,
-          lng: 0
-        }
+        fullAddress: ''
       },
-      loyaltySettings: {
-        tiers: [
-          {
-            minAmount: 0,
-            rewardType: 'cashback',
-            value: 5,
-            description: 'پاداش پایه'
-          }
-        ],
-        lotteryFrequency: 'none',
-        defaultCashbackRate: 5
+      promotions: [],
+      planExpiryDate: '',
+      status: 'active',
+      logoUrl: '',
+      description: '',
+      socialLinks: {
+        website: '',
+        instagram: '',
+        telegram: ''
       },
-      plan: {
-        type: 'free',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      workingHours: {
+        open: '09:00',
+        close: '21:00'
       }
     }
   })
@@ -67,33 +60,26 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
         // Reset form for create mode
         methods.reset({
           name: '',
-          ownerName: '',
           phoneNumber: '',
           userId: '',
           address: {
+            province: '',
             city: '',
-            street: '',
-            coordinates: {
-              lat: 0,
-              lng: 0
-            }
+            fullAddress: ''
           },
-          loyaltySettings: {
-            tiers: [
-              {
-                minAmount: 0,
-                rewardType: 'cashback',
-                value: 5,
-                description: 'پاداش پایه'
-              }
-            ],
-            lotteryFrequency: 'none',
-            defaultCashbackRate: 5
+          promotions: [],
+          planExpiryDate: '',
+          status: 'active',
+          logoUrl: '',
+          description: '',
+          socialLinks: {
+            website: '',
+            instagram: '',
+            telegram: ''
           },
-          plan: {
-            type: 'free',
-            startDate: new Date().toISOString().split('T')[0],
-            endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+          workingHours: {
+            open: '09:00',
+            close: '21:00'
           }
         })
         setError(null)
@@ -111,12 +97,23 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
       
       methods.reset({
         name: storeData.name,
-        ownerName: storeData.ownerName,
         phoneNumber: storeData.phoneNumber,
         userId: storeData.userId,
         address: storeData.address,
-        loyaltySettings: storeData.loyaltySettings,
-        plan: storeData.plan
+        promotions: storeData.promotions || [],
+        planExpiryDate: storeData.planExpiryDate || '',
+        status: storeData.status,
+        logoUrl: storeData.logoUrl || '',
+        description: storeData.description || '',
+        socialLinks: storeData.socialLinks || {
+          website: '',
+          instagram: '',
+          telegram: ''
+        },
+        workingHours: storeData.workingHours || {
+          open: '09:00',
+          close: '21:00'
+        }
       } as any)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات فروشگاه')
@@ -152,21 +149,11 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
     setError(null)
   }
 
-  const planOptions = [
-    { code: 'free', name: 'رایگان' },
-    { code: 'premium', name: 'پریمیوم' }
-  ]
-
-  const rewardTypeOptions = [
-    { code: 'cashback', name: 'کش بک' },
-    { code: 'discount', name: 'تخفیف' },
-    { code: 'lottery', name: 'قرعه کشی' }
-  ]
-
-  const lotteryFrequencyOptions = [
-    { code: 'none', name: 'هیچ' },
-    { code: 'weekly', name: 'هفتگی' },
-    { code: 'monthly', name: 'ماهانه' }
+  const statusOptions = [
+    { code: StoreStatus.ACTIVE, name: 'فعال' },
+    { code: StoreStatus.PENDING, name: 'در انتظار' },
+    { code: StoreStatus.SUSPENDED, name: 'معلق' },
+    { code: StoreStatus.DELETED, name: 'حذف شده' }
   ]
 
   return (
@@ -204,160 +191,145 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
               
               <Input
                 generalType="input"
-                name="ownerName"
-                label="نام صاحب فروشگاه"
-                placeholder="نام صاحب فروشگاه"
-                inputType="text"
-                required={true}
-              />
-            </div>
-
-            {/* Contact Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                generalType="input"
                 name="phoneNumber"
                 label="شماره تلفن"
-                placeholder="09XXXXXXXXX"
+                placeholder="09123456789"
                 inputType="tel"
-                description="شماره تلفن باید با 09 شروع شود"
-                required={true}
-              />
-              
-              <Input
-                generalType="input"
-                name="userId"
-                label="شناسه کاربر"
-                placeholder="شناسه کاربر فروشگاه"
-                inputType="text"
-                required={true}
-                disabled={isEditMode}
-              />
-            </div>
-
-            {/* Address */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                generalType="input"
-                name="address.city"
-                label="شهر"
-                placeholder="شهر"
-                inputType="text"
-                required={true}
-              />
-              
-              <Input
-                generalType="input"
-                name="address.street"
-                label="آدرس"
-                placeholder="آدرس فروشگاه"
-                inputType="text"
-              />
-            </div>
-
-            {/* Plan */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Input
-                generalType="select"
-                name="plan.type"
-                label="نوع پلن"
-                placeholder="نوع پلن را انتخاب کنید"
-                selectOptions={planOptions}
-                selectKey="code"
-                selectValue="name"
-                required={true}
-              />
-              
-              <Input
-                generalType="input"
-                name="plan.startDate"
-                label="تاریخ شروع"
-                placeholder="تاریخ شروع پلن"
-                inputType="date"
-                required={true}
-              />
-              
-              <Input
-                generalType="input"
-                name="plan.endDate"
-                label="تاریخ پایان"
-                placeholder="تاریخ پایان پلن"
-                inputType="date"
                 required={true}
               />
             </div>
 
-            {/* Loyalty Settings */}
+            {/* Address Information */}
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-text-dark">تنظیمات وفاداری</h4>
-              
+              <h3 className="text-lg font-semibold text-gray-900">اطلاعات آدرس</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  generalType="select"
-                  name="loyaltySettings.lotteryFrequency"
-                  label="فرکانس قرعه کشی"
-                  placeholder="فرکانس قرعه کشی را انتخاب کنید"
-                  selectOptions={lotteryFrequencyOptions}
-                  selectKey="code"
-                  selectValue="name"
+                  generalType="input"
+                  name="address.province"
+                  label="استان"
+                  placeholder="تهران"
+                  inputType="text"
                   required={true}
                 />
                 
                 <Input
                   generalType="input"
-                  name="loyaltySettings.defaultCashbackRate"
-                  label="نرخ کش بک پیش فرض (%)"
-                  placeholder="نرخ کش بک"
-                  inputType="number"
+                  name="address.city"
+                  label="شهر"
+                  placeholder="تهران"
+                  inputType="text"
                   required={true}
                 />
               </div>
+              
+              <Input
+                generalType="textarea"
+                name="address.fullAddress"
+                label="آدرس کامل"
+                placeholder="آدرس کامل فروشگاه"
+                required={true}
+              />
+            </div>
 
-              {/* Loyalty Tiers */}
-              <div className="space-y-3">
-                <label className="text-sm font-medium text-text-dark">سطوح وفاداری</label>
-                <div className="space-y-3 p-4 border border-divider rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <Input
-                      generalType="input"
-                      name="loyaltySettings.tiers.0.minAmount"
-                      label="حداقل مبلغ"
-                      placeholder="حداقل مبلغ"
-                      inputType="number"
-                      required={true}
-                    />
-                    
-                    <Input
-                      generalType="select"
-                      name="loyaltySettings.tiers.0.rewardType"
-                      label="نوع پاداش"
-                      placeholder="نوع پاداش"
-                      selectOptions={rewardTypeOptions}
-                      selectKey="code"
-                      selectValue="name"
-                      required={true}
-                    />
-                    
-                    <Input
-                      generalType="input"
-                      name="loyaltySettings.tiers.0.value"
-                      label="مقدار پاداش"
-                      placeholder="مقدار پاداش"
-                      inputType="number"
-                      required={true}
-                    />
-                    
-                    <Input
-                      generalType="input"
-                      name="loyaltySettings.tiers.0.description"
-                      label="توضیحات"
-                      placeholder="توضیحات پاداش"
-                      inputType="text"
-                    />
-                  </div>
-                </div>
+            {/* Store Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">جزئیات فروشگاه</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  generalType="input"
+                  name="logoUrl"
+                  label="آدرس لوگو"
+                  placeholder="https://example.com/logo.png"
+                  inputType="url"
+                />
+                
+                <Input
+                  generalType="select"
+                  name="status"
+                  label="وضعیت"
+                  options={statusOptions}
+                  required={true}
+                />
+              </div>
+              
+              <Input
+                generalType="input"
+                name="planExpiryDate"
+                label="تاریخ انقضای پلن"
+                inputType="date"
+              />
+              
+              <Input
+                generalType="textarea"
+                name="description"
+                label="توضیحات"
+                placeholder="توضیحات فروشگاه"
+              />
+            </div>
+
+            {/* Social Links */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">لینک‌های شبکه‌های اجتماعی</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Input
+                  generalType="input"
+                  name="socialLinks.website"
+                  label="وب‌سایت"
+                  placeholder="https://example.com"
+                  inputType="url"
+                />
+                
+                <Input
+                  generalType="input"
+                  name="socialLinks.instagram"
+                  label="اینستاگرام"
+                  placeholder="@username"
+                  inputType="text"
+                />
+                
+                <Input
+                  generalType="input"
+                  name="socialLinks.telegram"
+                  label="تلگرام"
+                  placeholder="@username"
+                  inputType="text"
+                />
               </div>
             </div>
+
+            {/* Working Hours */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">ساعات کاری</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  generalType="input"
+                  name="workingHours.open"
+                  label="ساعت بازگشایی"
+                  placeholder="09:00"
+                  inputType="time"
+                />
+                
+                <Input
+                  generalType="input"
+                  name="workingHours.close"
+                  label="ساعت بسته شدن"
+                  placeholder="21:00"
+                  inputType="time"
+                />
+              </div>
+            </div>
+
+            {/* User ID (only for create mode) */}
+            {!isEditMode && (
+              <Input
+                generalType="input"
+                name="userId"
+                label="شناسه کاربر"
+                placeholder="شناسه کاربر مدیر فروشگاه"
+                inputType="text"
+                required={true}
+              />
+            )}
           </div>
         </FormProvider>
       </div>

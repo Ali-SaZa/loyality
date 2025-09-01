@@ -77,17 +77,17 @@ export class StoresController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async getStats(): Promise<{ total: number; active: number; pending: number; inactive: number }> {
-    const [total, premium, free, inactive] = await Promise.all([
+    const [total, active, pending, inactive] = await Promise.all([
       this.storesService.count(),
-      this.storesService.count({ 'plan.type': 'premium' }),
-      this.storesService.count({ 'plan.type': 'free' }),
-      this.storesService.count({ 'plan.type': 'inactive' })
+      this.storesService.count({ status: 'active' }),
+      this.storesService.count({ status: 'pending' }),
+      this.storesService.count({ status: 'suspended' })
     ]);
 
     return {
       total,
-      active: premium,
-      pending: free,
+      active,
+      pending,
       inactive
     };
   }
@@ -103,7 +103,7 @@ export class StoresController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async getFilterOptions(): Promise<{ plans: string[]; roles: string[] }> {
+  async getFilterOptions(): Promise<{ statuses: string[] }> {
     return this.storesService.getFilterOptions();
   }
 

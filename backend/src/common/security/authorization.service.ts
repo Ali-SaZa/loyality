@@ -9,7 +9,7 @@ export interface UserContext {
 }
 
 export interface ResourceAccess {
-  resourceType: 'scratch-card' | 'store' | 'user' | 'transaction' | 'admin';
+  resourceType: 'scratch-card' | 'store' | 'user' | 'transaction' | 'promotion' | 'admin';
   resourceId: string;
   storeId?: string;
   userId?: string;
@@ -34,6 +34,9 @@ export class AuthorizationService {
         break;
       case 'transaction':
         await this.checkTransactionAccess(user, resource);
+        break;
+      case 'promotion':
+        await this.checkPromotionAccess(user, resource);
         break;
       case 'admin':
         await this.checkAdminAccess(user, resource);
@@ -143,6 +146,29 @@ export class AuthorizationService {
     }
 
     throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تراکنش را ندارید.'); // translated to Persian
+  }
+
+  /**
+   * Check promotion access permissions
+   */
+  private async checkPromotionAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
+    // Admin can access everything
+    if (user.role === 'admin') {
+      return;
+    }
+
+    // Store users can access promotions related to their store
+    // (this will be validated in the service layer to check storeId)
+    if (user.role === 'store') {
+      return;
+    }
+
+    // Customers can view promotions (read-only access)
+    if (user.role === 'customer') {
+      return;
+    }
+
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تبلیغ را ندارید.'); // translated to Persian
   }
 
   /**

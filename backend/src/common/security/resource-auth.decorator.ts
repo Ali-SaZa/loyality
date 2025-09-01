@@ -38,6 +38,12 @@ export const TransactionAuth = (options?: Omit<ResourceAuthMetadata, 'resourceTy
   ResourceAuth('transaction', options);
 
 /**
+ * Decorator for promotion endpoints
+ */
+export const PromotionAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
+  ResourceAuth('promotion', options);
+
+/**
  * Decorator for admin endpoints
  */
 export const AdminAuth = () => ResourceAuth('admin');

@@ -12,7 +12,7 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
-import { StorePlanType, getStorePlanConfig } from '@/types/enums'
+import { StoreStatus, getStoreStatusConfig } from '@/types/enums'
 import StoreFormModal from '@/components/modals/StoreFormModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
@@ -25,7 +25,8 @@ const AdminStores = () => {
     total: 0,
     active: 0,
     pending: 0,
-    inactive: 0
+    deleted: 0,
+    suspended: 0
   })
   const [error, setError] = useState<string | null>(null)
 
@@ -70,12 +71,12 @@ const AdminStores = () => {
     }
   }
 
-  const getStatusColor = (planType: string) => {
-    return getStorePlanConfig(planType).color
+  const getStatusColor = (status: string) => {
+    return getStoreStatusConfig(status).color
   }
 
-  const getStatusText = (planType: string) => {
-    return getStorePlanConfig(planType).text
+  const getStatusText = (status: string) => {
+    return getStoreStatusConfig(status).text
   }
 
   const formatDate = (dateString: string) => {
@@ -93,8 +94,8 @@ const AdminStores = () => {
 
   const getAddressText = (address: Store['address']) => {
     const parts = []
-    if (address.street) parts.push(address.street)
     if (address.city) parts.push(address.city)
+    if (address.province) parts.push(address.province)
     return parts.join('، ') || 'آدرس ثبت نشده'
   }
 
@@ -204,7 +205,7 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">فروشگاه‌های پریمیوم</p>
+                <p className="text-sm text-text-light mb-1">فروشگاه‌های فعال</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
               </div>
               <StoreIcon className="size-8 text-success" />
@@ -216,7 +217,7 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">فروشگاه‌های رایگان</p>
+                <p className="text-sm text-text-light mb-1">در انتظار تایید</p>
                 <p className="text-2xl font-bold text-text-dark">{stats.pending}</p>
               </div>
               <StoreIcon className="size-8 text-warning" />
@@ -228,10 +229,22 @@ const AdminStores = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">غیرفعال</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.inactive}</p>
+                <p className="text-sm text-text-light mb-1">معلق</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.suspended}</p>
               </div>
               <StoreIcon className="size-8 text-danger" />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">حذف شده</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
+              </div>
+              <StoreIcon className="size-8 text-default" />
             </div>
           </CardBody>
         </Card>
@@ -246,9 +259,9 @@ const AdminStores = () => {
           <Table aria-label="لیست فروشگاه‌ها">
             <TableHeader>
               <TableColumn>نام فروشگاه</TableColumn>
-              <TableColumn>صاحب فروشگاه</TableColumn>
-              <TableColumn>نوع پلن</TableColumn>
+              <TableColumn>وضعیت</TableColumn>
               <TableColumn>آدرس</TableColumn>
+              <TableColumn>تعداد تبلیغات</TableColumn>
               <TableColumn>تاریخ عضویت</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
@@ -269,26 +282,26 @@ const AdminStores = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <span className="font-medium">{store.ownerName}</span>
-                      <p className="text-xs text-text-light">ID: {store.userId}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
                     <Chip
-                      color={getStatusColor(store.plan.type)}
+                      color={getStatusColor(store.status)}
                       size="sm"
                       variant="flat"
                     >
-                      {getStatusText(store.plan.type)}
+                      {getStatusText(store.status)}
                     </Chip>
                   </TableCell>
                   <TableCell>
                     <div>
                       <span className="text-sm">{getAddressText(store.address)}</span>
                       <p className="text-xs text-text-light">
-                        {store.loyaltySettings.tiers.length} سطح وفاداری
+                        {store.address.fullAddress ? store.address.fullAddress.substring(0, 30) + '...' : 'آدرس کامل ثبت نشده'}
                       </p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-center">
+                      <span className="font-medium">{store.promotions?.length || 0}</span>
+                      <p className="text-xs text-text-light">تبلیغ فعال</p>
                     </div>
                   </TableCell>
                   <TableCell>{formatDate(store.createdAt)}</TableCell>

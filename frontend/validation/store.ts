@@ -2,37 +2,41 @@ import { z } from 'zod'
 
 import { convertPersianToEnglish } from '@/helpers'
 
+// Address validation schema
+const StoreAddressValidation = z.object({
+  province: z.string().min(2, 'استان حداقل باید ۲ کاراکتر باشد.'),
+  city: z.string().min(2, 'شهر حداقل باید ۲ کاراکتر باشد.'),
+  fullAddress: z.string().min(10, 'آدرس کامل حداقل باید ۱۰ کاراکتر باشد.')
+})
+
+// Social links validation schema
+const SocialLinksValidation = z.object({
+  website: z.string().url('آدرس وب‌سایت معتبر نیست').optional().or(z.literal('')),
+  instagram: z.string().optional(),
+  telegram: z.string().optional()
+}).optional()
+
+// Working hours validation schema
+const WorkingHoursValidation = z.object({
+  open: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'ساعت بازگشایی معتبر نیست (فرمت: HH:MM)'),
+  close: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'ساعت بسته شدن معتبر نیست (فرمت: HH:MM)')
+}).optional()
+
 // Base validation schema without userId
 const StoreBaseValidation = z.object({
-  name: z.string().min(2, 'نام فروشگاه حداقل باید ۲ کاراکتر باشد.'),
-  ownerName: z.string().min(2, 'نام صاحب فروشگاه حداقل باید ۲ کاراکتر باشد.'),
+  name: z.string().min(2, 'نام فروشگاه حداقل باید ۲ کاراکتر باشد.').max(100, 'نام فروشگاه حداکثر ۱۰۰ کاراکتر باشد.'),
   phoneNumber: z.string().refine((val) => {
     const convertedValue = convertPersianToEnglish(val)
     return /^09\d{9}$/.test(convertedValue)
   }, 'شماره تلفن معتبر نیست'),
-  address: z.object({
-    city: z.string().min(2, 'شهر حداقل باید ۲ کاراکتر باشد.'),
-    street: z.string().optional(),
-    coordinates: z.object({
-      lat: z.number(),
-      lng: z.number()
-    }).optional()
-  }),
-  loyaltySettings: z.object({
-    tiers: z.array(z.object({
-      minAmount: z.number(),
-      rewardType: z.enum(['cashback', 'discount', 'lottery']),
-      value: z.number(),
-      description: z.string().optional()
-    })),
-    lotteryFrequency: z.enum(['none', 'weekly', 'monthly']),
-    defaultCashbackRate: z.number().min(0).max(100)
-  }),
-  plan: z.object({
-    type: z.enum(['free', 'premium']),
-    startDate: z.string(),
-    endDate: z.string()
-  })
+  address: StoreAddressValidation,
+  promotions: z.array(z.string()).optional(),
+  planExpiryDate: z.string().optional(),
+  status: z.enum(['active', 'pending', 'deleted', 'suspended']).optional(),
+  logoUrl: z.string().url('آدرس لوگو معتبر نیست').optional().or(z.literal('')),
+  description: z.string().max(500, 'توضیحات حداکثر ۵۰۰ کاراکتر باشد.').optional(),
+  socialLinks: SocialLinksValidation,
+  workingHours: WorkingHoursValidation
 })
 
 // User information validation (same as user registration)

@@ -23,13 +23,16 @@ export class StoresService {
     return {
       id: store._id.toString(),
       name: store.name,
-      ownerName: store.ownerName,
       phoneNumber: store.phoneNumber,
       userId: store.userId.toString(),
       address: store.address,
-      loyaltySettings: store.loyaltySettings,
-      plan: store.plan,
-      role: store.role,
+      promotions: store.promotions.map(promo => promo.toString()),
+      planExpiryDate: store.planExpiryDate,
+      status: store.status,
+      logoUrl: store.logoUrl,
+      description: store.description,
+      socialLinks: store.socialLinks,
+      workingHours: store.workingHours,
       createdAt: store.createdAt,
       updatedAt: store.updatedAt,
     };
@@ -92,7 +95,7 @@ export class StoresService {
     const storeData = {
       ...createStoreWithUserDto.store,
       userId: savedUser._id,
-      role: 'store'
+      status: 'active' // Set default status
     };
 
     const store = new this.storeModel(storeData);
@@ -241,17 +244,12 @@ export class StoresService {
 
   // Get available filter options for the frontend
   async getFilterOptions(): Promise<{
-    plans: string[];
-    roles: string[];
+    statuses: string[];
   }> {
-    const [plans, roles] = await Promise.all([
-      this.getDistinctValues('plan.type'),
-      this.getDistinctValues('role')
-    ]);
+    const statuses = await this.getDistinctValues('status');
 
     return {
-      plans: plans.filter(Boolean),
-      roles: roles.filter(Boolean)
+      statuses: statuses.filter(Boolean)
     };
   }
 

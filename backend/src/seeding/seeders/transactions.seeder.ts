@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Transaction, TransactionDocument } from '../../schemas/transaction.schema';
 import { StoreDocument } from '../../schemas/store.schema';
 import { UserDocument } from '../../schemas/user.schema';
-import { ScratchCardDocument } from '../../schemas/scratch-card.schema';
+import { PromoCodeDocument } from '../../schemas/promoCode.schema';
 import { BaseSeeder } from './base.seeder';
 
 @Injectable()

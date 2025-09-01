@@ -15,6 +15,34 @@ export enum StorePlanType {
   PREMIUM = 'premium'
 }
 
+export enum StoreStatus {
+  ACTIVE = 'active',
+  PENDING = 'pending',
+  DELETED = 'deleted',
+  SUSPENDED = 'suspended'
+}
+
+export enum PromotionType {
+  COUPON = 'coupon',
+  CASHBACK = 'cashback',
+  REFERRAL = 'referral',
+  CONDITIONAL = 'conditional',
+  PERCENTAGE = 'percentage',
+  FIXED = 'fixed',
+  FLASH_SALE = 'flashSale',
+  FREE_SHIPPING = 'freeShipping',
+  LOYALTY_POINTS = 'loyaltyPoints',
+  BEHAVIORAL = 'behavioral',
+  STACKABLE = 'stackable'
+}
+
+export enum PromotionStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  DELETED = 'deleted',
+  EXPIRED = 'expired'
+}
+
 export enum ScratchCardStatus {
   ACTIVE = 'active',
   EXPIRED = 'expired',
@@ -107,6 +135,91 @@ export const STORE_PLAN_CONFIG = {
   [StorePlanType.PREMIUM]: {
     text: 'پریمیوم',
     color: 'success' as const
+  }
+}
+
+export const STORE_STATUS_CONFIG = {
+  [StoreStatus.ACTIVE]: {
+    text: 'فعال',
+    color: 'success' as const
+  },
+  [StoreStatus.PENDING]: {
+    text: 'در انتظار',
+    color: 'warning' as const
+  },
+  [StoreStatus.DELETED]: {
+    text: 'حذف شده',
+    color: 'danger' as const
+  },
+  [StoreStatus.SUSPENDED]: {
+    text: 'معلق',
+    color: 'default' as const
+  }
+}
+
+export const PROMOTION_TYPE_CONFIG = {
+  [PromotionType.COUPON]: {
+    text: 'کوپن',
+    color: 'primary' as const
+  },
+  [PromotionType.CASHBACK]: {
+    text: 'کش بک',
+    color: 'success' as const
+  },
+  [PromotionType.REFERRAL]: {
+    text: 'معرفی دوست',
+    color: 'secondary' as const
+  },
+  [PromotionType.CONDITIONAL]: {
+    text: 'شرطی',
+    color: 'warning' as const
+  },
+  [PromotionType.PERCENTAGE]: {
+    text: 'درصدی',
+    color: 'primary' as const
+  },
+  [PromotionType.FIXED]: {
+    text: 'مبلغ ثابت',
+    color: 'success' as const
+  },
+  [PromotionType.FLASH_SALE]: {
+    text: 'فروش فلش',
+    color: 'danger' as const
+  },
+  [PromotionType.FREE_SHIPPING]: {
+    text: 'ارسال رایگان',
+    color: 'secondary' as const
+  },
+  [PromotionType.LOYALTY_POINTS]: {
+    text: 'امتیاز وفاداری',
+    color: 'primary' as const
+  },
+  [PromotionType.BEHAVIORAL]: {
+    text: 'رفتاری',
+    color: 'warning' as const
+  },
+  [PromotionType.STACKABLE]: {
+    text: 'قابل ترکیب',
+    color: 'success' as const
+  }
+}
+
+export const PROMOTION_STATUS_CONFIG = {
+  [PromotionStatus.ACTIVE]: {
+    text: 'فعال',
+    color: 'success' as const
+  },
+  [PromotionStatus.INACTIVE]: {
+    text: 'غیرفعال',
+    color: 'default' as const
+  },
+  [PromotionStatus.DELETED]: {
+    text: 'حذف شده',
+    color: 'danger' as const
+  },
+  [PromotionStatus.EXPIRED]: {
+    text: 'منقضی شده',
+    color: 'warning' as const
   }
 }
 
@@ -222,6 +335,18 @@ export const getStatusConfig = (status: string) => {
 
 export const getStorePlanConfig = (planType: string) => {
   return STORE_PLAN_CONFIG[planType as StorePlanType] || STORE_PLAN_CONFIG[StorePlanType.FREE]
+}
+
+export const getStoreStatusConfig = (status: string) => {
+  return STORE_STATUS_CONFIG[status as StoreStatus] || STORE_STATUS_CONFIG[StoreStatus.ACTIVE]
+}
+
+export const getPromotionTypeConfig = (type: string) => {
+  return PROMOTION_TYPE_CONFIG[type as PromotionType] || PROMOTION_TYPE_CONFIG[PromotionType.COUPON]
+}
+
+export const getPromotionStatusConfig = (status: string) => {
+  return PROMOTION_STATUS_CONFIG[status as PromotionStatus] || PROMOTION_STATUS_CONFIG[PromotionStatus.ACTIVE]
 }
 
 export const getScratchCardStatusConfig = (status: string) => {

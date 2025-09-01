@@ -1,97 +1,66 @@
 import axiosInstance, { handleApiError } from '@/config/axios'
 
 // Types for stores
+export interface StoreAddress {
+  province: string
+  city: string
+  fullAddress: string
+}
+
+export interface SocialLinks {
+  website?: string
+  instagram?: string
+  telegram?: string
+}
+
+export interface WorkingHours {
+  open: string
+  close: string
+}
+
 export interface Store {
   id: string
   name: string
-  ownerName: string
   phoneNumber: string
   userId: string
-  address: {
-    city: string
-    street?: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
-  }
-  loyaltySettings: {
-    tiers: Array<{
-      minAmount: number
-      rewardType: 'discount' | 'cashback' | 'lottery'
-      value: number
-      description?: string
-    }>
-    lotteryFrequency: 'weekly' | 'monthly' | 'none'
-    defaultCashbackRate: number
-  }
-  plan: {
-    type: 'free' | 'premium'
-    startDate: string
-    endDate: string
-  }
-  role: string
+  address: StoreAddress
+  promotions: string[] // Array of promotion IDs
+  planExpiryDate?: string
+  status: 'active' | 'pending' | 'deleted' | 'suspended'
+  logoUrl?: string
+  description?: string
+  socialLinks?: SocialLinks
+  workingHours?: WorkingHours
   createdAt: string
   updatedAt: string
 }
 
 export interface CreateStoreRequest {
   name: string
-  ownerName: string
   phoneNumber: string
   userId: string
-  address: {
-    city: string
-    street?: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
-  }
-  loyaltySettings: {
-    tiers: Array<{
-      minAmount: number
-      rewardType: 'discount' | 'cashback' | 'lottery'
-      value: number
-      description?: string
-    }>
-    lotteryFrequency: 'weekly' | 'monthly' | 'none'
-    defaultCashbackRate: number
-  }
-  plan: {
-    type: 'free' | 'premium'
-    startDate: string
-    endDate: string
-  }
+  address: StoreAddress
+  promotions?: string[]
+  planExpiryDate?: string
+  status?: 'active' | 'pending' | 'deleted' | 'suspended'
+  logoUrl?: string
+  description?: string
+  socialLinks?: SocialLinks
+  workingHours?: WorkingHours
 }
 
 export interface UpdateStoreRequest {
   name?: string
-  ownerName?: string
   phoneNumber?: string
-  address?: {
-    city: string
-    street?: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
-  }
-  loyaltySettings?: {
-    tiers: Array<{
-      minAmount: number
-      rewardType: 'discount' | 'cashback' | 'lottery'
-      value: number
-      description?: string
-    }>
-    lotteryFrequency: 'weekly' | 'monthly' | 'none'
-    defaultCashbackRate: number
-  }
-  plan?: {
-    type: 'free' | 'premium'
-    startDate: string
-    endDate: string
-  }
+  userId?: string
+  address?: StoreAddress
+  promotions?: string[]
+  planExpiryDate?: string
+  status?: 'active' | 'pending' | 'deleted' | 'suspended'
+  logoUrl?: string
+  description?: string
+  socialLinks?: SocialLinks
+  workingHours?: WorkingHours
 }
 
 // New interfaces for store with user
@@ -140,7 +109,8 @@ export interface StoreStats {
   total: number
   active: number
   pending: number
-  inactive: number
+  deleted: number
+  suspended: number
 }
 
 // Stores service functions

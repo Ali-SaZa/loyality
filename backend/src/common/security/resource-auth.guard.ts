@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthorizationService, UserContext, ResourceAccess } from './authorization.service';
 
 export interface ResourceAuthMetadata {
-  resourceType: 'scratch-card' | 'store' | 'user' | 'transaction' | 'admin';
+  resourceType: 'scratch-card' | 'store' | 'user' | 'transaction' | 'promotion' | 'admin';
   paramName?: string; // URL parameter name for resource ID
   storeIdParam?: string; // URL parameter name for store ID
   userIdParam?: string; // URL parameter name for user ID

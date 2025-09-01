@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ScratchCard, ScratchCardDocument } from '../../schemas/scratch-card.schema';
+import { PromoCode, PromoCodeDocument } from '../../schemas/promoCode.schema';
 import { StoreDocument } from '../../schemas/store.schema';
 import { UserDocument } from '../../schemas/user.schema';
 import { BaseSeeder } from './base.seeder';
