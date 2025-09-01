@@ -12,7 +12,7 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
-import { StoreStatus, getStoreStatusConfig } from '@/types/enums'
+import { getStoreStatusConfig } from '@/types/enums'
 import StoreFormModal from '@/components/modals/StoreFormModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
@@ -79,8 +79,8 @@ const AdminStores = () => {
     return getStoreStatusConfig(status).text
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+  const formatDate = (dateString: string | Date) => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
     return date.toLocaleDateString('fa-IR')
   }
 

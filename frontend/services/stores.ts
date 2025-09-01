@@ -1,6 +1,6 @@
 import axiosInstance, { handleApiError } from '@/config/axios'
 
-// Types for stores
+// Types for stores - based on backend schema
 export interface StoreAddress {
   province: string
   city: string
@@ -25,14 +25,14 @@ export interface Store {
   userId: string
   address: StoreAddress
   promotions: string[] // Array of promotion IDs
-  planExpiryDate?: string
+  planExpiryDate?: Date
   status: 'active' | 'pending' | 'deleted' | 'suspended'
   logoUrl?: string
   description?: string
   socialLinks?: SocialLinks
   workingHours?: WorkingHours
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CreateStoreRequest {
@@ -100,8 +100,8 @@ export interface StoreListResponse {
   appliedFilters: {
     search?: string
     searchFields?: string[]
-    sort?: string
-    filters?: Record<string, any>
+    sort?: any
+    filters?: any
   }
 }
 
@@ -130,11 +130,22 @@ export const storesService = {
       if (params?.limit) queryParams.append('limit', params.limit.toString())
       if (params?.search) queryParams.append('search', params.search)
       if (params?.searchFields) queryParams.append('searchFields', params.searchFields.join(','))
-      if (params?.sort) queryParams.append('sort', params.sort)
+      
+      // Handle sort parameter - convert string format to array format expected by backend
+      if (params?.sort) {
+        const [field, direction] = params.sort.split(':')
+        const sortArray = [{ field, direction }]
+        queryParams.append('sort', JSON.stringify(sortArray))
+      }
+      
+      // Convert filters to the format expected by backend
       if (params?.filters) {
-        Object.entries(params.filters).forEach(([key, value]) => {
-          queryParams.append(`filters[${key}]`, value.toString())
-        })
+        const filterArray = Object.entries(params.filters).map(([key, value]) => ({
+          field: key,
+          operator: 'eq',
+          value: value
+        }))
+        queryParams.append('filters', JSON.stringify(filterArray))
       }
 
       const response = await axiosInstance.get<StoreListResponse>(`/stores?${queryParams.toString()}`)
@@ -178,10 +189,21 @@ export const storesService = {
     }
   },
 
-  // Delete store
+  // Delete store (logical deletion - set status to deleted)
   async deleteStore(id: string): Promise<void> {
     try {
-      await axiosInstance.delete(`/stores/${id}`)
+      await storesService.updateStore(id, { status: 'deleted' })
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
+  },
+
+  // Update store status
+  async updateStoreStatus(id: string, status: 'active' | 'pending' | 'deleted' | 'suspended'): Promise<Store> {
+    try {
+      const response = await axiosInstance.patch<Store>(`/stores/${id}/status`, { status })
+      return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)
       throw new Error(errorMessage)
@@ -201,8 +223,7 @@ export const storesService = {
 
   // Get store filter options
   async getStoreFilterOptions(): Promise<{
-    plans: string[]
-    roles: string[]
+    statuses: string[]
   }> {
     try {
       const response = await axiosInstance.get('/stores/filter-options')
@@ -220,5 +241,6 @@ export const getStoreById = storesService.getStoreById
 export const createStore = storesService.createStore
 export const updateStore = storesService.updateStore
 export const deleteStore = storesService.deleteStore
+export const updateStoreStatus = storesService.updateStoreStatus
 export const getStoreStats = storesService.getStoreStats
 export const getStoreFilterOptions = storesService.getStoreFilterOptions

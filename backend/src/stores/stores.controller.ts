@@ -55,6 +55,7 @@ export class StoresController {
   }
 
   @Get()
+  @AdminAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all stores with pagination and filtering' })
   @ApiQuery({ name: 'page', required: false, description: 'Page number' })
@@ -66,11 +67,21 @@ export class StoresController {
     type: Object 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findAll(
-    @Query() listRequest: ListRequestDto,
+    @Query() query: any,
     @CurrentUser() user: any
   ) {
-    return this.storesService.findAll(listRequest, { requestingUser: user });
+    const request: ListRequestDto = {
+      page: parseInt(query.page) || 1,
+      limit: parseInt(query.limit) || 20,
+      search: query.search,
+      searchFields: query.searchFields ? query.searchFields.split(',') : ['name', 'phoneNumber'],
+      sort: query.sort ? JSON.parse(query.sort) : [],
+      filters: query.filters ? JSON.parse(query.filters) : []
+    };
+
+    return this.storesService.findAll(request, { requestingUser: user });
   }
 
   @Get('stats')

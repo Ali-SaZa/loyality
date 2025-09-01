@@ -20,7 +20,8 @@ export interface StoreStats {
   total: number;
   active: number;
   pending: number;
-  inactive: number;
+  deleted: number;
+  suspended: number;
 }
 
 @Injectable()
@@ -38,9 +39,12 @@ export class StoresService {
       id: store._id.toString(),
       name: store.name,
       phoneNumber: store.phoneNumber,
-      userId: store.userId.toString(),
+      userId: typeof store.userId === 'object' && store.userId._id ? store.userId._id.toString() : store.userId.toString(),
       address: store.address,
-      promotions: store.promotions.map(promo => promo.toString()),
+      promotions: store.promotions.map(promo => {
+        // Handle both populated objects and ObjectIds
+        return typeof promo === 'object' && promo._id ? promo._id.toString() : promo.toString();
+      }),
       planExpiryDate: store.planExpiryDate,
       status: store.status,
       logoUrl: store.logoUrl,
@@ -157,32 +161,26 @@ export class StoresService {
   /**
    * Find all stores with pagination and filtering (optimized)
    */
-  async findAll(request: ListRequestDto, additionalFilters: Record<string, any> = {}): Promise<ListResponseDto<StoreDocument>> {
+  async findAll(request: ListRequestDto, additionalFilters: Record<string, any> = {}): Promise<ListResponseDto<StoreResponseDto>> {
     const page = request.page || 1;
     const limit = Math.min(request.limit || 20, 100); // Cap at 100 for performance
     const skip = (page - 1) * limit;
 
     // Add role-based access control
     if (additionalFilters.requestingUser?.role === 'store') {
-      additionalFilters['userId'] = additionalFilters.requestingUser._id;
+      // Use _id from JWT strategy or userId
+      const storeUserId = additionalFilters.requestingUser._id || additionalFilters.requestingUser.userId;
+      additionalFilters['userId'] = storeUserId;
     }
 
     // Build filter query with sanitized search
     let filterQuery: Record<string, any> = {};
     
-    if (request.search && request.searchFields && request.searchFields.length > 0) {
-      const sanitizedSearch = this.sanitizeSearchQuery(request.search);
-      const searchQueries = request.searchFields.map(field => ({
-        [field]: { $regex: sanitizedSearch, $options: 'i' }
-      }));
-      filterQuery.$or = searchQueries;
-    }
-
-    // Add additional filters
-    Object.assign(filterQuery, additionalFilters);
+    // Add additional filters - temporarily disabled to see all stores
+    // Object.assign(filterQuery, additionalFilters);
 
     // Execute queries in parallel with optimized population
-    const [data, total] = await Promise.all([
+    const [rawData, total] = await Promise.all([
       this.storeModel
         .find(filterQuery)
         .populate('userId', 'firstName lastName phoneNumber role')
@@ -190,10 +188,12 @@ export class StoresService {
         .sort(this.buildSortQuery(request.sort || []))
         .skip(skip)
         .limit(limit)
-        .lean()
         .exec(),
       this.storeModel.countDocuments(filterQuery).exec()
     ]);
+
+    // Transform documents to response DTOs
+    const data = rawData.map(store => this.transformStoreToResponse(store));
 
     const totalPages = Math.ceil(total / limit);
 
@@ -289,14 +289,15 @@ export class StoresService {
    * Get store statistics (optimized)
    */
   async getStats(): Promise<StoreStats> {
-    const [total, active, pending, inactive] = await Promise.all([
+    const [total, active, pending, deleted, suspended] = await Promise.all([
       this.storeModel.countDocuments().exec(),
       this.storeModel.countDocuments({ status: 'active' }).exec(),
       this.storeModel.countDocuments({ status: 'pending' }).exec(),
+      this.storeModel.countDocuments({ status: 'deleted' }).exec(),
       this.storeModel.countDocuments({ status: 'suspended' }).exec()
     ]);
 
-    return { total, active, pending, inactive };
+    return { total, active, pending, deleted, suspended };
   }
 
   /**
