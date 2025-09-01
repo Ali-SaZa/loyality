@@ -28,7 +28,7 @@ export const siteConfig = {
       {
         title: 'داشبورد ادمین',
         icon: (className: string = 'size-6') => <DashboardIcon className={className} />,
-        link: '/admin/dashboard',
+        link: '/admin',
         isShortAccess: true,
         children: [],
       },
@@ -45,42 +45,7 @@ export const siteConfig = {
         link: '/admin/stores',
         isShortAccess: true,
         children: [],
-      },
-      {
-        title: 'مدیریت ادمین‌ها',
-        icon: (className: string = 'size-6') => <SecurityIcon className={className} />,
-        link: '/admin/admins',
-        isShortAccess: true,
-        children: [],
-      },
-      {
-        title: 'تراکنش‌ها',
-        icon: (className: string = 'size-6') => <WalletIcon className={className} />,
-        link: '/admin/transactions',
-        isShortAccess: false,
-        children: [],
-      },
-      {
-        title: 'کارت‌های تخفیف',
-        icon: (className: string = 'size-6') => <ListIcon className={className} />,
-        link: '/admin/scratch-cards',
-        isShortAccess: false,
-        children: [],
-      },
-      {
-        title: 'گزارشات',
-        icon: (className: string = 'size-6') => <ChartTreeIcon className={className} />,
-        link: '/admin/reports',
-        isShortAccess: false,
-        children: [],
-      },
-      {
-        title: 'تنظیمات',
-        icon: (className: string = 'size-6') => <FilterIcon className={className} />,
-        link: '/admin/settings',
-        isShortAccess: false,
-        children: [],
-      },
+      }
     ],
     store: [
       {

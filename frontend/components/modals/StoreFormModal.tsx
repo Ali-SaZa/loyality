@@ -37,7 +37,7 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
       },
       promotions: [],
       planExpiryDate: '',
-      status: 'active',
+      status: 'active' as const,
       logoUrl: '',
       description: '',
       socialLinks: {
@@ -69,7 +69,7 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
           },
           promotions: [],
           planExpiryDate: '',
-          status: 'active',
+          status: 'active' as const,
           logoUrl: '',
           description: '',
           socialLinks: {
@@ -235,28 +235,29 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">جزئیات فروشگاه</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  generalType="input"
-                  name="logoUrl"
-                  label="آدرس لوگو"
-                  placeholder="https://example.com/logo.png"
-                  inputType="url"
-                />
-                
-                <Input
-                  generalType="select"
-                  name="status"
-                  label="وضعیت"
-                  options={statusOptions}
-                  required={true}
-                />
+                              <Input
+                generalType="input"
+                name="logoUrl"
+                label="آدرس لوگو"
+                placeholder="https://example.com/logo.png"
+                inputType="text"
+              />
+              
+              <Input
+                generalType="select"
+                name="status"
+                label="وضعیت"
+                selectOptions={statusOptions}
+                selectKey="code"
+                selectValue="name"
+                required={true}
+              />
               </div>
               
               <Input
-                generalType="input"
+                generalType="datePickerPro"
                 name="planExpiryDate"
                 label="تاریخ انقضای پلن"
-                inputType="date"
               />
               
               <Input
@@ -276,7 +277,7 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
                   name="socialLinks.website"
                   label="وب‌سایت"
                   placeholder="https://example.com"
-                  inputType="url"
+                  inputType="text"
                 />
                 
                 <Input
@@ -306,7 +307,7 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
                   name="workingHours.open"
                   label="ساعت بازگشایی"
                   placeholder="09:00"
-                  inputType="time"
+                  inputType="text"
                 />
                 
                 <Input
@@ -314,7 +315,7 @@ const StoreFormModal = ({ isOpen, onOpenChange, onSuccess, storeId }: StoreFormM
                   name="workingHours.close"
                   label="ساعت بسته شدن"
                   placeholder="21:00"
-                  inputType="time"
+                  inputType="text"
                 />
               </div>
             </div>
