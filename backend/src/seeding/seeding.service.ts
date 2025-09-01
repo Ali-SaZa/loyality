@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { 
   StoresSeeder, 
   UsersSeeder, 
+  PromotionsSeeder,
+  PromoCodesSeeder,
   OTPsSeeder 
 } from './seeders';
 
@@ -12,6 +14,8 @@ export class SeedingService {
   constructor(
     private readonly storesSeeder: StoresSeeder,
     private readonly usersSeeder: UsersSeeder,
+    private readonly promotionsSeeder: PromotionsSeeder,
+    private readonly promoCodesSeeder: PromoCodesSeeder,
     private readonly otpsSeeder: OTPsSeeder,
   ) {}
 
@@ -27,10 +31,12 @@ export class SeedingService {
       // Seed in order to maintain referential integrity
       const users = await this.seedUsers([]); // Pass empty array since stores are created after users
       const stores = await this.seedStores(users);
+      const promotions = await this.seedPromotions(stores);
+      const promoCodes = await this.seedPromoCodes(promotions, users);
       await this.seedOTPs(users);
 
       this.logger.log(`Seeding completed successfully for ${environment} environment`);
-      this.logger.log(`Created: ${stores.length} stores, ${users.length} users`);
+      this.logger.log(`Created: ${users.length} users, ${stores.length} stores, ${promotions.length} promotions, ${promoCodes.length} promo codes`);
     } catch (error) {
       this.logger.error('Seeding failed:', error);
       throw error;
@@ -41,6 +47,8 @@ export class SeedingService {
     this.logger.log('Clearing all existing data...');
     
     await Promise.all([
+      this.promoCodesSeeder.clear(),
+      this.promotionsSeeder.clear(),
       this.storesSeeder.clear(),
       this.usersSeeder.clear(),
       this.otpsSeeder.clear(),
@@ -52,6 +60,17 @@ export class SeedingService {
   private async seedStores(users: any[]) {
     this.storesSeeder.setUsers(users);
     return this.storesSeeder.seed();
+  }
+
+  private async seedPromotions(stores: any[]) {
+    this.promotionsSeeder.setStores(stores);
+    return this.promotionsSeeder.seed();
+  }
+
+  private async seedPromoCodes(promotions: any[], users: any[]) {
+    this.promoCodesSeeder.setPromotions(promotions);
+    this.promoCodesSeeder.setUsers(users);
+    return this.promoCodesSeeder.seed();
   }
 
 
@@ -73,20 +92,35 @@ export class SeedingService {
   async getSeedingStatus(): Promise<{
     users: number;
     stores: number;
+    promotions: number;
+    promoCodes: number;
     otps: number;
   }> {
-    const [users, stores, otps] = await Promise.all([
+    const [users, stores, promotions, promoCodes, otps] = await Promise.all([
       this.usersSeeder.count(),
       this.storesSeeder.count(),
+      this.promotionsSeeder.count(),
+      this.promoCodesSeeder.count(),
       this.otpsSeeder.count(),
     ]);
 
-    return { users, stores, otps };
+    return { users, stores, promotions, promoCodes, otps };
   }
 
   // Individual seeding methods for flexibility
   async seedStoresOnly(): Promise<any[]> {
     return this.storesSeeder.seed();
+  }
+
+  async seedPromotionsOnly(stores: any[]): Promise<any[]> {
+    this.promotionsSeeder.setStores(stores);
+    return this.promotionsSeeder.seed();
+  }
+
+  async seedPromoCodesOnly(promotions: any[], users: any[]): Promise<any[]> {
+    this.promoCodesSeeder.setPromotions(promotions);
+    this.promoCodesSeeder.setUsers(users);
+    return this.promoCodesSeeder.seed();
   }
 
 

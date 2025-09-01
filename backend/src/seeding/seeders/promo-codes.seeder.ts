@@ -55,9 +55,9 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
         const isRegistered = Math.random() > 0.3; // 70% chance of being registered
         const isUsed = isRegistered && Math.random() > 0.5; // 50% chance of being used if registered
 
-        let userId = null;
-        let registeredAt = null;
-        let usedAt = null;
+        let userId: Types.ObjectId | undefined = undefined;
+        let registeredAt: Date | undefined = undefined;
+        let usedAt: Date | undefined = undefined;
         let status = 'unused';
 
         if (isRegistered && customerUsers.length > 0) {
@@ -65,7 +65,7 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
           registeredAt = new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000); // Random date within last week
           status = 'unused';
 
-          if (isUsed) {
+          if (isUsed && registeredAt) {
             usedAt = new Date(registeredAt.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000); // Used within 3 days of registration
             status = 'used';
           }
@@ -78,8 +78,7 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
           userId,
           registeredAt,
           usedAt,
-          notes: `Generated promo code for ${promotion.title}`,
-          expiresAt: oneMonthFromNow
+          notes: `Generated promo code for ${promotion.title}`
         });
       }
     });
@@ -94,9 +93,9 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
         const isRegistered = Math.random() > 0.4; // 60% chance of being registered
         const isUsed = isRegistered && Math.random() > 0.6; // 40% chance of being used if registered
 
-        let userId = null;
-        let registeredAt = null;
-        let usedAt = null;
+        let userId: Types.ObjectId | undefined = undefined;
+        let registeredAt: Date | undefined = undefined;
+        let usedAt: Date | undefined = undefined;
         let status = 'unused';
 
         if (isRegistered && customerUsers.length > 0) {
@@ -104,7 +103,7 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
           registeredAt = new Date(now.getTime() - Math.random() * 10 * 24 * 60 * 60 * 1000); // Random date within last 10 days
           status = 'unused';
 
-          if (isUsed) {
+          if (isUsed && registeredAt) {
             usedAt = new Date(registeredAt.getTime() + Math.random() * 5 * 24 * 60 * 60 * 1000); // Used within 5 days of registration
             status = 'used';
           }
@@ -117,34 +116,30 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
           userId,
           registeredAt,
           usedAt,
-          notes: `Generated promo code for ${promotion.title}`,
-          expiresAt: oneMonthFromNow
+          notes: `Generated promo code for ${promotion.title}`
         });
       }
     });
 
     // Add some special promo codes
-    const specialCodes = [
+    const specialCodes: any[] = [
       {
         code: 'WELCOME10',
         promotionId: this.promotions[0]._id, // First promotion
         status: 'unused',
-        notes: 'Welcome bonus code for new customers',
-        expiresAt: oneMonthFromNow
+        notes: 'Welcome bonus code for new customers'
       },
       {
         code: 'VIP2024',
         promotionId: this.promotions[1]._id, // Second promotion
         status: 'unused',
-        notes: 'VIP customer exclusive code',
-        expiresAt: oneMonthFromNow
+        notes: 'VIP customer exclusive code'
       },
       {
         code: 'SUMMER50',
         promotionId: this.promotions[2]._id, // Third promotion
         status: 'unused',
-        notes: 'Summer special promotion code',
-        expiresAt: oneMonthFromNow
+        notes: 'Summer special promotion code'
       }
     ];
 

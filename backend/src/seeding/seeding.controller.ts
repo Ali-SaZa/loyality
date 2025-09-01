@@ -72,6 +72,32 @@ export class SeedingController {
     };
   }
 
+  @Post('seed/promotions')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Seed promotions collection only',
+    description: 'Populates only the promotions collection with sample data. Requires stores to exist first.'
+  })
+  async seedPromotionsOnly() {
+    return {
+      message: 'Promotions seeding requires existing stores. Use /seeding/seed for complete seeding.',
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  @Post('seed/promo-codes')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Seed promo codes collection only',
+    description: 'Populates only the promo codes collection with sample data. Requires promotions and users to exist first.'
+  })
+  async seedPromoCodesOnly() {
+    return {
+      message: 'Promo codes seeding requires existing promotions and users. Use /seeding/seed for complete seeding.',
+      timestamp: new Date().toISOString()
+    };
+  }
+
 
 
   @Post('seed/users')
@@ -128,8 +154,8 @@ export class SeedingController {
       properties: {
         users: { type: 'number', description: 'Number of users' },
         stores: { type: 'number', description: 'Number of stores' },
-
-
+        promotions: { type: 'number', description: 'Number of promotions' },
+        promoCodes: { type: 'number', description: 'Number of promo codes' },
         otps: { type: 'number', description: 'Number of OTPs' },
         timestamp: { type: 'string', format: 'date-time' }
       }

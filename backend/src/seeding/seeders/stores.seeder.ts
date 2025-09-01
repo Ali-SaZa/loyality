@@ -38,75 +38,70 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
     return [
       {
         name: 'Tehran Mall',
-        ownerName: 'Ahmad Rezaei',
         phoneNumber: '09123456789',
         userId: storeUsers[0]._id,
         address: {
+          province: 'Tehran',
           city: 'Tehran',
-          street: 'Valiasr Street',
-          coordinates: { lat: 35.6892, lng: 51.3890 }
+          fullAddress: 'Valiasr Street, Tehran Mall, Tehran, Iran'
         },
-        loyaltySettings: {
-          tiers: [
-            { minAmount: 100000, rewardType: 'discount', value: 5, description: '5% discount' },
-            { minAmount: 500000, rewardType: 'cashback', value: 10, description: '10% cashback' },
-            { minAmount: 1000000, rewardType: 'lottery', value: 1, description: 'Lottery entry' }
-          ],
-          lotteryFrequency: 'monthly',
-          defaultCashbackRate: 2
+        status: 'active',
+        planExpiryDate: new Date('2024-12-31'),
+        logoUrl: 'https://example.com/tehran-mall-logo.jpg',
+        description: 'Premium shopping mall in Tehran with comprehensive loyalty program',
+        socialLinks: {
+          website: 'https://tehranmall.ir',
+          instagram: '@tehranmall',
+          telegram: '@tehranmall'
         },
-        plan: {
-          type: 'premium',
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-12-31')
+        workingHours: {
+          open: '09:00',
+          close: '22:00'
         }
       },
       {
         name: 'Isfahan Bazaar',
-        ownerName: 'Fatemeh Karimi',
         phoneNumber: '09187654321',
         userId: storeUsers[1]._id,
         address: {
+          province: 'Isfahan',
           city: 'Isfahan',
-          street: 'Naqsh-e Jahan Square',
-          coordinates: { lat: 32.6546, lng: 51.6680 }
+          fullAddress: 'Naqsh-e Jahan Square, Isfahan Bazaar, Isfahan, Iran'
         },
-        loyaltySettings: {
-          tiers: [
-            { minAmount: 50000, rewardType: 'discount', value: 3, description: '3% discount' },
-            { minAmount: 200000, rewardType: 'cashback', value: 7, description: '7% cashback' }
-          ],
-          lotteryFrequency: 'weekly',
-          defaultCashbackRate: 1.5
+        status: 'active',
+        planExpiryDate: new Date('2024-12-31'),
+        logoUrl: 'https://example.com/isfahan-bazaar-logo.jpg',
+        description: 'Traditional bazaar in Isfahan with basic loyalty features',
+        socialLinks: {
+          instagram: '@isfahanbazaar',
+          telegram: '@isfahanbazaar'
         },
-        plan: {
-          type: 'free',
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-12-31')
+        workingHours: {
+          open: '08:00',
+          close: '20:00'
         }
       },
       {
         name: 'Shiraz Market',
-        ownerName: 'Hassan Mohammadi',
         phoneNumber: '09111223344',
         userId: storeUsers[2]._id,
         address: {
+          province: 'Fars',
           city: 'Shiraz',
-          street: 'Vakil Bazaar',
-          coordinates: { lat: 29.5916, lng: 52.5836 }
+          fullAddress: 'Vakil Bazaar, Shiraz Market, Shiraz, Iran'
         },
-        loyaltySettings: {
-          tiers: [
-            { minAmount: 75000, rewardType: 'discount', value: 4, description: '4% discount' },
-            { minAmount: 300000, rewardType: 'lottery', value: 1, description: 'Lottery entry' }
-          ],
-          lotteryFrequency: 'monthly',
-          defaultCashbackRate: 2.5
+        status: 'active',
+        planExpiryDate: new Date('2024-12-31'),
+        logoUrl: 'https://example.com/shiraz-market-logo.jpg',
+        description: 'Modern market in Shiraz with premium features and lottery system',
+        socialLinks: {
+          website: 'https://shirazmarket.ir',
+          instagram: '@shirazmarket',
+          telegram: '@shirazmarket'
         },
-        plan: {
-          type: 'premium',
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-12-31')
+        workingHours: {
+          open: '09:00',
+          close: '21:00'
         }
       }
     ];

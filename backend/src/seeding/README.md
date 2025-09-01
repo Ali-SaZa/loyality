@@ -16,28 +16,38 @@ This module provides comprehensive database seeding functionality for the Loyalt
 
 ## 📊 What Gets Seeded
 
+### Users (10 users)
+- **Admin User** (09121111111) - System administrator with full permissions
+- **Store Admin** (09122222222) - Store administrator with store management permissions  
+- **Customer User** (09123333333) - Regular customer for testing
+- **Ali Ahmadi** (09111111111) - Premium customer with multiple purchases
+- **Reza Mohammadi** (09133333333) - VIP customer with high spending
+- **Narges Hashemi** (09144444444) - New customer with limited activity
+- **Amir Hosseini** (09155555555) - Premium customer with loyalty history
+- **Store One** (09166666666) - Store owner for Tehran Mall
+- **Store Two** (09177777777) - Store owner for Isfahan Bazaar
+- **Store Manager** (09221234567) - Store owner for Shiraz Market
+
 ### Stores (3 stores)
-- **Tehran Mall** - Premium plan with comprehensive loyalty tiers
-- **Isfahan Bazaar** - Free plan with basic loyalty features  
-- **Shiraz Market** - Premium plan with lottery features
+- **Tehran Mall** - Premium shopping mall in Tehran with comprehensive features
+- **Isfahan Bazaar** - Traditional bazaar in Isfahan with basic loyalty features  
+- **Shiraz Market** - Modern market in Shiraz with premium features and lottery system
 
-### Admins (3 admins)
-- **System Administrator** - Full permissions
-- **Store Manager** - Store management permissions
-- **User Manager** - User management permissions
+### Promotions (12 promotions)
+- **Tehran Mall**: 4 promotions (percentage, cashback, loyalty points, coupon)
+- **Isfahan Bazaar**: 3 promotions (fixed discount, referral, conditional)
+- **Shiraz Market**: 5 promotions (flash sale, behavioral, free shipping, stackable)
 
-### Users (5 users)
-- **Ali Ahmadi** - Premium customer with multiple purchases
-- **Sara Karimi** - Regular customer with basic activity
-- **Reza Mohammadi** - VIP customer with high spending
-- **Narges Hashemi** - New customer with limited consents
-- **Amir Hosseini** - Premium customer with loyalty history
+### Promo Codes (Multiple codes)
+- Generated promo codes for coupon-type promotions
+- Special codes (WELCOME10, VIP2024, SUMMER50)
+- Various usage states (unused, used, registered)
+- Proper expiration dates and user associations
 
-
-
-### OTPs (5 OTPs)
+### OTPs (10 OTPs)
 - One OTP per user for verification
-- Proper expiration times
+- Fixed code '123456' for testing purposes
+- Proper expiration times (10 minutes)
 
 ## 🛠️ Usage
 
@@ -58,7 +68,8 @@ npm run seed:status
 
 # Seed individual collections
 npm run seed:stores              # Seed only stores
-npm run seed:admins              # Seed only admins
+npm run seed:promotions          # Seed only promotions
+npm run seed:promo-codes         # Seed only promo codes
 
 # Show help
 npm run seed -- --help
@@ -86,7 +97,8 @@ POST /seeding/seed?environment=development
 #### Seed Individual Collections
 ```http
 POST /seeding/seed/stores
-POST /seeding/seed/admins
+POST /seeding/seed/promotions
+POST /seeding/seed/promo-codes
 POST /seeding/seed/users
 ```
 
@@ -120,11 +132,11 @@ GET /seeding/status
 **Response:**
 ```json
 {
-  "users": 5,
+  "users": 10,
   "stores": 3,
-  "admins": 3,
-
-  "otps": 5,
+  "promotions": 12,
+  "promoCodes": 25,
+  "otps": 10,
   "timestamp": "2024-01-15T10:30:00.000Z"
 }
 ```
