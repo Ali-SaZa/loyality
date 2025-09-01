@@ -89,7 +89,7 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
     otherPromotions.forEach((promotion, index) => {
       // Generate 3 promo codes per other promotion type
       for (let i = 0; i < 3; i++) {
-        const code = `${promotion.type.toUpperCase()}${String(index + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
+        const code = `${promotion.type.toUpperCase().substring(0, 4)}${String(index + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
         const isRegistered = Math.random() > 0.4; // 60% chance of being registered
         const isUsed = isRegistered && Math.random() > 0.6; // 40% chance of being used if registered
 
