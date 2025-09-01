@@ -59,20 +59,6 @@ const DeleteConfirmModal = ({
             <p className="text-text-light">{message}</p>
           </div>
         </div>
-        
-        {itemName && (
-          <div className="p-4 bg-warning-50 border border-warning-200 rounded-lg">
-            <p className="text-warning text-sm">
-              <strong>نام:</strong> {itemName}
-            </p>
-          </div>
-        )}
-        
-        <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-          <p className="text-danger text-sm">
-            ⚠️ این عمل قابل بازگشت نیست. آیا از حذف این مورد اطمینان دارید؟
-          </p>
-        </div>
       </div>
     </Modal>
   )

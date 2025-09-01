@@ -4,7 +4,6 @@ import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
-import { useRouter } from 'next/navigation'
 
 import UserIcon from '@/components/icons/UserIcon'
 import EditIcon from '@/components/icons/EditIcon'
@@ -12,12 +11,12 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllUsers, getUserStats, deleteUser, User, UserStats } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
-import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
+import { getRoleConfig, getStatusConfig } from '@/types/enums'
 import UserFormModal from '@/components/modals/UserFormModal'
 import UserViewModal from '@/components/modals/UserViewModal'
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
 const AdminUsers = () => {
-  const router = useRouter()
   const { setLoading } = useLoading()
   
   const [users, setUsers] = useState<User[]>([])
@@ -39,6 +38,13 @@ const AdminUsers = () => {
   const [userViewModal, setUserViewModal] = useState({
     isOpen: false,
     userId: undefined as string | undefined
+  })
+
+  // Delete confirmation modal state
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({
+    isOpen: false,
+    userId: undefined as string | undefined,
+    userName: ''
   })
 
   useEffect(() => {
@@ -112,17 +118,15 @@ const AdminUsers = () => {
   }
 
   const handleDeleteUser = async (userId: string) => {
-    if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
-      try {
-        setLoading(true)
-        await deleteUser(userId)
-        await fetchUsers() // Refresh the list
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
-      } finally {
-        setLoading(false)
-      }
-    }
+    // Find the user to get their name for the confirmation modal
+    const user = users.find(u => u.id === userId)
+    const userName = user ? (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.phoneNumber) : ''
+    
+    setDeleteConfirmModal({
+      isOpen: true,
+      userId,
+      userName
+    })
   }
 
   const handleAddUser = () => {
@@ -151,6 +155,22 @@ const AdminUsers = () => {
   const handleUserViewSuccess = () => {
     fetchUsers() // Refresh the list
     fetchStats() // Refresh stats
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirmModal.userId) return
+    
+    try {
+      setLoading(true)
+      await deleteUser(deleteConfirmModal.userId)
+      await fetchUsers() // Refresh the list
+      await fetchStats() // Refresh stats
+      setDeleteConfirmModal({ isOpen: false, userId: undefined, userName: '' })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (error) {
@@ -355,6 +375,17 @@ const AdminUsers = () => {
         onDelete={handleUserViewDelete}
         onSuccess={handleUserViewSuccess}
         userId={userViewModal.userId}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onOpenChange={(isOpen) => setDeleteConfirmModal(prev => ({ ...prev, isOpen }))}
+        onConfirm={handleDeleteConfirm}
+        title="حذف کاربر"
+        message="آیا از حذف این کاربر اطمینان دارید؟"
+        itemName={deleteConfirmModal.userName}
+        isLoading={false}
       />
     </div>
   )
