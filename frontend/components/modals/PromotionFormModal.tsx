@@ -7,47 +7,51 @@ import Modal from './Modal'
 import Input from '@/components/formElements/Input'
 import useLoading from '@/hooks/useLoading'
 import { CreatePromotionValidation, UpdatePromotionValidation, CreatePromotionData, UpdatePromotionData } from '@/validation/promotion'
-import { PromotionType, PromotionStatus } from '@/types/enums'
+import { PromotionType } from '@/types/enums'
 import { Promotion, getPromotionById, createPromotion, updatePromotion } from '@/services/promotions'
+import { Store } from '@/services/stores'
 
 interface PromotionFormModalProps {
   isOpen: boolean
   onOpenChange: (isOpen: boolean) => void
   onSuccess?: () => void
   promotionId?: string // If provided, it's edit mode
-  storeId?: string // Required for create mode
+  stores: Store[]
 }
 
-const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, storeId }: PromotionFormModalProps) => {
+const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stores }: PromotionFormModalProps) => {
   const { setLoading } = useLoading()
   const [promotion, setPromotion] = useState<Promotion | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [selectedType, setSelectedType] = useState<string>('')
 
   const isEditMode = !!promotionId
 
   const methods = useForm<CreatePromotionData | UpdatePromotionData>({
     resolver: zodResolver(isEditMode ? UpdatePromotionValidation : CreatePromotionValidation),
     defaultValues: {
-      storeId: storeId || '',
-      type: 'coupon',
+      storeId: '',
+      type: PromotionType.COUPON,
       title: '',
       description: '',
-      value: 0,
-      minPurchaseAmount: 0,
-      maxDiscountAmount: 0,
+      value: undefined,
+      minPurchaseAmount: undefined,
+      maxDiscountAmount: undefined,
       code: '',
-      points: 0,
+      points: undefined,
       startDate: '',
       endDate: '',
-      usageLimit: 0,
-      applicableEvents: [],
-      maxUsagePerCustomer: 0,
+      usageLimit: undefined,
+      maxUsagePerCustomer: undefined,
       isStackable: false,
       stackableWith: [],
       termsAndConditions: '',
-      requiresApproval: false
+      requiresApproval: false,
+      applicableEvents: []
     }
   })
+
+  const watchType = methods.watch('type')
 
   useEffect(() => {
     if (isOpen) {
@@ -56,29 +60,34 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
       } else {
         // Reset form for create mode
         methods.reset({
-          storeId: storeId || '',
-          type: 'coupon',
+          storeId: '',
+          type: PromotionType.COUPON,
           title: '',
           description: '',
-          value: 0,
-          minPurchaseAmount: 0,
-          maxDiscountAmount: 0,
+          value: undefined,
+          minPurchaseAmount: undefined,
+          maxDiscountAmount: undefined,
           code: '',
-          points: 0,
+          points: undefined,
           startDate: '',
           endDate: '',
-          usageLimit: 0,
-          applicableEvents: [],
-          maxUsagePerCustomer: 0,
+          usageLimit: undefined,
+          maxUsagePerCustomer: undefined,
           isStackable: false,
           stackableWith: [],
           termsAndConditions: '',
-          requiresApproval: false
+          requiresApproval: false,
+          applicableEvents: []
         })
+        setSelectedType(PromotionType.COUPON)
         setError(null)
       }
     }
-  }, [isOpen, isEditMode, promotionId, storeId])
+  }, [isOpen, isEditMode, promotionId])
+
+  useEffect(() => {
+    setSelectedType(watchType)
+  }, [watchType])
 
   const fetchPromotion = async (promotionId: string) => {
     try {
@@ -87,21 +96,22 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
       
       const promotionData = await getPromotionById(promotionId)
       setPromotion(promotionData)
+      setSelectedType(promotionData.type)
       
       methods.reset({
         title: promotionData.title,
         description: promotionData.description || '',
-        value: promotionData.value || 0,
-        minPurchaseAmount: promotionData.minPurchaseAmount || 0,
-        maxDiscountAmount: promotionData.maxDiscountAmount || 0,
-        usageLimit: promotionData.usageLimit || 0,
-        maxUsagePerCustomer: promotionData.maxUsagePerCustomer || 0,
+        value: promotionData.value,
+        minPurchaseAmount: promotionData.minPurchaseAmount,
+        maxDiscountAmount: promotionData.maxDiscountAmount,
+        usageLimit: promotionData.usageLimit,
+        maxUsagePerCustomer: promotionData.maxUsagePerCustomer,
         isStackable: promotionData.isStackable || false,
         stackableWith: promotionData.stackableWith || [],
         termsAndConditions: promotionData.termsAndConditions || '',
         requiresApproval: promotionData.requiresApproval || false,
         applicableEvents: promotionData.applicableEvents || []
-      } as any)
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات تبلیغ')
     } finally {
@@ -136,19 +146,202 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
     setError(null)
   }
 
-  const promotionTypeOptions = [
-    { code: PromotionType.COUPON, name: 'کوپن' },
+  const storeOptions = stores.map(store => ({
+    code: store.id,
+    name: store.name
+  }))
+
+  const typeOptions = [
+    { code: PromotionType.COUPON, name: 'کوپن / کد تخفیف' },
     { code: PromotionType.CASHBACK, name: 'کش بک' },
     { code: PromotionType.REFERRAL, name: 'معرفی دوست' },
-    { code: PromotionType.CONDITIONAL, name: 'شرطی' },
+    { code: PromotionType.CONDITIONAL, name: 'شرطی / پلکانی' },
     { code: PromotionType.PERCENTAGE, name: 'درصدی' },
     { code: PromotionType.FIXED, name: 'مبلغ ثابت' },
     { code: PromotionType.FLASH_SALE, name: 'فروش فلش' },
     { code: PromotionType.FREE_SHIPPING, name: 'ارسال رایگان' },
     { code: PromotionType.LOYALTY_POINTS, name: 'امتیاز وفاداری' },
-    { code: PromotionType.BEHAVIORAL, name: 'رفتاری' },
+    { code: PromotionType.BEHAVIORAL, name: 'رفتاری / رویداد محور' },
     { code: PromotionType.STACKABLE, name: 'قابل ترکیب' }
   ]
+
+  const stackableTypeOptions = typeOptions.filter(option => option.code !== selectedType)
+
+  const eventOptions = [
+    { code: 'birthday', name: 'تولد مشتری' },
+    { code: 'first_login', name: 'ورود اول به اپ' },
+    { code: 'monthly_login', name: 'ورود ماهانه' },
+    { code: 'purchase_milestone', name: 'دستاورد خرید' },
+    { code: 'referral', name: 'معرفی دوست' },
+    { code: 'holiday', name: 'تعطیلات' }
+  ]
+
+  const renderTypeSpecificFields = () => {
+    switch (selectedType) {
+      case PromotionType.COUPON:
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              generalType="input"
+              name="code"
+              label="کد تخفیف"
+              placeholder="مثال: OFF10"
+              inputType="text"
+              description="کد باید ۳ تا ۲۰ کاراکتر و شامل حروف بزرگ و اعداد باشد"
+              required={true}
+            />
+            <Input
+              generalType="input"
+              name="value"
+              label="مقدار تخفیف"
+              placeholder="مثال: 10"
+              inputType="number"
+              description="درصد یا مبلغ تخفیف"
+              required={true}
+            />
+          </div>
+        )
+
+      case PromotionType.LOYALTY_POINTS:
+        return (
+          <div className="grid grid-cols-1 gap-6">
+            <Input
+              generalType="input"
+              name="points"
+              label="امتیاز"
+              placeholder="مثال: 100"
+              inputType="number"
+              description="تعداد امتیازهای اعطایی"
+              required={true}
+            />
+          </div>
+        )
+
+      case PromotionType.FLASH_SALE:
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Input
+              generalType="input"
+              name="value"
+              label="مقدار تخفیف"
+              placeholder="مثال: 30"
+              inputType="number"
+              description="درصد تخفیف"
+              required={true}
+            />
+            <Input
+              generalType="input"
+              name="startDate"
+              label="تاریخ شروع"
+              placeholder="تاریخ شروع را انتخاب کنید"
+              inputType="text"
+              required={true}
+            />
+            <Input
+              generalType="input"
+              name="endDate"
+              label="تاریخ پایان"
+              placeholder="تاریخ پایان را انتخاب کنید"
+              inputType="text"
+              required={true}
+            />
+          </div>
+        )
+
+      case PromotionType.BEHAVIORAL:
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              generalType="input"
+              name="value"
+              label="مقدار تخفیف"
+              placeholder="مثال: 10"
+              inputType="number"
+              description="درصد یا مبلغ تخفیف"
+              required={true}
+            />
+            <Input
+              generalType="select"
+              name="applicableEvents"
+              label="رویدادهای قابل اعمال"
+              placeholder="رویدادها را انتخاب کنید"
+              selectOptions={eventOptions}
+              selectKey="code"
+              selectValue="name"
+              multiple={true}
+              description="رویدادهایی که این تخفیف برای آنها اعمال می‌شود"
+              required={true}
+            />
+          </div>
+        )
+
+      case PromotionType.STACKABLE:
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              generalType="input"
+              name="value"
+              label="مقدار تخفیف"
+              placeholder="مثال: 10"
+              inputType="number"
+              description="درصد یا مبلغ تخفیف"
+              required={true}
+            />
+            <Input
+              generalType="select"
+              name="stackableWith"
+              label="قابل ترکیب با"
+              placeholder="انواع تبلیغات را انتخاب کنید"
+              selectOptions={stackableTypeOptions}
+              selectKey="code"
+              selectValue="name"
+              multiple={true}
+              description="انواع تبلیغاتی که این تبلیغ می‌تواند با آنها ترکیب شود"
+              required={true}
+            />
+          </div>
+        )
+
+      case PromotionType.CONDITIONAL:
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              generalType="input"
+              name="value"
+              label="مقدار تخفیف"
+              placeholder="مثال: 10"
+              inputType="number"
+              description="درصد تخفیف"
+              required={true}
+            />
+            <Input
+              generalType="input"
+              name="minPurchaseAmount"
+              label="حداقل مبلغ خرید"
+              placeholder="مثال: 500000"
+              inputType="number"
+              description="حداقل مبلغ خرید برای اعمال تخفیف"
+              required={true}
+            />
+          </div>
+        )
+
+      default:
+        return (
+          <div className="grid grid-cols-1 gap-6">
+            <Input
+              generalType="input"
+              name="value"
+              label="مقدار تخفیف"
+              placeholder="مثال: 10"
+              inputType="number"
+              description="درصد یا مبلغ تخفیف"
+              required={true}
+            />
+          </div>
+        )
+    }
+  }
 
   return (
     <Modal
@@ -160,8 +353,8 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
       title={isEditMode ? 'ویرایش تبلیغ' : 'افزودن تبلیغ جدید'}
       acceptBtnText={isEditMode ? 'بروزرسانی تبلیغ' : 'ایجاد تبلیغ'}
       rejectBtnText="انصراف"
-      acceptBtnColor="success"
-      size="xl"
+      acceptBtnColor="primary"
+      size="2xl"
     >
       <div className="space-y-6">
         {error && (
@@ -173,152 +366,159 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
         <FormProvider {...methods}>
           <div className="space-y-6">
             {/* Basic Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">اطلاعات پایه</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  generalType="select"
-                  name="type"
-                  label="نوع تبلیغ"
-                  options={promotionTypeOptions}
-                  required={true}
-                />
-                
-                <Input
-                  generalType="input"
-                  name="title"
-                  label="عنوان تبلیغ"
-                  placeholder="عنوان تبلیغ"
-                  inputType="text"
-                  required={true}
-                />
-              </div>
-              
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
-                generalType="textarea"
-                name="description"
-                label="توضیحات"
-                placeholder="توضیحات تبلیغ"
+                generalType="select"
+                name="storeId"
+                label="فروشگاه"
+                placeholder="فروشگاه را انتخاب کنید"
+                selectOptions={storeOptions}
+                selectKey="code"
+                selectValue="name"
+                required={true}
+                disabled={isEditMode}
+              />
+
+              <Input
+                generalType="select"
+                name="type"
+                label="نوع تبلیغ"
+                placeholder="نوع تبلیغ را انتخاب کنید"
+                selectOptions={typeOptions}
+                selectKey="code"
+                selectValue="name"
+                required={true}
+                disabled={isEditMode}
               />
             </div>
 
-            {/* Value and Limits */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">مقادیر و محدودیت‌ها</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Input
-                  generalType="input"
-                  name="value"
-                  label="مقدار تخفیف"
-                  placeholder="0"
-                  inputType="number"
-                />
-                
-                <Input
-                  generalType="input"
-                  name="minPurchaseAmount"
-                  label="حداقل مبلغ خرید"
-                  placeholder="0"
-                  inputType="number"
-                />
-                
-                <Input
-                  generalType="input"
-                  name="maxDiscountAmount"
-                  label="حداکثر مبلغ تخفیف"
-                  placeholder="0"
-                  inputType="number"
-                />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input
+                generalType="input"
+                name="title"
+                label="عنوان تبلیغ"
+                placeholder="عنوان تبلیغ را وارد کنید"
+                inputType="text"
+                required={true}
+              />
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  generalType="input"
-                  name="usageLimit"
-                  label="حد مجاز استفاده"
-                  placeholder="0"
-                  inputType="number"
-                />
-                
-                <Input
-                  generalType="input"
-                  name="maxUsagePerCustomer"
-                  label="حد مجاز استفاده برای هر مشتری"
-                  placeholder="0"
-                  inputType="number"
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="description"
+                label="توضیحات"
+                placeholder="توضیحات تبلیغ (اختیاری)"
+                inputType="text"
+              />
             </div>
 
-            {/* Special Fields */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">فیلدهای خاص</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  generalType="input"
-                  name="code"
-                  label="کد تبلیغ"
-                  placeholder="کد تبلیغ"
-                  inputType="text"
-                />
-                
-                <Input
-                  generalType="input"
-                  name="points"
-                  label="امتیاز وفاداری"
-                  placeholder="0"
-                  inputType="number"
-                />
-              </div>
+            {/* Type-specific fields */}
+            {renderTypeSpecificFields()}
+
+            {/* Additional fields */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Input
+                generalType="input"
+                name="maxDiscountAmount"
+                label="حداکثر مبلغ تخفیف"
+                placeholder="مثال: 50000"
+                inputType="number"
+                description="حداکثر مبلغ تخفیف قابل اعمال"
+              />
+
+              <Input
+                generalType="input"
+                name="usageLimit"
+                label="حد مجاز استفاده"
+                placeholder="مثال: 100"
+                inputType="number"
+                description="تعداد کل دفعات قابل استفاده"
+              />
+
+              <Input
+                generalType="input"
+                name="maxUsagePerCustomer"
+                label="حد مجاز برای هر مشتری"
+                placeholder="مثال: 1"
+                inputType="number"
+                description="تعداد دفعات قابل استفاده برای هر مشتری"
+              />
             </div>
 
-            {/* Date Range */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">بازه زمانی</h3>
+            {/* Date fields for non-flash sale types */}
+            {selectedType !== PromotionType.FLASH_SALE && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Input
+              generalType="input"
+              name="startDate"
+              label="تاریخ شروع (اختیاری)"
+              placeholder="تاریخ شروع را انتخاب کنید"
+              inputType="text"
+            />
+            <Input
+              generalType="input"
+              name="endDate"
+              label="تاریخ پایان (اختیاری)"
+              placeholder="تاریخ پایان را انتخاب کنید"
+              inputType="text"
+            />
+              </div>
+            )}
+
+            {/* Stackable options */}
+            {selectedType !== PromotionType.STACKABLE && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  generalType="input"
-                  name="startDate"
-                  label="تاریخ شروع"
-                  inputType="datetime-local"
+                  generalType="select"
+                  name="isStackable"
+                  label="قابل ترکیب"
+                  placeholder="آیا این تبلیغ قابل ترکیب است؟"
+                  selectOptions={[
+                    { code: true, name: 'بله' },
+                    { code: false, name: 'خیر' }
+                  ]}
+                  selectKey="code"
+                  selectValue="name"
                 />
-                
-                <Input
-                  generalType="input"
-                  name="endDate"
-                  label="تاریخ پایان"
-                  inputType="datetime-local"
-                />
-              </div>
-            </div>
 
-            {/* Terms and Conditions */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">شرایط و قوانین</h3>
+                {methods.watch('isStackable') && (
+                  <Input
+                    generalType="select"
+                    name="stackableWith"
+                    label="قابل ترکیب با"
+                    placeholder="انواع تبلیغات را انتخاب کنید"
+                    selectOptions={stackableTypeOptions}
+                    selectKey="code"
+                    selectValue="name"
+                    multiple={true}
+                    description="انواع تبلیغاتی که این تبلیغ می‌تواند با آنها ترکیب شود"
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Terms and approval */}
+            <div className="grid grid-cols-1 gap-6">
               <Input
                 generalType="textarea"
                 name="termsAndConditions"
                 label="شرایط و قوانین"
-                placeholder="شرایط و قوانین استفاده از تبلیغ"
+                placeholder="شرایط و قوانین تبلیغ را وارد کنید"
+                description="شرایط و قوانین استفاده از این تبلیغ"
               />
-            </div>
 
-            {/* Options */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">گزینه‌ها</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  generalType="checkbox"
-                  name="isStackable"
-                  label="قابل ترکیب با سایر تبلیغات"
-                />
-                
-                <Input
-                  generalType="checkbox"
-                  name="requiresApproval"
-                  label="نیاز به تایید دستی"
-                />
-              </div>
+              <Input
+                generalType="select"
+                name="requiresApproval"
+                label="نیاز به تایید"
+                placeholder="آیا این تبلیغ نیاز به تایید دارد؟"
+                selectOptions={[
+                  { code: true, name: 'بله' },
+                  { code: false, name: 'خیر' }
+                ]}
+                selectKey="code"
+                selectValue="name"
+                description="در صورت فعال بودن، استفاده از این تبلیغ نیاز به تایید ادمین دارد"
+              />
             </div>
           </div>
         </FormProvider>

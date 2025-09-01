@@ -6,7 +6,7 @@ export const CreatePromotionValidation = z.object({
   type: z.enum([
     'coupon', 'cashback', 'referral', 'conditional', 'percentage', 
     'fixed', 'flashSale', 'freeShipping', 'loyaltyPoints', 'behavioral', 'stackable'
-  ], { required_error: 'نوع تبلیغ الزامی است' }),
+  ]).refine((val) => val !== undefined, { message: 'نوع تبلیغ الزامی است' }),
   title: z.string().min(2, 'عنوان تبلیغ حداقل باید ۲ کاراکتر باشد').max(100, 'عنوان تبلیغ حداکثر ۱۰۰ کاراکتر باشد'),
   description: z.string().max(500, 'توضیحات حداکثر ۵۰۰ کاراکتر باشد').optional(),
   value: z.number().min(0, 'مقدار باید مثبت باشد').optional(),
@@ -40,6 +40,12 @@ export const CreatePromotionValidation = z.object({
   if (data.type === 'flashSale' && (!data.startDate || !data.endDate)) {
     return false
   }
+  if (data.type === 'behavioral' && (!data.applicableEvents || data.applicableEvents.length === 0)) {
+    return false
+  }
+  if (data.type === 'stackable' && (!data.isStackable || !data.stackableWith || data.stackableWith.length === 0)) {
+    return false
+  }
   return true
 }, {
   message: 'فیلدهای مورد نیاز برای این نوع تبلیغ را پر کنید',
@@ -62,7 +68,7 @@ export const UpdatePromotionValidation = z.object({
 })
 
 export const ChangePromotionStatusValidation = z.object({
-  status: z.enum(['active', 'inactive', 'deleted', 'expired'], { required_error: 'وضعیت تبلیغ الزامی است' })
+  status: z.enum(['active', 'inactive', 'deleted', 'expired']).refine((val) => val !== undefined, { message: 'وضعیت تبلیغ الزامی است' })
 })
 
 // Type definitions

@@ -72,7 +72,6 @@ export class UsersService {
       if (additionalFilters.requestingUser?.role === 'store' && additionalFilters.requestingUser?.storeId) {
         // Store users can only see customers related to their store
         // This is a simplified example - you might want to implement more sophisticated logic
-        // Note: Store-specific filtering logic removed as purchases are no longer stored in user documents
       }
       // Do NOT copy `requestingUser` (or any other non-schema keys) into the Mongo filter
     }

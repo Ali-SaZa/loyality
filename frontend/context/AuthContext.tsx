@@ -14,7 +14,6 @@ interface User {
   phoneNumber: string
   firstName?: string
   lastName?: string
-  totalPoints: number
   role: UserRole
   accessToken: string
   refreshToken: string
@@ -31,7 +30,6 @@ interface SaveUserData {
     phoneNumber: string
     firstName?: string
     lastName?: string
-    totalPoints: number
     role: UserRole
   }
 }

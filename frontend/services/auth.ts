@@ -21,7 +21,6 @@ export interface User {
   phoneNumber: string
   firstName?: string
   lastName?: string
-  totalPoints: number
   role: 'customer' | 'store' | 'admin'  // Updated to include all three user levels
 }
 

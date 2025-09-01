@@ -38,84 +38,6 @@
           "trim": true
         },
         {
-          "name": "totalPoints",
-          "type": "Number",
-          "description": "Total loyalty points accumulated by the user",
-          "required": false,
-          "default": 0,
-          "minimum": 0
-        },
-        {
-          "name": "purchases",
-          "type": "Array",
-          "description": "Array of user's purchase history",
-          "required": false,
-          "default": [],
-          "items": {
-            "type": "Object",
-            "fields": [
-              {
-                "name": "storeId",
-                "type": "ObjectId",
-                "description": "Reference to the store where purchase was made",
-                "required": true,
-                "indexed": true,
-                "ref": "stores"
-              },
-              {
-                "name": "amount",
-                "type": "Number",
-                "description": "Purchase amount",
-                "required": true,
-                "minimum": 0
-              },
-              {
-                "name": "date",
-                "type": "Date",
-                "description": "Date of purchase",
-                "required": true,
-                "indexed": true
-              },
-              {
-                "name": "scratchCode",
-                "type": "String",
-                "description": "Scratch card code used for this purchase",
-                "required": false
-              },
-              {
-                "name": "entryMethod",
-                "type": "String",
-                "description": "Method used to enter the purchase",
-                "required": true,
-                "enum": ["sms", "qr"],
-                "indexed": true
-              },
-              {
-                "name": "rewardApplied",
-                "type": "Object",
-                "description": "Reward applied to this purchase",
-                "required": true,
-                "fields": [
-                  {
-                    "name": "type",
-                    "type": "String",
-                    "description": "Type of reward applied",
-                    "required": true,
-                    "enum": ["discount", "cashback", "lottery"]
-                  },
-                  {
-                    "name": "value",
-                    "type": "Number",
-                    "description": "Value of the reward",
-                    "required": true,
-                    "minimum": 0
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "role",
           "type": "String",
           "description": "User role in the system",
@@ -731,21 +653,6 @@
     {
       "collection": "users",
       "fields": ["status"],
-      "type": "index"
-    },
-    {
-      "collection": "users",
-      "fields": ["purchases.storeId"],
-      "type": "index"
-    },
-    {
-      "collection": "users",
-      "fields": ["purchases.date"],
-      "type": "index"
-    },
-    {
-      "collection": "users",
-      "fields": ["purchases.entryMethod"],
       "type": "index"
     },
     {

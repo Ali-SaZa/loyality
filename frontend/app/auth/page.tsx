@@ -105,7 +105,13 @@ const Auth = () => {
         await saveUser({
           accessToken: res.accessToken,
           refreshToken: res.accessToken, // Using accessToken as refreshToken for now
-          user: res.user
+          user: {
+            _id: res.user._id,
+            phoneNumber: res.user.phoneNumber,
+            firstName: res.user.firstName,
+            lastName: res.user.lastName,
+            role: res.user.role as any // Type assertion to match UserRole enum
+          }
         })
 
         redirectToDashboard()
