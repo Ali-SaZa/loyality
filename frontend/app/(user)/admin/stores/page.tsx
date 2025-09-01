@@ -4,7 +4,6 @@ import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
-import { useRouter } from 'next/navigation'
 
 import StoreIcon from '@/components/icons/ChartTreeIcon'
 import EditIcon from '@/components/icons/EditIcon'
@@ -15,9 +14,9 @@ import useLoading from '@/hooks/useLoading'
 import { getStoreStatusConfig } from '@/types/enums'
 import StoreFormModal from '@/components/modals/StoreFormModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
+import StoreViewModal from '@/components/modals/StoreViewModal'
 
 const AdminStores = () => {
-  const router = useRouter()
   const { setLoading } = useLoading()
   
   const [stores, setStores] = useState<Store[]>([])
@@ -32,6 +31,12 @@ const AdminStores = () => {
 
   // Store form modal state
   const [storeFormModal, setStoreFormModal] = useState({
+    isOpen: false,
+    storeId: undefined as string | undefined
+  })
+
+  // Store view modal state
+  const [storeViewModal, setStoreViewModal] = useState({
     isOpen: false,
     storeId: undefined as string | undefined
   })
@@ -100,7 +105,10 @@ const AdminStores = () => {
   }
 
   const handleViewStore = (storeId: string) => {
-    router.push(`/admin/stores/${storeId}/view`)
+    setStoreViewModal({
+      isOpen: true,
+      storeId
+    })
   }
 
   const handleEditStore = (storeId: string) => {
@@ -146,6 +154,11 @@ const AdminStores = () => {
   }
 
   const handleStoreFormSuccess = () => {
+    fetchStores() // Refresh the list
+    fetchStats() // Refresh stats
+  }
+
+  const handleStoreViewSuccess = () => {
     fetchStores() // Refresh the list
     fetchStats() // Refresh stats
   }
@@ -352,6 +365,16 @@ const AdminStores = () => {
         onOpenChange={(isOpen) => setStoreFormModal(prev => ({ ...prev, isOpen }))}
         onSuccess={handleStoreFormSuccess}
         storeId={storeFormModal.storeId}
+      />
+
+      {/* Store View Modal */}
+      <StoreViewModal
+        isOpen={storeViewModal.isOpen}
+        onOpenChange={(isOpen) => setStoreViewModal(prev => ({ ...prev, isOpen }))}
+        onEdit={handleEditStore}
+        onDelete={handleDeleteStore}
+        onSuccess={handleStoreViewSuccess}
+        storeId={storeViewModal.storeId}
       />
 
       {/* Delete Confirmation Modal */}
