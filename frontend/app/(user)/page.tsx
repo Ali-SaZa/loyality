@@ -106,23 +106,6 @@ export default function UserIndexPage() {
           </div>
         </CardBody>
       </Card>
-
-      {/* Points Display (if customer) */}
-      {user.role === 'customer' && (
-        <Card className="border-1">
-          <CardHeader>
-            <h2 className="text-xl font-semibold">امتیازات وفاداری</h2>
-          </CardHeader>
-          <CardBody>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">
-                {(user.totalPoints || 0).toLocaleString()}
-              </div>
-              <p className="text-gray-600">امتیاز کل</p>
-            </div>
-          </CardBody>
-        </Card>
-      )}
     </div>
   )
 }

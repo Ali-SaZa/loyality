@@ -253,7 +253,6 @@ const AdminUsers = () => {
               <TableColumn>شماره تلفن</TableColumn>
               <TableColumn>نقش</TableColumn>
               <TableColumn>وضعیت</TableColumn>
-              <TableColumn>امتیاز</TableColumn>
               <TableColumn>تاریخ عضویت</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
@@ -297,9 +296,6 @@ const AdminUsers = () => {
                     >
                       {getStatusText(user.status || 'active')}
                     </Chip>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{user.totalPoints.toLocaleString()}</span>
                   </TableCell>
                   <TableCell>{formatDate(user.createdAt)}</TableCell>
                   <TableCell>

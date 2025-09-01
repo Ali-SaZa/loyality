@@ -6,47 +6,22 @@ export interface User {
   phoneNumber: string
   firstName?: string
   lastName?: string
-  totalPoints: number
   role: string
   status?: 'active' | 'blocked' | 'deleted'
   lastActivity: string
   createdAt: string
   updatedAt: string
-  purchases: Purchase[]
-  storeName?: string
-  address?: string
-  description?: string
 }
-
-export interface Purchase {
-  storeId: string
-  amount: number
-  date: string
-  scratchCode?: string
-  entryMethod: 'sms' | 'qr'
-  rewardApplied: {
-    type: 'discount' | 'cashback' | 'lottery'
-    value: number
-  }
-}
-
-
 
 export interface CreateUserRequest {
   phoneNumber: string
   firstName?: string
   lastName?: string
-  storeName?: string
-  address?: string
-  description?: string
 }
 
 export interface UpdateUserRequest {
   firstName?: string
   lastName?: string
-  storeName?: string
-  address?: string
-  description?: string
 }
 
 export interface UsersResponse {
@@ -115,9 +90,13 @@ export const usersService = {
       if (params?.searchFields) queryParams.append('searchFields', params.searchFields.join(','))
       if (params?.sort) queryParams.append('sort', params.sort)
       if (params?.filters) {
-        Object.entries(params.filters).forEach(([key, value]) => {
-          queryParams.append(`filters[${key}]`, value.toString())
-        })
+        // Convert filters to the format expected by backend
+        const filterArray = Object.entries(params.filters).map(([key, value]) => ({
+          field: key,
+          operator: 'eq',
+          value: value
+        }))
+        queryParams.append('filters', JSON.stringify(filterArray))
       }
 
       const response = await axiosInstance.get<UserListResponse>(`/users?${queryParams.toString()}`)

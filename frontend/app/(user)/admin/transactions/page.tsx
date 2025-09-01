@@ -83,12 +83,6 @@ const AdminTransactions = () => {
     return getTransactionStatusConfig(status).text
   }
 
-  const formatAmount = (amount: number) => {
-    if (amount === 0) return '0 تومان'
-    const sign = amount > 0 ? '+' : ''
-    return `${sign}${amount.toLocaleString()} تومان`
-  }
-
   const formatPoints = (points: number) => {
     const sign = points > 0 ? '+' : ''
     return `${sign}${points} امتیاز`
@@ -211,14 +205,6 @@ const AdminTransactions = () => {
                     >
                       {getTypeText(transaction.type)}
                     </Chip>
-                  </TableCell>
-                  <TableCell>
-                    <span className={`font-medium ${
-                      transaction.amount > 0 ? 'text-success' : 
-                      transaction.amount < 0 ? 'text-danger' : 'text-text-dark'
-                    }`}>
-                      {formatAmount(transaction.amount)}
-                    </span>
                   </TableCell>
                   <TableCell>
                     <span className={`font-medium ${

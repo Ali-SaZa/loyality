@@ -107,6 +107,11 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
     return getRoleConfig(role).text
   }
 
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('fa-IR', { hour: 'numeric', minute: 'numeric' })
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -114,7 +119,7 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
       onClose={handleClose}
       title="مشاهده اطلاعات کاربر"
       size="xl"
-      hideButtons={true}
+      hideFooter={true}
     >
       <div className="space-y-6">
         {error && (
@@ -211,59 +216,24 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
 
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">آمار و اطلاعات</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">اطلاعات سیستم</h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
-                  <div>
-                    <label className="text-sm text-text-light">امتیاز کل</label>
-                    <p className="font-medium text-2xl text-primary">{user.totalPoints.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">تعداد خریدها</label>
-                    <p className="font-medium">{user.purchases.length}</p>
-                  </div>
                   <div>
                     <label className="text-sm text-text-light">تاریخ عضویت</label>
                     <p className="font-medium">{formatDate(user.createdAt)}</p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">آخرین فعالیت</label>
-                    <p className="font-medium">{formatDate(user.lastActivity)}</p>
+                    <p className="font-medium">{formatDateTime(user.lastActivity)}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-text-light">آخرین بروزرسانی</label>
+                    <p className="font-medium">{formatDateTime(user.updatedAt)}</p>
                   </div>
                 </CardBody>
               </Card>
             </div>
-
-            {/* Purchases */}
-            {user.purchases.length > 0 && (
-              <Card className="border-1">
-                <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">تاریخچه خریدها</h3>
-                </CardHeader>
-                <CardBody>
-                  <div className="space-y-3">
-                    {user.purchases.map((purchase, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="font-medium">خرید #{index + 1}</p>
-                          <p className="text-sm text-text-light">
-                            {formatDate(purchase.date)} - {purchase.entryMethod === 'sms' ? 'پیامک' : 'QR کد'}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">{purchase.amount.toLocaleString()} ریال</p>
-                          <p className="text-sm text-text-light">
-                            {purchase.rewardApplied.type === 'cashback' ? 'کش بک' : 
-                             purchase.rewardApplied.type === 'discount' ? 'تخفیف' : 'قرعه کشی'}: 
-                            {purchase.rewardApplied.value}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardBody>
-              </Card>
-            )}
           </>
         ) : (
           <div className="text-center py-8">
