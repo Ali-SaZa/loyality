@@ -19,6 +19,7 @@ import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
 import PromotionStatusModal from '@/components/modals/PromotionStatusModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
+import AutomaticPromoCodeCreationModal from '@/components/modals/AutomaticPromoCodeCreationModal'
 
 const AdminPromotions = () => {
   const { setLoading } = useLoading()
@@ -66,6 +67,13 @@ const AdminPromotions = () => {
     promotionId: undefined as string | undefined,
     currentStatus: '',
     promotionTitle: ''
+  })
+
+  // Automatic promo code creation modal state
+  const [automaticPromoCodeModal, setAutomaticPromoCodeModal] = useState({
+    isOpen: false,
+    promotionId: '',
+    storeName: ''
   })
 
   useEffect(() => {
@@ -206,6 +214,20 @@ const AdminPromotions = () => {
 
   const handlePromotionDetailsSuccess = () => {
     fetchPromotions() // Refresh the list
+    fetchStats() // Refresh stats
+  }
+
+  const handlePromotionCreated = (promotionId: string, storeName: string) => {
+    // Open the automatic promo code creation modal
+    setAutomaticPromoCodeModal({
+      isOpen: true,
+      promotionId,
+      storeName
+    })
+  }
+
+  const handleAutomaticPromoCodeSuccess = () => {
+    fetchPromotions() // Refresh the list to show updated promo code count
     fetchStats() // Refresh stats
   }
 
@@ -411,6 +433,24 @@ const AdminPromotions = () => {
                         isIconOnly
                         size="sm"
                         variant="light"
+                        color="success"
+                        aria-label="ایجاد کدهای تخفیف"
+                        disabled={promotion.status === 'deleted'}
+                        onClick={() => {
+                          const storeName = getStoreName(promotion.storeId)
+                          setAutomaticPromoCodeModal({
+                            isOpen: true,
+                            promotionId: promotion.id,
+                            storeName
+                          })
+                        }}
+                      >
+                        <PromotionIcon className="size-4" />
+                      </Button>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
                         color="warning"
                         aria-label="تغییر وضعیت"
                         disabled={promotion.status === 'deleted'}
@@ -432,8 +472,18 @@ const AdminPromotions = () => {
         isOpen={promotionFormModal.isOpen}
         onOpenChange={(isOpen) => setPromotionFormModal(prev => ({ ...prev, isOpen }))}
         onSuccess={handleDetailsModalSuccess}
+        onPromotionCreated={handlePromotionCreated}
         promotionId={promotionFormModal.promotionId}
         stores={stores}
+      />
+
+      {/* Automatic Promo Code Creation Modal */}
+      <AutomaticPromoCodeCreationModal
+        isOpen={automaticPromoCodeModal.isOpen}
+        onOpenChange={(isOpen) => setAutomaticPromoCodeModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleAutomaticPromoCodeSuccess}
+        promotionId={automaticPromoCodeModal.promotionId}
+        storeName={automaticPromoCodeModal.storeName}
       />
 
       {/* Promotion Details Modal */}

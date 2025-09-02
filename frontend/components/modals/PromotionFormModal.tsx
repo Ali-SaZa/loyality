@@ -14,11 +14,12 @@ interface PromotionFormModalProps {
   isOpen: boolean
   onOpenChange: (isOpen: boolean) => void
   onSuccess?: () => void
+  onPromotionCreated?: (promotionId: string, storeName: string) => void
   promotionId?: string // If provided, it's edit mode
   stores: Store[]
 }
 
-const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stores }: PromotionFormModalProps) => {
+const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreated, promotionId, stores }: PromotionFormModalProps) => {
   const { setLoading } = useLoading()
   const [promotion, setPromotion] = useState<Promotion | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -104,7 +105,14 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
         await updatePromotion(promotionId, transformedData as UpdatePromotionRequest)
       } else {
         // Create new promotion
-        await createPromotion(transformedData as CreatePromotionRequest)
+        const createdPromotion = await createPromotion(transformedData as CreatePromotionRequest)
+        
+        // Get store name for the created promotion
+        const selectedStore = stores.find(store => store.id === transformedData.storeId)
+        const storeName = selectedStore?.name || 'Unknown Store'
+        
+        // Call the callback to trigger automatic promo code creation
+        onPromotionCreated?.(createdPromotion.id, storeName)
       }
       
       onOpenChange(false)

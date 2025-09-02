@@ -38,6 +38,7 @@ export interface CreatePromoCodeRequest {
 export interface BulkCreatePromoCodesRequest {
   promotionId: string
   count?: number
+  prefix?: string
   expiresAt?: string
   notes?: string
 }

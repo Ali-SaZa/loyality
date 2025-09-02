@@ -201,16 +201,14 @@ export class BulkCreatePromoCodesDto {
   count?: number;
 
   @ApiProperty({ 
-    description: 'Prefix for all generated codes (optional)', 
+    description: 'Prefix for all generated codes (optional). Prefix can be any length and contain only English letters and numbers (no spaces)', 
     required: false,
-    example: 'WELCOME',
-    maxLength: 4
+    example: 'WELCOME2024'
   })
   @IsOptional()
   @IsString()
-  @MaxLength(4)
-  @Matches(/^[A-Z0-9]*$/, { 
-    message: 'Prefix must contain only uppercase letters and numbers' 
+  @Matches(/^[A-Za-z0-9]*$/, { 
+    message: 'Prefix must contain only English letters and numbers (no spaces)' 
   })
   prefix?: string;
 

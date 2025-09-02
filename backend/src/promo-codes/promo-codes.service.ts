@@ -75,7 +75,15 @@ export class PromoCodesService {
 
     // Check if user has access to this promotion's store
     const store = await this.storeModel.findById(promotion.storeId).exec();
-    if (!store || store.userId.toString() !== user.id) {
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    
+    // Admin users can create promo codes for any promotion
+    if (user.role === 'admin') {
+      // Allow admin access
+    } else if (store.userId.toString() !== user.id) {
+      // Store users can only create promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to create promo codes for this promotion');
     }
 
@@ -174,7 +182,15 @@ export class PromoCodesService {
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
-    if (!store || store.userId.toString() !== user.id) {
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    
+    // Admin users can access any promo code
+    if (user.role === 'admin') {
+      // Allow admin access
+    } else if (store.userId.toString() !== user.id) {
+      // Store users can only access promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to access this promo code');
     }
 
@@ -194,7 +210,15 @@ export class PromoCodesService {
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
-    if (!store || store.userId.toString() !== user.id) {
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    
+    // Admin users can update any promo code
+    if (user.role === 'admin') {
+      // Allow admin access
+    } else if (store.userId.toString() !== user.id) {
+      // Store users can only update promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to update this promo code');
     }
 
@@ -229,7 +253,15 @@ export class PromoCodesService {
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
-    if (!store || store.userId.toString() !== user.id) {
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    
+    // Admin users can update status of any promo code
+    if (user.role === 'admin') {
+      // Allow admin access
+    } else if (store.userId.toString() !== user.id) {
+      // Store users can only update promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to update this promo code');
     }
 
@@ -395,7 +427,15 @@ export class PromoCodesService {
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
-    if (!store || store.userId.toString() !== user.id) {
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    
+    // Admin users can create promo codes for any promotion
+    if (user.role === 'admin') {
+      // Allow admin access
+    } else if (store.userId.toString() !== user.id) {
+      // Store users can only create promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to create promo codes for this promotion');
     }
 
@@ -404,16 +444,19 @@ export class PromoCodesService {
       throw new BadRequestException('Count must be between 1 and 1000');
     }
 
-    // Validate prefix length with code generation
-    const maxPrefixLength = 4; // Maximum prefix length
+    // Calculate suffix length based on prefix and total code length
     const minSuffixLength = 4; // Minimum suffix length for uniqueness
     const maxTotalLength = 12; // Maximum total code length
     
-    if (prefix && prefix.length > maxPrefixLength) {
-      throw new BadRequestException(`Prefix cannot be longer than ${maxPrefixLength} characters`);
+    // If prefix is provided, ensure we have enough space for suffix
+    let suffixLength = minSuffixLength;
+    if (prefix) {
+      const availableSpace = maxTotalLength - prefix.length;
+      if (availableSpace < minSuffixLength) {
+        throw new BadRequestException(`Prefix is too long. Maximum prefix length is ${maxTotalLength - minSuffixLength} characters to allow for unique suffix`);
+      }
+      suffixLength = availableSpace;
     }
-
-    const suffixLength = Math.max(minSuffixLength, maxTotalLength - (prefix?.length || 0));
     const codesToCreate: any[] = [];
 
     // Generate unique codes
@@ -463,7 +506,15 @@ export class PromoCodesService {
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
-    if (!store || store.userId.toString() !== user.id) {
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    
+    // Admin users can delete promo codes for any promotion
+    if (user.role === 'admin') {
+      // Allow admin access
+    } else if (store.userId.toString() !== user.id) {
+      // Store users can only delete promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to delete this promo code');
     }
 
