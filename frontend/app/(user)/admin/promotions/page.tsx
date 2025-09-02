@@ -74,10 +74,6 @@ const AdminPromotions = () => {
     fetchStores()
   }, [])
 
-  useEffect(() => {
-    console.log('statusModal state changed:', statusModal)
-  }, [statusModal])
-
   const fetchPromotions = async () => {
     try {
       setLoading(true)
@@ -167,15 +163,7 @@ const AdminPromotions = () => {
   }
 
   const handleStatusChange = (promotionItem: PromotionWithCodeCount) => {
-    console.log('handleStatusChange called with:', promotionItem)
-    alert('Status change button clicked!') // Temporary test
     setStatusModal({
-      isOpen: true,
-      promotionId: promotionItem.id,
-      currentStatus: promotionItem.status,
-      promotionTitle: promotionItem.title
-    })
-    console.log('statusModal state set to:', {
       isOpen: true,
       promotionId: promotionItem.id,
       currentStatus: promotionItem.status,
@@ -425,6 +413,7 @@ const AdminPromotions = () => {
                         variant="light"
                         color="warning"
                         aria-label="تغییر وضعیت"
+                        disabled={promotion.status === 'deleted'}
                         onClick={() => handleStatusChange(promotion as PromotionWithCodeCount)}
                       >
                         <ClockIcon className="size-4" />

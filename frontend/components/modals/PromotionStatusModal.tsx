@@ -8,6 +8,7 @@ import Input from '@/components/formElements/Input'
 import useLoading from '@/hooks/useLoading'
 import { ChangePromotionStatusValidation, ChangePromotionStatusData } from '@/validation/promotion'
 import { changePromotionStatus, ChangePromotionStatusRequest } from '@/services/promotions'
+import { PromotionStatus, PROMOTION_STATUS_CONFIG, getPromotionStatusConfig } from '@/types/enums'
 
 interface PromotionStatusModalProps {
   isOpen: boolean
@@ -32,14 +33,14 @@ const PromotionStatusModal = ({
   const methods = useForm<ChangePromotionStatusData>({
     resolver: zodResolver(ChangePromotionStatusValidation),
     defaultValues: {
-      status: currentStatus as 'active' | 'inactive' | 'deleted' | 'expired'
+      status: currentStatus as PromotionStatus
     }
   })
 
   useEffect(() => {
     if (isOpen && currentStatus) {
       methods.reset({
-        status: currentStatus as 'active' | 'inactive' | 'deleted' | 'expired'
+        status: currentStatus as PromotionStatus
       })
       setError(null)
     }
@@ -69,12 +70,10 @@ const PromotionStatusModal = ({
   }
 
   const getStatusOptions = () => {
-    const options = [
-      { code: 'active', name: 'فعال' },
-      { code: 'inactive', name: 'غیرفعال' },
-      { code: 'expired', name: 'منقضی شده' },
-      { code: 'deleted', name: 'حذف شده' }
-    ]
+    const options = Object.entries(PROMOTION_STATUS_CONFIG).map(([code, config]) => ({
+      code,
+      name: config.text
+    }))
 
     // Filter out current status to avoid selecting the same status
     return options.filter(option => option.code !== currentStatus)
@@ -105,7 +104,7 @@ const PromotionStatusModal = ({
             تغییر وضعیت تبلیغ: <strong>{promotionTitle}</strong>
           </p>
           <p className="text-text-light text-sm mb-6">
-            وضعیت فعلی: <span className="font-medium">{getStatusOptions().find(opt => opt.code === currentStatus)?.name || currentStatus}</span>
+            وضعیت فعلی: <span className="font-medium">{getPromotionStatusConfig(currentStatus).text}</span>
           </p>
         </div>
 
