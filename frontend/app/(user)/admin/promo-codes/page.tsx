@@ -10,7 +10,7 @@ import { getAllPromotions, Promotion } from '@/services/promotions'
 import { getAllUsers, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { getPromoCodeStatusConfig } from '@/types/enums'
-import { formatDateToCustomTimezone, formatDateToPersianJalali } from '@/helpers'
+import { formatDateToPersianJalali } from '@/helpers'
 
 const AdminPromoCodes = () => {
   const { setLoading } = useLoading()

@@ -7,7 +7,6 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 
 import PromotionIcon from '@/components/icons/PromotionIcon'
 import EditIcon from '@/components/icons/EditIcon'
-import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import ClockIcon from '@/components/icons/ClockIcon'
 import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats, getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'

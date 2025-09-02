@@ -7,14 +7,11 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 
 import Modal from './Modal'
 import PromotionIcon from '@/components/icons/PromotionIcon'
-import EditIcon from '@/components/icons/EditIcon'
-import TrashIcon from '@/components/icons/TrashIcon'
 import { getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
 import { getPromoCodesByPromotion, PromoCode } from '@/services/promo-codes'
 import { Store } from '@/services/stores'
-import useLoading from '@/hooks/useLoading'
 import { getPromotionStatusConfig, getPromoCodeStatusConfig } from '@/types/enums'
-import { formatDateToCustomTimezone, formatDateToPersianJalali } from '@/helpers'
+import { formatDateToPersianJalali } from '@/helpers'
 
 interface PromotionDetailsModalProps {
   isOpen: boolean
@@ -27,7 +24,6 @@ interface PromotionDetailsModalProps {
 }
 
 const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, promotionId, stores }: PromotionDetailsModalProps) => {
-  const { setLoading } = useLoading()
   const [promotion, setPromotion] = useState<PromotionWithCodeCount | null>(null)
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([])
   const [isLoading, setIsLoading] = useState(false)
