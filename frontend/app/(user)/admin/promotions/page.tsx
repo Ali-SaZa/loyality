@@ -155,7 +155,8 @@ const AdminPromotions = () => {
   const handleAddPromotion = () => {
     setPromotionFormModal({
       isOpen: true,
-      promotionId: undefined
+      promotionId: undefined,
+      promotionTitle: ''
     })
   }
 
@@ -164,20 +165,23 @@ const AdminPromotions = () => {
     fetchStats() // Refresh stats
   }
 
-  const handlePromotionDetailsEdit = (promotionItem: PromotionWithCodeCount) => {
+  const handlePromotionDetailsEdit = (promotionId: string) => {
     setPromotionFormModal({
       isOpen: true,
-      promotionId: promotionItem.id,
-      promotionTitle: promotionItem.title
+      promotionId,
+      promotionTitle: ''
     })
   }
 
-  const handlePromotionDetailsDelete = async (promotionItem: PromotionWithCodeCount) => {
-  
+  const handlePromotionDetailsDelete = async (promotionId: string) => {
+    // Find the promotion to get its title for the confirmation modal
+    const promotion = promotions.find(p => p.id === promotionId)
+    const promotionTitle = promotion ? promotion.title : ''
+    
     setDeleteConfirmModal({
       isOpen: true,
-      promotionId: promotionItem.id,
-      promotionTitle: promotionItem.title
+      promotionId,
+      promotionTitle
     })
   }
 

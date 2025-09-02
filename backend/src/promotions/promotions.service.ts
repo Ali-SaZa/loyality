@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Promotion, PromotionDocument } from '../schemas/promotion.schema';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { PromoCode, PromoCodeDocument } from '../schemas/promoCode.schema';
@@ -122,15 +122,26 @@ export class PromotionsService {
 
     // Get promo code counts for all promotions in this batch
     const promotionIds = plainData.map(promotion => promotion.id);
-    const promoCodeCounts = await this.promoCodeModel.aggregate([
-      { $match: { promotionId: { $in: promotionIds } } },
-      { $group: { _id: '$promotionId', count: { $sum: 1 } } }
-    ]).exec();
+    
+    // Debug: Check if there are any promo codes at all
+    const totalPromoCodes = await this.promoCodeModel.countDocuments({});
+    console.log(`Total promo codes in database: ${totalPromoCodes}`);
+    
+    // Simple approach: count promo codes for each promotion individually
+    const promoCodeCounts = await Promise.all(
+      promotionIds.map(async (promotionId) => {
+        const count = await this.promoCodeModel.countDocuments({ 
+          promotionId: new Types.ObjectId(promotionId) 
+        });
+        console.log(`Promotion ${promotionId}: ${count} promo codes`);
+        return { promotionId, count };
+      })
+    );
 
     // Create a map of promotion ID to count
     const countMap = new Map();
     promoCodeCounts.forEach(item => {
-      countMap.set(item._id.toString(), item.count);
+      countMap.set(item.promotionId, item.count);
     });
 
     // Add promo code count to each promotion
