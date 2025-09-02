@@ -12,6 +12,7 @@ import { getPromotionById, deletePromotion, Promotion } from '@/services/promoti
 import { Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getPromotionStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 
 interface PromotionViewModalProps {
   isOpen: boolean
@@ -83,11 +84,6 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('fa-IR')
-  }
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR', { hour: 'numeric', minute: 'numeric' })
   }
 
   const getStatusColor = (status: string) => {
@@ -236,11 +232,11 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
                 <CardBody className="space-y-4">
                   <div>
                     <label className="text-sm text-text-light">تاریخ ایجاد</label>
-                    <p className="font-medium">{formatDateTime(promotion.createdAt)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(promotion.createdAt)}</p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateTime(promotion.updatedAt)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(promotion.updatedAt)}</p>
                   </div>
                 </CardBody>
               </Card>

@@ -282,6 +282,34 @@ export const formatDateToCustomTimezone = (date: Date, timezoneOffset = 210): st
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000${timezone}`
 }
 
+export const formatDateToPersianJalali = (date: Date | string): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  
+  // Convert to Iran timezone (UTC+3:30)
+  const iranDate = new Date(dateObj.getTime() + (3.5 * 60 * 60 * 1000))
+  
+  // Convert to Jalali calendar
+  const jDate = jalaali.toJalaali(iranDate.getFullYear(), iranDate.getMonth() + 1, iranDate.getDate())
+  
+  // Format time
+  const hours = String(iranDate.getHours()).padStart(2, '0')
+  const minutes = String(iranDate.getMinutes()).padStart(2, '0')
+  const seconds = String(iranDate.getSeconds()).padStart(2, '0')
+  
+  // Convert numbers to Persian
+  const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+  const toPersian = (num: string) => num.split('').map(digit => persianNumbers[parseInt(digit)]).join('')
+  
+  const persianYear = toPersian(jDate.jy.toString())
+  const persianMonth = toPersian(String(jDate.jm).padStart(2, '0'))
+  const persianDay = toPersian(String(jDate.jd).padStart(2, '0'))
+  const persianHours = toPersian(hours)
+  const persianMinutes = toPersian(minutes)
+  const persianSeconds = toPersian(seconds)
+  
+  return `${persianHours}:${persianMinutes}:${persianSeconds} - ${persianYear}/${persianMonth}/${persianDay}`
+}
+
 // const gregorianDate = (jalaliDate: string) => moment(jalaliDate, 'jYYYY-jMM-jDDTHH:mm:ss.SSSZ').format('YYYY-MM-DDTHH:mm:ss.SSSZ')
 // const gregorianDate = (jalaliDate: string) => {
 //   const [datePart, timePart] = jalaliDate.split('T')

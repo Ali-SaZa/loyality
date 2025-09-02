@@ -12,6 +12,7 @@ import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getStoreStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 import StoreFormModal from '@/components/modals/StoreFormModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 import StoreViewModal from '@/components/modals/StoreViewModal'
@@ -86,7 +87,7 @@ const AdminStores = () => {
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('fa-IR')
+    return formatDateToPersianJalali(date)
   }
 
   const formatPhoneNumber = (phone: string) => {

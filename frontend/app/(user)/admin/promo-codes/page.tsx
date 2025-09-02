@@ -10,6 +10,7 @@ import { getAllPromotions, Promotion } from '@/services/promotions'
 import { getAllUsers, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { getPromoCodeStatusConfig } from '@/types/enums'
+import { formatDateToCustomTimezone, formatDateToPersianJalali } from '@/helpers'
 
 const AdminPromoCodes = () => {
   const { setLoading } = useLoading()
@@ -155,6 +156,7 @@ const AdminPromoCodes = () => {
               <TableColumn>تبلیغ</TableColumn>
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>کاربر</TableColumn>
+              <TableColumn>تاریخ ایجاد</TableColumn>
               <TableColumn>تاریخ ثبت</TableColumn>
               <TableColumn>تاریخ استفاده</TableColumn>
             </TableHeader>
@@ -197,8 +199,13 @@ const AdminPromoCodes = () => {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
+                      {formatDateToPersianJalali(promoCode.createdAt)}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm text-gray-600">
                       {promoCode.registeredAt 
-                        ? new Date(promoCode.registeredAt).toLocaleDateString('fa-IR')
+                        ? formatDateToPersianJalali(promoCode.registeredAt)
                         : '-'
                       }
                     </div>
@@ -206,7 +213,7 @@ const AdminPromoCodes = () => {
                   <TableCell>
                     <div className="text-sm text-gray-600">
                       {promoCode.usedAt 
-                        ? new Date(promoCode.usedAt).toLocaleDateString('fa-IR')
+                        ? formatDateToPersianJalali(promoCode.usedAt)
                         : '-'
                       }
                     </div>

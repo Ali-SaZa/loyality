@@ -12,6 +12,7 @@ import { getPromoCodeById, deletePromoCode, PromoCode } from '@/services/promo-c
 import { Promotion } from '@/services/promotions'
 import useLoading from '@/hooks/useLoading'
 import { getPromoCodeStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 
 interface PromoCodeViewModalProps {
   isOpen: boolean
@@ -83,11 +84,6 @@ const PromoCodeViewModal = ({ isOpen, onClose, onEdit, onDelete, onSuccess, prom
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('fa-IR')
-  }
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR', { hour: 'numeric', minute: 'numeric' })
   }
 
   const getStatusColor = (status: string) => {
@@ -206,13 +202,13 @@ const PromoCodeViewModal = ({ isOpen, onClose, onEdit, onDelete, onSuccess, prom
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ ثبت</label>
                 <div className="text-gray-900">
-                  {promoCode.registeredAt ? formatDateTime(promoCode.registeredAt) : 'ثبت نشده'}
+                  {promoCode.registeredAt ? formatDateToPersianJalali(promoCode.registeredAt) : 'ثبت نشده'}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ استفاده</label>
                 <div className="text-gray-900">
-                  {promoCode.usedAt ? formatDateTime(promoCode.usedAt) : 'استفاده نشده'}
+                  {promoCode.usedAt ? formatDateToPersianJalali(promoCode.usedAt) : 'استفاده نشده'}
                 </div>
               </div>
             </div>
@@ -228,11 +224,11 @@ const PromoCodeViewModal = ({ isOpen, onClose, onEdit, onDelete, onSuccess, prom
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ ایجاد</label>
-                <div className="text-gray-900">{formatDateTime(promoCode.createdAt)}</div>
+                <div className="text-gray-900">{formatDateToPersianJalali(promoCode.createdAt)}</div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">آخرین بروزرسانی</label>
-                <div className="text-gray-900">{formatDateTime(promoCode.updatedAt)}</div>
+                <div className="text-gray-900">{formatDateToPersianJalali(promoCode.updatedAt)}</div>
               </div>
             </div>
           </CardBody>

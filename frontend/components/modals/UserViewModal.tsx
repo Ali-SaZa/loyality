@@ -11,6 +11,7 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import { getUserById, deleteUser, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 
 interface UserViewModalProps {
   isOpen: boolean
@@ -105,11 +106,6 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
 
   const getRoleText = (role: string) => {
     return getRoleConfig(role).text
-  }
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR', { hour: 'numeric', minute: 'numeric' })
   }
 
   return (
@@ -225,11 +221,11 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
                   </div>
                   <div>
                     <label className="text-sm text-text-light">آخرین فعالیت</label>
-                    <p className="font-medium">{formatDateTime(user.lastActivity)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(user.lastActivity)}</p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateTime(user.updatedAt)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(user.updatedAt)}</p>
                   </div>
                 </CardBody>
               </Card>

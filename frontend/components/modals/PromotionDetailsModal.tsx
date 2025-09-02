@@ -14,6 +14,7 @@ import { getPromoCodesByPromotion, PromoCode } from '@/services/promo-codes'
 import { Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getPromotionStatusConfig, getPromoCodeStatusConfig } from '@/types/enums'
+import { formatDateToCustomTimezone, formatDateToPersianJalali } from '@/helpers'
 
 interface PromotionDetailsModalProps {
   isOpen: boolean
@@ -81,11 +82,6 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('fa-IR')
-  }
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR', { hour: 'numeric', minute: 'numeric' })
   }
 
   const getStatusColor = (status: string) => {
@@ -217,11 +213,11 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                   </div>
                   <div>
                     <label className="text-sm text-text-light">تاریخ ایجاد</label>
-                    <p className="font-medium">{formatDateTime(promotion.createdAt)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(promotion.createdAt)}</p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateTime(promotion.updatedAt)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(promotion.updatedAt)}</p>
                   </div>
                 </CardBody>
               </Card>
@@ -239,6 +235,7 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                       <TableColumn>کد تخفیف</TableColumn>
                       <TableColumn>وضعیت</TableColumn>
                       <TableColumn>کاربر</TableColumn>
+                      <TableColumn>تاریخ ایجاد</TableColumn>
                       <TableColumn>تاریخ ثبت</TableColumn>
                       <TableColumn>تاریخ استفاده</TableColumn>
                       <TableColumn>یادداشت</TableColumn>
@@ -264,10 +261,13 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                             {promoCode.userId ? 'ثبت شده' : 'ثبت نشده'}
                           </TableCell>
                           <TableCell>
-                            {promoCode.registeredAt ? formatDate(promoCode.registeredAt) : '-'}
+                            {formatDateToPersianJalali(promoCode.createdAt)}
                           </TableCell>
                           <TableCell>
-                            {promoCode.usedAt ? formatDate(promoCode.usedAt) : '-'}
+                            {promoCode.registeredAt ? formatDateToPersianJalali(promoCode.registeredAt) : '-'}
+                          </TableCell>
+                          <TableCell>
+                            {promoCode.usedAt ? formatDateToPersianJalali(promoCode.usedAt) : '-'}
                           </TableCell>
                           <TableCell>
                             {promoCode.notes || '-'}

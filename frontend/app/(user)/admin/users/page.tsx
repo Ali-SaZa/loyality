@@ -12,6 +12,7 @@ import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllUsers, getUserStats, deleteUser, User, UserStats } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { getRoleConfig, getStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 import UserFormModal from '@/components/modals/UserFormModal'
 import UserViewModal from '@/components/modals/UserViewModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
@@ -92,7 +93,7 @@ const AdminUsers = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR')
+    return formatDateToPersianJalali(date)
   }
 
   const formatPhoneNumber = (phone: string) => {

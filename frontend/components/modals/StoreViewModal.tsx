@@ -11,6 +11,7 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import { getStoreById, deleteStore, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { StoreStatus, getStoreStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 
 interface StoreViewModalProps {
   isOpen: boolean
@@ -80,7 +81,7 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('fa-IR')
+    return formatDateToPersianJalali(date)
   }
 
   const formatPhoneNumber = (phone: string) => {
@@ -97,11 +98,6 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
 
   const getStatusText = (status: string) => {
     return getStoreStatusConfig(status).text
-  }
-
-  const formatDateTime = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('fa-IR', { hour: 'numeric', minute: 'numeric' })
   }
 
   const getAddressText = (address: Store['address']) => {
@@ -257,7 +253,7 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
                   </div>
                   <div>
                     <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateTime(store.updatedAt)}</p>
+                    <p className="font-medium">{formatDateToPersianJalali(store.updatedAt)}</p>
                   </div>
                   {store.planExpiryDate && (
                     <div>

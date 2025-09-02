@@ -14,6 +14,7 @@ import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, Promot
 import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali } from '@/helpers'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
 import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
@@ -133,7 +134,7 @@ const AdminPromotions = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR')
+    return formatDateToPersianJalali(date)
   }
 
   const getStoreName = (storeId: string) => {
