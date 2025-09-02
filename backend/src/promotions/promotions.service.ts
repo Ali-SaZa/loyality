@@ -202,6 +202,21 @@ export class PromotionsService {
       throw new BadRequestException('Points must be greater than 0');
     }
 
+    // Handle status change if included
+    if (updatePromotionDto.status !== undefined) {
+      // Validate status transition
+      this.validateStatusTransition(promotion.status, updatePromotionDto.status);
+
+      // If status is being changed to 'deleted', soft delete all associated promo codes
+      if (updatePromotionDto.status === 'deleted') {
+        const updatedPromoCodes = await this.promoCodeModel.updateMany(
+          { promotionId: promotion._id },
+          { status: 'deleted' }
+        ).exec();
+        console.log(`Soft deleted ${updatedPromoCodes.modifiedCount} promo codes for promotion ${id} due to status change to deleted`);
+      }
+    }
+
     const updatedPromotion = await this.promotionModel
       .findByIdAndUpdate(id, updatePromotionDto, { new: true })
       .exec();

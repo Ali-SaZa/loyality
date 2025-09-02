@@ -31,6 +31,7 @@ export interface UpdatePromotionRequest {
   description?: string
   price?: number
   points?: number
+  status?: 'active' | 'inactive' | 'deleted' | 'expired'
 }
 
 export interface ChangePromotionStatusRequest {

@@ -60,29 +60,15 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
   }
 
   const handleEdit = () => {
-    if (promotionId && onEdit) {
-      onOpenChange(false)
-      onEdit(promotionId)
-    }
+    // Handler removed as requested
   }
 
   const handleDelete = async () => {
-    if (!promotionId) return
-    
-    if (confirm('آیا از حذف این تبلیغ اطمینان دارید؟')) {
-      try {
-        setLoading(true)
-        // Import deletePromotion here to avoid circular dependency
-        const { deletePromotion } = await import('@/services/promotions')
-        await deletePromotion(promotionId)
-        onOpenChange(false)
-        onSuccess?.()
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف تبلیغ')
-      } finally {
-        setLoading(false)
-      }
-    }
+    // Handler removed as requested
+  }
+
+  const handleStatusChange = () => {
+    // Handler removed as requested
   }
 
   const handleClose = () => {
@@ -168,25 +154,7 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {promotion.status !== 'deleted' && (
-                  <>
-                    <Button
-                      color="primary"
-                      startContent={<EditIcon className="size-5" />}
-                      onClick={handleEdit}
-                    >
-                      ویرایش
-                    </Button>
-                    <Button
-                      color="danger"
-                      variant="light"
-                      startContent={<TrashIcon className="size-5" />}
-                      onClick={handleDelete}
-                    >
-                      حذف
-                    </Button>
-                  </>
-                )}
+                {/* Action buttons removed as requested */}
               </div>
             </div>
 

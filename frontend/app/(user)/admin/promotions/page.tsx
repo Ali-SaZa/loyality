@@ -9,6 +9,7 @@ import PromotionIcon from '@/components/icons/PromotionIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
+import ClockIcon from '@/components/icons/ClockIcon'
 import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats, getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
 import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
@@ -16,6 +17,7 @@ import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
 import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
+import PromotionStatusModal from '@/components/modals/PromotionStatusModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
 const AdminPromotions = () => {
@@ -58,11 +60,23 @@ const AdminPromotions = () => {
     promotionTitle: ''
   })
 
+  // Status change modal state
+  const [statusModal, setStatusModal] = useState({
+    isOpen: false,
+    promotionId: undefined as string | undefined,
+    currentStatus: '',
+    promotionTitle: ''
+  })
+
   useEffect(() => {
     fetchPromotions()
     fetchStats()
     fetchStores()
   }, [])
+
+  useEffect(() => {
+    console.log('statusModal state changed:', statusModal)
+  }, [statusModal])
 
   const fetchPromotions = async () => {
     try {
@@ -148,6 +162,23 @@ const AdminPromotions = () => {
     setDeleteConfirmModal({
       isOpen: true,
       promotionId: promotionItem.id,
+      promotionTitle: promotionItem.title
+    })
+  }
+
+  const handleStatusChange = (promotionItem: PromotionWithCodeCount) => {
+    console.log('handleStatusChange called with:', promotionItem)
+    alert('Status change button clicked!') // Temporary test
+    setStatusModal({
+      isOpen: true,
+      promotionId: promotionItem.id,
+      currentStatus: promotionItem.status,
+      promotionTitle: promotionItem.title
+    })
+    console.log('statusModal state set to:', {
+      isOpen: true,
+      promotionId: promotionItem.id,
+      currentStatus: promotionItem.status,
       promotionTitle: promotionItem.title
     })
   }
@@ -377,29 +408,27 @@ const AdminPromotions = () => {
                       >
                         <EyeIcon className="size-4" />
                       </Button>
-                    
-                          <Button
-                            isIconOnly
-                            size="sm"
-                            variant="light"
-                            color="primary"
-                            aria-label="ویرایش"
-                            disabled={promotion.status === 'deleted'}
-                            onClick={() => handleEditPromotion(promotion as PromotionWithCodeCount)}
-                          >
-                            <EditIcon className="size-4" />
-                          </Button>
-                          <Button
-                            isIconOnly
-                            size="sm"
-                            variant="light"
-                            color="danger"
-                            aria-label="حذف"
-                            disabled={promotion.status === 'deleted'}
-                            onClick={() => handleDeletePromotion(promotion as PromotionWithCodeCount)}
-                          >
-                            <TrashIcon className="size-4" />
-                          </Button>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        color="primary"
+                        aria-label="ویرایش"
+                        disabled={promotion.status === 'deleted'}
+                        onClick={() => handleEditPromotion(promotion as PromotionWithCodeCount)}
+                      >
+                        <EditIcon className="size-4" />
+                      </Button>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        color="warning"
+                        aria-label="تغییر وضعیت"
+                        onClick={() => handleStatusChange(promotion as PromotionWithCodeCount)}
+                      >
+                        <ClockIcon className="size-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -438,6 +467,19 @@ const AdminPromotions = () => {
         message="آیا از حذف این تبلیغ اطمینان دارید؟"
         itemName={deleteConfirmModal.promotionTitle}
         isLoading={false}
+      />
+
+      {/* Status Change Modal */}
+      <PromotionStatusModal
+        isOpen={statusModal.isOpen}
+        onOpenChange={(isOpen) => setStatusModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={() => {
+          fetchPromotions()
+          fetchStats()
+        }}
+        promotionId={statusModal.promotionId}
+        currentStatus={statusModal.currentStatus}
+        promotionTitle={statusModal.promotionTitle}
       />
     </div>
   )

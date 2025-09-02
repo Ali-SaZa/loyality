@@ -67,6 +67,15 @@ export class UpdatePromotionDto {
   @IsNumber()
   @Min(1)
   points?: number;
+
+  @ApiProperty({ 
+    description: 'Promotion status', 
+    enum: ['active', 'inactive', 'deleted', 'expired'],
+    required: false 
+  })
+  @IsOptional()
+  @IsEnum(['active', 'inactive', 'deleted', 'expired'])
+  status?: string;
 }
 
 // Status Change DTO

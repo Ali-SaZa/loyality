@@ -1,18 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader } from '@heroui/card'
-import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
 
 import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
-import EditIcon from '@/components/icons/EditIcon'
-import EyeIcon from '@/components/icons/EyeIcon'
-import { getAllPromoCodes, getPromoCodeStats, deletePromoCode, PromoCode, PromoCodeStats } from '@/services/promo-codes'
+import { getAllPromoCodes, getPromoCodeStats, PromoCode, PromoCodeStats } from '@/services/promo-codes'
 import { getAllPromotions, Promotion } from '@/services/promotions'
 import useLoading from '@/hooks/useLoading'
 import { getPromoCodeStatusConfig } from '@/types/enums'
-import PromoCodeViewModal from '@/components/modals/PromoCodeViewModal'
 
 const AdminPromoCodes = () => {
   const { setLoading } = useLoading()
@@ -23,28 +19,10 @@ const AdminPromoCodes = () => {
     total: 0,
     unused: 0,
     used: 0,
-    registered: 0
+    registered: 0,
+    deleted: 0
   })
   const [error, setError] = useState<string | null>(null)
-
-  // Promo code form modal state
-  const [promoCodeFormModal, setPromoCodeFormModal] = useState({
-    isOpen: false,
-    promoCodeId: undefined as string | undefined
-  })
-
-  // Promo code view modal state
-  const [promoCodeViewModal, setPromoCodeViewModal] = useState({
-    isOpen: false,
-    promoCodeId: undefined as string | undefined
-  })
-
-  // Delete confirmation modal state
-  const [deleteConfirmModal, setDeleteConfirmModal] = useState({
-    isOpen: false,
-    promoCodeId: undefined as string | undefined,
-    promoCodeCode: ''
-  })
 
   useEffect(() => {
     fetchPromoCodes()
@@ -96,39 +74,6 @@ const AdminPromoCodes = () => {
     return promotion?.title || 'نامشخص'
   }
 
-  const handleAddPromoCode = () => {
-    setPromoCodeFormModal({
-      isOpen: true,
-      promoCodeId: undefined
-    })
-  }
-
-  const handleEditPromoCode = (promoCodeId: string) => {
-    setPromoCodeFormModal({
-      isOpen: true,
-      promoCodeId
-    })
-  }
-
-  const handleViewPromoCode = (promoCodeId: string) => {
-    setPromoCodeViewModal({
-      isOpen: true,
-      promoCodeId
-    })
-  }
-
-  const handleModalClose = () => {
-    setPromoCodeFormModal({ isOpen: false, promoCodeId: undefined })
-    setPromoCodeViewModal({ isOpen: false, promoCodeId: undefined })
-    setDeleteConfirmModal({ isOpen: false, promoCodeId: undefined, promoCodeCode: '' })
-  }
-
-  const handleModalSuccess = () => {
-    fetchPromoCodes()
-    fetchStats()
-    handleModalClose()
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -137,16 +82,8 @@ const AdminPromoCodes = () => {
           <PromoCodeIcon className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold text-gray-900">کدهای تخفیف</h1>
-            <p className="text-gray-600">مدیریت کدهای تخفیف و تبلیغات</p>
           </div>
         </div>
-        <Button
-          color="primary"
-          onClick={handleAddPromoCode}
-          className="font-medium"
-        >
-          افزودن کد تخفیف
-        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -199,7 +136,6 @@ const AdminPromoCodes = () => {
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>کاربر</TableColumn>
               <TableColumn>تاریخ ثبت</TableColumn>
-              <TableColumn>عملیات</TableColumn>
             </TableHeader>
             <TableBody>
               {promoCodes.map((promoCode) => (
@@ -236,40 +172,12 @@ const AdminPromoCodes = () => {
                       }
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        onClick={() => handleViewPromoCode(promoCode.id)}
-                      >
-                        <EyeIcon className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        onClick={() => handleEditPromoCode(promoCode.id)}
-                      >
-                        <EditIcon className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardBody>
       </Card>
-
-      {/* Modals */}
-      <PromoCodeViewModal
-        isOpen={promoCodeViewModal.isOpen}
-        promoCodeId={promoCodeViewModal.promoCodeId}
-        onClose={handleModalClose}
-        promotions={promotions}
-      />
     </div>
   )
 }
