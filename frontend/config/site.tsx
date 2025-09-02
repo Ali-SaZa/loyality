@@ -16,6 +16,7 @@ import ListIcon from '@/components/icons/ListIcon'
 import WalletIcon from '@/components/icons/WalletIcon'
 import BellIcon from '@/components/icons/BellIcon'
 import PromotionIcon from '@/components/icons/PromotionIcon'
+import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
 
 export const siteConfig = {
   name: 'OBS',
@@ -50,6 +51,13 @@ export const siteConfig = {
         title: 'مدیریت تبلیغات',
         icon: (className: string = 'size-6') => <PromotionIcon className={className} />,
         link: '/admin/promotions',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'مدیریت کدهای تخفیف',
+        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
+        link: '/admin/promo-codes',
         isShortAccess: true,
         children: [],
       }

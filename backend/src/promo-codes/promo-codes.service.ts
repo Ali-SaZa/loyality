@@ -74,14 +74,19 @@ export class PromoCodesService {
     const { page = 1, limit = 10, search, sort = [{ field: 'createdAt', direction: 'desc' }] } = listRequest;
     const skip = (page - 1) * limit;
 
-    // Build query to only show promo codes for promotions belonging to user's stores
-    const userStores = await this.storeModel.find({ userId: user.id }).select('_id').exec();
-    const storeIds = userStores.map(store => store._id);
-    
-    const promotions = await this.promotionModel.find({ storeId: { $in: storeIds } }).select('_id').exec();
-    const promotionIds = promotions.map(promotion => promotion._id);
+    // Build query - admin users can see all promo codes, store users only see their own
+    let query: any = {};
 
-    const query: any = { promotionId: { $in: promotionIds } };
+    // For store users, filter by their stores only
+    if (user.role === 'store') {
+      const userStores = await this.storeModel.find({ userId: user.id }).select('_id').exec();
+      const storeIds = userStores.map(store => store._id);
+      
+      const promotions = await this.promotionModel.find({ storeId: { $in: storeIds } }).select('_id').exec();
+      const promotionIds = promotions.map(promotion => promotion._id);
+      
+      query.promotionId = { $in: promotionIds };
+    }
 
     if (search) {
       query.$or = [
@@ -497,8 +502,8 @@ export class PromoCodesService {
   }> {
     let query: any = {};
 
-    // If user is provided, filter by their stores
-    if (user) {
+    // For store users, filter by their stores only
+    if (user && user.role === 'store') {
       const userStores = await this.storeModel.find({ userId: user.id }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       

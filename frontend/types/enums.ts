@@ -33,6 +33,11 @@ export enum PromotionStatus {
   EXPIRED = 'expired'
 }
 
+export enum PromoCodeStatus {
+  UNUSED = 'unused',
+  USED = 'used'
+}
+
 export enum ScratchCardStatus {
   ACTIVE = 'active',
   EXPIRED = 'expired',
@@ -178,6 +183,17 @@ export const PROMOTION_STATUS_CONFIG = {
   }
 }
 
+export const PROMO_CODE_STATUS_CONFIG = {
+  [PromoCodeStatus.UNUSED]: {
+    text: 'استفاده نشده',
+    color: 'success' as const
+  },
+  [PromoCodeStatus.USED]: {
+    text: 'استفاده شده',
+    color: 'warning' as const
+  }
+}
+
 export const SCRATCH_CARD_STATUS_CONFIG = {
   [ScratchCardStatus.ACTIVE]: {
     text: 'فعال',
@@ -302,6 +318,10 @@ export const getPromotionTypeConfig = (type: string) => {
 
 export const getPromotionStatusConfig = (status: string) => {
   return PROMOTION_STATUS_CONFIG[status as PromotionStatus] || PROMOTION_STATUS_CONFIG[PromotionStatus.ACTIVE]
+}
+
+export const getPromoCodeStatusConfig = (status: string) => {
+  return PROMO_CODE_STATUS_CONFIG[status as PromoCodeStatus] || PROMO_CODE_STATUS_CONFIG[PromoCodeStatus.UNUSED]
 }
 
 export const getScratchCardStatusConfig = (status: string) => {
