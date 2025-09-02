@@ -9,7 +9,7 @@ export interface PromoCodeDocument extends Document {
   _id: Types.ObjectId;
   code: string;                    // The unique code string
   promotionId: Types.ObjectId;      // Reference to the associated Promotion
-  status: 'unused' | 'used'; // Current status of the code
+  status: 'unused' | 'used' | 'deleted'; // Current status of the code
   userId?: Types.ObjectId;          // Reference to the user who registered/used the code (optional)
   registeredAt?: Date;               // Timestamp when the code was registered to user
   usedAt?: Date;                     // Timestamp when the code was used
@@ -34,11 +34,11 @@ export class PromoCode {
   // Reference to the promotion this code belongs to
 
   @Prop({
-    enum: ['unused', 'used'],
+    enum: ['unused', 'used', 'deleted'],
     default: 'unused',
     required: true,
   })
-  status: 'unused' | 'used';
+  status: 'unused' | 'used' | 'deleted';
   // Current status of the promo code
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: false })

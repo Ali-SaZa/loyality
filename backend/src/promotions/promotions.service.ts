@@ -225,10 +225,13 @@ export class PromotionsService {
     // Validate status transition
     this.validateStatusTransition(promotion.status, changeStatusDto.status);
 
-    // If status is being changed to 'deleted', delete all associated promo codes
+    // If status is being changed to 'deleted', soft delete all associated promo codes
     if (changeStatusDto.status === 'deleted') {
-      const deletedPromoCodes = await this.promoCodeModel.deleteMany({ promotionId: promotion._id }).exec();
-      console.log(`Deleted ${deletedPromoCodes.deletedCount} promo codes for promotion ${id} due to status change to deleted`);
+      const updatedPromoCodes = await this.promoCodeModel.updateMany(
+        { promotionId: promotion._id },
+        { status: 'deleted' }
+      ).exec();
+      console.log(`Soft deleted ${updatedPromoCodes.modifiedCount} promo codes for promotion ${id} due to status change to deleted`);
     }
 
     const updatedPromotion = await this.promotionModel
@@ -251,9 +254,12 @@ export class PromotionsService {
     // Validate access permissions
     await this.validateStoreAccess(promotion.storeId.toString(), user);
 
-    // Delete all associated promo codes first
-    const deletedPromoCodes = await this.promoCodeModel.deleteMany({ promotionId: promotion._id }).exec();
-    console.log(`Deleted ${deletedPromoCodes.deletedCount} promo codes for promotion ${id}`);
+    // Soft delete all associated promo codes first
+    const updatedPromoCodes = await this.promoCodeModel.updateMany(
+      { promotionId: promotion._id },
+      { status: 'deleted' }
+    ).exec();
+    console.log(`Soft deleted ${updatedPromoCodes.modifiedCount} promo codes for promotion ${id}`);
 
     // Soft delete the promotion by changing status to 'deleted'
     await this.promotionModel.findByIdAndUpdate(id, { status: 'deleted' }).exec();

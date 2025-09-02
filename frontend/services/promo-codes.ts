@@ -5,7 +5,7 @@ export interface PromoCode {
   id: string
   code: string
   promotionId: string
-  status: 'unused' | 'used'
+  status: 'unused' | 'used' | 'deleted'
   userId?: string
   registeredAt?: string
   usedAt?: string
@@ -34,7 +34,7 @@ export interface UpdatePromoCodeRequest {
 }
 
 export interface ChangePromoCodeStatusRequest {
-  status: 'unused' | 'used'
+  status: 'unused' | 'used' | 'deleted'
   userId?: string
 }
 
@@ -55,7 +55,7 @@ export interface PromoCodeValidationResponse {
     status: string
   }
   message?: string
-  errorCode?: string
+  errorCode?: 'CODE_NOT_FOUND' | 'CODE_ALREADY_USED' | 'CODE_NOT_REGISTERED' | 'CODE_DELETED' | 'PROMOTION_NOT_FOUND' | 'PROMOTION_INACTIVE' | 'PROMOTION_EXPIRED' | 'PROMOTION_DELETED' | 'INVALID_STORE' | 'FORBIDDEN_STORE'
 }
 
 export interface RegisterPromoCodeRequest {
@@ -83,6 +83,7 @@ export interface PromoCodeStats {
   unused: number
   used: number
   registered: number
+  deleted: number
 }
 
 // Promo codes service functions

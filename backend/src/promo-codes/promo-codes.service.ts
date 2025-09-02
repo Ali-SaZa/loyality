@@ -75,7 +75,8 @@ export class PromoCodesService {
     const skip = (page - 1) * limit;
 
     // Build query - admin users can see all promo codes, store users only see their own
-    let query: any = {};
+    // Exclude deleted promo codes from all queries
+    let query: any = { status: { $ne: 'deleted' } };
 
     // Apply additional filters first (like promotionId)
     if (additionalFilters.promotionId) {
@@ -251,6 +252,15 @@ export class PromoCodesService {
       };
     }
 
+    // Check if code is deleted
+    if (promoCode.status === 'deleted') {
+      return {
+        isValid: false,
+        message: 'Promo code has been deleted',
+        errorCode: 'CODE_DELETED'
+      };
+    }
+
     // Check if code is already used
     if (promoCode.status === 'used') {
       return {
@@ -281,10 +291,32 @@ export class PromoCodesService {
 
     // Check if promotion is active
     if (promotion.status !== 'active') {
+      let errorMessage = 'Promotion is not active';
+      let errorCode = 'PROMOTION_INACTIVE';
+      
+      // Provide specific error messages for different promotion statuses
+      switch (promotion.status) {
+        case 'expired':
+          errorMessage = 'Promotion has expired';
+          errorCode = 'PROMOTION_EXPIRED';
+          break;
+        case 'deleted':
+          errorMessage = 'Promotion has been deleted';
+          errorCode = 'PROMOTION_DELETED';
+          break;
+        case 'inactive':
+          errorMessage = 'Promotion is currently inactive';
+          errorCode = 'PROMOTION_INACTIVE';
+          break;
+        default:
+          errorMessage = 'Promotion is not active';
+          errorCode = 'PROMOTION_INACTIVE';
+      }
+      
       return {
         isValid: false,
-        message: 'Promotion is not active',
-        errorCode: 'PROMOTION_INACTIVE'
+        message: errorMessage,
+        errorCode: errorCode
       };
     }
 
@@ -303,15 +335,6 @@ export class PromoCodesService {
         isValid: false,
         message: 'You can only validate promo codes for your own store',
         errorCode: 'FORBIDDEN_STORE'
-      };
-    }
-
-    // Check promotion status
-    if (promotion.status !== 'active') {
-      return {
-        isValid: false,
-        message: 'Promotion is not active',
-        errorCode: 'PROMOTION_INACTIVE'
       };
     }
 
@@ -428,6 +451,11 @@ export class PromoCodesService {
       throw new NotFoundException('Promo code not found');
     }
 
+    // Check if code is deleted
+    if (promoCode.status === 'deleted') {
+      throw new BadRequestException('Promo code has been deleted');
+    }
+
     // Check if code is already used
     if (promoCode.status === 'used') {
       throw new BadRequestException('Promo code has already been used');
@@ -450,13 +478,25 @@ export class PromoCodesService {
       throw new NotFoundException('Associated promotion not found');
     }
 
+    // Check promotion status with specific error messages
     if (promotion.status !== 'active') {
-      throw new BadRequestException('Promotion is not active');
-    }
-
-    // Check promotion status
-    if (promotion.status !== 'active') {
-      throw new BadRequestException('Promotion is not active');
+      let errorMessage = 'Promotion is not active';
+      
+      switch (promotion.status) {
+        case 'expired':
+          errorMessage = 'Promotion has expired';
+          break;
+        case 'deleted':
+          errorMessage = 'Promotion has been deleted';
+          break;
+        case 'inactive':
+          errorMessage = 'Promotion is currently inactive';
+          break;
+        default:
+          errorMessage = 'Promotion is not active';
+      }
+      
+      throw new BadRequestException(errorMessage);
     }
 
     // Register the code to the user (status remains 'unused')
@@ -480,7 +520,7 @@ export class PromoCodesService {
     }
 
     // Build query for user's promo codes
-    let query: any = { userId: targetUser._id };
+    let query: any = { userId: targetUser._id, status: { $ne: 'deleted' } };
 
     // If storeId is provided, filter by promotions belonging to that store
     if (storeId) {
@@ -504,8 +544,9 @@ export class PromoCodesService {
     unused: number;
     used: number;
     registered: number;
+    deleted: number;
   }> {
-    let query: any = {};
+    let query: any = { status: { $ne: 'deleted' } };
 
     // For store users, filter by their stores only
     if (user && user.role === 'store') {
@@ -523,13 +564,14 @@ export class PromoCodesService {
       query.promotionId = promotionId;
     }
 
-    const [total, unused, used, registered] = await Promise.all([
+    const [total, unused, used, registered, deleted] = await Promise.all([
       this.promoCodeModel.countDocuments(query).exec(),
       this.promoCodeModel.countDocuments({ ...query, status: 'unused', userId: { $exists: false } }).exec(),
       this.promoCodeModel.countDocuments({ ...query, status: 'used' }).exec(),
       this.promoCodeModel.countDocuments({ ...query, status: 'unused', userId: { $exists: true } }).exec(),
+      this.promoCodeModel.countDocuments({ ...query, status: 'deleted' }).exec(),
     ]);
 
-    return { total, unused, used, registered };
+    return { total, unused, used, registered, deleted };
   }
 }

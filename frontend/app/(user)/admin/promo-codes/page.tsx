@@ -7,15 +7,12 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 
 import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
 import EditIcon from '@/components/icons/EditIcon'
-import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllPromoCodes, getPromoCodeStats, deletePromoCode, PromoCode, PromoCodeStats } from '@/services/promo-codes'
 import { getAllPromotions, Promotion } from '@/services/promotions'
 import useLoading from '@/hooks/useLoading'
 import { getPromoCodeStatusConfig } from '@/types/enums'
-import PromoCodeFormModal from '@/components/modals/PromoCodeFormModal'
 import PromoCodeViewModal from '@/components/modals/PromoCodeViewModal'
-import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
 const AdminPromoCodes = () => {
   const { setLoading } = useLoading()
@@ -118,30 +115,6 @@ const AdminPromoCodes = () => {
       isOpen: true,
       promoCodeId
     })
-  }
-
-  const handleDeletePromoCode = (promoCode: PromoCode) => {
-    setDeleteConfirmModal({
-      isOpen: true,
-      promoCodeId: promoCode.id,
-      promoCodeCode: promoCode.code
-    })
-  }
-
-  const confirmDelete = async () => {
-    if (!deleteConfirmModal.promoCodeId) return
-
-    try {
-      setLoading(true)
-      await deletePromoCode(deleteConfirmModal.promoCodeId)
-      await fetchPromoCodes()
-      await fetchStats()
-      setDeleteConfirmModal({ isOpen: false, promoCodeId: undefined, promoCodeCode: '' })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در حذف کد تخفیف')
-    } finally {
-      setLoading(false)
-    }
   }
 
   const handleModalClose = () => {
@@ -281,15 +254,6 @@ const AdminPromoCodes = () => {
                       >
                         <EditIcon className="w-4 h-4" />
                       </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        onClick={() => handleDeletePromoCode(promoCode)}
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -300,27 +264,11 @@ const AdminPromoCodes = () => {
       </Card>
 
       {/* Modals */}
-      <PromoCodeFormModal
-        isOpen={promoCodeFormModal.isOpen}
-        promoCodeId={promoCodeFormModal.promoCodeId}
-        onClose={handleModalClose}
-        onSuccess={handleModalSuccess}
-        promotions={promotions}
-      />
-
       <PromoCodeViewModal
         isOpen={promoCodeViewModal.isOpen}
         promoCodeId={promoCodeViewModal.promoCodeId}
         onClose={handleModalClose}
         promotions={promotions}
-      />
-
-      <DeleteConfirmModal
-        isOpen={deleteConfirmModal.isOpen}
-        title="حذف کد تخفیف"
-        message={`آیا از حذف کد تخفیف "${deleteConfirmModal.promoCodeCode}" اطمینان دارید؟`}
-        onConfirm={confirmDelete}
-        onOpenChange={handleModalClose}
       />
     </div>
   )
