@@ -35,7 +35,8 @@ const AdminPromotions = () => {
   // Promotion form modal state
   const [promotionFormModal, setPromotionFormModal] = useState({
     isOpen: false,
-    promotionId: undefined as string | undefined
+    promotionId: undefined as string | undefined,
+    promotionTitle: ''
   })
 
   // Promotion view modal state
@@ -126,29 +127,28 @@ const AdminPromotions = () => {
     return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`
   }
 
-  const handleViewPromotion = (promotionId: string) => {
+  const handleViewPromotion = (promotionItem: PromotionWithCodeCount) => {
     setPromotionDetailsModal({
       isOpen: true,
-      promotionId
+      promotionId: promotionItem.id,
     })
   }
 
-  const handleEditPromotion = (promotionId: string) => {
+  const handleEditPromotion = (promotionItem: PromotionWithCodeCount) => {
     setPromotionFormModal({
       isOpen: true,
-      promotionId
+      promotionId: promotionItem.id,
+      promotionTitle: promotionItem.title
     })
   }
 
-  const handleDeletePromotion = async (promotionId: string) => {
-    // Find the promotion to get its title for the confirmation modal
-    const promotion = promotions.find(p => p.id === promotionId)
-    const promotionTitle = promotion ? promotion.title : ''
+  const handleDeletePromotion = async (promotionItem: PromotionWithCodeCount) => {
+    console.log('promotionItem', promotionItem)
     
     setDeleteConfirmModal({
       isOpen: true,
-      promotionId,
-      promotionTitle
+      promotionId: promotionItem.id,
+      promotionTitle: promotionItem.title
     })
   }
 
@@ -164,22 +164,20 @@ const AdminPromotions = () => {
     fetchStats() // Refresh stats
   }
 
-  const handlePromotionDetailsEdit = (promotionId: string) => {
+  const handlePromotionDetailsEdit = (promotionItem: PromotionWithCodeCount) => {
     setPromotionFormModal({
       isOpen: true,
-      promotionId
+      promotionId: promotionItem.id,
+      promotionTitle: promotionItem.title
     })
   }
 
-  const handlePromotionDetailsDelete = (promotionId: string) => {
-    // Find the promotion to get its title for the confirmation modal
-    const promotion = promotions.find(p => p.id === promotionId)
-    const promotionTitle = promotion ? promotion.title : ''
-    
+  const handlePromotionDetailsDelete = async (promotionItem: PromotionWithCodeCount) => {
+  
     setDeleteConfirmModal({
       isOpen: true,
-      promotionId,
-      promotionTitle
+      promotionId: promotionItem.id,
+      promotionTitle: promotionItem.title
     })
   }
 
@@ -366,7 +364,7 @@ const AdminPromotions = () => {
                         variant="light"
                         color="primary"
                         aria-label="مشاهده"
-                        onClick={() => handleViewPromotion(promotion.id)}
+                        onClick={() => handleViewPromotion(promotion as PromotionWithCodeCount)}
                       >
                         <EyeIcon className="size-4" />
                       </Button>
@@ -376,7 +374,7 @@ const AdminPromotions = () => {
                         variant="light"
                         color="primary"
                         aria-label="ویرایش"
-                        onClick={() => handleEditPromotion(promotion.id)}
+                        onClick={() => handleEditPromotion(promotion as PromotionWithCodeCount)}
                       >
                         <EditIcon className="size-4" />
                       </Button>
@@ -386,7 +384,7 @@ const AdminPromotions = () => {
                         variant="light"
                         color="danger"
                         aria-label="حذف"
-                        onClick={() => handleDeletePromotion(promotion.id)}
+                        onClick={() => handleDeletePromotion(promotion as PromotionWithCodeCount)}
                       >
                         <TrashIcon className="size-4" />
                       </Button>

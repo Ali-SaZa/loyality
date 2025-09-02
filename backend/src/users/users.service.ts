@@ -97,10 +97,12 @@ export class UsersService {
         .sort(this.buildSortQuery(request.sort))
         .skip(skip)
         .limit(limit)
-        .lean()
         .exec(),
       this.userModel.countDocuments(filterQuery).exec()
     ]);
+
+    // Convert Mongoose documents to plain objects with transforms applied
+    const plainData = data.map(doc => doc.toJSON());
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(total / limit);
@@ -108,7 +110,7 @@ export class UsersService {
     const hasPrevPage = page > 1;
 
     return {
-      data,
+      data: plainData,
       total,
       page,
       limit,

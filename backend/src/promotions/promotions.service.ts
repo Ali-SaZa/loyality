@@ -113,13 +113,15 @@ export class PromotionsService {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .lean()
         .exec(),
       this.promotionModel.countDocuments(filterQuery).exec()
     ]);
 
+    // Convert Mongoose documents to plain objects with transforms applied
+    const plainData = data.map(doc => doc.toJSON());
+
     // Get promo code counts for all promotions in this batch
-    const promotionIds = data.map(promotion => promotion._id);
+    const promotionIds = plainData.map(promotion => promotion.id);
     const promoCodeCounts = await this.promoCodeModel.aggregate([
       { $match: { promotionId: { $in: promotionIds } } },
       { $group: { _id: '$promotionId', count: { $sum: 1 } } }
@@ -132,9 +134,9 @@ export class PromotionsService {
     });
 
     // Add promo code count to each promotion
-    const dataWithCounts = data.map(promotion => ({
+    const dataWithCounts = plainData.map(promotion => ({
       ...promotion,
-      promoCodeCount: countMap.get(promotion._id.toString()) || 0
+      promoCodeCount: countMap.get(promotion.id) || 0
     }));
 
     // Calculate pagination metadata

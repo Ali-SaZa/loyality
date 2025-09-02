@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { globalTransformPlugin } from './global-transform.plugin';
 
 export interface StoreDocument extends Store, Document {
   _id: Types.ObjectId;
@@ -83,3 +84,6 @@ export class Store {
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);
+
+// Apply global transform plugin
+StoreSchema.plugin(globalTransformPlugin);

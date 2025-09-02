@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { globalTransformPlugin } from './global-transform.plugin';
 
 /**
  * Interface representing a PromoCode document in MongoDB
@@ -58,6 +59,9 @@ export class PromoCode {
 }
 
 export const PromoCodeSchema = SchemaFactory.createForClass(PromoCode);
+
+// Apply global transform plugin
+PromoCodeSchema.plugin(globalTransformPlugin);
 
 // Indexes for fast lookup
 PromoCodeSchema.index({ code: 1 }, { unique: true }); // Unique code search

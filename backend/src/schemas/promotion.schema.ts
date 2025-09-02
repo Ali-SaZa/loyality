@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { globalTransformPlugin } from './global-transform.plugin';
 
 /**
  * Interface representing a Promotion document in MongoDB
@@ -59,6 +60,9 @@ export class Promotion {
 }
 
 export const PromotionSchema = SchemaFactory.createForClass(Promotion);
+
+// Apply global transform plugin
+PromotionSchema.plugin(globalTransformPlugin);
 
 // Indexes for better query performance
 PromotionSchema.index({ storeId: 1, status: 1 });
