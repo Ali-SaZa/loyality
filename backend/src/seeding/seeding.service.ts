@@ -73,16 +73,10 @@ export class SeedingService {
     return this.promoCodesSeeder.seed();
   }
 
-
-
   private async seedUsers(stores: any[]) {
     // Users are created without stores now
     return this.usersSeeder.seed();
   }
-
-
-
-
 
   private async seedOTPs(users: any[]) {
     this.otpsSeeder.setUsers(users);
@@ -123,16 +117,10 @@ export class SeedingService {
     return this.promoCodesSeeder.seed();
   }
 
-
-
   async seedUsersOnly(stores: any[]): Promise<any[]> {
     // Users are created without stores now
     return this.usersSeeder.seed();
   }
-
-
-
-
 
   async seedOTPsOnly(users: any[]): Promise<any[]> {
     this.otpsSeeder.setUsers(users);

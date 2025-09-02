@@ -23,17 +23,7 @@ export enum StoreStatus {
 }
 
 export enum PromotionType {
-  COUPON = 'coupon',
-  CASHBACK = 'cashback',
-  REFERRAL = 'referral',
-  CONDITIONAL = 'conditional',
-  PERCENTAGE = 'percentage',
-  FIXED = 'fixed',
-  FLASH_SALE = 'flashSale',
-  FREE_SHIPPING = 'freeShipping',
-  LOYALTY_POINTS = 'loyaltyPoints',
-  BEHAVIORAL = 'behavioral',
-  STACKABLE = 'stackable'
+  POINTS_BASED = 'pointsBased'
 }
 
 export enum PromotionStatus {
@@ -158,65 +148,15 @@ export const STORE_STATUS_CONFIG = {
 }
 
 export const PROMOTION_TYPE_CONFIG = {
-  [PromotionType.COUPON]: {
-    text: 'کوپن',
+  [PromotionType.POINTS_BASED]: {
+    text: 'امتیازی',
     color: 'primary' as const
-  },
-  [PromotionType.CASHBACK]: {
-    text: 'کش بک',
-    color: 'success' as const
-  },
-  [PromotionType.REFERRAL]: {
-    text: 'معرفی دوست',
-    color: 'secondary' as const
-  },
-  [PromotionType.CONDITIONAL]: {
-    text: 'شرطی',
-    color: 'warning' as const
-  },
-  [PromotionType.PERCENTAGE]: {
-    text: 'درصدی',
-    color: 'primary' as const
-  },
-  [PromotionType.FIXED]: {
-    text: 'مبلغ ثابت',
-    color: 'success' as const
-  },
-  [PromotionType.FLASH_SALE]: {
-    text: 'فروش فلش',
-    color: 'danger' as const
-  },
-  [PromotionType.FREE_SHIPPING]: {
-    text: 'ارسال رایگان',
-    color: 'secondary' as const
-  },
-  [PromotionType.LOYALTY_POINTS]: {
-    text: 'امتیاز وفاداری',
-    color: 'primary' as const
-  },
-  [PromotionType.BEHAVIORAL]: {
-    text: 'رفتاری',
-    color: 'warning' as const
-  },
-  [PromotionType.STACKABLE]: {
-    text: 'قابل ترکیب',
-    color: 'success' as const
   }
 }
 
 // Full promotion type options for select dropdowns
 export const PROMOTION_TYPE_OPTIONS = [
-  { code: PromotionType.COUPON, name: 'کوپن / کد تخفیف' },
-  { code: PromotionType.CASHBACK, name: 'کش بک' },
-  { code: PromotionType.REFERRAL, name: 'معرفی دوست' },
-  { code: PromotionType.CONDITIONAL, name: 'شرطی / پلکانی' },
-  { code: PromotionType.PERCENTAGE, name: 'درصدی' },
-  { code: PromotionType.FIXED, name: 'مبلغ ثابت' },
-  { code: PromotionType.FLASH_SALE, name: 'فروش فلش' },
-  { code: PromotionType.FREE_SHIPPING, name: 'ارسال رایگان' },
-  { code: PromotionType.LOYALTY_POINTS, name: 'امتیاز وفاداری' },
-  { code: PromotionType.BEHAVIORAL, name: 'رفتاری / رویداد محور' },
-  { code: PromotionType.STACKABLE, name: 'قابل ترکیب' }
+  { code: PromotionType.POINTS_BASED, name: 'تبلیغ امتیازی' }
 ]
 
 export const PROMOTION_STATUS_CONFIG = {
@@ -357,7 +297,7 @@ export const getStoreStatusConfig = (status: string) => {
 }
 
 export const getPromotionTypeConfig = (type: string) => {
-  return PROMOTION_TYPE_CONFIG[type as PromotionType] || PROMOTION_TYPE_CONFIG[PromotionType.COUPON]
+  return PROMOTION_TYPE_CONFIG[type as PromotionType] || PROMOTION_TYPE_CONFIG[PromotionType.POINTS_BASED]
 }
 
 export const getPromotionStatusConfig = (status: string) => {

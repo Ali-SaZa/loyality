@@ -31,7 +31,7 @@ export class PromotionsController {
   @Post()
   @PromotionAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new promotion (Store Owner/Admin only)' })
+  @ApiOperation({ summary: 'Create a new points-based promotion (Store Owner/Admin only)' })
   @ApiResponse({ 
     status: 201, 
     description: 'Promotion created successfully',
@@ -40,7 +40,6 @@ export class PromotionsController {
   @ApiResponse({ status: 400, description: 'Invalid promotion data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Store access required' })
-  @ApiResponse({ status: 409, description: 'Promo code already exists' })
   async create(
     @Body() createPromotionDto: CreatePromotionDto,
     @CurrentUser() user: any
@@ -61,7 +60,6 @@ export class PromotionsController {
   @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
   @ApiQuery({ name: 'search', required: false, description: 'Search term' })
   @ApiQuery({ name: 'storeId', required: false, description: 'Filter by store ID' })
-  @ApiQuery({ name: 'type', required: false, description: 'Filter by promotion type' })
   @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
   async findAll(
     @Query() query: any,
@@ -103,21 +101,6 @@ export class PromotionsController {
     deleted: number;
   }> {
     return this.promotionsService.getPromotionStats(storeId);
-  }
-
-  @Get('code/:code')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promotion by promo code' })
-  @ApiParam({ name: 'code', description: 'Promo code' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promotion found',
-    type: PromotionResponseDto 
-  })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findByCode(@Param('code') code: string): Promise<PromotionResponseDto | null> {
-    return this.promotionsService.findByCode(code);
   }
 
   @Get('store/:storeId')

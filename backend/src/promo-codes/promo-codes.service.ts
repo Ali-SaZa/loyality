@@ -102,7 +102,7 @@ export class PromoCodesService {
     const [promoCodes, total] = await Promise.all([
       this.promoCodeModel
         .find(query)
-        .populate('promotionId', 'title type')
+        .populate('promotionId', 'title price points status')
         .sort(sortObj)
         .skip(skip)
         .limit(limit)
@@ -296,30 +296,12 @@ export class PromoCodesService {
       };
     }
 
-    // Check promotion date validity
-    const now = new Date();
-    if (promotion.startDate && promotion.startDate > now) {
+    // Check promotion status
+    if (promotion.status !== 'active') {
       return {
         isValid: false,
-        message: 'Promotion has not started yet',
-        errorCode: 'PROMOTION_NOT_STARTED'
-      };
-    }
-
-    if (promotion.endDate && promotion.endDate < now) {
-      return {
-        isValid: false,
-        message: 'Promotion has expired',
-        errorCode: 'PROMOTION_EXPIRED'
-      };
-    }
-
-    // Check usage limits
-    if (promotion.usageLimit && (promotion.currentUsageCount || 0) >= promotion.usageLimit) {
-      return {
-        isValid: false,
-        message: 'Promotion usage limit has been reached',
-        errorCode: 'USAGE_LIMIT_REACHED'
+        message: 'Promotion is not active',
+        errorCode: 'PROMOTION_INACTIVE'
       };
     }
 
@@ -331,13 +313,8 @@ export class PromoCodesService {
         id: promotion._id.toString(),
         title: promotion.title,
         description: promotion.description,
-        type: promotion.type,
-        value: promotion.value,
-        minPurchaseAmount: promotion.minPurchaseAmount,
-        maxDiscountAmount: promotion.maxDiscountAmount,
-        termsAndConditions: promotion.termsAndConditions,
-        startDate: promotion.startDate,
-        endDate: promotion.endDate,
+        price: promotion.price,
+        points: promotion.points,
         status: promotion.status,
       },
       message: 'Promo code is valid'
@@ -467,14 +444,9 @@ export class PromoCodesService {
       throw new BadRequestException('Promotion is not active');
     }
 
-    // Check promotion date validity
-    const now = new Date();
-    if (promotion.startDate && promotion.startDate > now) {
-      throw new BadRequestException('Promotion has not started yet');
-    }
-
-    if (promotion.endDate && promotion.endDate < now) {
-      throw new BadRequestException('Promotion has expired');
+    // Check promotion status
+    if (promotion.status !== 'active') {
+      throw new BadRequestException('Promotion is not active');
     }
 
     // Register the code to the user (status remains 'unused')
@@ -510,7 +482,7 @@ export class PromoCodesService {
     // Get promo codes with promotion details
     const promoCodes = await this.promoCodeModel
       .find(query)
-      .populate('promotionId', 'title type value minPurchaseAmount maxDiscountAmount startDate endDate status')
+      .populate('promotionId', 'title price points status')
       .sort({ createdAt: -1 })
       .exec();
 

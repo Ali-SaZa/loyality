@@ -4,63 +4,28 @@ import axiosInstance, { handleApiError } from '@/config/axios'
 export interface Promotion {
   id: string
   storeId: string
-  type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'
   title: string
   description?: string
-  value?: number
-  minPurchaseAmount?: number
-  maxDiscountAmount?: number
-  code?: string
-  points?: number
-  startDate?: string
-  endDate?: string
+  price: number
+  points: number
   status: 'active' | 'inactive' | 'deleted' | 'expired'
-  usageLimit?: number
-  applicableEvents?: string[]
-  currentUsageCount?: number
-  maxUsagePerCustomer?: number
-  isStackable?: boolean
-  stackableWith?: string[]
-  termsAndConditions?: string
-  requiresApproval?: boolean
   createdAt: string
   updatedAt: string
 }
 
 export interface CreatePromotionRequest {
   storeId: string
-  type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'
   title: string
   description?: string
-  value?: number
-  minPurchaseAmount?: number
-  maxDiscountAmount?: number
-  code?: string
-  points?: number
-  startDate?: string
-  endDate?: string
-  usageLimit?: number
-  applicableEvents?: string[]
-  maxUsagePerCustomer?: number
-  isStackable?: boolean
-  stackableWith?: string[]
-  termsAndConditions?: string
-  requiresApproval?: boolean
+  price: number
+  points: number
 }
 
 export interface UpdatePromotionRequest {
   title?: string
   description?: string
-  value?: number
-  minPurchaseAmount?: number
-  maxDiscountAmount?: number
-  usageLimit?: number
-  maxUsagePerCustomer?: number
-  isStackable?: boolean
-  stackableWith?: string[]
-  termsAndConditions?: string
-  requiresApproval?: boolean
-  applicableEvents?: string[]
+  price?: number
+  points?: number
 }
 
 export interface ChangePromotionStatusRequest {
@@ -192,30 +157,14 @@ export const promotionsService = {
     page?: number
     limit?: number
     status?: string
-    type?: string
   }): Promise<PromotionListResponse> {
     try {
       const queryParams = new URLSearchParams()
       if (params?.page) queryParams.append('page', params.page.toString())
       if (params?.limit) queryParams.append('limit', params.limit.toString())
       if (params?.status) queryParams.append('status', params.status)
-      if (params?.type) queryParams.append('type', params.type)
 
-      const response = await axiosInstance.get<PromotionListResponse>(`/stores/${storeId}/promotions?${queryParams.toString()}`)
-      return response.data
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      throw new Error(errorMessage)
-    }
-  },
-
-  // Get promotion filter options
-  async getPromotionFilterOptions(): Promise<{
-    types: string[]
-    statuses: string[]
-  }> {
-    try {
-      const response = await axiosInstance.get('/promotions/filter-options')
+      const response = await axiosInstance.get<PromotionListResponse>(`/promotions/store/${storeId}?${queryParams.toString()}`)
       return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -233,4 +182,3 @@ export const changePromotionStatus = promotionsService.changePromotionStatus
 export const deletePromotion = promotionsService.deletePromotion
 export const getPromotionStats = promotionsService.getPromotionStats
 export const getPromotionsByStore = promotionsService.getPromotionsByStore
-export const getPromotionFilterOptions = promotionsService.getPromotionFilterOptions

@@ -153,13 +153,8 @@ export class PromoCodeValidationResponseDto {
     id: string;
     title: string;
     description?: string;
-    type: string;
-    value?: number;
-    minPurchaseAmount?: number;
-    maxDiscountAmount?: number;
-    termsAndConditions?: string;
-    startDate?: Date;
-    endDate?: Date;
+    price: number;
+    points: number;
     status: string;
   };
 

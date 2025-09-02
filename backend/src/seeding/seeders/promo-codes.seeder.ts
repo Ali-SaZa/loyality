@@ -41,17 +41,16 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
     const now = new Date();
     const oneMonthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    // Find coupon promotions
-    const couponPromotions = this.promotions.filter(promo => promo.type === 'coupon');
+    // Get customer users
     const customerUsers = this.users.filter(user => user.role === 'customer');
 
     const promoCodes: any[] = [];
 
-    // Generate promo codes for coupon promotions
-    couponPromotions.forEach((promotion, index) => {
-      // Generate 5 promo codes per coupon promotion
-      for (let i = 0; i < 5; i++) {
-        const code = `${promotion.code}${String(i + 1).padStart(2, '0')}`;
+    // Generate promo codes for points-based promotions
+    this.promotions.forEach((promotion, index) => {
+      // Generate 3 promo codes per promotion
+      for (let i = 0; i < 3; i++) {
+        const code = `POINTS${String(index + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
         const isRegistered = Math.random() > 0.3; // 70% chance of being registered
         const isUsed = isRegistered && Math.random() > 0.5; // 50% chance of being used if registered
 
@@ -78,45 +77,7 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
           userId,
           registeredAt,
           usedAt,
-          notes: `Generated promo code for ${promotion.title}`
-        });
-      }
-    });
-
-    // Generate additional standalone promo codes for other promotion types
-    const otherPromotions = this.promotions.filter(promo => promo.type !== 'coupon');
-    
-    otherPromotions.forEach((promotion, index) => {
-      // Generate 3 promo codes per other promotion type
-      for (let i = 0; i < 3; i++) {
-        const code = `${promotion.type.toUpperCase().substring(0, 4)}${String(index + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
-        const isRegistered = Math.random() > 0.4; // 60% chance of being registered
-        const isUsed = isRegistered && Math.random() > 0.6; // 40% chance of being used if registered
-
-        let userId: Types.ObjectId | undefined = undefined;
-        let registeredAt: Date | undefined = undefined;
-        let usedAt: Date | undefined = undefined;
-        let status = 'unused';
-
-        if (isRegistered && customerUsers.length > 0) {
-          userId = customerUsers[Math.floor(Math.random() * customerUsers.length)]._id;
-          registeredAt = new Date(now.getTime() - Math.random() * 10 * 24 * 60 * 60 * 1000); // Random date within last 10 days
-          status = 'unused';
-
-          if (isUsed && registeredAt) {
-            usedAt = new Date(registeredAt.getTime() + Math.random() * 5 * 24 * 60 * 60 * 1000); // Used within 5 days of registration
-            status = 'used';
-          }
-        }
-
-        promoCodes.push({
-          code,
-          promotionId: promotion._id,
-          status,
-          userId,
-          registeredAt,
-          usedAt,
-          notes: `Generated promo code for ${promotion.title}`
+          notes: `Generated promo code for ${promotion.title} - Buy ${promotion.price.toLocaleString()} Toman, Get ${promotion.points} Points`
         });
       }
     });

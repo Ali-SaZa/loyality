@@ -12,8 +12,7 @@ import {
 } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
-  StoreNotFoundException,
-  CustomConflictException 
+  StoreNotFoundException
 } from '../common/errors';
 
 @Injectable()
@@ -27,108 +26,14 @@ export class PromotionsService {
     return {
       id: promotion._id.toString(),
       storeId: promotion.storeId.toString(),
-      type: promotion.type,
       title: promotion.title,
       description: promotion.description,
-      value: promotion.value,
-      minPurchaseAmount: promotion.minPurchaseAmount,
-      maxDiscountAmount: promotion.maxDiscountAmount,
-      code: promotion.code,
+      price: promotion.price,
       points: promotion.points,
-      startDate: promotion.startDate,
-      endDate: promotion.endDate,
       status: promotion.status,
-      usageLimit: promotion.usageLimit,
-      currentUsageCount: promotion.currentUsageCount,
-      maxUsagePerCustomer: promotion.maxUsagePerCustomer,
-      isStackable: promotion.isStackable,
-      stackableWith: promotion.stackableWith,
-      termsAndConditions: promotion.termsAndConditions,
-      requiresApproval: promotion.requiresApproval,
-      applicableEvents: promotion.applicableEvents,
       createdAt: promotion.createdAt,
       updatedAt: promotion.updatedAt,
     };
-  }
-
-  private validatePromotionType(dto: CreatePromotionDto): void {
-    switch (dto.type) {
-      case 'coupon':
-        if (!dto.code) {
-          throw new BadRequestException('Code is required for coupon promotions');
-        }
-        if (!dto.value) {
-          throw new BadRequestException('Value is required for coupon promotions');
-        }
-        break;
-
-      case 'loyaltyPoints':
-        if (!dto.points) {
-          throw new BadRequestException('Points are required for loyalty point promotions');
-        }
-        break;
-
-      case 'percentage':
-      case 'fixed':
-      case 'cashback':
-      case 'referral':
-        if (!dto.value) {
-          throw new BadRequestException('Value is required for this promotion type');
-        }
-        break;
-
-      case 'conditional':
-        if (!dto.value) {
-          throw new BadRequestException('Value is required for conditional promotions');
-        }
-        if (!dto.minPurchaseAmount) {
-          throw new BadRequestException('Minimum purchase amount is required for conditional promotions');
-        }
-        break;
-
-      case 'flashSale':
-        if (!dto.value) {
-          throw new BadRequestException('Value is required for flash sale promotions');
-        }
-        if (!dto.startDate) {
-          throw new BadRequestException('Start date is required for flash sale promotions');
-        }
-        if (!dto.endDate) {
-          throw new BadRequestException('End date is required for flash sale promotions');
-        }
-        if (new Date(dto.startDate) >= new Date(dto.endDate)) {
-          throw new BadRequestException('End date must be after start date');
-        }
-        break;
-
-      case 'behavioral':
-        if (!dto.value) {
-          throw new BadRequestException('Value is required for behavioral promotions');
-        }
-        if (!dto.applicableEvents || dto.applicableEvents.length === 0) {
-          throw new BadRequestException('Applicable events are required for behavioral promotions');
-        }
-        break;
-
-      case 'stackable':
-        if (!dto.value) {
-          throw new BadRequestException('Value is required for stackable promotions');
-        }
-        if (dto.isStackable !== true) {
-          throw new BadRequestException('Stackable promotions must have isStackable set to true');
-        }
-        if (!dto.stackableWith || dto.stackableWith.length === 0) {
-          throw new BadRequestException('Stackable promotions must specify which types they can stack with');
-        }
-        break;
-
-      case 'freeShipping':
-        // Free shipping doesn't require value, but can have minPurchaseAmount
-        break;
-
-      default:
-        throw new BadRequestException(`Invalid promotion type: ${dto.type}`);
-    }
   }
 
   private async validateBusinessRules(dto: CreatePromotionDto): Promise<void> {
@@ -138,49 +43,17 @@ export class PromotionsService {
       throw new StoreNotFoundException();
     }
 
-    // Validate promo code uniqueness for coupon type
-    if (dto.type === 'coupon' && dto.code) {
-      const existingPromotion = await this.promotionModel.findOne({ 
-        code: dto.code, 
-        status: { $ne: 'deleted' } 
-      }).exec();
-      
-      if (existingPromotion) {
-        throw new CustomConflictException('Promo code already exists');
-      }
+    // Validate price and points are positive
+    if (dto.price <= 0) {
+      throw new BadRequestException('Price must be greater than 0');
     }
 
-    // Validate date logic
-    if (dto.startDate && dto.endDate) {
-      if (new Date(dto.startDate) >= new Date(dto.endDate)) {
-        throw new BadRequestException('End date must be after start date');
-      }
-    }
-
-    // Validate percentage values
-    if (dto.type === 'percentage' && dto.value && dto.value > 100) {
-      throw new BadRequestException('Percentage value cannot exceed 100%');
-    }
-
-    // Validate stackable logic
-    if (dto.isStackable && dto.stackableWith) {
-      const validTypes = [
-        'coupon', 'cashback', 'referral', 'conditional', 'percentage', 
-        'fixed', 'flashSale', 'freeShipping', 'loyaltyPoints', 'behavioral', 'stackable'
-      ];
-      
-      for (const type of dto.stackableWith) {
-        if (!validTypes.includes(type)) {
-          throw new BadRequestException(`Invalid stackable type: ${type}`);
-        }
-      }
+    if (dto.points <= 0) {
+      throw new BadRequestException('Points must be greater than 0');
     }
   }
 
   async create(createPromotionDto: CreatePromotionDto, user: any): Promise<PromotionResponseDto> {
-    // Validate type-specific requirements
-    this.validatePromotionType(createPromotionDto);
-    
     // Validate business rules
     await this.validateBusinessRules(createPromotionDto);
 
@@ -190,9 +63,7 @@ export class PromotionsService {
     // Set default values
     const promotionData = {
       ...createPromotionDto,
-      currentUsageCount: 0,
       status: 'active',
-      isStackable: createPromotionDto.isStackable || false,
     };
 
     const promotion = new this.promotionModel(promotionData);
@@ -227,6 +98,11 @@ export class PromotionsService {
 
     // Build filter query - simplified to only exclude deleted promotions
     let filterQuery: any = { status: { $ne: 'deleted' } };
+
+    // Add store filter if provided
+    if (additionalFilters.storeId) {
+      filterQuery.storeId = additionalFilters.storeId;
+    }
 
     // Execute queries in parallel for better performance
     const [data, total] = await Promise.all([
@@ -283,16 +159,17 @@ export class PromotionsService {
     // Validate access permissions
     await this.validateStoreAccess(promotion.storeId.toString(), user);
 
-    // Prevent editing of immutable fields - these are not in UpdatePromotionDto anyway
-    const allowedUpdates = { ...updatePromotionDto };
-    
     // Additional validation for certain fields
-    if (allowedUpdates.value && promotion.type === 'percentage' && allowedUpdates.value > 100) {
-      throw new BadRequestException('Percentage value cannot exceed 100%');
+    if (updatePromotionDto.price !== undefined && updatePromotionDto.price <= 0) {
+      throw new BadRequestException('Price must be greater than 0');
+    }
+
+    if (updatePromotionDto.points !== undefined && updatePromotionDto.points <= 0) {
+      throw new BadRequestException('Points must be greater than 0');
     }
 
     const updatedPromotion = await this.promotionModel
-      .findByIdAndUpdate(id, allowedUpdates, { new: true })
+      .findByIdAndUpdate(id, updatePromotionDto, { new: true })
       .exec();
     
     if (!updatedPromotion) {
@@ -336,15 +213,6 @@ export class PromotionsService {
 
     // Soft delete by changing status to 'deleted'
     await this.promotionModel.findByIdAndUpdate(id, { status: 'deleted' }).exec();
-  }
-
-  async findByCode(code: string): Promise<PromotionResponseDto | null> {
-    const promotion = await this.promotionModel.findOne({ 
-      code, 
-      status: 'active' 
-    }).exec();
-    
-    return promotion ? this.transformPromotionToResponse(promotion) : null;
   }
 
   async findByStore(storeId: string, status?: string): Promise<PromotionResponseDto[]> {

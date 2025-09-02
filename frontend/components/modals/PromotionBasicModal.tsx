@@ -5,12 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
 import { BasicPromotionValidation } from '@/validation/promotion'
-import { PromotionType, PROMOTION_TYPE_OPTIONS } from '@/types/enums'
 import { Store } from '@/services/stores'
 
 type BasicPromotionData = {
   storeId: string
-  type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'
   title: string
   description?: string
 }
@@ -27,7 +25,6 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
     resolver: zodResolver(BasicPromotionValidation),
     defaultValues: {
       storeId: '',
-      type: PromotionType.COUPON,
       title: '',
       description: ''
     }
@@ -55,8 +52,6 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
     name: store.name
   }))
 
-  const typeOptions = PROMOTION_TYPE_OPTIONS
-
   return (
     <Modal
       isOpen={isOpen}
@@ -64,7 +59,7 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
       onClose={handleClose}
       onAccept={handleAccept}
       onReject={handleClose}
-      title="اطلاعات اولیه تبلیغ"
+      title="اطلاعات اولیه تبلیغ امتیازی"
       acceptBtnText="مرحله بعد"
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
@@ -73,24 +68,13 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
       <div className="space-y-6">
         <FormProvider {...methods}>
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <Input
                 generalType="select"
                 name="storeId"
                 label="فروشگاه"
                 placeholder="فروشگاه را انتخاب کنید"
                 selectOptions={storeOptions}
-                selectKey="code"
-                selectValue="name"
-                required={true}
-              />
-
-              <Input
-                generalType="select"
-                name="type"
-                label="نوع تبلیغ"
-                placeholder="نوع تبلیغ را انتخاب کنید"
-                selectOptions={typeOptions}
                 selectKey="code"
                 selectValue="name"
                 required={true}
@@ -114,6 +98,14 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
                 placeholder="توضیحات تبلیغ (اختیاری)"
                 inputType="text"
               />
+            </div>
+
+            {/* Info about points-based promotions */}
+            <div className="p-4 bg-info-50 border border-info-200 rounded-lg">
+              <p className="text-info text-sm">
+                <strong>تبلیغ امتیازی:</strong> در این نوع تبلیغ، مشتریان با خرید مبلغ مشخصی، 
+                امتیاز دریافت می‌کنند که می‌توانند در خریدهای بعدی استفاده کنند.
+              </p>
             </div>
           </div>
         </FormProvider>

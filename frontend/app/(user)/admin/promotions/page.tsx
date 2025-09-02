@@ -14,8 +14,6 @@ import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
-import PromotionBasicModal from '@/components/modals/PromotionBasicModal'
-import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
 import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
@@ -37,16 +35,6 @@ const AdminPromotions = () => {
   const [promotionFormModal, setPromotionFormModal] = useState({
     isOpen: false,
     promotionId: undefined as string | undefined
-  })
-
-  // Two-step promotion creation state
-  const [basicModal, setBasicModal] = useState({
-    isOpen: false
-  })
-
-  const [detailsModal, setDetailsModal] = useState({
-    isOpen: false,
-    basicData: null as { storeId: string; type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'; title: string; description?: string } | null
   })
 
   // Promotion view modal state
@@ -126,16 +114,7 @@ const AdminPromotions = () => {
   }
 
   const formatValue = (promotion: Promotion) => {
-    if (promotion.type === 'percentage') {
-      return `${promotion.value}%`
-    } else if (promotion.type === 'fixed' || promotion.type === 'conditional') {
-      return `${promotion.value?.toLocaleString()} تومان`
-    } else if (promotion.type === 'loyaltyPoints') {
-      return `${promotion.points} امتیاز`
-    } else if (promotion.type === 'coupon') {
-      return promotion.code || 'بدون کد'
-    }
-    return promotion.value ? `${promotion.value}` : '-'
+    return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`
   }
 
   const handleViewPromotion = (promotionId: string) => {
@@ -165,24 +144,13 @@ const AdminPromotions = () => {
   }
 
   const handleAddPromotion = () => {
-    setBasicModal({
-      isOpen: true
-    })
-  }
-
-  const handleBasicModalNext = (data: { storeId: string; type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable'; title: string; description?: string }) => {
-    setBasicModal({ isOpen: false })
-    setDetailsModal({
+    setPromotionFormModal({
       isOpen: true,
-      basicData: data
+      promotionId: undefined
     })
   }
 
   const handleDetailsModalSuccess = () => {
-    setDetailsModal({
-      isOpen: false,
-      basicData: null
-    })
     fetchPromotions() // Refresh the list
     fetchStats() // Refresh stats
   }
@@ -328,7 +296,6 @@ const AdminPromotions = () => {
           <Table aria-label="لیست تبلیغات">
             <TableHeader>
               <TableColumn>عنوان تبلیغ</TableColumn>
-              <TableColumn>نوع</TableColumn>
               <TableColumn>فروشگاه</TableColumn>
               <TableColumn>مقدار</TableColumn>
               <TableColumn>وضعیت</TableColumn>
@@ -353,15 +320,6 @@ const AdminPromotions = () => {
                         <p className="text-xs text-text-light">ID: {promotion.id}</p>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      color={getTypeColor(promotion.type)}
-                      size="sm"
-                      variant="flat"
-                    >
-                      {getTypeText(promotion.type)}
-                    </Chip>
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">{getStoreName(promotion.storeId)}</span>
@@ -419,21 +377,6 @@ const AdminPromotions = () => {
           </Table>
         </CardBody>
       </Card>
-
-      {/* Two-Step Promotion Creation Modals */}
-      <PromotionBasicModal
-        isOpen={basicModal.isOpen}
-        onOpenChange={(isOpen) => setBasicModal({ isOpen })}
-        onNext={handleBasicModalNext}
-        stores={stores}
-      />
-
-      <PromotionDetailsModal
-        isOpen={detailsModal.isOpen}
-        onOpenChange={(isOpen) => setDetailsModal(prev => ({ ...prev, isOpen }))}
-        onSuccess={handleDetailsModalSuccess}
-        basicData={detailsModal.basicData!}
-      />
 
       {/* Promotion Form Modal (for editing) */}
       <PromotionFormModal
