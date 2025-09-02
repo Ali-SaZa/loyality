@@ -141,7 +141,8 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
               label="تبلیغ"
               selectOptions={promotions.map(promotion => ({
                 code: promotion.id,
-                name: promotion.title
+                name: promotion.status === 'deleted' ? `${promotion.title} (حذف شده)` : promotion.title,
+                disabled: promotion.status === 'deleted' // Disable deleted promotions
               }))}
               placeholder="انتخاب تبلیغ"
               description="تبلیغی که این کد به آن تعلق دارد"

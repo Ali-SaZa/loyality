@@ -98,8 +98,8 @@ export class PromotionsService {
       }
     }
 
-    // Build filter query - simplified to only exclude deleted promotions
-    let filterQuery: any = { status: { $ne: 'deleted' } };
+    // Build filter query - include all promotions including deleted ones
+    let filterQuery: any = {};
 
     // Add store filter if provided
     if (additionalFilters.storeId) {
@@ -225,6 +225,12 @@ export class PromotionsService {
     // Validate status transition
     this.validateStatusTransition(promotion.status, changeStatusDto.status);
 
+    // If status is being changed to 'deleted', delete all associated promo codes
+    if (changeStatusDto.status === 'deleted') {
+      const deletedPromoCodes = await this.promoCodeModel.deleteMany({ promotionId: promotion._id }).exec();
+      console.log(`Deleted ${deletedPromoCodes.deletedCount} promo codes for promotion ${id} due to status change to deleted`);
+    }
+
     const updatedPromotion = await this.promotionModel
       .findByIdAndUpdate(id, { status: changeStatusDto.status }, { new: true })
       .exec();
@@ -245,7 +251,11 @@ export class PromotionsService {
     // Validate access permissions
     await this.validateStoreAccess(promotion.storeId.toString(), user);
 
-    // Soft delete by changing status to 'deleted'
+    // Delete all associated promo codes first
+    const deletedPromoCodes = await this.promoCodeModel.deleteMany({ promotionId: promotion._id }).exec();
+    console.log(`Deleted ${deletedPromoCodes.deletedCount} promo codes for promotion ${id}`);
+
+    // Soft delete the promotion by changing status to 'deleted'
     await this.promotionModel.findByIdAndUpdate(id, { status: 'deleted' }).exec();
   }
 
@@ -253,9 +263,8 @@ export class PromotionsService {
     const filter: any = { storeId };
     if (status) {
       filter.status = status;
-    } else {
-      filter.status = { $ne: 'deleted' };
     }
+    // Include all promotions including deleted ones by default
 
     const promotions = await this.promotionModel.find(filter).exec();
     return promotions.map(promotion => this.transformPromotionToResponse(promotion));

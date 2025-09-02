@@ -324,7 +324,10 @@ const AdminPromotions = () => {
             </TableHeader>
             <TableBody>
               {promotions.map((promotion) => (
-                <TableRow key={promotion.id}>
+                <TableRow 
+                  key={promotion.id}
+                  className={promotion.status === 'deleted' ? 'opacity-60 bg-gray-50' : ''}
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
@@ -333,7 +336,9 @@ const AdminPromotions = () => {
                         </span>
                       </div>
                       <div>
-                        <span className="font-medium">{promotion.title}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{promotion.title}</span>
+                        </div>
                         {promotion.description && (
                           <p className="text-xs text-text-light">{promotion.description}</p>
                         )}
@@ -372,26 +377,29 @@ const AdminPromotions = () => {
                       >
                         <EyeIcon className="size-4" />
                       </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="primary"
-                        aria-label="ویرایش"
-                        onClick={() => handleEditPromotion(promotion as PromotionWithCodeCount)}
-                      >
-                        <EditIcon className="size-4" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        aria-label="حذف"
-                        onClick={() => handleDeletePromotion(promotion as PromotionWithCodeCount)}
-                      >
-                        <TrashIcon className="size-4" />
-                      </Button>
+                    
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            color="primary"
+                            aria-label="ویرایش"
+                            disabled={promotion.status === 'deleted'}
+                            onClick={() => handleEditPromotion(promotion as PromotionWithCodeCount)}
+                          >
+                            <EditIcon className="size-4" />
+                          </Button>
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            color="danger"
+                            aria-label="حذف"
+                            disabled={promotion.status === 'deleted'}
+                            onClick={() => handleDeletePromotion(promotion as PromotionWithCodeCount)}
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                     </div>
                   </TableCell>
                 </TableRow>

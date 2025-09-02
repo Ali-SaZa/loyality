@@ -136,26 +136,37 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
                   <PromotionIcon className="size-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-text-dark">{promotion.title}</h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-text-dark">{promotion.title}</h2>
+                    {promotion.status === 'deleted' && (
+                      <Chip size="sm" color="danger" variant="flat">
+                        حذف شده
+                      </Chip>
+                    )}
+                  </div>
                   <p className="text-text-light">مشاهده اطلاعات تبلیغ</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button
-                  color="primary"
-                  startContent={<EditIcon className="size-5" />}
-                  onClick={handleEdit}
-                >
-                  ویرایش
-                </Button>
-                <Button
-                  color="danger"
-                  variant="light"
-                  startContent={<TrashIcon className="size-5" />}
-                  onClick={handleDelete}
-                >
-                  حذف
-                </Button>
+                {promotion.status !== 'deleted' && (
+                  <>
+                    <Button
+                      color="primary"
+                      startContent={<EditIcon className="size-5" />}
+                      onClick={handleEdit}
+                    >
+                      ویرایش
+                    </Button>
+                    <Button
+                      color="danger"
+                      variant="light"
+                      startContent={<TrashIcon className="size-5" />}
+                      onClick={handleDelete}
+                    >
+                      حذف
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
 
