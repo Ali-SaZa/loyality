@@ -70,15 +70,20 @@ export class PromoCodesService {
     return this.transformPromoCodeToResponse(savedPromoCode);
   }
 
-  async findAll(listRequest: ListRequestDto, user: any): Promise<PromoCodeListResponseDto> {
+  async findAll(listRequest: ListRequestDto, user: any, additionalFilters: any = {}): Promise<PromoCodeListResponseDto> {
     const { page = 1, limit = 10, search, sort = [{ field: 'createdAt', direction: 'desc' }] } = listRequest;
     const skip = (page - 1) * limit;
 
     // Build query - admin users can see all promo codes, store users only see their own
     let query: any = {};
 
-    // For store users, filter by their stores only
-    if (user.role === 'store') {
+    // Apply additional filters first (like promotionId)
+    if (additionalFilters.promotionId) {
+      query.promotionId = additionalFilters.promotionId;
+    }
+
+    // For store users, filter by their stores only (only if not already filtered by promotionId)
+    if (user.role === 'store' && !additionalFilters.promotionId) {
       const userStores = await this.storeModel.find({ userId: user.id }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       

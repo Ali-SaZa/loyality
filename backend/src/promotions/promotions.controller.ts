@@ -141,6 +141,26 @@ export class PromotionsController {
     return this.promotionsService.findOne(id, user);
   }
 
+  @Get(':id/with-codes')
+  @PromotionAuth({ paramName: 'id' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get promotion by ID with promo code count (Store Owner/Admin only)' })
+  @ApiParam({ name: 'id', description: 'Promotion ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Promotion found with code count',
+    type: PromotionResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Promotion not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  async findOneWithCodeCount(
+    @Param('id') id: string,
+    @CurrentUser() user: any
+  ): Promise<PromotionResponseDto & { promoCodeCount: number }> {
+    return this.promotionsService.getPromotionWithCodeCount(id, user);
+  }
+
   @Patch(':id')
   @PromotionAuth({ paramName: 'id' })
   @ApiBearerAuth()

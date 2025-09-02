@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Promotion, PromotionDocument } from '../schemas/promotion.schema';
 import { Store, StoreDocument } from '../schemas/store.schema';
+import { PromoCode, PromoCodeDocument } from '../schemas/promoCode.schema';
 import { 
   CreatePromotionDto, 
   UpdatePromotionDto, 
@@ -20,6 +21,7 @@ export class PromotionsService {
   constructor(
     @InjectModel(Promotion.name) private promotionModel: Model<PromotionDocument>,
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
+    @InjectModel(PromoCode.name) private promoCodeModel: Model<PromoCodeDocument>,
   ) {}
 
   private transformPromotionToResponse(promotion: PromotionDocument): PromotionResponseDto {
@@ -116,13 +118,32 @@ export class PromotionsService {
       this.promotionModel.countDocuments(filterQuery).exec()
     ]);
 
+    // Get promo code counts for all promotions in this batch
+    const promotionIds = data.map(promotion => promotion._id);
+    const promoCodeCounts = await this.promoCodeModel.aggregate([
+      { $match: { promotionId: { $in: promotionIds } } },
+      { $group: { _id: '$promotionId', count: { $sum: 1 } } }
+    ]).exec();
+
+    // Create a map of promotion ID to count
+    const countMap = new Map();
+    promoCodeCounts.forEach(item => {
+      countMap.set(item._id.toString(), item.count);
+    });
+
+    // Add promo code count to each promotion
+    const dataWithCounts = data.map(promotion => ({
+      ...promotion,
+      promoCodeCount: countMap.get(promotion._id.toString()) || 0
+    }));
+
     // Calculate pagination metadata
     const totalPages = Math.ceil(total / limit);
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
 
     return {
-      data,
+      data: dataWithCounts,
       total,
       page,
       limit,
@@ -277,5 +298,24 @@ export class PromotionsService {
     ]);
 
     return { total, active, inactive, expired, deleted };
+  }
+
+  // Helper method to get promotion with promo code count
+  async getPromotionWithCodeCount(id: string, user: any): Promise<PromotionResponseDto & { promoCodeCount: number }> {
+    const promotion = await this.promotionModel.findById(id).exec();
+    if (!promotion) {
+      throw new BadRequestException('Promotion not found');
+    }
+
+    // Validate access permissions
+    await this.validateStoreAccess(promotion.storeId.toString(), user);
+
+    // Get promo code count for this promotion
+    const promoCodeCount = await this.promoCodeModel.countDocuments({ promotionId: promotion._id }).exec();
+
+    return {
+      ...this.transformPromotionToResponse(promotion),
+      promoCodeCount
+    };
   }
 }

@@ -60,17 +60,6 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
       >
         <NavbarContent>
           <NavbarBrand>
-            {pathname !== '/user' && !showBrand && (
-              <Button
-                iconOnly
-                className="!rounded-full border-1 ml-2 hidden md:flex"
-                color="default"
-                variant="bordered"
-                onClick={() => router.back()}
-              >
-                <ChevronRightIcon className="size-4 text-white" />
-              </Button>
-            )}
             {showBrand ? (
               <div className="border border-white bg-white/50 w-fit rounded-xl p-1">
                 <LogoContainer iconSize={140} />

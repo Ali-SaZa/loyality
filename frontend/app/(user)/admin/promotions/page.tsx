@@ -9,12 +9,13 @@ import PromotionIcon from '@/components/icons/PromotionIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
-import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats } from '@/services/promotions'
+import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats, getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
 import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
 import PromotionViewModal from '@/components/modals/PromotionViewModal'
+import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 
 const AdminPromotions = () => {
@@ -43,6 +44,12 @@ const AdminPromotions = () => {
     promotionId: undefined as string | undefined
   })
 
+  // Promotion details modal state
+  const [promotionDetailsModal, setPromotionDetailsModal] = useState({
+    isOpen: false,
+    promotionId: undefined as string | undefined
+  })
+
   // Delete confirmation modal state
   const [deleteConfirmModal, setDeleteConfirmModal] = useState({
     isOpen: false,
@@ -61,6 +68,8 @@ const AdminPromotions = () => {
       setLoading(true)
       setError(null)
       const response = await getAllPromotions({ page: 1, limit: 50 })
+      
+      // The backend now returns promotions with promo code counts directly
       setPromotions(response.data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در بارگذاری تبلیغات')
@@ -118,7 +127,7 @@ const AdminPromotions = () => {
   }
 
   const handleViewPromotion = (promotionId: string) => {
-    setPromotionViewModal({
+    setPromotionDetailsModal({
       isOpen: true,
       promotionId
     })
@@ -155,18 +164,26 @@ const AdminPromotions = () => {
     fetchStats() // Refresh stats
   }
 
-  const handlePromotionViewEdit = (promotionId: string) => {
+  const handlePromotionDetailsEdit = (promotionId: string) => {
     setPromotionFormModal({
       isOpen: true,
       promotionId
     })
   }
 
-  const handlePromotionViewDelete = (promotionId: string) => {
-    // This will be handled by the view modal itself
+  const handlePromotionDetailsDelete = (promotionId: string) => {
+    // Find the promotion to get its title for the confirmation modal
+    const promotion = promotions.find(p => p.id === promotionId)
+    const promotionTitle = promotion ? promotion.title : ''
+    
+    setDeleteConfirmModal({
+      isOpen: true,
+      promotionId,
+      promotionTitle
+    })
   }
 
-  const handlePromotionViewSuccess = () => {
+  const handlePromotionDetailsSuccess = () => {
     fetchPromotions() // Refresh the list
     fetchStats() // Refresh stats
   }
@@ -299,6 +316,7 @@ const AdminPromotions = () => {
               <TableColumn>فروشگاه</TableColumn>
               <TableColumn>مقدار</TableColumn>
               <TableColumn>وضعیت</TableColumn>
+              <TableColumn>تعداد کدها</TableColumn>
               <TableColumn>تاریخ ایجاد</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
@@ -335,6 +353,9 @@ const AdminPromotions = () => {
                     >
                       {getStatusText(promotion.status)}
                     </Chip>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{promotion.promoCodeCount || 0} کد</span>
                   </TableCell>
                   <TableCell>{formatDate(promotion.createdAt)}</TableCell>
                   <TableCell>
@@ -387,14 +408,14 @@ const AdminPromotions = () => {
         stores={stores}
       />
 
-      {/* Promotion View Modal */}
-      <PromotionViewModal
-        isOpen={promotionViewModal.isOpen}
-        onOpenChange={(isOpen) => setPromotionViewModal(prev => ({ ...prev, isOpen }))}
-        onEdit={handlePromotionViewEdit}
-        onDelete={handlePromotionViewDelete}
-        onSuccess={handlePromotionViewSuccess}
-        promotionId={promotionViewModal.promotionId}
+      {/* Promotion Details Modal */}
+      <PromotionDetailsModal
+        isOpen={promotionDetailsModal.isOpen}
+        onOpenChange={(isOpen) => setPromotionDetailsModal(prev => ({ ...prev, isOpen }))}
+        onEdit={handlePromotionDetailsEdit}
+        onDelete={handlePromotionDetailsDelete}
+        onSuccess={handlePromotionDetailsSuccess}
+        promotionId={promotionDetailsModal.promotionId}
         stores={stores}
       />
 

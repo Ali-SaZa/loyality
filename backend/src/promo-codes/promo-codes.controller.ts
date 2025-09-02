@@ -252,6 +252,42 @@ export class PromoCodesController {
     return this.promoCodesService.getUserPromoCodes(phoneNumber, storeId, user);
   }
 
+  @Get('promotion/:promotionId')
+  @PromoCodeAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all promo codes for a specific promotion (Store/Admin only)' })
+  @ApiParam({ name: 'promotionId', description: 'Promotion ID' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
+  @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Promo codes for promotion retrieved successfully',
+    type: PromoCodeListResponseDto
+  })
+  @ApiResponse({ status: 404, description: 'Promotion not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async getPromoCodesByPromotion(
+    @Param('promotionId') promotionId: string,
+    @Query() query: any,
+    @CurrentUser() user: any
+  ): Promise<PromoCodeListResponseDto> {
+    const request: ListRequestDto = {
+      page: parseInt(query.page) || 1,
+      limit: parseInt(query.limit) || 20,
+      search: query.search,
+      searchFields: query.searchFields ? query.searchFields.split(',') : ['code', 'notes'],
+      sort: query.sort ? JSON.parse(query.sort) : [],
+      filters: query.filters ? JSON.parse(query.filters) : {}
+    };
+
+    // Add promotion filter
+    const additionalFilters = { promotionId };
+    
+    return this.promoCodesService.findAll(request, user, additionalFilters);
+  }
+
   @Get('my-codes')
   @PromoCodeAuth()
   @ApiBearerAuth()

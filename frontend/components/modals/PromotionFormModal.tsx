@@ -63,6 +63,7 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, promotionId, stor
       setPromotion(promotionData)
       
       methods.reset({
+        storeId: promotionData.storeId,
         title: promotionData.title,
         description: promotionData.description || '',
         price: promotionData.price,

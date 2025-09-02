@@ -11,6 +11,11 @@ export interface Promotion {
   status: 'active' | 'inactive' | 'deleted' | 'expired'
   createdAt: string
   updatedAt: string
+  promoCodeCount?: number
+}
+
+export interface PromotionWithCodeCount extends Promotion {
+  promoCodeCount: number
 }
 
 export interface CreatePromotionRequest {
@@ -33,7 +38,7 @@ export interface ChangePromotionStatusRequest {
 }
 
 export interface PromotionListResponse {
-  data: Promotion[]
+  data: PromotionWithCodeCount[]
   total: number
   page: number
   limit: number
@@ -88,6 +93,17 @@ export const promotionsService = {
   async getPromotionById(id: string): Promise<Promotion> {
     try {
       const response = await axiosInstance.get<Promotion>(`/promotions/${id}`)
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
+  },
+
+  // Get promotion by ID with code count
+  async getPromotionByIdWithCodeCount(id: string): Promise<PromotionWithCodeCount> {
+    try {
+      const response = await axiosInstance.get<PromotionWithCodeCount>(`/promotions/${id}/with-codes`)
       return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -176,6 +192,7 @@ export const promotionsService = {
 // Export individual functions for convenience
 export const getAllPromotions = promotionsService.getAllPromotions
 export const getPromotionById = promotionsService.getPromotionById
+export const getPromotionByIdWithCodeCount = promotionsService.getPromotionByIdWithCodeCount
 export const createPromotion = promotionsService.createPromotion
 export const updatePromotion = promotionsService.updatePromotion
 export const changePromotionStatus = promotionsService.changePromotionStatus
