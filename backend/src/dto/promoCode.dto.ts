@@ -138,6 +138,24 @@ export class PromoCodeResponseDto {
 
   @ApiProperty()
   updatedAt: Date;
+
+  // Populated fields
+  @ApiProperty({ required: false })
+  promotion?: {
+    id: string;
+    title: string;
+    price: number;
+    points: number;
+    status: string;
+  };
+
+  @ApiProperty({ required: false })
+  user?: {
+    id: string;
+    phoneNumber: string;
+    firstName?: string;
+    lastName?: string;
+  };
 }
 
 // Validation Response DTO (includes promotion details)
@@ -181,6 +199,20 @@ export class BulkCreatePromoCodesDto {
   })
   @IsOptional()
   count?: number;
+
+  @ApiProperty({ 
+    description: 'Prefix for all generated codes (optional)', 
+    required: false,
+    example: 'WELCOME',
+    maxLength: 4
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(4)
+  @Matches(/^[A-Z0-9]*$/, { 
+    message: 'Prefix must contain only uppercase letters and numbers' 
+  })
+  prefix?: string;
 
   @ApiProperty({ 
     description: 'When these codes expire', 

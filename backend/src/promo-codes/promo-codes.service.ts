@@ -31,6 +31,12 @@ export class PromoCodesService {
   ) {}
 
   private transformPromoCodeToResponse(promoCode: PromoCodeDocument): PromoCodeResponseDto {
+    // Type assertion for populated fields
+    const populatedPromoCode = promoCode as PromoCodeDocument & {
+      promotionId: any;
+      userId?: any;
+    };
+
     return {
       id: promoCode._id.toString(),
       code: promoCode.code,
@@ -42,6 +48,21 @@ export class PromoCodesService {
       notes: promoCode.notes,
       createdAt: promoCode.createdAt,
       updatedAt: promoCode.updatedAt,
+      // Include populated promotion data
+      promotion: populatedPromoCode.populated('promotionId') ? {
+        id: populatedPromoCode.promotionId._id.toString(),
+        title: populatedPromoCode.promotionId.title,
+        price: populatedPromoCode.promotionId.price,
+        points: populatedPromoCode.promotionId.points,
+        status: populatedPromoCode.promotionId.status,
+      } : undefined,
+      // Include populated user data
+      user: populatedPromoCode.populated('userId') && populatedPromoCode.userId ? {
+        id: populatedPromoCode.userId._id.toString(),
+        phoneNumber: populatedPromoCode.userId.phoneNumber,
+        firstName: populatedPromoCode.userId.firstName,
+        lastName: populatedPromoCode.userId.lastName,
+      } : undefined,
     };
   }
 
@@ -114,6 +135,7 @@ export class PromoCodesService {
       this.promoCodeModel
         .find(query)
         .populate('promotionId', 'title price points status')
+        .populate('userId', 'phoneNumber firstName lastName')
         .sort(sortObj)
         .skip(skip)
         .limit(limit)
@@ -135,7 +157,12 @@ export class PromoCodesService {
   }
 
   async findOne(id: string, user: any): Promise<PromoCodeResponseDto> {
-    const promoCode = await this.promoCodeModel.findById(id).exec();
+    const promoCode = await this.promoCodeModel
+      .findById(id)
+      .populate('promotionId', 'title price points status')
+      .populate('userId', 'phoneNumber firstName lastName')
+      .exec();
+    
     if (!promoCode) {
       throw new NotFoundException('Promo code not found');
     }
@@ -178,6 +205,8 @@ export class PromoCodesService {
 
     const updatedPromoCode = await this.promoCodeModel
       .findByIdAndUpdate(id, updatePromoCodeDto, { new: true })
+      .populate('promotionId', 'title price points status')
+      .populate('userId', 'phoneNumber firstName lastName')
       .exec();
 
     if (!updatedPromoCode) {
@@ -230,6 +259,8 @@ export class PromoCodesService {
 
     const updatedPromoCode = await this.promoCodeModel
       .findByIdAndUpdate(id, updateData, { new: true })
+      .populate('promotionId', 'title price points status')
+      .populate('userId', 'phoneNumber firstName lastName')
       .exec();
 
     if (!updatedPromoCode) {
@@ -355,7 +386,7 @@ export class PromoCodesService {
   }
 
   async bulkCreate(bulkCreateDto: BulkCreatePromoCodesDto, user: any): Promise<PromoCodeResponseDto[]> {
-    const { promotionId, count = 1, expiresAt, notes } = bulkCreateDto;
+    const { promotionId, count = 1, prefix, expiresAt, notes } = bulkCreateDto;
 
     // Verify promotion exists and belongs to user's store
     const promotion = await this.promotionModel.findById(promotionId).exec();
@@ -373,7 +404,16 @@ export class PromoCodesService {
       throw new BadRequestException('Count must be between 1 and 1000');
     }
 
-    const promoCodes: PromoCodeResponseDto[] = [];
+    // Validate prefix length with code generation
+    const maxPrefixLength = 4; // Maximum prefix length
+    const minSuffixLength = 4; // Minimum suffix length for uniqueness
+    const maxTotalLength = 12; // Maximum total code length
+    
+    if (prefix && prefix.length > maxPrefixLength) {
+      throw new BadRequestException(`Prefix cannot be longer than ${maxPrefixLength} characters`);
+    }
+
+    const suffixLength = Math.max(minSuffixLength, maxTotalLength - (prefix?.length || 0));
     const codesToCreate: any[] = [];
 
     // Generate unique codes
@@ -384,7 +424,7 @@ export class PromoCodesService {
 
       // Generate unique code (max 10 attempts to avoid infinite loop)
       while (!isUnique && attempts < 10) {
-        code = this.generatePromoCode();
+        code = this.generatePromoCodeWithPrefix(prefix, suffixLength);
         const existingCode = await this.promoCodeModel.findOne({ code }).exec();
         if (!existingCode) {
           isUnique = true;
@@ -442,6 +482,19 @@ export class PromoCodesService {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;
+  }
+
+  private generatePromoCodeWithPrefix(prefix?: string, suffixLength: number = 8): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let suffix = '';
+    
+    // Generate random suffix
+    for (let i = 0; i < suffixLength; i++) {
+      suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    // Combine prefix and suffix
+    return prefix ? `${prefix}${suffix}` : suffix;
   }
 
   async registerCodeToUser(code: string, phoneNumber: string): Promise<PromoCodeResponseDto> {
@@ -504,7 +557,18 @@ export class PromoCodesService {
     promoCode.registeredAt = new Date();
     const updatedPromoCode = await promoCode.save();
 
-    return this.transformPromoCodeToResponse(updatedPromoCode);
+    // Populate the data before transforming
+    const populatedPromoCode = await this.promoCodeModel
+      .findById(updatedPromoCode._id)
+      .populate('promotionId', 'title price points status')
+      .populate('userId', 'phoneNumber firstName lastName')
+      .exec();
+
+    if (!populatedPromoCode) {
+      throw new NotFoundException('Promo code not found after registration');
+    }
+
+    return this.transformPromoCodeToResponse(populatedPromoCode);
   }
 
   async getUserPromoCodes(phoneNumber: string, storeId?: string, requestingUser?: any): Promise<PromoCodeResponseDto[]> {
@@ -533,6 +597,7 @@ export class PromoCodesService {
     const promoCodes = await this.promoCodeModel
       .find(query)
       .populate('promotionId', 'title price points status')
+      .populate('userId', 'phoneNumber firstName lastName')
       .sort({ createdAt: -1 })
       .exec();
 

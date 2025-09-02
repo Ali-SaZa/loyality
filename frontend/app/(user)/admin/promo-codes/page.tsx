@@ -7,6 +7,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
 import { getAllPromoCodes, getPromoCodeStats, PromoCode, PromoCodeStats } from '@/services/promo-codes'
 import { getAllPromotions, Promotion } from '@/services/promotions'
+import { getAllUsers, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
 import { getPromoCodeStatusConfig } from '@/types/enums'
 
@@ -15,6 +16,7 @@ const AdminPromoCodes = () => {
   
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([])
   const [promotions, setPromotions] = useState<Promotion[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [stats, setStats] = useState<PromoCodeStats>({
     total: 0,
     unused: 0,
@@ -69,9 +71,27 @@ const AdminPromoCodes = () => {
     return getPromoCodeStatusConfig(status).text
   }
 
-  const getPromotionTitle = (promotionId: string) => {
-    const promotion = promotions.find(p => p.id === promotionId)
+  const getPromotionTitle = (promoCode: PromoCode) => {
+    // Use populated promotion data if available, otherwise fallback to lookup
+    if (promoCode.promotion) {
+      return promoCode.promotion.title
+    }
+    const promotion = promotions.find(p => p.id === promoCode.promotionId)
     return promotion?.title || 'نامشخص'
+  }
+
+  const getUserInfo = (promoCode: PromoCode) => {
+    if (promoCode.user) {
+      const fullName = [promoCode.user.firstName, promoCode.user.lastName].filter(Boolean).join(' ')
+      return {
+        phoneNumber: promoCode.user.phoneNumber,
+        fullName: fullName || 'نامشخص'
+      }
+    }
+    return {
+      phoneNumber: promoCode.userId ? 'نامشخص' : 'ثبت نشده',
+      fullName: 'نامشخص'
+    }
   }
 
   return (
@@ -136,6 +156,7 @@ const AdminPromoCodes = () => {
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>کاربر</TableColumn>
               <TableColumn>تاریخ ثبت</TableColumn>
+              <TableColumn>تاریخ استفاده</TableColumn>
             </TableHeader>
             <TableBody>
               {promoCodes.map((promoCode) => (
@@ -147,8 +168,13 @@ const AdminPromoCodes = () => {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
-                      {getPromotionTitle(promoCode.promotionId)}
+                      {getPromotionTitle(promoCode)}
                     </div>
+                    {promoCode.promotion && (
+                      <div className="text-xs text-gray-500">
+                        {promoCode.promotion.price.toLocaleString()} تومان - {promoCode.promotion.points} امتیاز
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Chip
@@ -161,13 +187,26 @@ const AdminPromoCodes = () => {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
-                      {promoCode.userId ? 'ثبت شده' : 'ثبت نشده'}
+                      {getUserInfo(promoCode).phoneNumber}
                     </div>
+                    {getUserInfo(promoCode).fullName !== 'نامشخص' && (
+                      <div className="text-xs text-gray-500">
+                        {getUserInfo(promoCode).fullName}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
                       {promoCode.registeredAt 
                         ? new Date(promoCode.registeredAt).toLocaleDateString('fa-IR')
+                        : '-'
+                      }
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm text-gray-600">
+                      {promoCode.usedAt 
+                        ? new Date(promoCode.usedAt).toLocaleDateString('fa-IR')
                         : '-'
                       }
                     </div>

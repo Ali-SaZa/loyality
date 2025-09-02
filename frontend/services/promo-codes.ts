@@ -12,6 +12,20 @@ export interface PromoCode {
   notes?: string
   createdAt: string
   updatedAt: string
+  // Populated fields
+  promotion?: {
+    id: string
+    title: string
+    price: number
+    points: number
+    status: string
+  }
+  user?: {
+    id: string
+    phoneNumber: string
+    firstName?: string
+    lastName?: string
+  }
 }
 
 export interface CreatePromoCodeRequest {

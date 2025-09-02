@@ -57,7 +57,7 @@ export class PromoCodesController {
   @Post('bulk')
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create multiple promo codes at once (Store/Admin only)' })
+  @ApiOperation({ summary: 'Create multiple promo codes at once with optional prefix (Store/Admin only)' })
   @ApiResponse({ 
     status: 201, 
     description: 'Promo codes created successfully',
