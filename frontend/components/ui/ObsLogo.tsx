@@ -5,7 +5,7 @@ interface LogoContainerProps {
   disableClick?: boolean
 }
 
-const LogoContainer = ({ iconSize = 180, disableClick = false }: LogoContainerProps) => {
+const LogoContainer = ({ iconSize = 100, disableClick = false }: LogoContainerProps) => {
   return (
     <Link
       className="flex items-center gap-2 cursor-pointer"

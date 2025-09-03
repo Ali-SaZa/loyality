@@ -12,10 +12,6 @@ export default function PromoCodeIcon({ className = 'size-6' }) {
           fill="currentColor"
         />
         <path
-          d="M20.5 19.5C19.67 19.5 19 18.83 19 18C19 17.17 19.67 16.5 20.5 16.5C21.33 16.5 22 17.17 22 18C22 18.83 21.33 19.5 20.5 19.5Z"
-          fill="currentColor"
-        />
-        <path
           d="M16.5 15.5C15.67 15.5 15 14.83 15 14C15 13.17 15.67 12.5 16.5 12.5C17.33 12.5 18 13.17 18 14C18 14.83 17.33 15.5 16.5 15.5Z"
           fill="currentColor"
         />
@@ -25,11 +21,6 @@ export default function PromoCodeIcon({ className = 'size-6' }) {
         />
         <path
           d="M8.5 7.5C7.67 7.5 7 6.83 7 6C7 5.17 7.67 4.5 8.5 4.5C9.33 4.5 10 5.17 10 6C10 6.83 9.33 7.5 8.5 7.5Z"
-          fill="currentColor"
-        />
-        {/* Add a small tag/discount symbol */}
-        <path
-          d="M19 8H17V6H19V8ZM19 10H17V12H19V10ZM17 14H19V16H17V14ZM17 18H19V20H17V18Z"
           fill="currentColor"
         />
       </g>

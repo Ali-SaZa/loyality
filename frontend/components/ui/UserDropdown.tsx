@@ -7,7 +7,7 @@ import React, { useMemo, useState } from 'react'
 import LogoutIcon from '../icons/LogoutIcon'
 import EditIcon from '../icons/EditIcon'
 import DashboardIcon from '../icons/DashboardIcon'
-
+import StyledUser from './StyledUser'
 
 import { getMenuByRole } from '@/helpers/menuUtils'
 import useAuth from '@/hooks/useAuth'
@@ -15,9 +15,10 @@ import useAlertModal from '@/hooks/useAlertModal'
 
 interface UserDropdownProps {
   useNavbarItem?: boolean
+  isOnDarkBackground?: boolean
 }
 
-const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
+const UserDropdown = ({ useNavbarItem = true, isOnDarkBackground }: UserDropdownProps) => {
   const { user, logout } = useAuth()
   const { showAlert } = useAlertModal()
 
@@ -33,16 +34,17 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
     [menuItems]
   )
 
+  // Determine if we're on a dark background
+  const shouldUseDarkBackground = isOnDarkBackground !== undefined ? isOnDarkBackground : useNavbarItem
+
   // Render the trigger based on context
   const renderTrigger = () => {
     const userComponent = (
-      <User
-        avatarProps={{
-          src: '/images/man-placeholder.webp'
-        }}
-        className="[&_span.bg-default]:!bg-transparent"
+      <StyledUser
+        avatarSrc="/images/man-placeholder.webp"
         description={user?.phoneNumber}
-                name={user?.firstName || user?.phoneNumber || 'کاربر'}
+        isOnDarkBackground={shouldUseDarkBackground}
+        name={user?.firstName || user?.phoneNumber || 'کاربر'}
       />
     )
 
@@ -97,25 +99,6 @@ const UserDropdown = ({ useNavbarItem = true }: UserDropdownProps) => {
                   {item.title}
                 </DropdownItem>
               ))}
-          </DropdownSection>
-          <DropdownSection
-            showDivider
-            title="صفحات کاربر"
-          >
-            <DropdownItem
-              key="profile"
-              href="/auth/profile"
-              startContent={<EditIcon className="size-4" />}
-            >
-              ویرایش پروفایل
-            </DropdownItem>
-            <DropdownItem
-              key="dashboard"
-              href="/customer"
-              startContent={<DashboardIcon className="size-4" />}
-            >
-              داشبورد
-            </DropdownItem>
           </DropdownSection>
           <DropdownItem
             key="logout"

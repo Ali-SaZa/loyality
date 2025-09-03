@@ -14,6 +14,7 @@ import LogoContainer from '@/components/ui/ObsLogo'
 import { truncateText } from '@/helpers'
 import useAlertModal from '@/hooks/useAlertModal'
 import useAuth from '@/hooks/useAuth'
+import { getRoleConfig } from '@/types/enums'
 
 interface NavbarProps {
   showBrand?: boolean
@@ -40,15 +41,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
   }
 
   const getRoleTitle = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'پنل مدیریت'
-      case 'store':
-        return 'پنل فروشگاه'
-      case 'customer':
-      default:
-        return 'پنل مشتری'
-    }
+    return getRoleConfig(role).title
   }
 
   return (
@@ -88,7 +81,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
           className="hidden md:flex"
           justify="end"
         >
-          <UserDropdown />
+          <UserDropdown isOnDarkBackground={true} />
         </NavbarContent>
 
         {/* Mobile Menu */}

@@ -79,17 +79,7 @@ const UserSidebar = () => {
           <div className="flex flex-col gap-1 px-3">
             {menuItems.map((item: any, index) => (
               <div
-                key={index}
-                className={`relative ${
-                  isActive(item.link) 
-                    ? `after:content-[""] after:absolute after:top-0 after:right-0 after:w-1 after:h-full after:rounded-l after:shadow-lg ${
-                        user?.role === UserRole.ADMIN 
-                          ? 'after:bg-gradient-to-b after:from-error after:to-error/80' 
-                          : 'after:bg-gradient-to-b after:from-primary after:to-primary/80'
-                      }`
-                    : ''
-                }`}
-              >
+                key={index}>
                 <Button
                   fullWidth
                   className={`justify-start h-12 px-4 rounded-xl transition-all duration-200 ${
@@ -111,25 +101,6 @@ const UserSidebar = () => {
                 </Button>
               </div>
             ))}
-          </div>
-          
-          {/* User Info Section */}
-          <div className="px-3 pb-4">
-            <div className="py-4 px-4 rounded-xl bg-gradient-to-br from-background-50 to-background-100 border border-divider">
-              <div className="text-center">
-                <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <span className="text-white text-lg font-bold">
-                    {user?.firstName?.charAt(0) || user?.phoneNumber?.charAt(0) || 'U'}
-                  </span>
-                </div>
-                <p className="text-sm font-semibold text-text-dark mb-1">
-                  {user?.firstName || user?.phoneNumber || 'کاربر'}
-                </p>
-                <p className="text-xs text-text-light bg-white/60 rounded-full px-2 py-1 inline-block">
-                  نقش: {getRoleConfig(user?.role || 'customer').text}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

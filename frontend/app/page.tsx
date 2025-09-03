@@ -10,13 +10,14 @@ import UserDropdown from '@/components/ui/UserDropdown'
 import { getRoleConfig } from '@/types/enums'
 
 export default function LandingPage() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const router = useRouter()
 
+  // Debug logging
+  console.log('🏠 LandingPage: Current state:', { isLoading, hasUser: !!user, userRole: user?.role })
 
-
-  // Show loading while checking auth (user is null during initial load)
-  if (user === null) {
+  // Show loading only while checking auth, not when user is null (which is normal for non-authenticated users)
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -32,6 +33,15 @@ export default function LandingPage() {
   // Landing page for all users (authenticated and non-authenticated)
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Debug Panel - Remove this after fixing */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs z-50">
+          <div>Loading: {isLoading ? 'true' : 'false'}</div>
+          <div>User: {user ? 'exists' : 'null'}</div>
+          <div>Role: {user?.role || 'none'}</div>
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +50,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               {user ? (
                 // User dropdown for authenticated users
-                <UserDropdown useNavbarItem={false} />
+                <UserDropdown useNavbarItem={false} isOnDarkBackground={false} />
               ) : (
                 // Login/Register buttons for non-authenticated users
                 <>
@@ -140,8 +150,8 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl">🎯</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">مدیریت وفاداری</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-center">مدیریت وفاداری</h3>
+              <p className="text-gray-600 text-center">
                 سیستم امتیازدهی و پاداش برای حفظ مشتریان
               </p>
             </CardBody>
@@ -152,8 +162,8 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl">🏪</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">مدیریت فروشگاه</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-center">مدیریت فروشگاه</h3>
+              <p className="text-gray-600 text-center">
                 ابزارهای کامل برای مدیریت کسب و کار
               </p>
             </CardBody>
@@ -164,8 +174,8 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-warning rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl">📊</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">گزارشات تحلیلی</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-center">گزارشات تحلیلی</h3>
+              <p className="text-gray-600 text-center">
                 تحلیل‌های دقیق عملکرد و رفتار مشتریان
               </p>
             </CardBody>

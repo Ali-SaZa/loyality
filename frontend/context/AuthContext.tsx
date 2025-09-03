@@ -69,6 +69,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Logout function - defined early to avoid dependency issues
   const logout = useCallback(async () => {
     try {
+      console.log('🚪 Logout: Starting logout process')
+      
+      // Set loading to false to stop any loading states
+      setIsLoading(false)
+      setLoading(false)
+      
+      console.log('🚪 Logout: Loading states cleared')
+      
       // Clear user state
       setUser(null)
       
@@ -85,49 +93,73 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Clear authToken cookie for middleware
       document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
       
-      // Redirect to home
-      if (typeof window !== 'undefined') {
-        window.location.href = '/'
-      }
+      console.log('🚪 Logout: All data cleared')
       
       toast.success('خروج موفقیت آمیز بود')
+      
+      // Use a more reliable redirect method
+      if (typeof window !== 'undefined') {
+        console.log('🚪 Logout: Redirecting to home page')
+        // Force a clean redirect
+        window.location.replace('/')
+      }
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('🚪 Logout: Error during logout:', error)
       // Force logout even if there's an error
+      setIsLoading(false)
+      setLoading(false)
       setUser(null)
       localStorage.removeItem('user')
       if (typeof window !== 'undefined') {
-        window.location.href = '/'
+        window.location.replace('/')
       }
     }
-  }, [])
+  }, [setLoading])
 
   // Refresh token logic
   const refreshToken = useCallback(async (): Promise<boolean> => {
     try {
-      if (!user?.refreshToken) return false
+      console.log('🔄 refreshToken: Starting token refresh')
+      
+      // Get user from localStorage instead of state to avoid circular dependency
+      const storedUser = localStorage.getItem('user')
+      if (!storedUser) {
+        console.log('🔄 refreshToken: No stored user found')
+        return false
+      }
+      
+      const userData: User = JSON.parse(storedUser)
+      if (!userData?.refreshToken) {
+        console.log('🔄 refreshToken: No refresh token found')
+        return false
+      }
       
       // Check if refresh token is expired
-      if (isTokenExpired(user.refreshToken)) {
-        await logout()
+      if (isTokenExpired(userData.refreshToken)) {
+        console.log('🔄 refreshToken: Refresh token expired, clearing data')
+        localStorage.removeItem('user')
+        setUser(null)
         return false
       }
 
       // Token is still valid, update axios headers
-      axiosInstance.defaults.headers['Authorization'] = `Bearer ${user.accessToken}`
+      axiosInstance.defaults.headers['Authorization'] = `Bearer ${userData.accessToken}`
+      console.log('🔄 refreshToken: Token refresh successful')
       return true
     } catch (error) {
-      console.error('Token refresh failed:', error)
-      await logout()
+      console.error('🔄 refreshToken: Token refresh failed:', error)
+      localStorage.removeItem('user')
+      setUser(null)
       return false
     }
-  }, [user?.refreshToken, user?.accessToken, isTokenExpired, logout])
+  }, [isTokenExpired])
 
   // Fetch user data from storage
   const fetchUser = useCallback(async () => {
     try {
       console.log('🔍 fetchUser: Starting to fetch user data')
       setIsLoading(true)
+      setLoading(true)
       const storedUser = localStorage.getItem('user')
 
       if (storedUser) {
@@ -163,9 +195,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.removeItem('user')
       setUser(null)
     } finally {
+      console.log('🔍 fetchUser: Setting loading to false')
       setIsLoading(false)
+      setLoading(false)
     }
-  }, [isTokenExpired, refreshToken])
+  }, [isTokenExpired, refreshToken, setLoading])
 
   // Store fetchUser in ref to avoid dependency issues
   fetchUserRef.current = fetchUser
@@ -176,6 +210,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const checkTokenExpiry = () => {
       if (isTokenExpired(user.accessToken)) {
+        console.log('🔄 Auto-refresh: Token expired, attempting refresh')
         refreshToken()
       }
     }
@@ -185,14 +220,57 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => clearInterval(interval)
   }, [user?.accessToken, isTokenExpired, refreshToken])
 
+  // Cleanup effect to reset loading states on unmount
+  useEffect(() => {
+    return () => {
+      setIsLoading(false)
+      setLoading(false)
+    }
+  }, [setLoading])
+
   useEffect(() => {
     // Don't fetch user data on auth page to prevent unnecessary API calls
     if (typeof window !== 'undefined' && window.location.pathname !== '/auth') {
+      console.log('🔍 AuthContext: Initializing user fetch')
+      
+      // Check if there's any stored user data first
+      const storedUser = localStorage.getItem('user')
+      if (!storedUser) {
+        console.log('🔍 AuthContext: No stored user found, setting loading to false immediately')
+        setIsLoading(false)
+        setLoading(false)
+        return
+      }
+      
       fetchUserRef.current?.()
+      
+      // Add a timeout to prevent infinite loading
+      const timeout = setTimeout(() => {
+        console.log('🔍 AuthContext: Loading timeout reached, forcing stop')
+        setIsLoading(false)
+        setLoading(false)
+      }, 5000) // Reduced to 5 seconds for faster recovery
+      
+      return () => clearTimeout(timeout)
     } else {
+      console.log('🔍 AuthContext: On auth page, skipping user fetch')
       setIsLoading(false)
+      setLoading(false)
     }
-  }, []) // Empty dependency array since we're using ref
+  }, [setLoading]) // Removed isLoading from dependencies to prevent circular updates
+
+  // Emergency fallback - force stop loading after 10 seconds
+  useEffect(() => {
+    const emergencyTimeout = setTimeout(() => {
+      if (isLoading) {
+        console.log('🚨 Emergency: Force stopping loading after 10 seconds')
+        setIsLoading(false)
+        setLoading(false)
+      }
+    }, 10000)
+    
+    return () => clearTimeout(emergencyTimeout)
+  }, [isLoading, setLoading])
 
   const saveUser = async (data: SaveUserData) => {
     try {
