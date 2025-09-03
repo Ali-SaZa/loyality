@@ -10,22 +10,21 @@ import EditIcon from '@/components/icons/EditIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import ClockIcon from '@/components/icons/ClockIcon'
 import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats, getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
+import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
-import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
+import { getPromotionStatusConfig } from '@/types/enums'
 import { formatDateToPersianJalali } from '@/helpers'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
-import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
 import PromotionStatusModal from '@/components/modals/PromotionStatusModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 import AutomaticPromoCodeCreationModal from '@/components/modals/AutomaticPromoCodeCreationModal'
-import useAuth from '@/hooks/useAuth'
 
 const StorePromotions = () => {
   const { setLoading } = useLoading()
-  const { user } = useAuth()
   
   const [promotions, setPromotions] = useState<Promotion[]>([])
+  const [stores, setStores] = useState<Store[]>([])
   const [stats, setStats] = useState<PromotionStats>({
     total: 0,
     active: 0,
@@ -40,12 +39,6 @@ const StorePromotions = () => {
     isOpen: false,
     promotionId: undefined as string | undefined,
     promotionTitle: ''
-  })
-
-  // Promotion view modal state
-  const [promotionViewModal, setPromotionViewModal] = useState({
-    isOpen: false,
-    promotionId: undefined as string | undefined
   })
 
   // Promotion details modal state
@@ -79,13 +72,13 @@ const StorePromotions = () => {
   useEffect(() => {
     fetchPromotions()
     fetchStats()
+    fetchStores()
   }, [])
 
   const fetchPromotions = async () => {
     try {
       setLoading(true)
       setError(null)
-      // For store users, the backend should filter promotions by the authenticated store
       const response = await getAllPromotions({ page: 1, limit: 50 })
       
       // The backend now returns promotions with promo code counts directly
@@ -106,84 +99,111 @@ const StorePromotions = () => {
     }
   }
 
-  const handleCreatePromotion = () => {
+  const fetchStores = async () => {
+    try {
+      const response = await getAllStores({ page: 1, limit: 100 })
+      setStores(response.data)
+    } catch (err) {
+      console.error('Error fetching stores:', err)
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    return getPromotionStatusConfig(status).color
+  }
+
+  const getStatusText = (status: string) => {
+    return getPromotionStatusConfig(status).text
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return formatDateToPersianJalali(date)
+  }
+
+  const getStoreName = (storeId: string) => {
+    const store = stores.find(s => s.id === storeId)
+    return store ? store.name : 'نامشخص'
+  }
+
+  const formatValue = (promotion: Promotion) => {
+    return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`
+  }
+
+  const handleViewPromotion = (promotionItem: PromotionWithCodeCount) => {
+    setPromotionDetailsModal({
+      isOpen: true,
+      promotionId: promotionItem.id,
+    })
+  }
+
+  const handleEditPromotion = (promotionItem: PromotionWithCodeCount) => {
+    setPromotionFormModal({
+      isOpen: true,
+      promotionId: promotionItem.id,
+      promotionTitle: promotionItem.title
+    })
+  }
+
+  const handleStatusChange = (promotionItem: PromotionWithCodeCount) => {
+    setStatusModal({
+      isOpen: true,
+      promotionId: promotionItem.id,
+      currentStatus: promotionItem.status,
+      promotionTitle: promotionItem.title
+    })
+  }
+
+  const handleAddPromotion = () => {
     setPromotionFormModal({
       isOpen: true,
       promotionId: undefined,
-      promotionTitle: 'ایجاد تبلیغ جدید'
+      promotionTitle: ''
     })
   }
 
-  const handleEditPromotion = (promotion: Promotion) => {
+  const handleDetailsModalSuccess = () => {
+    fetchPromotions() // Refresh the list
+    fetchStats() // Refresh stats
+  }
+
+  const handlePromotionDetailsEdit = (promotionId: string) => {
     setPromotionFormModal({
       isOpen: true,
-      promotionId: promotion.id,
-      promotionTitle: `ویرایش تبلیغ: ${promotion.title}`
+      promotionId,
+      promotionTitle: ''
     })
   }
 
-  const handleViewPromotion = (promotion: Promotion) => {
-    setPromotionViewModal({
-      isOpen: true,
-      promotionId: promotion.id
-    })
-  }
-
-  const handleViewPromotionDetails = (promotion: Promotion) => {
-    setPromotionDetailsModal({
-      isOpen: true,
-      promotionId: promotion.id
-    })
-  }
-
-  const handleDeletePromotion = (promotion: Promotion) => {
+  const handlePromotionDetailsDelete = async (promotionId: string) => {
+    // Find the promotion to get its title for the confirmation modal
+    const promotion = promotions.find(p => p.id === promotionId)
+    const promotionTitle = promotion ? promotion.title : ''
+    
     setDeleteConfirmModal({
       isOpen: true,
-      promotionId: promotion.id,
-      promotionTitle: promotion.title
+      promotionId,
+      promotionTitle
     })
   }
 
-  const handleStatusChange = (promotion: Promotion) => {
-    setStatusModal({
-      isOpen: true,
-      promotionId: promotion.id,
-      currentStatus: promotion.status,
-      promotionTitle: promotion.title
-    })
+  const handlePromotionDetailsSuccess = () => {
+    fetchPromotions() // Refresh the list
+    fetchStats() // Refresh stats
   }
 
-  const handleAutomaticPromoCodeCreation = (promotion: Promotion) => {
+  const handlePromotionCreated = (promotionId: string, storeName: string) => {
+    // Open the automatic promo code creation modal
     setAutomaticPromoCodeModal({
       isOpen: true,
-      promotionId: promotion.id,
-      storeName: 'فروشگاه' // Use a default name since storeName is not available
+      promotionId,
+      storeName
     })
   }
 
-  const handleFormSubmit = async (data: any) => {
-    try {
-      setLoading(true)
-      // Add storeId to the data - the backend should handle this based on authentication
-      const promotionData = {
-        ...data
-      }
-      
-      if (promotionFormModal.promotionId) {
-        // Update existing promotion
-        // await updatePromotion(promotionFormModal.promotionId, promotionData)
-      } else {
-        // Create new promotion
-        // await createPromotion(promotionData)
-      }
-      
-      setPromotionFormModal({ isOpen: false, promotionId: undefined, promotionTitle: '' })
-      fetchPromotions()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در ذخیره تبلیغ')
-    } finally {
-      setLoading(false)
-    }
+  const handleAutomaticPromoCodeSuccess = () => {
+    fetchPromotions() // Refresh the list to show updated promo code count
+    fetchStats() // Refresh stats
   }
 
   const handleDeleteConfirm = async () => {
@@ -192,8 +212,9 @@ const StorePromotions = () => {
     try {
       setLoading(true)
       await deletePromotion(deleteConfirmModal.promotionId)
+      await fetchPromotions() // Refresh the list
+      await fetchStats() // Refresh stats
       setDeleteConfirmModal({ isOpen: false, promotionId: undefined, promotionTitle: '' })
-      fetchPromotions()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در حذف تبلیغ')
     } finally {
@@ -201,109 +222,105 @@ const StorePromotions = () => {
     }
   }
 
-  const handleStatusSubmit = async (newStatus: string) => {
-    if (!statusModal.promotionId) return
-    
-    try {
-      setLoading(true)
-      // await updatePromotionStatus(statusModal.promotionId, newStatus)
-      setStatusModal({ isOpen: false, promotionId: undefined, currentStatus: '', promotionTitle: '' })
-      fetchPromotions()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در تغییر وضعیت تبلیغ')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleAutomaticPromoCodeSubmit = async (data: any) => {
-    try {
-      setLoading(true)
-      // await createAutomaticPromoCodes(data)
-      setAutomaticPromoCodeModal({ isOpen: false, promotionId: '', storeName: '' })
-      fetchPromotions()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در ایجاد کدهای تخفیف')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fa-IR').format(price) + ' تومان'
+  if (error) {
+    return (
+      <div className="p-6">
+        <Card className="border-1">
+          <CardBody className="p-6">
+            <div className="text-center">
+              <p className="text-danger mb-4">{error}</p>
+              <Button color="primary" onClick={fetchPromotions}>
+                تلاش مجدد
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <PromotionIcon className="size-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold text-text-dark">مدیریت تبلیغات</h1>
-            <p className="text-text-light">ایجاد و مدیریت تبلیغات فروشگاه</p>
+            <p className="text-text-light">مشاهده و مدیریت تمام تبلیغات سیستم</p>
           </div>
         </div>
         <Button
           color="primary"
-          onPress={handleCreatePromotion}
+          startContent={<PromotionIcon className="size-5" />}
+          onClick={handleAddPromotion}
         >
-          ایجاد تبلیغ جدید
+          افزودن تبلیغ جدید
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         <Card className="border-1">
-          <CardBody className="p-4">
-            <div className="text-center">
-              <p className="text-sm text-text-light">کل تبلیغات</p>
-              <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">کل تبلیغات</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
+              </div>
+              <PromotionIcon className="size-8 text-primary" />
             </div>
           </CardBody>
         </Card>
+
         <Card className="border-1">
-          <CardBody className="p-4">
-            <div className="text-center">
-              <p className="text-sm text-text-light">فعال</p>
-              <p className="text-2xl font-bold text-success">{stats.active}</p>
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">تبلیغات فعال</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
+              </div>
+              <PromotionIcon className="size-8 text-success" />
             </div>
           </CardBody>
         </Card>
+
         <Card className="border-1">
-          <CardBody className="p-4">
-            <div className="text-center">
-              <p className="text-sm text-text-light">غیرفعال</p>
-              <p className="text-2xl font-bold text-warning">{stats.inactive}</p>
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">تبلیغات غیرفعال</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.inactive}</p>
+              </div>
+              <PromotionIcon className="size-8 text-default" />
             </div>
           </CardBody>
         </Card>
+
         <Card className="border-1">
-          <CardBody className="p-4">
-            <div className="text-center">
-              <p className="text-sm text-text-light">منقضی شده</p>
-              <p className="text-2xl font-bold text-danger">{stats.expired}</p>
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">تبلیغات منقضی</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.expired}</p>
+              </div>
+              <PromotionIcon className="size-8 text-warning" />
             </div>
           </CardBody>
         </Card>
+
         <Card className="border-1">
-          <CardBody className="p-4">
-            <div className="text-center">
-              <p className="text-sm text-text-light">حذف شده</p>
-              <p className="text-2xl font-bold text-default">{stats.deleted}</p>
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-text-light mb-1">تبلیغات حذف شده</p>
+                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
+              </div>
+              <PromotionIcon className="size-8 text-danger" />
             </div>
           </CardBody>
         </Card>
       </div>
-
-      {/* Error Display */}
-      {error && (
-        <Card className="border-1 border-danger">
-          <CardBody className="p-4">
-            <p className="text-danger">{error}</p>
-          </CardBody>
-        </Card>
-      )}
 
       {/* Promotions Table */}
       <Card className="border-1">
@@ -311,53 +328,59 @@ const StorePromotions = () => {
           <h3 className="text-lg font-semibold text-text-dark">لیست تبلیغات</h3>
         </CardHeader>
         <CardBody className="p-0">
-          <Table aria-label="Promotions table">
+          <Table aria-label="لیست تبلیغات">
             <TableHeader>
-              <TableColumn>عنوان</TableColumn>
-              <TableColumn>توضیحات</TableColumn>
-              <TableColumn>مبلغ</TableColumn>
-              <TableColumn>امتیاز</TableColumn>
+              <TableColumn>عنوان تبلیغ</TableColumn>
+              <TableColumn>فروشگاه</TableColumn>
+              <TableColumn>مقدار</TableColumn>
               <TableColumn>وضعیت</TableColumn>
+              <TableColumn>تعداد کدها</TableColumn>
               <TableColumn>تاریخ ایجاد</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
-            <TableBody
-              emptyContent={error ? "خطا در بارگذاری" : "هیچ تبلیغی یافت نشد"}
-            >
+            <TableBody>
               {promotions.map((promotion) => (
-                <TableRow key={promotion.id}>
+                <TableRow 
+                  key={promotion.id}
+                  className={promotion.status === 'deleted' ? 'opacity-60 bg-gray-50' : ''}
+                >
                   <TableCell>
-                    <div className="font-medium text-text-dark">{promotion.title}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-text-light max-w-xs truncate">
-                      {promotion.description || '-'}
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-semibold">
+                          {promotion.title.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{promotion.title}</span>
+                        </div>
+                        {promotion.description && (
+                          <p className="text-xs text-text-light">{promotion.description}</p>
+                        )}
+                        <p className="text-xs text-text-light">ID: {promotion.id}</p>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium text-text-dark">
-                      {formatPrice(promotion.price)}
-                    </div>
+                    <span className="font-medium">{getStoreName(promotion.storeId)}</span>
                   </TableCell>
                   <TableCell>
-                    <Chip size="sm" color="primary" variant="flat">
-                      {promotion.points} امتیاز
-                    </Chip>
+                    <span className="font-medium">{formatValue(promotion)}</span>
                   </TableCell>
                   <TableCell>
                     <Chip
+                      color={getStatusColor(promotion.status)}
                       size="sm"
-                      color={getPromotionStatusConfig(promotion.status).color}
                       variant="flat"
                     >
-                      {getPromotionStatusConfig(promotion.status).text}
+                      {getStatusText(promotion.status)}
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <div className="text-sm text-text-light">
-                      {formatDateToPersianJalali(promotion.createdAt)}
-                    </div>
+                    <span className="font-medium">{promotion.promoCodeCount || 0} کد</span>
                   </TableCell>
+                  <TableCell>{formatDate(promotion.createdAt)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
@@ -365,7 +388,8 @@ const StorePromotions = () => {
                         size="sm"
                         variant="light"
                         color="primary"
-                        onPress={() => handleViewPromotion(promotion)}
+                        aria-label="مشاهده"
+                        onClick={() => handleViewPromotion(promotion as PromotionWithCodeCount)}
                       >
                         <EyeIcon className="size-4" />
                       </Button>
@@ -373,8 +397,10 @@ const StorePromotions = () => {
                         isIconOnly
                         size="sm"
                         variant="light"
-                        color="warning"
-                        onPress={() => handleEditPromotion(promotion)}
+                        color="primary"
+                        aria-label="ویرایش"
+                        disabled={promotion.status === 'deleted'}
+                        onClick={() => handleEditPromotion(promotion as PromotionWithCodeCount)}
                       >
                         <EditIcon className="size-4" />
                       </Button>
@@ -382,17 +408,28 @@ const StorePromotions = () => {
                         isIconOnly
                         size="sm"
                         variant="light"
-                        color="secondary"
-                        onPress={() => handleStatusChange(promotion)}
+                        color="success"
+                        aria-label="ایجاد کدهای تخفیف"
+                        disabled={promotion.status === 'deleted'}
+                        onClick={() => {
+                          const storeName = getStoreName(promotion.storeId)
+                          setAutomaticPromoCodeModal({
+                            isOpen: true,
+                            promotionId: promotion.id,
+                            storeName
+                          })
+                        }}
                       >
-                        <ClockIcon className="size-4" />
+                        <PromotionIcon className="size-4" />
                       </Button>
                       <Button
                         isIconOnly
                         size="sm"
                         variant="light"
-                        color="danger"
-                        onPress={() => handleDeletePromotion(promotion)}
+                        color="warning"
+                        aria-label="تغییر وضعیت"
+                        disabled={promotion.status === 'deleted'}
+                        onClick={() => handleStatusChange(promotion as PromotionWithCodeCount)}
                       >
                         <ClockIcon className="size-4" />
                       </Button>
@@ -405,9 +442,59 @@ const StorePromotions = () => {
         </CardBody>
       </Card>
 
-      {/* Modals */}
-      {/* Note: Modal implementations need to be updated to match the actual prop interfaces */}
-      {/* For now, we'll use basic modals without the complex form modals */}
+      {/* Promotion Form Modal (for editing) */}
+      <PromotionFormModal
+        isOpen={promotionFormModal.isOpen}
+        onOpenChange={(isOpen) => setPromotionFormModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleDetailsModalSuccess}
+        onPromotionCreated={handlePromotionCreated}
+        promotionId={promotionFormModal.promotionId}
+        stores={stores}
+      />
+
+      {/* Automatic Promo Code Creation Modal */}
+      <AutomaticPromoCodeCreationModal
+        isOpen={automaticPromoCodeModal.isOpen}
+        onOpenChange={(isOpen) => setAutomaticPromoCodeModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={handleAutomaticPromoCodeSuccess}
+        promotionId={automaticPromoCodeModal.promotionId}
+        storeName={automaticPromoCodeModal.storeName}
+      />
+
+      {/* Promotion Details Modal */}
+      <PromotionDetailsModal
+        isOpen={promotionDetailsModal.isOpen}
+        onOpenChange={(isOpen) => setPromotionDetailsModal(prev => ({ ...prev, isOpen }))}
+        onEdit={handlePromotionDetailsEdit}
+        onDelete={handlePromotionDetailsDelete}
+        onSuccess={handlePromotionDetailsSuccess}
+        promotionId={promotionDetailsModal.promotionId}
+        stores={stores}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onOpenChange={(isOpen) => setDeleteConfirmModal(prev => ({ ...prev, isOpen }))}
+        onConfirm={handleDeleteConfirm}
+        title="حذف تبلیغ"
+        message="آیا از حذف این تبلیغ اطمینان دارید؟"
+        itemName={deleteConfirmModal.promotionTitle}
+        isLoading={false}
+      />
+
+      {/* Status Change Modal */}
+      <PromotionStatusModal
+        isOpen={statusModal.isOpen}
+        onOpenChange={(isOpen) => setStatusModal(prev => ({ ...prev, isOpen }))}
+        onSuccess={() => {
+          fetchPromotions()
+          fetchStats()
+        }}
+        promotionId={statusModal.promotionId}
+        currentStatus={statusModal.currentStatus}
+        promotionTitle={statusModal.promotionTitle}
+      />
     </div>
   )
 }

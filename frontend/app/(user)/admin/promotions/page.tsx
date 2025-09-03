@@ -12,10 +12,9 @@ import ClockIcon from '@/components/icons/ClockIcon'
 import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats, getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
 import { getAllStores, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
-import { getPromotionTypeConfig, getPromotionStatusConfig } from '@/types/enums'
+import { getPromotionStatusConfig } from '@/types/enums'
 import { formatDateToPersianJalali } from '@/helpers'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
-import PromotionViewModal from '@/components/modals/PromotionViewModal'
 import PromotionDetailsModal from '@/components/modals/PromotionDetailsModal'
 import PromotionStatusModal from '@/components/modals/PromotionStatusModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
@@ -40,12 +39,6 @@ const AdminPromotions = () => {
     isOpen: false,
     promotionId: undefined as string | undefined,
     promotionTitle: ''
-  })
-
-  // Promotion view modal state
-  const [promotionViewModal, setPromotionViewModal] = useState({
-    isOpen: false,
-    promotionId: undefined as string | undefined
   })
 
   // Promotion details modal state
@@ -123,14 +116,6 @@ const AdminPromotions = () => {
     return getPromotionStatusConfig(status).text
   }
 
-  const getTypeColor = (type: string) => {
-    return getPromotionTypeConfig(type).color
-  }
-
-  const getTypeText = (type: string) => {
-    return getPromotionTypeConfig(type).text
-  }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return formatDateToPersianJalali(date)
@@ -154,16 +139,6 @@ const AdminPromotions = () => {
 
   const handleEditPromotion = (promotionItem: PromotionWithCodeCount) => {
     setPromotionFormModal({
-      isOpen: true,
-      promotionId: promotionItem.id,
-      promotionTitle: promotionItem.title
-    })
-  }
-
-  const handleDeletePromotion = async (promotionItem: PromotionWithCodeCount) => {
-    console.log('promotionItem', promotionItem)
-    
-    setDeleteConfirmModal({
       isOpen: true,
       promotionId: promotionItem.id,
       promotionTitle: promotionItem.title

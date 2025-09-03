@@ -1,99 +1,113 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader } from '@heroui/card'
-import { Chip } from '@heroui/chip'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
+"use client";
+import { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Chip } from "@heroui/chip";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
 
-import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
-import { getAllPromoCodes, getPromoCodeStats, PromoCode, PromoCodeStats } from '@/services/promo-codes'
-import { getAllPromotions, Promotion } from '@/services/promotions'
-import { getAllUsers, User } from '@/services/users'
-import useLoading from '@/hooks/useLoading'
-import { getPromoCodeStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali } from '@/helpers'
+import PromoCodeIcon from "@/components/icons/PromoCodeIcon";
+import {
+  getAllPromoCodes,
+  getPromoCodeStats,
+  PromoCode,
+  PromoCodeStats,
+} from "@/services/promo-codes";
+import { getAllPromotions, Promotion } from "@/services/promotions";
+import useLoading from "@/hooks/useLoading";
+import { getPromoCodeStatusConfig } from "@/types/enums";
+import { formatDateToPersianJalali } from "@/helpers";
 
 const AdminPromoCodes = () => {
-  const { setLoading } = useLoading()
-  
-  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([])
-  const [promotions, setPromotions] = useState<Promotion[]>([])
-  const [users, setUsers] = useState<User[]>([])
+  const { setLoading } = useLoading();
+
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [stats, setStats] = useState<PromoCodeStats>({
     total: 0,
     unused: 0,
     used: 0,
     registered: 0,
-    deleted: 0
-  })
-  const [error, setError] = useState<string | null>(null)
+    deleted: 0,
+  });
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPromoCodes()
-    fetchStats()
-    fetchPromotions()
-  }, [])
+    fetchPromoCodes();
+    fetchStats();
+    fetchPromotions();
+  }, []);
 
   const fetchPromoCodes = async () => {
     try {
-      setLoading(true)
-      setError(null)
-      const response = await getAllPromoCodes({ page: 1, limit: 50 })
-      setPromoCodes(response.data)
+      setLoading(true);
+      setError(null);
+      const response = await getAllPromoCodes({ page: 1, limit: 50 });
+      setPromoCodes(response.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری کدهای تخفیف')
+      setError(
+        err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف"
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchStats = async () => {
     try {
-      const statsData = await getPromoCodeStats()
-      setStats(statsData)
+      const statsData = await getPromoCodeStats();
+      setStats(statsData);
     } catch (err) {
-      console.error('Error fetching stats:', err)
+      console.error("Error fetching stats:", err);
     }
-  }
+  };
 
   const fetchPromotions = async () => {
     try {
-      const response = await getAllPromotions({ page: 1, limit: 100 })
-      setPromotions(response.data)
+      const response = await getAllPromotions({ page: 1, limit: 100 });
+      setPromotions(response.data);
     } catch (err) {
-      console.error('Error fetching promotions:', err)
+      console.error("Error fetching promotions:", err);
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
-    return getPromoCodeStatusConfig(status).color
-  }
+    return getPromoCodeStatusConfig(status).color;
+  };
 
   const getStatusText = (status: string) => {
-    return getPromoCodeStatusConfig(status).text
-  }
+    return getPromoCodeStatusConfig(status).text;
+  };
 
   const getPromotionTitle = (promoCode: PromoCode) => {
     // Use populated promotion data if available, otherwise fallback to lookup
     if (promoCode.promotion) {
-      return promoCode.promotion.title
+      return promoCode.promotion.title;
     }
-    const promotion = promotions.find(p => p.id === promoCode.promotionId)
-    return promotion?.title || 'نامشخص'
-  }
+    const promotion = promotions.find((p) => p.id === promoCode.promotionId);
+    return promotion?.title || "نامشخص";
+  };
 
   const getUserInfo = (promoCode: PromoCode) => {
     if (promoCode.user) {
-      const fullName = [promoCode.user.firstName, promoCode.user.lastName].filter(Boolean).join(' ')
+      const fullName = [promoCode.user.firstName, promoCode.user.lastName]
+        .filter(Boolean)
+        .join(" ");
       return {
         phoneNumber: promoCode.user.phoneNumber,
-        fullName: fullName || 'نامشخص'
-      }
+        fullName: fullName || "نامشخص",
+      };
     }
     return {
-      phoneNumber: promoCode.userId ? 'نامشخص' : 'ثبت نشده',
-      fullName: 'نامشخص'
-    }
-  }
+      phoneNumber: promoCode.userId ? "نامشخص" : "ثبت نشده",
+      fullName: "نامشخص",
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -111,25 +125,33 @@ const AdminPromoCodes = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardBody className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.total}
+            </div>
             <div className="text-sm text-gray-600">کل کدها</div>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.unused}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.unused}
+            </div>
             <div className="text-sm text-gray-600">استفاده نشده</div>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.registered}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {stats.registered}
+            </div>
             <div className="text-sm text-gray-600">ثبت شده</div>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="text-center">
-            <div className="text-2xl font-bold text-orange-600">{stats.used}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {stats.used}
+            </div>
             <div className="text-sm text-gray-600">استفاده شده</div>
           </CardBody>
         </Card>
@@ -174,7 +196,8 @@ const AdminPromoCodes = () => {
                     </div>
                     {promoCode.promotion && (
                       <div className="text-xs text-gray-500">
-                        {promoCode.promotion.price.toLocaleString()} تومان - {promoCode.promotion.points} امتیاز
+                        {promoCode.promotion.price.toLocaleString()} تومان -{" "}
+                        {promoCode.promotion.points} امتیاز
                       </div>
                     )}
                   </TableCell>
@@ -191,7 +214,7 @@ const AdminPromoCodes = () => {
                     <div className="text-sm text-gray-600">
                       {getUserInfo(promoCode).phoneNumber}
                     </div>
-                    {getUserInfo(promoCode).fullName !== 'نامشخص' && (
+                    {getUserInfo(promoCode).fullName !== "نامشخص" && (
                       <div className="text-xs text-gray-500">
                         {getUserInfo(promoCode).fullName}
                       </div>
@@ -204,18 +227,16 @@ const AdminPromoCodes = () => {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
-                      {promoCode.registeredAt 
+                      {promoCode.registeredAt
                         ? formatDateToPersianJalali(promoCode.registeredAt)
-                        : '-'
-                      }
+                        : "-"}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
-                      {promoCode.usedAt 
+                      {promoCode.usedAt
                         ? formatDateToPersianJalali(promoCode.usedAt)
-                        : '-'
-                      }
+                        : "-"}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -225,7 +246,7 @@ const AdminPromoCodes = () => {
         </CardBody>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default AdminPromoCodes
+export default AdminPromoCodes;
