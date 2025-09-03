@@ -36,8 +36,23 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   private transformUserToResponse(user: any): UserResponseDto {
+    // Handle the ID field more safely
+    let userId = 'unknown';
+    if (user.id) {
+      // If id is an ObjectId (has buffer property), convert it to string
+      if (user.id.buffer && Array.isArray(user.id.buffer.data)) {
+        userId = user.id.toString();
+      } else if (typeof user.id === 'string') {
+        userId = user.id;
+      } else {
+        userId = user.id.toString();
+      }
+    } else if (user._id && typeof user._id.toString === 'function') {
+      userId = user._id.toString();
+    }
+    
     return {
-      id: user._id.toString(),
+      id: userId,
       phoneNumber: user.phoneNumber,
       firstName: user.firstName,
       lastName: user.lastName,

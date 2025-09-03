@@ -193,7 +193,7 @@ const AdminStores = () => {
           </div>
         </div>
         <Button
-          color="success"
+          color="primary"
           startContent={<StoreIcon className="size-5" />}
           onClick={handleAddStore}
         >
@@ -203,18 +203,6 @@ const AdminStores = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل فروشگاه‌ها</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
-              </div>
-              <StoreIcon className="size-8 text-success" />
-            </div>
-          </CardBody>
-        </Card>
-
         <Card className="border-1">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
