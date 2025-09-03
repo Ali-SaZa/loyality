@@ -84,6 +84,13 @@ export const siteConfig = {
         isShortAccess: true,
         children: [],
       },
+      {
+        title: 'مشتریان',
+        icon: (className: string = 'size-6') => <UserIcon className={className} />,
+        link: '/store/users',
+        isShortAccess: true,
+        children: [],
+      },
     ],
     customer: [
       {

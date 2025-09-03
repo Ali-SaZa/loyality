@@ -5,6 +5,7 @@ import { PromotionsService } from './promotions.service';
 import { Promotion, PromotionSchema } from '../schemas/promotion.schema';
 import { Store, StoreSchema } from '../schemas/store.schema';
 import { PromoCode, PromoCodeSchema } from '../schemas/promoCode.schema';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { PromoCode, PromoCodeSchema } from '../schemas/promoCode.schema';
       { name: Store.name, schema: StoreSchema },
       { name: PromoCode.name, schema: PromoCodeSchema }
     ]),
+    AuthModule,
   ],
   controllers: [PromotionsController],
   providers: [PromotionsService],

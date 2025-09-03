@@ -8,68 +8,38 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 import UserIcon from '@/components/icons/UserIcon'
 import EditIcon from '@/components/icons/EditIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
-import { getAllUsers, getUserStats, deleteUser, User, UserStats } from '@/services/users'
+import { transactionsService, CustomerTransaction } from '@/services/transactions'
 import useLoading from '@/hooks/useLoading'
-import { getRoleConfig, getStatusConfig } from '@/types/enums'
+import { getStatusConfig } from '@/types/enums'
 import { formatDateToPersianJalali } from '@/helpers'
-import UserFormModal from '@/components/modals/UserFormModal'
-import UserViewModal from '@/components/modals/UserViewModal'
+import CustomerViewModal from '@/components/modals/CustomerViewModal'
 
 const StoreUsers = () => {
   const { setLoading } = useLoading()
   
-  const [users, setUsers] = useState<User[]>([])
-  const [stats, setStats] = useState<UserStats>({
-    total: 0,
-    active: 0,
-    blocked: 0,
-    deleted: 0
-  })
+  const [customers, setCustomers] = useState<CustomerTransaction[]>([])
   const [error, setError] = useState<string | null>(null)
 
-  // User form modal state
-  const [userFormModal, setUserFormModal] = useState({
+  // Customer view modal state
+  const [customerViewModal, setCustomerViewModal] = useState({
     isOpen: false,
-    userId: undefined as string | undefined
-  })
-
-  // User view modal state
-  const [userViewModal, setUserViewModal] = useState({
-    isOpen: false,
-    userId: undefined as string | undefined
-  })
-
-  // Delete confirmation modal state
-  const [deleteConfirmModal, setDeleteConfirmModal] = useState({
-    isOpen: false,
-    userId: undefined as string | undefined,
-    userName: ''
+    customerId: undefined as string | undefined
   })
 
   useEffect(() => {
-    fetchUsers()
-    fetchStats()
+    fetchCustomers()
   }, [])
 
-  const fetchUsers = async () => {
+  const fetchCustomers = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await getAllUsers({ page: 1, limit: 50 })
-      setUsers(response.data)
+      const response = await transactionsService.getMyStoreCustomers()
+      setCustomers(response)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری کاربران')
+      setError(err instanceof Error ? err.message : 'خطا در بارگذاری مشتریان')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const fetchStats = async () => {
-    try {
-      const statsData = await getUserStats()
-      setStats(statsData)
-    } catch (err) {
-      console.error('Error fetching stats:', err)
     }
   }
 
@@ -79,14 +49,6 @@ const StoreUsers = () => {
 
   const getStatusText = (status: string) => {
     return getStatusConfig(status).text
-  }
-
-  const getRoleColor = (role: string) => {
-    return getRoleConfig(role).color
-  }
-
-  const getRoleText = (role: string) => {
-    return getRoleConfig(role).text
   }
 
   const formatDate = (dateString: string) => {
@@ -102,48 +64,37 @@ const StoreUsers = () => {
     return phone
   }
 
-  const handleViewUser = (userId: string) => {
-    setUserViewModal({
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('fa-IR').format(amount)
+  }
+
+  const handleViewCustomer = (customerId: string) => {
+    setCustomerViewModal({
       isOpen: true,
-      userId
+      customerId
     })
   }
 
-  const handleEditUser = (userId: string) => {
-    setUserFormModal({
+  const handleEditCustomer = (customerId: string) => {
+    setCustomerViewModal({
       isOpen: true,
-      userId
+      customerId
     })
   }
 
-  
-
-  const handleAddUser = () => {
-    setUserFormModal({
+  const handleCustomerViewEdit = (customerId: string) => {
+    setCustomerViewModal({
       isOpen: true,
-      userId: undefined
+      customerId
     })
   }
 
-  const handleUserFormSuccess = () => {
-    fetchUsers() // Refresh the list
-    fetchStats() // Refresh stats
-  }
-
-  const handleUserViewEdit = (userId: string) => {
-    setUserFormModal({
-      isOpen: true,
-      userId
-    })
-  }
-
-  const handleUserViewDelete = (userId: string) => {
+  const handleCustomerViewDelete = (customerId: string) => {
     // This will be handled by the view modal itself
   }
 
-  const handleUserViewSuccess = () => {
-    fetchUsers() // Refresh the list
-    fetchStats() // Refresh stats
+  const handleCustomerViewSuccess = () => {
+    fetchCustomers() // Refresh the list
   }
 
   if (error) {
@@ -153,7 +104,7 @@ const StoreUsers = () => {
           <CardBody className="p-6">
             <div className="text-center">
               <p className="text-danger mb-4">{error}</p>
-              <Button color="primary" onClick={fetchUsers}>
+              <Button color="primary" onClick={fetchCustomers}>
                 تلاش مجدد
               </Button>
             </div>
@@ -170,17 +121,10 @@ const StoreUsers = () => {
         <div className="flex items-center gap-3">
           <UserIcon className="size-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-text-dark">مدیریت کاربران</h1>
-            <p className="text-text-light">مشاهده و مدیریت تمام کاربران سیستم</p>
+            <h1 className="text-2xl font-bold text-text-dark">مشتریان فروشگاه</h1>
+            <p className="text-text-light">مدیریت مشتریان و تراکنش‌های فروشگاه</p>
           </div>
         </div>
-        <Button
-          color="primary"
-          startContent={<UserIcon className="size-5" />}
-          onClick={handleAddUser}
-        >
-          افزودن کاربر جدید
-        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -189,8 +133,8 @@ const StoreUsers = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کل کاربران</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.total}</p>
+                <p className="text-sm text-text-light mb-1">کل مشتریان</p>
+                <p className="text-2xl font-bold text-text-dark">{customers.length}</p>
               </div>
               <UserIcon className="size-8 text-primary" />
             </div>
@@ -201,8 +145,10 @@ const StoreUsers = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کاربران فعال</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
+                <p className="text-sm text-text-light mb-1">کل تراکنش‌ها</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {customers.reduce((sum, customer) => sum + customer.totalTransactions, 0)}
+                </p>
               </div>
               <UserIcon className="size-8 text-success" />
             </div>
@@ -213,8 +159,10 @@ const StoreUsers = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کاربران مسدود</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.blocked}</p>
+                <p className="text-sm text-text-light mb-1">کل فروش</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {formatCurrency(customers.reduce((sum, customer) => sum + customer.totalSpent, 0))} تومان
+                </p>
               </div>
               <UserIcon className="size-8 text-warning" />
             </div>
@@ -225,8 +173,10 @@ const StoreUsers = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کاربران حذف شده</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
+                <p className="text-sm text-text-light mb-1">کل امتیازات</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {customers.reduce((sum, customer) => sum + customer.totalPointsEarned, 0)}
+                </p>
               </div>
               <UserIcon className="size-8 text-danger" />
             </div>
@@ -234,63 +184,65 @@ const StoreUsers = () => {
         </Card>
       </div>
 
-      {/* Users Table */}
+      {/* Customers Table */}
       <Card className="border-1">
         <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست کاربران</h3>
+          <h3 className="text-lg font-semibold text-text-dark">لیست مشتریان</h3>
         </CardHeader>
         <CardBody className="p-0">
-          <Table aria-label="لیست کاربران">
+          <Table aria-label="لیست مشتریان">
             <TableHeader>
-              <TableColumn>نام کاربر</TableColumn>
+              <TableColumn>نام مشتری</TableColumn>
               <TableColumn>شماره تلفن</TableColumn>
-              <TableColumn>نقش</TableColumn>
               <TableColumn>وضعیت</TableColumn>
-              <TableColumn>تاریخ عضویت</TableColumn>
+              <TableColumn>تعداد تراکنش</TableColumn>
+              <TableColumn>کل خرید</TableColumn>
+              <TableColumn>امتیازات</TableColumn>
+              <TableColumn>آخرین خرید</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
+              {customers.map((customer) => (
+                <TableRow key={customer.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-semibold">
-                          {user.firstName ? user.firstName.charAt(0) : user.phoneNumber.charAt(0)}
+                          {customer.firstName ? customer.firstName.charAt(0) : customer.phoneNumber.charAt(0)}
                         </span>
                       </div>
                       <div>
                         <span className="font-medium">
-                          {user.firstName && user.lastName 
-                            ? `${user.firstName} ${user.lastName}` 
+                          {customer.firstName && customer.lastName 
+                            ? `${customer.firstName} ${customer.lastName}` 
                             : 'نام ثبت نشده'}
                         </span>
-                        <p className="text-xs text-text-light">ID: {user.id}</p>
+                        <p className="text-xs text-text-light">ID: {customer.id}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">{formatPhoneNumber(user.phoneNumber)}</span>
+                    <span className="font-medium">{formatPhoneNumber(customer.phoneNumber)}</span>
                   </TableCell>
                   <TableCell>
                     <Chip
-                      color={getRoleColor(user.role)}
+                      color={getStatusColor(customer.status)}
                       size="sm"
                       variant="flat"
                     >
-                      {getRoleText(user.role)}
+                      {getStatusText(customer.status)}
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      color={getStatusColor(user.status || 'active')}
-                      size="sm"
-                      variant="flat"
-                    >
-                      {getStatusText(user.status || 'active')}
-                    </Chip>
+                    <span className="font-medium">{customer.totalTransactions}</span>
                   </TableCell>
-                  <TableCell>{formatDate(user.createdAt)}</TableCell>
+                  <TableCell>
+                    <span className="font-medium">{formatCurrency(customer.totalSpent)} تومان</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{customer.totalPointsEarned}</span>
+                  </TableCell>
+                  <TableCell>{formatDate(customer.lastTransactionDate.toString())}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
@@ -299,7 +251,7 @@ const StoreUsers = () => {
                         variant="light"
                         color="primary"
                         aria-label="مشاهده"
-                        onClick={() => handleViewUser(user.id)}
+                        onClick={() => handleViewCustomer(customer.id)}
                       >
                         <EyeIcon className="size-4" />
                       </Button>
@@ -309,7 +261,7 @@ const StoreUsers = () => {
                         variant="light"
                         color="primary"
                         aria-label="ویرایش"
-                        onClick={() => handleEditUser(user.id)}
+                        onClick={() => handleEditCustomer(customer.id)}
                       >
                         <EditIcon className="size-4" />
                       </Button>
@@ -322,22 +274,14 @@ const StoreUsers = () => {
         </CardBody>
       </Card>
 
-      {/* User Form Modal */}
-      <UserFormModal
-        isOpen={userFormModal.isOpen}
-        onOpenChange={(isOpen) => setUserFormModal(prev => ({ ...prev, isOpen }))}
-        onSuccess={handleUserFormSuccess}
-        userId={userFormModal.userId}
-      />
-
-      {/* User View Modal */}
-      <UserViewModal
-        isOpen={userViewModal.isOpen}
-        onOpenChange={(isOpen) => setUserViewModal(prev => ({ ...prev, isOpen }))}
-        onEdit={handleUserViewEdit}
-        onDelete={handleUserViewDelete}
-        onSuccess={handleUserViewSuccess}
-        userId={userViewModal.userId}
+      {/* Customer View Modal */}
+      <CustomerViewModal
+        isOpen={customerViewModal.isOpen}
+        onOpenChange={(isOpen) => setCustomerViewModal(prev => ({ ...prev, isOpen }))}
+        onEdit={handleCustomerViewEdit}
+        onDelete={handleCustomerViewDelete}
+        onSuccess={handleCustomerViewSuccess}
+        customerId={customerViewModal.customerId}
       />
     </div>
   )

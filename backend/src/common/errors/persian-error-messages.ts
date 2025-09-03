@@ -23,9 +23,9 @@ export const PERSIAN_ERROR_MESSAGES = {
   STORE_ALREADY_EXISTS: 'فروشگاه قبلاً وجود دارد', // translated to Persian
   STORE_PHONE_EXISTS: 'فروشگاه با این شماره موبایل قبلاً وجود دارد', // translated to Persian
   
-
-  
-
+  // Transaction related messages
+  TRANSACTION_NOT_FOUND: 'تراکنش یافت نشد', // translated to Persian
+  TRANSACTION_ALREADY_EXISTS: 'تراکنش قبلاً وجود دارد', // translated to Persian
   
   // Admin related messages
   ADMIN_NOT_FOUND: 'مدیر یافت نشد', // translated to Persian

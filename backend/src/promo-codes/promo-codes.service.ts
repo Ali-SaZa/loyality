@@ -5,6 +5,7 @@ import { PromoCode, PromoCodeDocument } from '../schemas/promoCode.schema';
 import { Promotion, PromotionDocument } from '../schemas/promotion.schema';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { User, UserDocument } from '../schemas/user.schema';
+import { Transaction, TransactionDocument } from '../schemas/transaction.schema';
 import { 
   CreatePromoCodeDto, 
   UpdatePromoCodeDto, 
@@ -28,6 +29,7 @@ export class PromoCodesService {
     @InjectModel(Promotion.name) private promotionModel: Model<PromotionDocument>,
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Transaction.name) private transactionModel: Model<TransactionDocument>,
   ) {}
 
   private transformPromoCodeToResponse(promoCode: PromoCodeDocument): PromoCodeResponseDto {
@@ -281,6 +283,25 @@ export class PromoCodesService {
       if (changeStatusDto.userId && promoCode.userId.toString() !== changeStatusDto.userId) {
         throw new BadRequestException('User ID does not match the registered user for this code');
       }
+
+      // Check if transaction already exists for this promo code
+      const existingTransaction = await this.transactionModel.findOne({
+        promoCodeId: promoCode._id
+      }).exec();
+
+      if (existingTransaction) {
+        throw new BadRequestException('Transaction already exists for this promo code');
+      }
+
+      // Create transaction when promo code is marked as used
+      const transaction = new this.transactionModel({
+        customerId: promoCode.userId,
+        storeId: promotion.storeId,
+        promoCodeId: promoCode._id,
+        promotionId: promotion._id,
+      });
+
+      await transaction.save();
     }
 
     const updateData: any = { status: changeStatusDto.status };

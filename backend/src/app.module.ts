@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { StoresModule } from './stores/stores.module';
 import { PromotionsModule } from './promotions/promotions.module';
 import { PromoCodesModule } from './promo-codes/promo-codes.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 import { OtpModule } from './otp/otp.module';
 
@@ -39,6 +40,7 @@ import { RateLimiterMiddleware } from './common/security/rate-limiter.middleware
     StoresModule,
     PromotionsModule,
     PromoCodesModule,
+    TransactionsModule,
 
     OtpModule,
 

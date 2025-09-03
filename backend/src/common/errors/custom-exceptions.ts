@@ -60,9 +60,11 @@ export class StoreNotFoundException extends CustomNotFoundException {
   }
 }
 
-
-
-
+export class TransactionNotFoundException extends CustomNotFoundException {
+  constructor() {
+    super('Transaction', 'TRANSACTION_NOT_FOUND');
+  }
+}
 
 export class AdminNotFoundException extends CustomNotFoundException {
   constructor() {
@@ -82,10 +84,6 @@ export class InsufficientPointsException extends BadRequestException {
     super(PERSIAN_ERROR_MESSAGES.INSUFFICIENT_POINTS);
   }
 }
-
-
-
-
 
 export class InvalidOTPException extends BadRequestException {
   constructor() {
