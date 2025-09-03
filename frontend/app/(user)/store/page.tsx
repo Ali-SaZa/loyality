@@ -5,8 +5,8 @@ import { Chip } from '@heroui/chip'
 import { useRouter } from 'next/navigation'
 
 import DashboardIcon from '@/components/icons/DashboardIcon'
-import UserIcon from '@/components/icons/UserIcon'
-import ListIcon from '@/components/icons/ListIcon'
+import PromotionIcon from '@/components/icons/PromotionIcon'
+import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
 import WalletIcon from '@/components/icons/WalletIcon'
 
 const StoreDashboard = () => {
@@ -14,29 +14,29 @@ const StoreDashboard = () => {
 
   const stats = [
     {
-      title: 'کل مشتریان',
-      value: '456',
-      icon: <UserIcon className="size-8 text-primary" />,
-      change: '+8%',
-      changeType: 'positive' as const,
-    },
-    {
-      title: 'محصولات فعال',
-      value: '23',
-      icon: <ListIcon className="size-8 text-success" />,
+      title: 'کل تبلیغات',
+      value: '12',
+      icon: <PromotionIcon className="size-8 text-primary" />,
       change: '+2',
       changeType: 'positive' as const,
     },
     {
-      title: 'کارت‌های تخفیف',
+      title: 'کدهای تخفیف فعال',
       value: '89',
-      icon: <ListIcon className="size-8 text-warning" />,
+      icon: <PromoCodeIcon className="size-8 text-success" />,
       change: '+15',
       changeType: 'positive' as const,
     },
     {
-      title: 'درآمد ماهانه',
-      value: '12.5M',
+      title: 'کدهای استفاده شده',
+      value: '234',
+      icon: <PromoCodeIcon className="size-8 text-warning" />,
+      change: '+23',
+      changeType: 'positive' as const,
+    },
+    {
+      title: 'درآمد کل',
+      value: '8.5M',
       icon: <WalletIcon className="size-8 text-danger" />,
       change: '+12%',
       changeType: 'positive' as const,
@@ -45,33 +45,33 @@ const StoreDashboard = () => {
 
   const recentActivities = [
     {
-      action: 'کارت تخفیف جدید ایجاد شد',
+      action: 'تبلیغ جدید ایجاد شد',
       details: '20% تخفیف برای خرید بالای 500 هزار تومان',
       time: '2 دقیقه پیش',
-      type: 'card' as const,
+      type: 'promotion' as const,
     },
     {
-      action: 'مشتری جدید ثبت نام کرد',
-      details: 'علی محمدی - شماره: 09111111111',
+      action: 'کد تخفیف جدید اضافه شد',
+      details: 'کد: SUMMER2024 - 15% تخفیف',
       time: '15 دقیقه پیش',
-      type: 'customer' as const,
+      type: 'promo-code' as const,
     },
     {
-      action: 'تراکنش جدید انجام شد',
-      details: 'مبلغ: 250 هزار تومان - امتیاز: 25',
+      action: 'کد تخفیف استفاده شد',
+      details: 'کد: WELCOME10 توسط مشتری',
       time: '1 ساعت پیش',
-      type: 'transaction' as const,
+      type: 'usage' as const,
     },
   ]
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'card':
-        return <ListIcon className="size-5 text-warning" />
-      case 'customer':
-        return <UserIcon className="size-5 text-primary" />
-      case 'transaction':
-        return <WalletIcon className="size-5 text-success" />
+      case 'promotion':
+        return <PromotionIcon className="size-5 text-primary" />
+      case 'promo-code':
+        return <PromoCodeIcon className="size-5 text-success" />
+      case 'usage':
+        return <PromoCodeIcon className="size-5 text-warning" />
       default:
         return <DashboardIcon className="size-5 text-default" />
     }
@@ -84,7 +84,7 @@ const StoreDashboard = () => {
         <DashboardIcon className="size-8 text-success" />
         <div>
           <h1 className="text-2xl font-bold text-text-dark">داشبورد فروشگاه</h1>
-          <p className="text-text-light">مدیریت کسب و کار و مشتریان</p>
+          <p className="text-text-light">مدیریت تبلیغات و کدهای تخفیف</p>
         </div>
       </div>
 
@@ -144,33 +144,24 @@ const StoreDashboard = () => {
           <h3 className="text-lg font-semibold text-text-dark">عملیات سریع</h3>
         </CardHeader>
         <CardBody>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button
               color="primary"
               variant="flat"
-              startContent={<ListIcon className="size-5" />}
+              startContent={<PromotionIcon className="size-5" />}
               className="justify-start h-12"
-              onPress={() => router.push('/store/scratch-cards')}
+              onPress={() => router.push('/store/promotions')}
             >
-              ایجاد کارت تخفیف
+              مدیریت تبلیغات
             </Button>
             <Button
               color="success"
               variant="flat"
-              startContent={<UserIcon className="size-5" />}
+              startContent={<PromoCodeIcon className="size-5" />}
               className="justify-start h-12"
-              onPress={() => router.push('/store/customers')}
+              onPress={() => router.push('/store/promo-codes')}
             >
-              مدیریت مشتریان
-            </Button>
-            <Button
-              color="warning"
-              variant="flat"
-              startContent={<WalletIcon className="size-5" />}
-              className="justify-start h-12"
-              onPress={() => router.push('/store/transactions')}
-            >
-              مشاهده تراکنش‌ها
+              مدیریت کدهای تخفیف
             </Button>
           </div>
         </CardBody>
