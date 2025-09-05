@@ -60,17 +60,22 @@ const ApplyPromoCodePage = () => {
       setCustomerPhoneNumber(data.phoneNumber)
       
       // Get customer's unused promo codes for this store
-      const promoCodes = await promoCodesService.getUserPromoCodes({
+      const response = await promoCodesService.getUserPromoCodes({
         phoneNumber: data.phoneNumber,
         storeId: currentStore?.id
       })
       
       // Filter only unused promo codes
-      const unusedPromoCodes = promoCodes.filter(code => code.status === 'unused')
+      const unusedPromoCodes = response.data.filter(code => code.status === 'unused')
       setCustomerPromoCodes(unusedPromoCodes)
       
-      if (unusedPromoCodes.length === 0) {
-        toast.error('این مشتری کد تخفیف استفاده نشده‌ای ندارد')
+      // Show the message from the API
+      if (response.message) {
+        if (unusedPromoCodes.length === 0) {
+          toast.error(response.message)
+        } else {
+          toast.success(response.message)
+        }
       }
     } catch (error) {
       console.error('❌ Get Customer Promo Codes - Error:', error)
@@ -112,12 +117,12 @@ const ApplyPromoCodePage = () => {
       toast.success(`کد تخفیف ${selectedPromoCode.code} با موفقیت استفاده شد`)
 
       // Refresh the promo codes list
-      const updatedPromoCodes = await promoCodesService.getUserPromoCodes({
+      const response = await promoCodesService.getUserPromoCodes({
         phoneNumber: customerPhoneNumber,
         storeId: currentStore?.id
       })
       
-      const unusedPromoCodes = updatedPromoCodes.filter(code => code.status === 'unused')
+      const unusedPromoCodes = response.data.filter(code => code.status === 'unused')
       setCustomerPromoCodes(unusedPromoCodes)
       
       setIsConfirmModalOpen(false)

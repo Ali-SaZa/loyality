@@ -14,7 +14,8 @@ import {
   PromoCodeResponseDto,
   PromoCodeValidationResponseDto,
   BulkCreatePromoCodesDto,
-  PromoCodeListResponseDto
+  PromoCodeListResponseDto,
+  UserPromoCodesResponseDto
 } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
@@ -648,16 +649,27 @@ export class PromoCodesService {
     return this.transformPromoCodeToResponse(populatedPromoCode);
   }
 
-  async getUserPromoCodes(phoneNumber: string, storeId?: string, requestingUser?: any): Promise<PromoCodeResponseDto[]> {
+  async getUserPromoCodes(phoneNumber: string, storeId?: string, requestingUser?: any): Promise<UserPromoCodesResponseDto> {
     // Find the user by phone number
     const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (!targetUser) {
       throw new NotFoundException('User not found with this phone number');
     }
 
-    // For store users, ensure they can only access users related to their store
-    if (requestingUser?.role === 'store' && storeId && requestingUser.storeId !== storeId) {
-      throw new ForbiddenException('You can only access users related to your own store');
+    // For store users, ensure they can only access promo codes from their own store
+    if (requestingUser?.role === 'store' && storeId) {
+      // Find the store that belongs to this user
+      const userStore = await this.storeModel.findOne({ userId: requestingUser._id }).exec();
+      
+      if (!userStore) {
+        throw new ForbiddenException('Store not found for this user');
+      }
+      
+      // Compare store IDs using string comparison
+      const userStoreId = userStore._id.toString();
+      if (userStoreId !== storeId) {
+        throw new ForbiddenException('You can only access promo codes from your own store');
+      }
     }
 
     // Build query for user's promo codes
@@ -678,7 +690,22 @@ export class PromoCodesService {
       .sort({ createdAt: -1 })
       .exec();
 
-    return promoCodes.map(promoCode => this.transformPromoCodeToResponse(promoCode));
+    const transformedPromoCodes = promoCodes.map(promoCode => this.transformPromoCodeToResponse(promoCode));
+    
+    // Determine message based on results
+    let message: string;
+    if (transformedPromoCodes.length === 0) {
+      message = 'این مشتری کد تخفیف استفاده نشده‌ای ندارد';
+    } else {
+      message = `${transformedPromoCodes.length} کد تخفیف برای این مشتری یافت شد`;
+    }
+
+    return {
+      data: transformedPromoCodes,
+      message,
+      total: transformedPromoCodes.length,
+      phoneNumber
+    };
   }
 
   async getStats(promotionId?: string, user?: any): Promise<{

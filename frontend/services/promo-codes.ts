@@ -28,6 +28,14 @@ export interface PromoCode {
   }
 }
 
+// Response type for user promo codes
+export interface UserPromoCodesResponse {
+  data: PromoCode[]
+  message: string
+  total: number
+  phoneNumber: string
+}
+
 export interface CreatePromoCodeRequest {
   code: string
   promotionId: string
@@ -223,12 +231,12 @@ export const promoCodesService = {
   },
 
   // Get user promo codes
-  async getUserPromoCodes(data: GetUserPromoCodesRequest): Promise<PromoCode[]> {
+  async getUserPromoCodes(data: GetUserPromoCodesRequest): Promise<UserPromoCodesResponse> {
     try {
       const queryParams = new URLSearchParams()
       if (data.storeId) queryParams.append('storeId', data.storeId)
 
-      const response = await axiosInstance.get<PromoCode[]>(`/promo-codes/user/${data.phoneNumber}?${queryParams.toString()}`)
+      const response = await axiosInstance.get<UserPromoCodesResponse>(`/promo-codes/user/${data.phoneNumber}?${queryParams.toString()}`)
       return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)

@@ -275,6 +275,21 @@ export class GetUserPromoCodesDto {
   storeId?: string;
 }
 
+// User Promo Codes Response DTO
+export class UserPromoCodesResponseDto {
+  @ApiProperty({ type: [PromoCodeResponseDto] })
+  data: PromoCodeResponseDto[];
+
+  @ApiProperty()
+  message: string;
+
+  @ApiProperty()
+  total: number;
+
+  @ApiProperty()
+  phoneNumber: string;
+}
+
 // List Response DTO
 export class PromoCodeListResponseDto {
   @ApiProperty({ type: [PromoCodeResponseDto] })

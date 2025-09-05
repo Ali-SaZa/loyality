@@ -22,6 +22,7 @@ import {
   PromoCodeValidationResponseDto,
   BulkCreatePromoCodesDto,
   PromoCodeListResponseDto,
+  UserPromoCodesResponseDto,
   RegisterPromoCodeDto,
   GetUserPromoCodesDto
 } from '../dto';
@@ -243,7 +244,7 @@ export class PromoCodesController {
   @ApiResponse({ 
     status: 200, 
     description: 'User promo codes retrieved successfully',
-    type: [PromoCodeResponseDto]
+    type: UserPromoCodesResponseDto
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -252,7 +253,7 @@ export class PromoCodesController {
     @Param('phoneNumber') phoneNumber: string,
     @Query('storeId') storeId?: string,
     @CurrentUser() user?: any
-  ): Promise<PromoCodeResponseDto[]> {
+  ): Promise<UserPromoCodesResponseDto> {
     return this.promoCodesService.getUserPromoCodes(phoneNumber, storeId, user);
   }
 
@@ -299,13 +300,13 @@ export class PromoCodesController {
   @ApiResponse({ 
     status: 200, 
     description: 'User\'s promo codes retrieved successfully',
-    type: [PromoCodeResponseDto]
+    type: UserPromoCodesResponseDto
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   async getMyPromoCodes(
     @CurrentUser() user: any
-  ): Promise<PromoCodeResponseDto[]> {
+  ): Promise<UserPromoCodesResponseDto> {
     if (user.role !== 'customer') {
       throw new ForbiddenException('Only customers can access their own promo codes');
     }
