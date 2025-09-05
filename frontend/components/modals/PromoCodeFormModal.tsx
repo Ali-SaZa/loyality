@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
+import Button from '@/components/formElements/Button'
 import useLoading from '@/hooks/useLoading'
 import { CreatePromoCodeValidation, UpdatePromoCodeValidation, CreatePromoCodeData, UpdatePromoCodeData } from '@/validation/promoCode'
 import { PromoCode, getPromoCodeById, createPromoCode, updatePromoCode, CreatePromoCodeRequest, UpdatePromoCodeRequest } from '@/services/promo-codes'
@@ -159,19 +160,19 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
           />
 
           <div className="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              انصراف
-            </button>
-            <button
+            <Button
               type="submit"
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors"
+              color="primary"
             >
               {isEditMode ? 'ویرایش' : 'افزودن'}
-            </button>
+            </Button>
+            <Button
+              type="button"
+              variant="light"
+              onClick={handleClose}
+            >
+              انصراف
+            </Button>
           </div>
         </form>
       </FormProvider>
