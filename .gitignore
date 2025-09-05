@@ -10,6 +10,9 @@ build/
 .next/
 out/
 
+# Deployment packages
+*.tar.gz
+loyalty-*-build.tar.gz
 
 # Logs
 logs
@@ -48,6 +51,9 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
+.env.local
+.env.production
+.env.docker
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
