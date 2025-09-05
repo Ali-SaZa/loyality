@@ -150,36 +150,4 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
-    try {
-      const payload = this.jwtService.verify(refreshToken, {
-        issuer: 'loyalty-api',
-        audience: 'loyalty-users',
-      });
-
-      // Validate refresh token type
-      if (payload.type !== 'refresh') {
-        throw new CustomUnauthorizedException('UNAUTHORIZED');
-      }
-
-      // Generate new access token
-      const newPayload = {
-        phoneNumber: payload.phoneNumber,
-        userId: payload.userId,
-        role: payload.role,
-        iat: Math.floor(Date.now() / 1000),
-        type: 'access',
-      };
-
-      const accessToken = this.jwtService.sign(newPayload, {
-        expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-        issuer: 'loyalty-api',
-        audience: 'loyalty-users',
-      });
-
-      return { accessToken };
-    } catch (error) {
-      throw new CustomUnauthorizedException('UNAUTHORIZED');
-    }
-  }
 }

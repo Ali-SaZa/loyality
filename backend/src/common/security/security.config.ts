@@ -5,7 +5,6 @@ export const SECURITY_CONFIG = {
     ISSUER: 'loyalty-api',
     AUDIENCE: 'loyalty-users',
     DEFAULT_EXPIRES_IN: '7d',
-    REFRESH_EXPIRES_IN: '30d',
     MIN_SECRET_LENGTH: 32,
   },
   
