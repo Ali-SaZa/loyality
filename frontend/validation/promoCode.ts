@@ -38,8 +38,15 @@ export const RegisterPromoCodeValidation = z.object({
 
 export const GetUserPromoCodesValidation = z.object({
   phoneNumber: z.string()
-    .regex(/^09[0-9]{9}$/, 'شماره تلفن باید در فرمت 09xxxxxxxxx باشد'),
+    .min(1, 'شماره تلفن الزامی است')
+    .regex(/^09\d{9}$/, 'شماره تلفن باید با 09 شروع شود و 11 رقم باشد'),
   storeId: z.string().optional()
+})
+
+export const ApplyPromoCodeValidation = z.object({
+  phoneNumber: z.string()
+    .min(1, 'شماره تلفن الزامی است')
+    .regex(/^09\d{9}$/, 'شماره تلفن باید با 09 شروع شود و 11 رقم باشد')
 })
 
 // Type definitions
@@ -49,3 +56,4 @@ export type ChangePromoCodeStatusData = z.infer<typeof ChangePromoCodeStatusVali
 export type ValidatePromoCodeData = z.infer<typeof ValidatePromoCodeValidation>
 export type RegisterPromoCodeData = z.infer<typeof RegisterPromoCodeValidation>
 export type GetUserPromoCodesData = z.infer<typeof GetUserPromoCodesValidation>
+export type ApplyPromoCodeData = z.infer<typeof ApplyPromoCodeValidation>

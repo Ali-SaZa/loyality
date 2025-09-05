@@ -86,6 +86,13 @@ export const siteConfig = {
         isShortAccess: true,
         children: [],
       },
+      {
+        title: 'اعمال کد تخفیف',
+        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
+        link: '/store/apply-promo-code',
+        isShortAccess: true,
+        children: [],
+      },
     ],
     customer: [
       {

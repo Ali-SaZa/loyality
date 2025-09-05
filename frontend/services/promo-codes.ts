@@ -226,10 +226,9 @@ export const promoCodesService = {
   async getUserPromoCodes(data: GetUserPromoCodesRequest): Promise<PromoCode[]> {
     try {
       const queryParams = new URLSearchParams()
-      queryParams.append('phoneNumber', data.phoneNumber)
       if (data.storeId) queryParams.append('storeId', data.storeId)
 
-      const response = await axiosInstance.get<PromoCode[]>(`/promo-codes/user?${queryParams.toString()}`)
+      const response = await axiosInstance.get<PromoCode[]>(`/promo-codes/user/${data.phoneNumber}?${queryParams.toString()}`)
       return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)
