@@ -24,10 +24,14 @@ import {
   PromoCodeListResponseDto,
   UserPromoCodesResponseDto,
   RegisterPromoCodeDto,
-  GetUserPromoCodesDto
+  GetUserPromoCodesDto,
+  RegisterWithPromoCodeDto,
+  VerifyPromoRegistrationDto,
+  PromoRegistrationResponseDto
 } from '../dto';
 import { PromotionAuth, AdminAuth, PromoCodeAuth, StoreOrAdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { ListRequestDto } from '../common/dto/list.dto';
 
 @ApiTags('promo-codes')
@@ -329,5 +333,45 @@ export class PromoCodesController {
     @CurrentUser() user: any
   ): Promise<void> {
     return this.promoCodesService.remove(id, user);
+  }
+
+  @Post('register/send-otp')
+  @Public()
+  @ApiOperation({ summary: 'Send OTP for promo code registration' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'OTP sent successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'کد تأیید ارسال شد' },
+        otpId: { type: 'string', example: '507f1f77bcf86cd799439011' }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid promo code or phone number' })
+  @ApiResponse({ status: 404, description: 'Promo code not found' })
+  @HttpCode(HttpStatus.CREATED)
+  async sendOtpForPromoRegistration(
+    @Body() registerDto: RegisterWithPromoCodeDto
+  ): Promise<{ message: string; otpId: string }> {
+    return this.promoCodesService.sendOtpForPromoRegistration(registerDto);
+  }
+
+  @Post('register/verify')
+  @Public()
+  @ApiOperation({ summary: 'Verify OTP and complete promo code registration' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Registration completed successfully',
+    type: PromoRegistrationResponseDto
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid OTP or promo code' })
+  @ApiResponse({ status: 404, description: 'Promo code or store not found' })
+  @HttpCode(HttpStatus.CREATED)
+  async verifyPromoRegistration(
+    @Body() verifyDto: VerifyPromoRegistrationDto
+  ): Promise<PromoRegistrationResponseDto> {
+    return this.promoCodesService.verifyPromoRegistration(verifyDto);
   }
 }

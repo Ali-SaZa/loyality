@@ -18,6 +18,10 @@ export const API_CONFIG = {
       DELETE: '/users/:id',
       GET_CURRENT: '/users/me',
     },
+    PROMO_CODES: {
+      REGISTER_SEND_OTP: '/promo-codes/register/send-otp',
+      REGISTER_VERIFY: '/promo-codes/register/verify',
+    },
   },
   
   // Request timeout (in milliseconds)

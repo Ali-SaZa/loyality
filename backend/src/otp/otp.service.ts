@@ -61,7 +61,7 @@ export class OtpService {
     return otps.map(otp => this.transformOtpToResponse(otp));
   }
 
-  async findActiveByPhoneNumber(phoneNumber: string, context: 'login' | 'scratch'): Promise<OtpResponseDto | null> {
+  async findActiveByPhoneNumber(phoneNumber: string, context: 'login' | 'scratch' | 'promo-registration'): Promise<OtpResponseDto | null> {
     const otp = await this.otpModel.findOne({
       phoneNumber,
       context,
@@ -72,7 +72,7 @@ export class OtpService {
     return otp ? this.transformOtpToResponse(otp) : null;
   }
 
-  async findRecentOtp(phoneNumber: string, context: 'login' | 'scratch'): Promise<OtpResponseDto | null> {
+  async findRecentOtp(phoneNumber: string, context: 'login' | 'scratch' | 'promo-registration'): Promise<OtpResponseDto | null> {
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
     
     const otp = await this.otpModel.findOne({
@@ -108,7 +108,7 @@ export class OtpService {
     return this.transformOtpToResponse(otp);
   }
 
-  async verifyOtp(phoneNumber: string, code: string, context: 'login' | 'scratch'): Promise<OtpResponseDto> {
+  async verifyOtp(phoneNumber: string, code: string, context: 'login' | 'scratch' | 'promo-registration'): Promise<OtpResponseDto> {
     const otp = await this.otpModel.findOne({
       phoneNumber,
       code,

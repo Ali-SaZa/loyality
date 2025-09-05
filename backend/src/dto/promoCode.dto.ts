@@ -313,3 +313,126 @@ export class PromoCodeListResponseDto {
   @ApiProperty()
   hasPrevPage: boolean;
 }
+
+// Promo Code Registration DTOs
+export class RegisterWithPromoCodeDto {
+  @ApiProperty({ 
+    description: 'Iranian mobile number', 
+    example: '09123456789',
+    pattern: '^09[0-9]{9}$'
+  })
+  @IsString()
+  @Matches(/^09[0-9]{9}$/, { 
+    message: 'Phone number must be a valid Iranian mobile number starting with 09' 
+  })
+  phoneNumber: string;
+
+  @ApiProperty({ 
+    description: 'Promo code to register with', 
+    example: 'WELCOME50',
+    pattern: '^[A-Z0-9]{6,12}$'
+  })
+  @IsString()
+  @Matches(/^[A-Z0-9]{6,12}$/, { 
+    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  })
+  promoCode: string;
+}
+
+export class VerifyPromoRegistrationDto {
+  @ApiProperty({ 
+    description: 'Iranian mobile number', 
+    example: '09123456789',
+    pattern: '^09[0-9]{9}$'
+  })
+  @IsString()
+  @Matches(/^09[0-9]{9}$/, { 
+    message: 'Phone number must be a valid Iranian mobile number starting with 09' 
+  })
+  phoneNumber: string;
+
+  @ApiProperty({ 
+    description: 'Promo code to register with', 
+    example: 'WELCOME50',
+    pattern: '^[A-Z0-9]{6,12}$'
+  })
+  @IsString()
+  @Matches(/^[A-Z0-9]{6,12}$/, { 
+    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  })
+  promoCode: string;
+
+  @ApiProperty({ 
+    description: '6-digit OTP code', 
+    example: '123456',
+    pattern: '^[0-9]{6}$'
+  })
+  @IsString()
+  @Matches(/^[0-9]{6}$/, { 
+    message: 'OTP code must be exactly 6 digits' 
+  })
+  otpCode: string;
+}
+
+export class PromoRegistrationResponseDto {
+  @ApiProperty({ description: 'Success message' })
+  message: string;
+
+  @ApiProperty({ description: 'User information' })
+  user: {
+    id: string;
+    phoneNumber: string;
+    firstName?: string;
+    lastName?: string;
+    role: string;
+    createdAt: Date;
+  };
+
+  @ApiProperty({ description: 'Store information' })
+  store: {
+    id: string;
+    name: string;
+    phoneNumber: string;
+    address: {
+      province: string;
+      city: string;
+      fullAddress: string;
+    };
+    logoUrl?: string;
+    description?: string;
+    socialLinks?: {
+      website?: string;
+      instagram?: string;
+      telegram?: string;
+    };
+    workingHours?: {
+      open: string;
+      close: string;
+    };
+  };
+
+  @ApiProperty({ description: 'Promotion information' })
+  promotion: {
+    id: string;
+    title: string;
+    description?: string;
+    price: number;
+    points: number;
+    status: string;
+  };
+
+  @ApiProperty({ description: 'Promo code information' })
+  promoCode: {
+    id: string;
+    code: string;
+    status: string;
+    registeredAt: Date;
+    notes?: string;
+  };
+
+  @ApiProperty({ description: 'Transaction information' })
+  transaction: {
+    id: string;
+    createdAt: Date;
+  };
+}

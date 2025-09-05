@@ -27,10 +27,10 @@ export class Otp {
   code: string;
 
   @Prop({
-    enum: ['login', 'scratch'],
+    enum: ['login', 'scratch', 'promo-registration'],
     required: true
   })
-  context: 'login' | 'scratch';
+  context: 'login' | 'scratch' | 'promo-registration';
 
   @Prop({ required: false })
   scratchCode?: string;

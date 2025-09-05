@@ -8,6 +8,7 @@ import { Store, StoreSchema } from '../schemas/store.schema';
 import { User, UserSchema } from '../schemas/user.schema';
 import { Transaction, TransactionSchema } from '../schemas/transaction.schema';
 import { AuthModule } from '../auth/auth.module';
+import { OtpModule } from '../otp/otp.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from '../auth/auth.module';
       { name: Transaction.name, schema: TransactionSchema }
     ]),
     AuthModule,
+    OtpModule,
   ],
   controllers: [PromoCodesController],
   providers: [PromoCodesService],

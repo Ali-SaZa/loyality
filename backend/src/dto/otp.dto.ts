@@ -17,9 +17,9 @@ export class CreateOtpDto {
   @Matches(/^[0-9]{6}$/)
   code: string;
 
-  @ApiProperty({ description: 'OTP context', enum: ['login', 'scratch'] })
-  @IsEnum(['login', 'scratch'])
-  context: 'login' | 'scratch';
+  @ApiProperty({ description: 'OTP context', enum: ['login', 'scratch', 'promo-registration'] })
+  @IsEnum(['login', 'scratch', 'promo-registration'])
+  context: 'login' | 'scratch' | 'promo-registration';
 
   @ApiProperty({ description: 'Scratch code', required: false })
   @IsOptional()
@@ -45,8 +45,8 @@ export class UpdateOtpDto {
 
   @ApiProperty({ description: 'OTP context', required: false })
   @IsOptional()
-  @IsEnum(['login', 'scratch'])
-  context?: 'login' | 'scratch';
+  @IsEnum(['login', 'scratch', 'promo-registration'])
+  context?: 'login' | 'scratch' | 'promo-registration';
 
   @ApiProperty({ description: 'Scratch code', required: false })
   @IsOptional()
@@ -72,8 +72,8 @@ export class OtpResponseDto {
   @ApiProperty()
   code: string;
 
-  @ApiProperty({ enum: ['login', 'scratch'] })
-  context: 'login' | 'scratch';
+  @ApiProperty({ enum: ['login', 'scratch', 'promo-registration'] })
+  context: 'login' | 'scratch' | 'promo-registration';
 
   @ApiProperty({ required: false })
   scratchCode?: string;

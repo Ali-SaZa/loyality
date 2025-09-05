@@ -15,13 +15,17 @@ import {
   PromoCodeValidationResponseDto,
   BulkCreatePromoCodesDto,
   PromoCodeListResponseDto,
-  UserPromoCodesResponseDto
+  UserPromoCodesResponseDto,
+  RegisterWithPromoCodeDto,
+  VerifyPromoRegistrationDto,
+  PromoRegistrationResponseDto
 } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
   StoreNotFoundException,
   CustomConflictException 
 } from '../common/errors';
+import { OtpService } from '../otp/otp.service';
 
 @Injectable()
 export class PromoCodesService {
@@ -31,6 +35,7 @@ export class PromoCodesService {
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Transaction.name) private transactionModel: Model<TransactionDocument>,
+    private otpService: OtpService,
   ) {}
 
   private transformPromoCodeToResponse(promoCode: PromoCodeDocument): PromoCodeResponseDto {
@@ -744,5 +749,148 @@ export class PromoCodesService {
     ]);
 
     return { total, unused, used, registered, deleted };
+  }
+
+  /**
+   * Step 1: Send OTP for promo code registration
+   */
+  async sendOtpForPromoRegistration(registerDto: RegisterWithPromoCodeDto): Promise<{ message: string; otpId: string }> {
+    // Validate promo code exists and is available
+    const promoCode = await this.promoCodeModel.findOne({ 
+      code: registerDto.promoCode,
+      status: 'unused'
+    }).populate('promotionId').exec();
+
+    if (!promoCode) {
+      throw new NotFoundException('کد تخفیف یافت نشد یا قبلاً استفاده شده است');
+    }
+
+    // Check if promotion is active
+    const promotion = promoCode.promotionId as any;
+    if (promotion.status !== 'active') {
+      throw new BadRequestException('این پیشنهاد فعال نیست');
+    }
+
+    // Check if there's already an active OTP for this phone number
+    const existingOtp = await this.otpService.findActiveByPhoneNumber(registerDto.phoneNumber, 'promo-registration');
+    if (existingOtp) {
+      throw new BadRequestException('کد تأیید قبلاً ارسال شده است. لطفاً منتظر بمانید');
+    }
+
+    // Create OTP with fixed code 123456
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+    const otp = await this.otpService.create({
+      phoneNumber: registerDto.phoneNumber,
+      code: '123456', // Fixed value as requested
+      context: 'promo-registration',
+      expiresAt: expiresAt.toISOString()
+    });
+
+    return {
+      message: 'کد تأیید ارسال شد',
+      otpId: otp.id
+    };
+  }
+
+  /**
+   * Step 2: Verify OTP and complete promo code registration
+   */
+  async verifyPromoRegistration(verifyDto: VerifyPromoRegistrationDto): Promise<PromoRegistrationResponseDto> {
+    // Verify OTP
+    try {
+      await this.otpService.verifyOtp(verifyDto.phoneNumber, verifyDto.otpCode, 'promo-registration');
+    } catch (error) {
+      throw new BadRequestException('کد تأیید نامعتبر یا منقضی شده است');
+    }
+
+    // Find promo code and validate
+    const promoCode = await this.promoCodeModel.findOne({ 
+      code: verifyDto.promoCode,
+      status: 'unused'
+    }).populate('promotionId').exec();
+
+    if (!promoCode) {
+      throw new NotFoundException('کد تخفیف یافت نشد یا قبلاً استفاده شده است');
+    }
+
+    const promotion = promoCode.promotionId as any;
+    if (promotion.status !== 'active') {
+      throw new BadRequestException('این پیشنهاد فعال نیست');
+    }
+
+    // Get store information
+    const store = await this.storeModel.findById(promotion.storeId).exec();
+    if (!store) {
+      throw new NotFoundException('فروشگاه یافت نشد');
+    }
+
+    // Check if user exists
+    let user = await this.userModel.findOne({ phoneNumber: verifyDto.phoneNumber }).exec();
+    
+    if (!user) {
+      // Create new user as customer
+      user = new this.userModel({
+        phoneNumber: verifyDto.phoneNumber,
+        role: 'customer',
+        status: 'active',
+        lastActivity: new Date()
+      });
+      await user.save();
+    }
+
+    // Register promo code for user
+    promoCode.userId = user._id;
+    promoCode.registeredAt = new Date();
+    await promoCode.save();
+
+    // Create transaction record
+    const transaction = new this.transactionModel({
+      customerId: user._id,
+      storeId: store._id,
+      promoCodeId: promoCode._id,
+      promotionId: promotion._id
+    });
+    await transaction.save();
+
+    return {
+      message: 'تبریک! شما با موفقیت در برنامه وفاداری ثبت نام کردید',
+      user: {
+        id: user._id.toString(),
+        phoneNumber: user.phoneNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        createdAt: user.createdAt
+      },
+      store: {
+        id: store._id.toString(),
+        name: store.name,
+        phoneNumber: store.phoneNumber,
+        address: store.address,
+        logoUrl: store.logoUrl,
+        description: store.description,
+        socialLinks: store.socialLinks,
+        workingHours: store.workingHours
+      },
+      promotion: {
+        id: promotion._id.toString(),
+        title: promotion.title,
+        description: promotion.description,
+        price: promotion.price,
+        points: promotion.points,
+        status: promotion.status
+      },
+      promoCode: {
+        id: promoCode._id.toString(),
+        code: promoCode.code,
+        status: promoCode.status,
+        registeredAt: promoCode.registeredAt,
+        notes: promoCode.notes
+      },
+      transaction: {
+        id: transaction._id.toString(),
+        createdAt: transaction.createdAt
+      }
+    };
   }
 }
