@@ -42,7 +42,9 @@ export class PromoCodesService {
     return {
       id: promoCode._id.toString(),
       code: promoCode.code,
-      promotionId: promoCode.promotionId.toString(),
+      promotionId: populatedPromoCode.populated('promotionId') 
+        ? populatedPromoCode.promotionId._id.toString()
+        : promoCode.promotionId.toString(),
       status: promoCode.status,
       userId: promoCode.userId?.toString(),
       registeredAt: promoCode.registeredAt,
@@ -119,7 +121,7 @@ export class PromoCodesService {
 
     // For store users, filter by their stores only (only if not already filtered by promotionId)
     if (user.role === 'store' && !additionalFilters.promotionId) {
-      const userStores = await this.storeModel.find({ userId: user._id.toString() }).select('_id').exec();
+      const userStores = await this.storeModel.find({ userId: user._id }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       
       const promotions = await this.promotionModel.find({ storeId: { $in: storeIds } }).select('_id').exec();
@@ -690,7 +692,7 @@ export class PromoCodesService {
 
     // For store users, filter by their stores only
     if (user && user.role === 'store') {
-      const userStores = await this.storeModel.find({ userId: user._id.toString() }).select('_id').exec();
+      const userStores = await this.storeModel.find({ userId: user._id }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       
       const promotions = await this.promotionModel.find({ storeId: { $in: storeIds } }).select('_id').exec();
@@ -701,7 +703,7 @@ export class PromoCodesService {
 
     // If specific promotion ID is provided
     if (promotionId) {
-      query.promotionId = promotionId;
+      query.promotionId = new Types.ObjectId(promotionId);
     }
 
     const [total, unused, used, registered, deleted] = await Promise.all([

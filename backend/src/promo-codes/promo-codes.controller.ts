@@ -74,7 +74,7 @@ export class PromoCodesController {
   }
 
   @Get()
-  @PromoCodeAuth()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all promo codes with pagination and filtering (Store/Admin only)' })
   @ApiResponse({ 
@@ -83,6 +83,7 @@ export class PromoCodesController {
     type: PromoCodeListResponseDto 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
   async findAll(
     @Query() listRequest: ListRequestDto,
     @CurrentUser() user: any
@@ -91,10 +92,10 @@ export class PromoCodesController {
   }
 
   @Get('stats')
-  @PromoCodeAuth()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get promo code statistics (Store/Admin only)' })
-  @ApiQuery({ name: 'promotionId', required: false, description: 'Filter by specific promotion ID' })
+  @ApiQuery({ name: 'promotionId', required: false, description: 'Filter by specific promotion ID (Admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'Statistics retrieved successfully',
@@ -104,11 +105,13 @@ export class PromoCodesController {
         total: { type: 'number' },
         unused: { type: 'number' },
         used: { type: 'number' },
-        registered: { type: 'number' }
+        registered: { type: 'number' },
+        deleted: { type: 'number' }
       }
     }
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
   async getStats(
     @Query('promotionId') promotionId?: string,
     @CurrentUser() user?: any
@@ -117,6 +120,7 @@ export class PromoCodesController {
     unused: number;
     used: number;
     registered: number;
+    deleted: number;
   }> {
     return this.promoCodesService.getStats(promotionId, user);
   }
