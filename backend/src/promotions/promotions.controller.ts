@@ -107,24 +107,6 @@ export class PromotionsController {
     return this.promotionsService.getPromotionStats(storeId, user);
   }
 
-  @Get('store/:storeId')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promotions by store ID' })
-  @ApiParam({ name: 'storeId', description: 'Store ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of promotions for the store',
-    type: [PromotionResponseDto] 
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
-  async findByStore(
-    @Param('storeId') storeId: string,
-    @Query('status') status?: string
-  ): Promise<PromotionResponseDto[]> {
-    return this.promotionsService.findByStore(storeId, status);
-  }
-
   @Get(':id')
   @PromotionAuth({ paramName: 'id' })
   @ApiBearerAuth()

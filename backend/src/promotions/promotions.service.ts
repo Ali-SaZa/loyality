@@ -279,17 +279,6 @@ export class PromotionsService {
     await this.promotionModel.findByIdAndUpdate(id, { status: 'deleted' }).exec();
   }
 
-  async findByStore(storeId: string, status?: string): Promise<PromotionResponseDto[]> {
-    const filter: any = { storeId };
-    if (status) {
-      filter.status = status;
-    }
-    // Include all promotions including deleted ones by default
-
-    const promotions = await this.promotionModel.find(filter).exec();
-    return promotions.map(promotion => this.transformPromotionToResponse(promotion));
-  }
-
   private async validateStoreAccess(storeId: string, user: any): Promise<void> {
     // Admin can access everything
     if (user.role === 'admin') {

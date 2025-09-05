@@ -55,13 +55,8 @@ export class AuthorizationService {
       return;
     }
 
-    // Store users can access their own store
+    // Store users can only access their own store
     if (user.role === 'store' && resource.resourceId === user.storeId) {
-      return;
-    }
-
-    // Store users can view other stores (read-only access)
-    if (user.role === 'store') {
       return;
     }
 

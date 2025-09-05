@@ -183,8 +183,8 @@ export class StoresService {
     // Build filter query with sanitized search
     let filterQuery: Record<string, any> = {};
     
-    // Add additional filters - temporarily disabled to see all stores
-    // Object.assign(filterQuery, additionalFilters);
+    // Add additional filters - properly apply role-based filtering
+    Object.assign(filterQuery, additionalFilters);
 
     // Execute queries in parallel with optimized population
     const [rawData, total] = await Promise.all([
