@@ -49,11 +49,21 @@ else
     exit 1
 fi
 
+# Load environment variables
+if [ -f ".env" ]; then
+    export $(cat .env | grep -v '^#' | xargs)
+fi
+
+# Set default ports if not defined
+BACKEND_PORT=${BACKEND_PORT:-5555}
+FRONTEND_PORT=${FRONTEND_PORT:-4444}
+MONGODB_PORT=${MONGODB_PORT:-27018}
+
 echo ""
 echo "🚀 Starting Frontend and Backend locally..."
-echo "   🗄️  MongoDB: localhost:27017 (Docker)"
-echo "   🔌 Backend: Will start on port 3001 (Local)"
-echo "   🌐 Frontend: Will start on port 3000 (Local)"
+echo "   🗄️  MongoDB: localhost:$MONGODB_PORT (Docker)"
+echo "   🔌 Backend: Will start on port $BACKEND_PORT (Local)"
+echo "   🌐 Frontend: Will start on port $FRONTEND_PORT (Local)"
 echo ""
 
 # Start frontend and backend locally
