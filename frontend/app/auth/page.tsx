@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -20,7 +20,7 @@ const CheckOtpDefaultValues = {
   code: "",
 };
 
-const Auth = () => {
+const AuthContent = () => {
   const { saveUser, user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -252,6 +252,14 @@ const Auth = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const Auth = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthContent />
+    </Suspense>
   );
 };
 

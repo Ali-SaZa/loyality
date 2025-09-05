@@ -232,6 +232,17 @@ export const storesService = {
       const errorMessage = handleApiError(error)
       throw new Error(errorMessage)
     }
+  },
+
+  // Get store statistics
+  async getStoreStats(): Promise<StoreStats> {
+    try {
+      const response = await axiosInstance.get<StoreStats>('/stores/stats')
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
   }
 }
 
