@@ -210,10 +210,10 @@ export const storesService = {
     }
   },
 
-  // Get store statistics
-  async getStoreStats(): Promise<StoreStats> {
+  // Get current user's store (for store users)
+  async getCurrentStore(): Promise<Store> {
     try {
-      const response = await axiosInstance.get<StoreStats>('/stores/stats')
+      const response = await axiosInstance.get<Store>('/stores/me')
       return response.data
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -243,4 +243,5 @@ export const updateStore = storesService.updateStore
 export const deleteStore = storesService.deleteStore
 export const updateStoreStatus = storesService.updateStoreStatus
 export const getStoreStats = storesService.getStoreStats
+export const getCurrentStore = storesService.getCurrentStore
 export const getStoreFilterOptions = storesService.getStoreFilterOptions

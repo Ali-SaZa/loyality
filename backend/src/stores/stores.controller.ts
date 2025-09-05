@@ -9,6 +9,8 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { StoresService, StoreStats } from './stores.service';
@@ -105,6 +107,29 @@ export class StoresController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async getStats(): Promise<StoreStats> {
     return this.storesService.getStats();
+  }
+
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user store (Store Owner only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Current user store found',
+    type: StoreResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Store not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not a store user' })
+  async getCurrentStore(@CurrentUser() user: any): Promise<StoreResponseDto> {
+    if (user.role !== 'store') {
+      throw new ForbiddenException('Only store users can access this endpoint');
+    }
+    
+    if (!user.storeId) {
+      throw new NotFoundException('Store not found for this user');
+    }
+    
+    return this.storesService.findOne(user.storeId, user);
   }
 
   @Get(':id')

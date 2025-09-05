@@ -308,7 +308,12 @@ export class StoresService {
       return;
     }
 
-    if (user.role === 'store' && user._id === store.userId.toString()) {
+    // Handle both populated and non-populated userId references
+    const storeUserId = typeof store.userId === 'object' && store.userId._id 
+      ? store.userId._id.toString() 
+      : store.userId.toString();
+
+    if (user.role === 'store' && user._id.toString() === storeUserId) {
       return;
     }
 

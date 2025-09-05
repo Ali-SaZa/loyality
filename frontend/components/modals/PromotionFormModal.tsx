@@ -44,7 +44,7 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
       } else {
         // Reset form for create mode
         methods.reset({
-          storeId: '',
+          storeId: stores.length === 1 ? stores[0].id : '', // Auto-select if only one store
           title: '',
           description: '',
           price: 0,
@@ -159,17 +159,19 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
           <div className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                generalType="select"
-                name="storeId"
-                label="فروشگاه"
-                placeholder="فروشگاه را انتخاب کنید"
-                selectOptions={storeOptions}
-                selectKey="code"
-                selectValue="name"
-                required={true}
-                disabled={isEditMode}
-              />
+              {stores.length > 1 && (
+                <Input
+                  generalType="select"
+                  name="storeId"
+                  label="فروشگاه"
+                  placeholder="فروشگاه را انتخاب کنید"
+                  selectOptions={storeOptions}
+                  selectKey="code"
+                  selectValue="name"
+                  required={true}
+                  disabled={isEditMode}
+                />
+              )}
 
               <Input
                 generalType="input"

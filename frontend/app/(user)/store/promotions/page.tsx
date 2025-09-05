@@ -10,8 +10,9 @@ import EditIcon from '@/components/icons/EditIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
 import ClockIcon from '@/components/icons/ClockIcon'
 import { getAllPromotions, getPromotionStats, deletePromotion, Promotion, PromotionStats, getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
-import { getAllStores, Store } from '@/services/stores'
+import { getCurrentStore, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
+import useAuth from '@/hooks/useAuth'
 import { getPromotionStatusConfig } from '@/types/enums'
 import { formatDateToPersianJalali } from '@/helpers'
 import PromotionFormModal from '@/components/modals/PromotionFormModal'
@@ -22,9 +23,10 @@ import AutomaticPromoCodeCreationModal from '@/components/modals/AutomaticPromoC
 
 const StorePromotions = () => {
   const { setLoading } = useLoading()
+  const { user } = useAuth()
   
   const [promotions, setPromotions] = useState<Promotion[]>([])
-  const [stores, setStores] = useState<Store[]>([])
+  const [currentStore, setCurrentStore] = useState<Store | null>(null)
   const [stats, setStats] = useState<PromotionStats>({
     total: 0,
     active: 0,
@@ -72,7 +74,7 @@ const StorePromotions = () => {
   useEffect(() => {
     fetchPromotions()
     fetchStats()
-    fetchStores()
+    fetchCurrentStore()
   }, [])
 
   const fetchPromotions = async () => {
@@ -99,12 +101,14 @@ const StorePromotions = () => {
     }
   }
 
-  const fetchStores = async () => {
+  const fetchCurrentStore = async () => {
     try {
-      const response = await getAllStores({ page: 1, limit: 100 })
-      setStores(response.data)
+      if (user?.role === 'store') {
+        const store = await getCurrentStore()
+        setCurrentStore(store)
+      }
     } catch (err) {
-      console.error('Error fetching stores:', err)
+      console.error('Error fetching current store:', err)
     }
   }
 
@@ -122,8 +126,7 @@ const StorePromotions = () => {
   }
 
   const getStoreName = (storeId: string) => {
-    const store = stores.find(s => s.id === storeId)
-    return store ? store.name : 'نامشخص'
+    return currentStore?.id === storeId ? currentStore.name : 'نامشخص'
   }
 
   const formatValue = (promotion: Promotion) => {
@@ -449,7 +452,7 @@ const StorePromotions = () => {
         onSuccess={handleDetailsModalSuccess}
         onPromotionCreated={handlePromotionCreated}
         promotionId={promotionFormModal.promotionId}
-        stores={stores}
+        stores={currentStore ? [currentStore] : []}
       />
 
       {/* Automatic Promo Code Creation Modal */}
@@ -469,7 +472,7 @@ const StorePromotions = () => {
         onDelete={handlePromotionDetailsDelete}
         onSuccess={handlePromotionDetailsSuccess}
         promotionId={promotionDetailsModal.promotionId}
-        stores={stores}
+        stores={currentStore ? [currentStore] : []}
       />
 
       {/* Delete Confirmation Modal */}
