@@ -10,8 +10,8 @@ import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import { getStoreById, deleteStore, Store } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
-import { StoreStatus, getStoreStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali } from '@/helpers'
+import { getStoreStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali, formatPhoneNumber } from '@/helpers'
 
 interface StoreViewModalProps {
   isOpen: boolean
@@ -84,13 +84,6 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
     return formatDateToPersianJalali(date)
   }
 
-  const formatPhoneNumber = (phone: string) => {
-    // Format Iranian phone number
-    if (phone.startsWith('09')) {
-      return phone.replace(/(\d{4})(\d{3})(\d{4})/, '$1-$2-$3')
-    }
-    return phone
-  }
 
   const getStatusColor = (status: string) => {
     return getStoreStatusConfig(status).color

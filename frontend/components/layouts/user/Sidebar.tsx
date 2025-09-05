@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import Button from '@/components/formElements/Button'
 import LogoContainer from '@/components/ui/ObsLogo'
 import { getMenuByRole } from '@/helpers/menuUtils'
-import { UserRole, getRoleConfig } from '@/types/enums'
+import { getRoleConfig } from '@/types/enums'
 import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
 import CloseIcon from '@/components/icons/CloseIcon'
 

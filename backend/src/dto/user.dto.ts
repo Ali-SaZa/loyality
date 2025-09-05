@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum, IsBoolean, IsDateString, Min, MaxLength, Matches } from 'class-validator';
-import { Types } from 'mongoose';
+import { IsString, IsOptional, MaxLength, Matches } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'Iranian mobile number', example: '09123456789' })

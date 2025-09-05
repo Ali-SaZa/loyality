@@ -5,8 +5,6 @@ import { User } from '@heroui/user'
 import React, { useMemo, useState } from 'react'
 
 import LogoutIcon from '../icons/LogoutIcon'
-import EditIcon from '../icons/EditIcon'
-import DashboardIcon from '../icons/DashboardIcon'
 import StyledUser from './StyledUser'
 
 import { getMenuByRole } from '@/helpers/menuUtils'

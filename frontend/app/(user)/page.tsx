@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import Button from '@/components/formElements/Button'
 import { User } from '@heroui/user'

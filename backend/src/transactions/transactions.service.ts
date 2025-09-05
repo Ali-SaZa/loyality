@@ -34,10 +34,18 @@ export class TransactionsService {
 
     return {
       id: transaction._id.toString(),
-      customerId: transaction.customerId.toString(),
-      storeId: transaction.storeId.toString(),
-      promoCodeId: transaction.promoCodeId.toString(),
-      promotionId: transaction.promotionId.toString(),
+      customerId: populatedTransaction.populated('customerId') 
+        ? populatedTransaction.customerId._id.toString()
+        : transaction.customerId.toString(),
+      storeId: populatedTransaction.populated('storeId') 
+        ? populatedTransaction.storeId._id.toString()
+        : transaction.storeId.toString(),
+      promoCodeId: populatedTransaction.populated('promoCodeId') 
+        ? populatedTransaction.promoCodeId._id.toString()
+        : transaction.promoCodeId.toString(),
+      promotionId: populatedTransaction.populated('promotionId') 
+        ? populatedTransaction.promotionId._id.toString()
+        : transaction.promotionId.toString(),
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
       // Include populated data if available
@@ -385,6 +393,14 @@ export class TransactionsService {
         }
       },
       {
+        $lookup: {
+          from: 'promotions',
+          localField: 'allTransactions.promotionId',
+          foreignField: '_id',
+          as: 'promotionDetails'
+        }
+      },
+      {
         $addFields: {
           totalSpent: {
             $sum: {
@@ -469,32 +485,41 @@ export class TransactionsService {
       { $sort: { lastTransactionDate: -1 } }
     ]);
 
-    return customerTransactions;
+    // Transform the aggregation results to match CustomerTransactionDto
+    return customerTransactions.map(customer => ({
+      id: customer.id ? customer.id.toString() : customer._id.toString(),
+      phoneNumber: customer.phoneNumber,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      status: customer.status,
+      totalTransactions: customer.totalTransactions,
+      totalSpent: customer.totalSpent || 0,
+      totalPointsEarned: customer.totalPointsEarned || 0,
+      firstTransactionDate: customer.firstTransactionDate,
+      lastTransactionDate: customer.lastTransactionDate,
+      lastActivity: customer.lastActivity
+    }));
   }
 
   async getCustomerTransactions(customerId: string, requestingUser: any): Promise<TransactionResponseDto[]> {
     // Security: Verify access permissions
-    if (requestingUser.role === 'customer' && requestingUser.id !== customerId) {
+    if (requestingUser.role === 'customer' && requestingUser._id.toString() !== customerId) {
       throw new ForbiddenException('You can only access your own transactions');
     }
 
+    let query: any = { customerId: new Types.ObjectId(customerId) };
+
     // For store users, ensure they can only access customers related to their stores
     if (requestingUser.role === 'store') {
-      const userStores = await this.storeModel.find({ userId: requestingUser.id }).select('_id').exec();
+      const userStores = await this.storeModel.find({ userId: requestingUser._id }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       
-      const customerTransactions = await this.transactionModel.find({
-        customerId,
-        storeId: { $in: storeIds }
-      }).exec();
-      
-      if (customerTransactions.length === 0) {
-        throw new ForbiddenException('You can only access customers related to your stores');
-      }
+      // Add store filter to the query
+      query.storeId = { $in: storeIds };
     }
 
     const transactions = await this.transactionModel
-      .find({ customerId })
+      .find(query)
       .populate('customerId', 'phoneNumber firstName lastName')
       .populate('storeId', 'name phoneNumber')
       .populate('promoCodeId', 'code status')

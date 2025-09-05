@@ -12,7 +12,7 @@ import EyeIcon from '@/components/icons/EyeIcon'
 import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
 import useLoading from '@/hooks/useLoading'
 import { getStoreStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali } from '@/helpers'
+import { formatDateToPersianJalali, formatPhoneNumber } from '@/helpers'
 import StoreFormModal from '@/components/modals/StoreFormModal'
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
 import StoreViewModal from '@/components/modals/StoreViewModal'
@@ -90,13 +90,6 @@ const AdminStores = () => {
     return formatDateToPersianJalali(date)
   }
 
-  const formatPhoneNumber = (phone: string) => {
-    // Format Iranian phone number
-    if (phone.startsWith('09')) {
-      return phone.replace(/(\d{4})(\d{3})(\d{4})/, '$1-$2-$3')
-    }
-    return phone
-  }
 
   const getAddressText = (address: Store['address']) => {
     const parts = []

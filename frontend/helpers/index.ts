@@ -462,3 +462,11 @@ export const convertMinutesToTime = (minutes: number) => {
     result: `${formattedHours}:${formattedMinutes}`,
   }
 }
+
+export const formatPhoneNumber = (phone: string) => {
+  // Format Iranian phone number
+  if (phone.startsWith("09")) {
+    return phone.replace(/(\d{4})(\d{3})(\d{4})/, "$1-$2-$3");
+  }
+  return phone;
+}

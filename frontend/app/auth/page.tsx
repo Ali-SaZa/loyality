@@ -1,7 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { Suspense, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
@@ -280,9 +280,9 @@ const Auth = () => {
 
 const AuthWrapper = () => {
   return (
-    <Suspense fallback={<Loading />}>
+    <Loading>
       <Auth />
-    </Suspense>
+    </Loading>
   )
 }
 

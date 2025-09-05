@@ -10,8 +10,8 @@ import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import { getUserById, deleteUser, User } from '@/services/users'
 import useLoading from '@/hooks/useLoading'
-import { UserRole, UserStatus, getRoleConfig, getStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali } from '@/helpers'
+import { getRoleConfig, getStatusConfig } from '@/types/enums'
+import { formatDateToPersianJalali, formatPhoneNumber } from '@/helpers'
 
 interface UserViewModalProps {
   isOpen: boolean
@@ -84,13 +84,6 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
     return date.toLocaleDateString('fa-IR')
   }
 
-  const formatPhoneNumber = (phone: string) => {
-    // Format Iranian phone number
-    if (phone.startsWith('09')) {
-      return phone.replace(/(\d{4})(\d{3})(\d{4})/, '$1-$2-$3')
-    }
-    return phone
-  }
 
   const getStatusColor = (status: string) => {
     return getStatusConfig(status).color

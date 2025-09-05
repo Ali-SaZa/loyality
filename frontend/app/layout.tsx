@@ -1,5 +1,4 @@
 import '@/styles/tailwind.css'
-import clsx from 'clsx'
 import { Toaster } from 'react-hot-toast'
 import React from 'react'
 
@@ -131,7 +130,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           httpEquiv="cache-control"
         />
       </head>
-      <body className={clsx('min-h-[100dvh] bg-background font-sans antialiased overflow-hidden', danaFont.variable)}>
+      <body className={`min-h-[100dvh] bg-background font-sans antialiased overflow-hidden ${danaFont.variable}`}>
         <Providers
           themeProps={{
             attribute: 'class',

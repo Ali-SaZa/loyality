@@ -23,7 +23,7 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto, TransactionResponseDto, CustomerTransactionDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserAuth, AdminAuth } from '../common/security';
+import { UserAuth, AdminAuth, StoreOrAdminAuth } from '../common/security';
 
 @ApiTags('Transactions')
 @Controller('transactions')
@@ -109,7 +109,7 @@ export class TransactionsController {
   }
 
   @Get('my-store/customers')
-  @UserAuth()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get customers for the current user\'s store (Store only)' })
   @ApiResponse({ 
@@ -127,9 +127,9 @@ export class TransactionsController {
   }
 
   @Get('customer/:customerId')
-  @UserAuth()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transactions for a specific customer' })
+  @ApiOperation({ summary: 'Get transactions for a specific customer (Store/Admin only)' })
   @ApiParam({ name: 'customerId', description: 'Customer ID' })
   @ApiResponse({ 
     status: 200, 
@@ -137,7 +137,7 @@ export class TransactionsController {
     type: [TransactionResponseDto] 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
   async getCustomerTransactions(
     @Param('customerId') customerId: string,
     @CurrentUser() user: any

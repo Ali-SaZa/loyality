@@ -155,9 +155,9 @@ describe('Persian Error Messages', () => {
   });
 
   it('should have meaningful error messages', () => {
-    expect(PERSIAN_ERROR_MESSAGES.NOT_FOUND).toBe('was not found');
-    expect(PERSIAN_ERROR_MESSAGES.ALREADY_EXISTS).toBe('already exists');
-    expect(PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND).toBe('User was not found');
-    expect(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND).toBe('Store was not found');
+    expect(PERSIAN_ERROR_MESSAGES.NOT_FOUND).toBe('یافت نشد');
+    expect(PERSIAN_ERROR_MESSAGES.ALREADY_EXISTS).toBe('قبلاً وجود دارد');
+    expect(PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND).toBe('کاربر یافت نشد');
+    expect(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND).toBe('فروشگاه یافت نشد');
   });
 });

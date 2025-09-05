@@ -1,5 +1,4 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 export interface UserContext {
   userId: string;
