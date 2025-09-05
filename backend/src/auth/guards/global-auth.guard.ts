@@ -53,7 +53,7 @@ export class GlobalAuthGuard implements CanActivate {
       // For store owners, get their store information
       let storeId: string | undefined;
       if (payload.role === 'store') {
-        const store = await this.storeModel.findOne({ phoneNumber: payload.phoneNumber }).exec();
+        const store = await this.storeModel.findOne({ userId: payload.userId }).exec();
         if (store) {
           storeId = store._id.toString();
         }
