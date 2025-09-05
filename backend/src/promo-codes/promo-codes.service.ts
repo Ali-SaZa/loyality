@@ -47,7 +47,9 @@ export class PromoCodesService {
         ? populatedPromoCode.promotionId._id.toString()
         : promoCode.promotionId.toString(),
       status: promoCode.status,
-      userId: promoCode.userId?.toString(),
+      userId: populatedPromoCode.populated('userId') 
+        ? populatedPromoCode.userId._id.toString()
+        : promoCode.userId?.toString(),
       registeredAt: promoCode.registeredAt,
       usedAt: promoCode.usedAt,
       notes: promoCode.notes,
