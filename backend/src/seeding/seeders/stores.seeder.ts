@@ -28,76 +28,31 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
       throw new Error('Users must be set before seeding stores');
     }
 
-    // Find store users (users with role 'store')
-    const storeUsers = this.users.filter(user => user.role === 'store');
+    // Find the store user (user with phone number 09122222222)
+    const storeUser = this.users.find(user => user.phoneNumber === '09122222222');
     
-    if (storeUsers.length < 3) {
-      throw new Error('Need at least 3 store users to seed stores');
+    if (!storeUser) {
+      throw new Error('Store user (09122222222) not found');
     }
 
     return [
       {
-        name: 'Tehran Mall',
-        phoneNumber: '09123456789',
-        userId: storeUsers[0]._id,
+        name: 'Doris Accessories',
+        phoneNumber: '09122222222',
+        userId: storeUser._id,
         address: {
           province: 'Tehran',
           city: 'Tehran',
-          fullAddress: 'Valiasr Street, Tehran Mall, Tehran, Iran'
+          fullAddress: 'Valiasr Street, Tehran, Iran'
         },
         status: 'active',
         planExpiryDate: new Date('2024-12-31'),
-        logoUrl: 'https://example.com/tehran-mall-logo.jpg',
-        description: 'Premium shopping mall in Tehran with comprehensive loyalty program',
+        logoUrl: 'https://example.com/doris-accessories-logo.jpg',
+        description: 'Premium accessories store with comprehensive loyalty program',
         socialLinks: {
-          website: 'https://tehranmall.ir',
-          instagram: '@tehranmall',
-          telegram: '@tehranmall'
-        },
-        workingHours: {
-          open: '09:00',
-          close: '22:00'
-        }
-      },
-      {
-        name: 'Isfahan Bazaar',
-        phoneNumber: '09187654321',
-        userId: storeUsers[1]._id,
-        address: {
-          province: 'Isfahan',
-          city: 'Isfahan',
-          fullAddress: 'Naqsh-e Jahan Square, Isfahan Bazaar, Isfahan, Iran'
-        },
-        status: 'active',
-        planExpiryDate: new Date('2024-12-31'),
-        logoUrl: 'https://example.com/isfahan-bazaar-logo.jpg',
-        description: 'Traditional bazaar in Isfahan with basic loyalty features',
-        socialLinks: {
-          instagram: '@isfahanbazaar',
-          telegram: '@isfahanbazaar'
-        },
-        workingHours: {
-          open: '08:00',
-          close: '20:00'
-        }
-      },
-      {
-        name: 'Shiraz Market',
-        phoneNumber: '09111223344',
-        userId: storeUsers[2]._id,
-        address: {
-          province: 'Fars',
-          city: 'Shiraz',
-          fullAddress: 'Vakil Bazaar, Shiraz Market, Shiraz, Iran'
-        },
-        status: 'active',
-        planExpiryDate: new Date('2024-12-31'),
-        logoUrl: 'https://example.com/shiraz-market-logo.jpg',
-        description: 'Modern market in Shiraz with premium features and lottery system',
-        socialLinks: {
-          website: 'https://shirazmarket.ir',
-          instagram: '@shirazmarket',
-          telegram: '@shirazmarket'
+          website: 'https://dorisaccessories.ir',
+          instagram: '@dorisaccessories',
+          telegram: '@dorisaccessories'
         },
         workingHours: {
           open: '09:00',

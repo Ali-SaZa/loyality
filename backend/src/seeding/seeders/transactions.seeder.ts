@@ -45,86 +45,45 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
 
     const now = new Date();
     const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    // Get customer users and used promo codes
-    const customerUsers = this.users.filter(user => user.role === 'customer');
-    const usedPromoCodes = this.promoCodes.filter(promoCode => promoCode.status === 'used' && promoCode.userId);
+    // Get the customer user (09123333333)
+    const customerUser = this.users.find(user => user.phoneNumber === '09123333333');
+    
+    if (!customerUser) {
+      throw new Error('Customer user (09123333333) not found');
+    }
+
+    // Get Doris Accessories store
+    const dorisStore = this.stores.find(store => store.name === 'Doris Accessories');
+    
+    if (!dorisStore) {
+      throw new Error('Doris Accessories store not found');
+    }
+
+    // Get used promo codes for the customer (first 15 codes)
+    const usedPromoCodes = this.promoCodes.filter(promoCode => 
+      promoCode.status === 'used' && 
+      promoCode.userId && 
+      promoCode.userId.toString() === customerUser._id.toString()
+    );
 
     const transactions: any[] = [];
 
-    // Create transactions for used promo codes
+    // Create transactions for the 15 used promo codes
     usedPromoCodes.forEach((promoCode, index) => {
-      const customer = customerUsers.find(user => user._id.toString() === promoCode.userId?.toString());
-      const promotion = this.promotions.find(promotion => promotion._id.toString() === promoCode.promotionId.toString());
-      const store = this.stores.find(store => store._id.toString() === promotion?.storeId.toString());
+      const promotion = this.promotions.find(promotion => 
+        promotion._id.toString() === promoCode.promotionId.toString()
+      );
 
-      if (customer && promotion && store) {
-        // Create transaction with realistic dates
-        const transactionDate = new Date(oneMonthAgo.getTime() + Math.random() * (now.getTime() - oneMonthAgo.getTime()));
-        
+      if (promotion && promoCode.usedAt) {
         transactions.push({
-          customerId: customer._id,
-          storeId: store._id,
+          customerId: customerUser._id,
+          storeId: dorisStore._id,
           promoCodeId: promoCode._id,
           promotionId: promotion._id,
-          createdAt: transactionDate,
-          updatedAt: transactionDate
+          createdAt: promoCode.usedAt,
+          updatedAt: promoCode.usedAt
         });
-      }
-    });
-
-    // Add some additional sample transactions for demonstration
-    const sampleTransactions = [
-      {
-        customerId: customerUsers[0]?._id,
-        storeId: this.stores[0]?._id,
-        promoCodeId: usedPromoCodes[0]?._id,
-        promotionId: this.promotions[0]?._id,
-        createdAt: oneMonthAgo,
-        updatedAt: oneMonthAgo
-      },
-      {
-        customerId: customerUsers[1]?._id,
-        storeId: this.stores[0]?._id,
-        promoCodeId: usedPromoCodes[1]?._id,
-        promotionId: this.promotions[0]?._id,
-        createdAt: twoWeeksAgo,
-        updatedAt: twoWeeksAgo
-      },
-      {
-        customerId: customerUsers[2]?._id,
-        storeId: this.stores[1]?._id,
-        promoCodeId: usedPromoCodes[2]?._id,
-        promotionId: this.promotions[1]?._id,
-        createdAt: oneWeekAgo,
-        updatedAt: oneWeekAgo
-      },
-      {
-        customerId: customerUsers[0]?._id,
-        storeId: this.stores[1]?._id,
-        promoCodeId: usedPromoCodes[3]?._id,
-        promotionId: this.promotions[1]?._id,
-        createdAt: threeDaysAgo,
-        updatedAt: threeDaysAgo
-      },
-      {
-        customerId: customerUsers[1]?._id,
-        storeId: this.stores[0]?._id,
-        promoCodeId: usedPromoCodes[4]?._id,
-        promotionId: this.promotions[0]?._id,
-        createdAt: oneDayAgo,
-        updatedAt: oneDayAgo
-      }
-    ];
-
-    // Filter out any undefined values and add to transactions
-    sampleTransactions.forEach(transaction => {
-      if (transaction.customerId && transaction.storeId && transaction.promoCodeId && transaction.promotionId) {
-        transactions.push(transaction);
       }
     });
 

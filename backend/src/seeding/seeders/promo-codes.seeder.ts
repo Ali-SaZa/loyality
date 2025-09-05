@@ -41,78 +41,44 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
     const now = new Date();
     const oneMonthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    // Get customer users
-    const customerUsers = this.users.filter(user => user.role === 'customer');
+    // Get the customer user (09123333333)
+    const customerUser = this.users.find(user => user.phoneNumber === '09123333333');
+    
+    if (!customerUser) {
+      throw new Error('Customer user (09123333333) not found');
+    }
 
     const promoCodes: any[] = [];
 
-    // Generate promo codes for points-based promotions
-    this.promotions.forEach((promotion, index) => {
-      // Generate 3 promo codes per promotion
-      for (let i = 0; i < 3; i++) {
-        const code = `POINTS${String(index + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
-        const isRegistered = Math.random() > 0.3; // 70% chance of being registered
-        const isUsed = isRegistered && Math.random() > 0.5; // 50% chance of being used if registered
-
-        let userId: Types.ObjectId | undefined = undefined;
-        let registeredAt: Date | undefined = undefined;
-        let usedAt: Date | undefined = undefined;
-        let status = 'unused';
-
-        if (isRegistered && customerUsers.length > 0) {
-          userId = customerUsers[Math.floor(Math.random() * customerUsers.length)]._id;
-          registeredAt = new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000); // Random date within last week
-          status = 'unused';
-
-          if (isUsed && registeredAt) {
-            usedAt = new Date(registeredAt.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000); // Used within 3 days of registration
-            status = 'used';
-          }
-        }
-
+    // Generate exactly 5 promo codes per promotion (50 total)
+    this.promotions.forEach((promotion, promotionIndex) => {
+      for (let i = 0; i < 5; i++) {
+        const code = `DORIS${String(promotionIndex + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
+        
         promoCodes.push({
           code,
           promotionId: promotion._id,
-          status,
-          userId,
-          registeredAt,
-          usedAt,
+          status: 'unused',
           notes: `Generated promo code for ${promotion.title} - Buy ${promotion.price.toLocaleString()} Toman, Get ${promotion.points} Points`
         });
       }
     });
 
-    // Add some special promo codes
-    const specialCodes: any[] = [
-      {
-        code: 'WELCOME10',
-        promotionId: this.promotions[0]._id, // First promotion
-        status: 'unused',
-        notes: 'Welcome bonus code for new customers'
-      },
-      {
-        code: 'VIP2024',
-        promotionId: this.promotions[1]._id, // Second promotion
-        status: 'unused',
-        notes: 'VIP customer exclusive code'
-      },
-      {
-        code: 'SUMMER50',
-        promotionId: this.promotions[2]._id, // Third promotion
-        status: 'unused',
-        notes: 'Summer special promotion code'
-      }
-    ];
-
-    // Register some special codes to users
-    specialCodes.forEach((specialCode, index) => {
-      if (customerUsers.length > 0 && index < customerUsers.length) {
-        specialCode.userId = customerUsers[index]._id;
-        specialCode.registeredAt = new Date(now.getTime() - Math.random() * 5 * 24 * 60 * 60 * 1000);
+    // Assign exactly 30 codes to the customer (15 used, 15 unused)
+    const codesToAssign = promoCodes.slice(0, 30);
+    
+    codesToAssign.forEach((promoCode, index) => {
+      promoCode.userId = customerUser._id;
+      promoCode.registeredAt = new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000); // Random date within last week
+      
+      // First 15 codes are used, last 15 are unused
+      if (index < 15) {
+        promoCode.status = 'used';
+        promoCode.usedAt = new Date(promoCode.registeredAt.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000); // Used within 3 days of registration
+      } else {
+        promoCode.status = 'unused';
       }
     });
-
-    promoCodes.push(...specialCodes);
 
     return promoCodes;
   }

@@ -278,12 +278,4 @@ const Auth = () => {
   )
 }
 
-const AuthWrapper = () => {
-  return (
-    <Loading>
-      <Auth />
-    </Loading>
-  )
-}
-
-export default AuthWrapper
+export default Auth
