@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { User, UserDocument } from '../schemas/user.schema';
 import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
@@ -108,7 +108,14 @@ export class StoresService {
   async create(createStoreDto: CreateStoreDto): Promise<StoreResponseDto> {
     await this.validateStoreCreation(createStoreDto.phoneNumber, createStoreDto.userId);
 
-    const store = new this.storeModel(createStoreDto);
+    // Convert string IDs to ObjectIds
+    const storeData = {
+      ...createStoreDto,
+      userId: new Types.ObjectId(createStoreDto.userId),
+      promotions: createStoreDto.promotions ? createStoreDto.promotions.map(id => new Types.ObjectId(id)) : []
+    };
+
+    const store = new this.storeModel(storeData);
     const savedStore = await store.save();
     return this.transformStoreToResponse(savedStore);
   }

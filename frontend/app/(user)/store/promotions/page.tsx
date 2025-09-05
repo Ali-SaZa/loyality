@@ -334,7 +334,6 @@ const StorePromotions = () => {
           <Table aria-label="لیست تبلیغات">
             <TableHeader>
               <TableColumn>عنوان تبلیغ</TableColumn>
-              <TableColumn>فروشگاه</TableColumn>
               <TableColumn>مقدار</TableColumn>
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>تعداد کدها</TableColumn>
@@ -364,9 +363,6 @@ const StorePromotions = () => {
                         <p className="text-xs text-text-light">ID: {promotion.id}</p>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{getStoreName(promotion.storeId)}</span>
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">{formatValue(promotion)}</span>

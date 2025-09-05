@@ -3,3 +3,5 @@ export * from './security.config';
 export * from './authorization.service';
 export * from './resource-auth.guard';
 export * from './resource-auth.decorator';
+export * from './role-auth.guard';
+export * from './role-auth.decorator';

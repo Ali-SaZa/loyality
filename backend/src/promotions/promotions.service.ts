@@ -62,9 +62,10 @@ export class PromotionsService {
     // Validate user has access to the store
     await this.validateStoreAccess(createPromotionDto.storeId, user);
 
-    // Set default values
+    // Set default values and convert storeId to ObjectId
     const promotionData = {
       ...createPromotionDto,
+      storeId: new Types.ObjectId(createPromotionDto.storeId),
       status: 'active',
     };
 
@@ -85,16 +86,13 @@ export class PromotionsService {
     // Add role-based access control
     if (additionalFilters.requestingUser?.role === 'store') {
       // Store users can only see their own store's promotions
-      // We need to find the store that belongs to this user
-      const userStore = await this.storeModel.findOne({ 
-        userId: additionalFilters.requestingUser._id 
-      }).exec();
-      
-      if (userStore) {
-        additionalFilters['storeId'] = userStore._id.toString();
+      // Use the storeId that's already provided by the authentication guard
+      if (additionalFilters.requestingUser.storeId) {
+        additionalFilters['storeId'] = additionalFilters.requestingUser.storeId;
       } else {
         // If user has no store, they can't see any promotions
-        additionalFilters['storeId'] = null;
+        // Use a non-existent ObjectId to ensure no promotions are returned
+        additionalFilters['storeId'] = '000000000000000000000000';
       }
     }
 
@@ -103,7 +101,8 @@ export class PromotionsService {
 
     // Add store filter if provided
     if (additionalFilters.storeId) {
-      filterQuery.storeId = additionalFilters.storeId;
+      // Convert string storeId to ObjectId for proper MongoDB query
+      filterQuery.storeId = new Types.ObjectId(additionalFilters.storeId);
     }
 
     // Execute queries in parallel for better performance
@@ -323,14 +322,34 @@ export class PromotionsService {
   }
 
   // Helper method to get promotion statistics
-  async getPromotionStats(storeId?: string): Promise<{
+  async getPromotionStats(storeId?: string, user?: any): Promise<{
     total: number;
     active: number;
     inactive: number;
     expired: number;
     deleted: number;
   }> {
-    const filter = storeId ? { storeId } : {};
+    let filter: any = {};
+    
+    // Add role-based access control
+    if (user?.role === 'store') {
+      // Store users can only see stats for their own store
+      if (user.storeId) {
+        filter.storeId = new Types.ObjectId(user.storeId);
+      } else {
+        // If user has no store, return zero stats
+        return { total: 0, active: 0, inactive: 0, expired: 0, deleted: 0 };
+      }
+    } else if (user?.role === 'admin' && storeId) {
+      // Admin users can specify a storeId to filter by
+      filter.storeId = new Types.ObjectId(storeId);
+    } else if (user?.role === 'admin') {
+      // Admin users without storeId see all promotions
+      filter = {};
+    } else {
+      // For other roles or no user, return zero stats
+      return { total: 0, active: 0, inactive: 0, expired: 0, deleted: 0 };
+    }
     
     const [total, active, inactive, expired, deleted] = await Promise.all([
       this.promotionModel.countDocuments(filter),

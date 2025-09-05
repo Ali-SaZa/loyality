@@ -19,7 +19,7 @@ import {
   ChangePromotionStatusDto,
   PromotionListResponseDto 
 } from '../dto';
-import { PromotionAuth, AdminAuth } from '../common/security';
+import { PromotionAuth, AdminAuth, StoreOrAdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ListRequestDto } from '../common/dto/list.dto';
 
@@ -48,6 +48,7 @@ export class PromotionsController {
   }
 
   @Get()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all promotions with pagination and filtering' })
   @ApiResponse({ 
@@ -82,25 +83,28 @@ export class PromotionsController {
   }
 
   @Get('stats')
-  @AdminAuth()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promotion statistics (Admin only)' })
+  @ApiOperation({ summary: 'Get promotion statistics (Store/Admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'Promotion statistics',
     type: Object 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by store ID' })
-  async getStats(@Query('storeId') storeId?: string): Promise<{
+  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
+  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by store ID (Admin only)' })
+  async getStats(
+    @Query('storeId') storeId?: string,
+    @CurrentUser() user?: any
+  ): Promise<{
     total: number;
     active: number;
     inactive: number;
     expired: number;
     deleted: number;
   }> {
-    return this.promotionsService.getPromotionStats(storeId);
+    return this.promotionsService.getPromotionStats(storeId, user);
   }
 
   @Get('store/:storeId')

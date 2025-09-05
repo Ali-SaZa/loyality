@@ -25,7 +25,7 @@ import {
   RegisterPromoCodeDto,
   GetUserPromoCodesDto
 } from '../dto';
-import { PromotionAuth, AdminAuth, PromoCodeAuth } from '../common/security';
+import { PromotionAuth, AdminAuth, PromoCodeAuth, StoreOrAdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ListRequestDto } from '../common/dto/list.dto';
 
@@ -55,7 +55,7 @@ export class PromoCodesController {
   }
 
   @Post('bulk')
-  @PromoCodeAuth()
+  @StoreOrAdminAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create multiple promo codes at once with optional prefix (Store/Admin only)' })
   @ApiResponse({ 

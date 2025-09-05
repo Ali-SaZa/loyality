@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { PromoCode, PromoCodeDocument } from '../schemas/promoCode.schema';
 import { Promotion, PromotionDocument } from '../schemas/promotion.schema';
 import { Store, StoreDocument } from '../schemas/store.schema';
@@ -84,7 +84,7 @@ export class PromoCodesService {
     // Admin users can create promo codes for any promotion
     if (user.role === 'admin') {
       // Allow admin access
-    } else if (store.userId.toString() !== user.id) {
+    } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only create promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to create promo codes for this promotion');
     }
@@ -95,7 +95,10 @@ export class PromoCodesService {
       throw new CustomConflictException('Promo code already exists');
     }
 
-    const promoCode = new this.promoCodeModel(createPromoCodeDto);
+    const promoCode = new this.promoCodeModel({
+      ...createPromoCodeDto,
+      promotionId: new Types.ObjectId(createPromoCodeDto.promotionId)
+    });
     const savedPromoCode = await promoCode.save();
     
     return this.transformPromoCodeToResponse(savedPromoCode);
@@ -116,7 +119,7 @@ export class PromoCodesService {
 
     // For store users, filter by their stores only (only if not already filtered by promotionId)
     if (user.role === 'store' && !additionalFilters.promotionId) {
-      const userStores = await this.storeModel.find({ userId: user.id }).select('_id').exec();
+      const userStores = await this.storeModel.find({ userId: user._id.toString() }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       
       const promotions = await this.promotionModel.find({ storeId: { $in: storeIds } }).select('_id').exec();
@@ -191,7 +194,7 @@ export class PromoCodesService {
     // Admin users can access any promo code
     if (user.role === 'admin') {
       // Allow admin access
-    } else if (store.userId.toString() !== user.id) {
+    } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only access promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to access this promo code');
     }
@@ -219,7 +222,7 @@ export class PromoCodesService {
     // Admin users can update any promo code
     if (user.role === 'admin') {
       // Allow admin access
-    } else if (store.userId.toString() !== user.id) {
+    } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only update promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to update this promo code');
     }
@@ -262,7 +265,7 @@ export class PromoCodesService {
     // Admin users can update status of any promo code
     if (user.role === 'admin') {
       // Allow admin access
-    } else if (store.userId.toString() !== user.id) {
+    } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only update promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to update this promo code');
     }
@@ -455,7 +458,7 @@ export class PromoCodesService {
     // Admin users can create promo codes for any promotion
     if (user.role === 'admin') {
       // Allow admin access
-    } else if (store.userId.toString() !== user.id) {
+    } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only create promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to create promo codes for this promotion');
     }
@@ -502,7 +505,7 @@ export class PromoCodesService {
 
       codesToCreate.push({
         code,
-        promotionId,
+        promotionId: new Types.ObjectId(promotionId),
         expiresAt,
         notes,
       });
@@ -534,7 +537,7 @@ export class PromoCodesService {
     // Admin users can delete promo codes for any promotion
     if (user.role === 'admin') {
       // Allow admin access
-    } else if (store.userId.toString() !== user.id) {
+    } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only delete promo codes for their own promotions
       throw new ForbiddenException('You do not have permission to delete this promo code');
     }
@@ -687,7 +690,7 @@ export class PromoCodesService {
 
     // For store users, filter by their stores only
     if (user && user.role === 'store') {
-      const userStores = await this.storeModel.find({ userId: user.id }).select('_id').exec();
+      const userStores = await this.storeModel.find({ userId: user._id.toString() }).select('_id').exec();
       const storeIds = userStores.map(store => store._id);
       
       const promotions = await this.promotionModel.find({ storeId: { $in: storeIds } }).select('_id').exec();
