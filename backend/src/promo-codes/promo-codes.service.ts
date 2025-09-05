@@ -677,7 +677,7 @@ export class PromoCodesService {
 
     // If storeId is provided, filter by promotions belonging to that store
     if (storeId) {
-      const promotions = await this.promotionModel.find({ storeId }).select('_id').exec();
+      const promotions = await this.promotionModel.find({ storeId: new Types.ObjectId(storeId) }).select('_id').exec();
       const promotionIds = promotions.map(promotion => promotion._id);
       query.promotionId = { $in: promotionIds };
     }
