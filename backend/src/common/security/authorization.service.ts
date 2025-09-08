@@ -1,5 +1,4 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 export interface UserContext {
   userId: string;
@@ -9,7 +8,7 @@ export interface UserContext {
 }
 
 export interface ResourceAccess {
-  resourceType: 'scratch-card' | 'store' | 'user' | 'transaction' | 'admin';
+  resourceType: 'store' | 'user' | 'promotion' | 'promoCode' | 'admin';
   resourceId: string;
   storeId?: string;
   userId?: string;
@@ -23,17 +22,19 @@ export class AuthorizationService {
    */
   async checkResourceAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
     switch (resource.resourceType) {
-      case 'scratch-card':
-        await this.checkScratchCardAccess(user, resource);
-        break;
+
       case 'store':
         await this.checkStoreAccess(user, resource);
         break;
       case 'user':
         await this.checkUserAccess(user, resource);
         break;
-      case 'transaction':
-        await this.checkTransactionAccess(user, resource);
+
+      case 'promotion':
+        await this.checkPromotionAccess(user, resource);
+        break;
+      case 'promoCode':
+        await this.checkPromoCodeAccess(user, resource);
         break;
       case 'admin':
         await this.checkAdminAccess(user, resource);
@@ -43,29 +44,7 @@ export class AuthorizationService {
     }
   }
 
-  /**
-   * Check scratch card access permissions
-   */
-  private async checkScratchCardAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
-    // Admin can access everything
-    if (user.role === 'admin') {
-      return;
-    }
 
-    // Store users can access scratch cards related to their store
-    // (this will be validated in the service layer to check storeId)
-    if (user.role === 'store') {
-      return;
-    }
-
-    // Customers can access scratch cards that belong to them
-    // (this will be validated in the service layer to check userId)
-    if (user.role === 'customer') {
-      return;
-    }
-
-    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این کارت تخفیف را ندارید.'); // translated to Persian
-  }
 
   /**
    * Check store access permissions
@@ -76,13 +55,8 @@ export class AuthorizationService {
       return;
     }
 
-    // Store users can access their own store
+    // Store users can only access their own store
     if (user.role === 'store' && resource.resourceId === user.storeId) {
-      return;
-    }
-
-    // Store users can view other stores (read-only access)
-    if (user.role === 'store') {
       return;
     }
 
@@ -114,7 +88,7 @@ export class AuthorizationService {
     }
 
     // Store users can view customer data related to their store
-    // (this will be validated in the service layer to check if customer has transactions with their store)
+
     if (user.role === 'store') {
       return;
     }
@@ -122,27 +96,52 @@ export class AuthorizationService {
     throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به اطلاعات این کاربر را ندارید.'); // translated to Persian
   }
 
+
+
   /**
-   * Check transaction access permissions
+   * Check promotion access permissions
    */
-  private async checkTransactionAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
+  private async checkPromotionAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
     // Admin can access everything
     if (user.role === 'admin') {
       return;
     }
 
-    // Users can only access their own transactions
-    if (user.role === 'customer' && resource.userId === user.userId) {
-      return;
-    }
-
-    // Store users can view transactions related to their store
+    // Store users can access promotions related to their store
     // (this will be validated in the service layer to check storeId)
     if (user.role === 'store') {
       return;
     }
 
-    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تراکنش را ندارید.'); // translated to Persian
+    // Customers can view promotions (read-only access)
+    if (user.role === 'customer') {
+      return;
+    }
+
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این تبلیغ را ندارید.'); // translated to Persian
+  }
+
+  /**
+   * Check promo code access permissions
+   */
+  private async checkPromoCodeAccess(user: UserContext, resource: ResourceAccess): Promise<void> {
+    // Admin can access everything
+    if (user.role === 'admin') {
+      return;
+    }
+
+    // Store users can access promo codes related to their store
+    // (this will be validated in the service layer to check storeId)
+    if (user.role === 'store') {
+      return;
+    }
+
+    // Customers can only access their own promo codes
+    if (user.role === 'customer') {
+      return;
+    }
+
+    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به این کد تخفیف را ندارید.'); // translated to Persian
   }
 
   /**
@@ -220,7 +219,7 @@ export class AuthorizationService {
     }
     
     if (user.role === 'store') {
-      return []; // Store owners can only see users who have transactions with their store
+      return []; // Store owners can only see users related to their store
     }
     
     return [];

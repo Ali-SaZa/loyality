@@ -1,122 +1,113 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Transaction, TransactionDocument } from '../../schemas/transaction.schema';
-import { StoreDocument } from '../../schemas/store.schema';
-import { UserDocument } from '../../schemas/user.schema';
-import { ScratchCardDocument } from '../../schemas/scratch-card.schema';
+import { User, UserDocument } from '../../schemas/user.schema';
+import { Store, StoreDocument } from '../../schemas/store.schema';
+import { PromoCode, PromoCodeDocument } from '../../schemas/promoCode.schema';
+import { Promotion, PromotionDocument } from '../../schemas/promotion.schema';
 import { BaseSeeder } from './base.seeder';
 
 @Injectable()
 export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
-  private stores: StoreDocument[] = [];
   private users: UserDocument[] = [];
-  private scratchCards: ScratchCardDocument[] = [];
+  private stores: StoreDocument[] = [];
+  private promoCodes: PromoCodeDocument[] = [];
+  private promotions: PromotionDocument[] = [];
 
   constructor(
-    @InjectModel(Transaction.name) private transactionsModel: Model<TransactionDocument>
+    @InjectModel(Transaction.name) private transactionModel: Model<TransactionDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
+    @InjectModel(PromoCode.name) private promoCodeModel: Model<PromoCodeDocument>,
+    @InjectModel(Promotion.name) private promotionModel: Model<PromotionDocument>
   ) {
     super();
   }
 
   protected get model(): Model<TransactionDocument> {
-    return this.transactionsModel;
-  }
-
-  setDependencies(
-    stores: StoreDocument[], 
-    users: UserDocument[], 
-    scratchCards: ScratchCardDocument[]
-  ): void {
-    this.stores = stores;
-    this.users = users;
-    this.scratchCards = scratchCards;
+    return this.transactionModel;
   }
 
   protected get data(): any[] {
-    if (this.stores.length === 0 || this.users.length === 0) {
-      throw new Error('فروشگاه‌ها و کاربران باید قبل از بذرگذاری تراکنش‌ها تنظیم شوند'); // translated to Persian
+    if (this.users.length === 0) {
+      throw new Error('Users must be set before seeding transactions');
+    }
+    if (this.stores.length === 0) {
+      throw new Error('Stores must be set before seeding transactions');
+    }
+    if (this.promoCodes.length === 0) {
+      throw new Error('Promo codes must be set before seeding transactions');
+    }
+    if (this.promotions.length === 0) {
+      throw new Error('Promotions must be set before seeding transactions');
     }
 
-    return [
-      {
-        userId: this.users[0]._id,
-        storeId: this.stores[0]._id,
-        type: 'purchase',
-        amount: 150000,
-        scratchCode: 'SCR001000001',
-        entryMethod: 'sms',
-        description: 'Purchase at Tehran Mall'
-      },
-      {
-        userId: this.users[0]._id,
-        storeId: this.stores[0]._id,
-        type: 'purchase',
-        amount: 300000,
-        entryMethod: 'qr',
-        description: 'Large purchase at Tehran Mall'
-      },
-      {
-        userId: this.users[1]._id,
-        storeId: this.stores[1]._id,
-        type: 'purchase',
-        amount: 80000,
-        entryMethod: 'sms',
-        description: 'Purchase at Isfahan Bazaar'
-      },
-      {
-        userId: this.users[2]._id,
-        storeId: this.stores[2]._id,
-        type: 'purchase',
-        amount: 400000,
-        entryMethod: 'qr',
-        description: 'Purchase at Shiraz Market'
-      },
-      {
-        userId: this.users[2]._id,
-        storeId: this.stores[0]._id,
-        type: 'purchase',
-        amount: 600000,
-        entryMethod: 'sms',
-        description: 'Premium purchase at Tehran Mall'
-      },
-      {
-        userId: this.users[3]._id,
-        storeId: this.stores[1]._id,
-        type: 'purchase',
-        amount: 120000,
-        entryMethod: 'sms',
-        description: 'Purchase at Isfahan Bazaar'
-      },
-      {
-        userId: this.users[4]._id,
-        storeId: this.stores[2]._id,
-        type: 'purchase',
-        amount: 250000,
-        entryMethod: 'qr',
-        description: 'Purchase at Shiraz Market'
-      },
-      {
-        userId: this.users[4]._id,
-        storeId: this.stores[0]._id,
-        type: 'purchase',
-        amount: 450000,
-        entryMethod: 'sms',
-        description: 'Large purchase at Tehran Mall'
-      },
-      {
-        userId: this.users[2]._id,
-        storeId: this.stores[0]._id,
-        type: 'cashback',
-        amount: 100000,
-        scratchCode: 'SCR002000002',
-        entryMethod: 'sms',
-        description: 'Scratch card redemption'
+    const now = new Date();
+    const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Get the customer user (09123333333)
+    const customerUser = this.users.find(user => user.phoneNumber === '09123333333');
+    
+    if (!customerUser) {
+      throw new Error('Customer user (09123333333) not found');
+    }
+
+    // Get Doris Accessories store
+    const dorisStore = this.stores.find(store => store.name === 'Doris Accessories');
+    
+    if (!dorisStore) {
+      throw new Error('Doris Accessories store not found');
+    }
+
+    // Get used promo codes for the customer (first 15 codes)
+    const usedPromoCodes = this.promoCodes.filter(promoCode => 
+      promoCode.status === 'used' && 
+      promoCode.userId && 
+      promoCode.userId.toString() === customerUser._id.toString()
+    );
+
+    const transactions: any[] = [];
+
+    // Create transactions for the 15 used promo codes
+    usedPromoCodes.forEach((promoCode, index) => {
+      const promotion = this.promotions.find(promotion => 
+        promotion._id.toString() === promoCode.promotionId.toString()
+      );
+
+      if (promotion && promoCode.usedAt) {
+        transactions.push({
+          customerId: customerUser._id,
+          storeId: dorisStore._id,
+          promoCodeId: promoCode._id,
+          promotionId: promotion._id,
+          createdAt: promoCode.usedAt,
+          updatedAt: promoCode.usedAt
+        });
       }
-    ];
+    });
+
+    return transactions;
   }
 
   protected getData(): any[] {
     return this.data;
+  }
+
+  // Setter methods to be called by the main seeder
+  setUsers(users: UserDocument[]): void {
+    this.users = users;
+  }
+
+  setStores(stores: StoreDocument[]): void {
+    this.stores = stores;
+  }
+
+  setPromoCodes(promoCodes: PromoCodeDocument[]): void {
+    this.promoCodes = promoCodes;
+  }
+
+  setPromotions(promotions: PromotionDocument[]): void {
+    this.promotions = promotions;
   }
 }

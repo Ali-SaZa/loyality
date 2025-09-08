@@ -70,7 +70,6 @@ The system includes 6 main collections:
 - `GET /users/:id` - Get customer details
 - `PATCH /users/:id` - Update customer
 - `DELETE /users/:id` - Delete customer
-- `POST /users/:id/purchases` - Add purchase
 - `PATCH /users/:id/consents` - Update consent preferences
 
 ### Stores

@@ -1,5 +1,4 @@
 import '@/styles/tailwind.css'
-import clsx from 'clsx'
 import { Toaster } from 'react-hot-toast'
 import React from 'react'
 
@@ -17,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="fa-IR"
     >
       <head>
-        <title>online business simulation</title>
+        <title>Customer Loyalty</title>
 
         {/* Google tag (gtag.js) */}
         <script
@@ -67,27 +66,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/*عنوان برای شبکه‌های اجتماعی*/}
         <meta
-          content="online business simulation"
+          content="Customer Loyalty"
           property="og:title"
         />
 
         {/*توضیحات کوتاه برای اشتراک‌گذاری*/}
         <meta
-          content="شبیه ساز آنلاین کسب و کار"
+          content="باشگاه مشتریان"
           property="og:description"
         />
 
         {/*تصویر پیش‌نمایش*/}
-        <meta
+        {/* <meta
           content="https://obs.ir/images/OBS.webp"
           property="og:image"
-        />
+        /> */}
 
         {/*آدرس صفحه*/}
-        <meta
+        {/* <meta
           content="https://obs.ir"
           property="og:url"
-        />
+        /> */}
 
         {/*نوع محتوا*/}
         <meta
@@ -97,7 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/*نام سایت*/}
         <meta
-          content="online business simulation"
+          content="Customer Loyalty"
           property="og:site_name"
         />
 
@@ -109,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/*URL اصلی صفحه*/}
         <link
-          href="https://obs.ir"
+          href="https://customer-loyalty.ir"
           rel="canonical"
         />
 
@@ -131,7 +130,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           httpEquiv="cache-control"
         />
       </head>
-      <body className={clsx('min-h-[100dvh] bg-background font-sans antialiased overflow-hidden', danaFont.variable)}>
+      <body className={`min-h-[100dvh] bg-background font-sans antialiased overflow-hidden ${danaFont.variable}`}>
         <Providers
           themeProps={{
             attribute: 'class',

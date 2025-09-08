@@ -5,13 +5,12 @@ import {
   CustomBadRequestException,
   StoreNotFoundException,
   UserNotFoundException,
-  ScratchCardNotFoundException,
-  TransactionNotFoundException,
+
+
   AdminNotFoundException,
   OTPNotFoundException,
   InsufficientPointsException,
-  ScratchCardAlreadyUsedException,
-  ScratchCardExpiredException,
+
   InvalidOTPException,
   OTPExpiredException,
   StorePhoneExistsException
@@ -85,17 +84,9 @@ import { PERSIAN_ERROR_MESSAGES } from './persian-error-messages';
       expect(exception.getStatus()).toBe(404);
     });
 
-    it('should create ScratchCardNotFoundException with correct message', () => {
-      const exception = new ScratchCardNotFoundException();
-      expect(exception.message).toBe(`Scratch card ${PERSIAN_ERROR_MESSAGES.SCRATCH_CARD_NOT_FOUND}`);
-      expect(exception.getStatus()).toBe(404);
-    });
 
-    it('should create TransactionNotFoundException with correct message', () => {
-      const exception = new TransactionNotFoundException();
-      expect(exception.message).toBe(`Transaction ${PERSIAN_ERROR_MESSAGES.TRANSACTION_NOT_FOUND}`);
-      expect(exception.getStatus()).toBe(404);
-    });
+
+
 
     it('should create AdminNotFoundException with correct message', () => {
       const exception = new AdminNotFoundException();
@@ -117,17 +108,7 @@ import { PERSIAN_ERROR_MESSAGES } from './persian-error-messages';
       expect(exception.getStatus()).toBe(400);
     });
 
-    it('should create ScratchCardAlreadyUsedException with correct message', () => {
-      const exception = new ScratchCardAlreadyUsedException();
-      expect(exception.message).toBe(PERSIAN_ERROR_MESSAGES.SCRATCH_CARD_ALREADY_USED);
-      expect(exception.getStatus()).toBe(409);
-    });
 
-    it('should create ScratchCardExpiredException with correct message', () => {
-      const exception = new ScratchCardExpiredException();
-      expect(exception.message).toBe(PERSIAN_ERROR_MESSAGES.SCRATCH_CARD_EXPIRED);
-      expect(exception.getStatus()).toBe(400);
-    });
 
     it('should create InvalidOTPException with correct message', () => {
       const exception = new InvalidOTPException();
@@ -156,13 +137,12 @@ describe('Persian Error Messages', () => {
       'ALREADY_EXISTS',
       'USER_NOT_FOUND',
       'STORE_NOT_FOUND',
-      'SCRATCH_CARD_NOT_FOUND',
-      'TRANSACTION_NOT_FOUND',
+
+
       'ADMIN_NOT_FOUND',
       'OTP_NOT_FOUND',
       'INSUFFICIENT_POINTS',
-      'SCRATCH_CARD_ALREADY_USED',
-      'SCRATCH_CARD_EXPIRED',
+
       'INVALID_OTP',
       'OTP_EXPIRED',
       'STORE_PHONE_EXISTS'
@@ -175,9 +155,9 @@ describe('Persian Error Messages', () => {
   });
 
   it('should have meaningful error messages', () => {
-    expect(PERSIAN_ERROR_MESSAGES.NOT_FOUND).toBe('was not found');
-    expect(PERSIAN_ERROR_MESSAGES.ALREADY_EXISTS).toBe('already exists');
-    expect(PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND).toBe('User was not found');
-    expect(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND).toBe('Store was not found');
+    expect(PERSIAN_ERROR_MESSAGES.NOT_FOUND).toBe('یافت نشد');
+    expect(PERSIAN_ERROR_MESSAGES.ALREADY_EXISTS).toBe('قبلاً وجود دارد');
+    expect(PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND).toBe('کاربر یافت نشد');
+    expect(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND).toBe('فروشگاه یافت نشد');
   });
 });

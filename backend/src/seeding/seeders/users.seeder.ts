@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User, UserDocument } from '../../schemas/user.schema';
-import { StoreDocument } from '../../schemas/store.schema';
 import { BaseSeeder } from './base.seeder';
 
 @Injectable()
 export class UsersSeeder extends BaseSeeder<UserDocument> {
-  private stores: StoreDocument[] = [];
-
   constructor(
     @InjectModel(User.name) private usersModel: Model<UserDocument>
   ) {
@@ -19,136 +16,26 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
     return this.usersModel;
   }
 
-  setStores(stores: StoreDocument[]): void {
-    this.stores = stores;
-  }
-
   protected get data(): any[] {
-    if (this.stores.length === 0) {
-      throw new Error('فروشگاه‌ها باید قبل از بذرگذاری کاربران تنظیم شوند'); // translated to Persian
-    }
-
     return [
+      // Required users with specific phone numbers for testing
       {
-        phoneNumber: '09111111111',
-        name: 'Ali Ahmadi',
-        totalPoints: 1250,
-        purchases: [
-          {
-            storeId: this.stores[0]._id,
-            amount: 150000,
-            date: new Date('2024-01-15'),
-            entryMethod: 'sms',
-            rewardApplied: { type: 'discount', value: 5 }
-          },
-          {
-            storeId: this.stores[0]._id,
-            amount: 300000,
-            date: new Date('2024-02-01'),
-            entryMethod: 'qr',
-            rewardApplied: { type: 'cashback', value: 10 }
-          }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: true,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['premium', 'active']
+        phoneNumber: '09121111111',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'admin'
       },
       {
         phoneNumber: '09122222222',
-        name: 'Sara Karimi',
-        totalPoints: 850,
-        purchases: [
-          {
-            storeId: this.stores[1]._id,
-            amount: 80000,
-            date: new Date('2024-01-20'),
-            entryMethod: 'sms',
-            rewardApplied: { type: 'discount', value: 3 }
-          }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: false,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['regular']
+        firstName: 'Store',
+        lastName: 'Admin',
+        role: 'store'
       },
       {
-        phoneNumber: '09133333333',
-        name: 'Reza Mohammadi',
-        totalPoints: 2100,
-        purchases: [
-          {
-            storeId: this.stores[2]._id,
-            amount: 400000,
-            date: new Date('2024-01-10'),
-            entryMethod: 'qr',
-            rewardApplied: { type: 'lottery', value: 1 }
-          },
-          {
-            storeId: this.stores[0]._id,
-            amount: 600000,
-            date: new Date('2024-02-05'),
-            entryMethod: 'sms',
-            rewardApplied: { type: 'cashback', value: 10 }
-          }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: true,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['vip', 'active']
-      },
-      {
-        phoneNumber: '09144444444',
-        name: 'Narges Hashemi',
-        totalPoints: 450,
-        purchases: [
-          {
-            storeId: this.stores[1]._id,
-            amount: 120000,
-            date: new Date('2024-01-25'),
-            entryMethod: 'sms',
-            rewardApplied: { type: 'discount', value: 3 }
-          }
-        ],
-        consents: {
-          dataCollection: false,
-          marketing: false,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['new']
-      },
-      {
-        phoneNumber: '09155555555',
-        name: 'Amir Hosseini',
-        totalPoints: 1800,
-        purchases: [
-          {
-            storeId: this.stores[2]._id,
-            amount: 250000,
-            date: new Date('2024-01-30'),
-            entryMethod: 'qr',
-            rewardApplied: { type: 'discount', value: 4 }
-          },
-          {
-            storeId: this.stores[0]._id,
-            amount: 450000,
-            date: new Date('2024-02-10'),
-            entryMethod: 'sms',
-            rewardApplied: { type: 'cashback', value: 10 }
-          }
-        ],
-        consents: {
-          dataCollection: true,
-          marketing: true,
-          consentDate: new Date('2024-01-01')
-        },
-        tags: ['premium', 'loyal']
+        phoneNumber: '09123333333',
+        firstName: 'Customer',
+        lastName: 'User',
+        role: 'customer'
       }
     ];
   }

@@ -8,10 +8,14 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
-import { StoresService } from './stores.service';
-import { CreateStoreDto, UpdateStoreDto, StoreResponseDto } from '../dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { StoresService, StoreStats } from './stores.service';
+import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
+import { ListRequestDto } from '../common/dto/list.dto';
 import { StoreAuth, AdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -36,17 +40,96 @@ export class StoresController {
     return this.storesService.create(createStoreDto);
   }
 
-  @Get()
+  @Post('with-user')
+  @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all stores (Public read, Admin full access)' })
+  @ApiOperation({ summary: 'Create a new store with user (Admin only)' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Store created successfully with user',
+    type: StoreWithUserResponseDto 
+  })
+  @ApiResponse({ status: 409, description: 'Store with this phone number already exists' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async createStoreWithUser(@Body() createStoreWithUserDto: CreateStoreWithUserDto): Promise<StoreWithUserResponseDto> {
+    return this.storesService.createStoreWithUser(createStoreWithUserDto);
+  }
+
+  @Get()
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all stores with pagination and filtering' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
+  @ApiQuery({ name: 'search', required: false, description: 'Search term' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of all stores',
-    type: [StoreResponseDto] 
+    description: 'List of stores with pagination',
+    type: Object 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(): Promise<StoreResponseDto[]> {
-    return this.storesService.findAll();
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async findAll(
+    @Query() query: any,
+    @CurrentUser() user: any
+  ) {
+    const request: ListRequestDto = {
+      page: parseInt(query.page) || 1,
+      limit: parseInt(query.limit) || 20,
+      search: query.search,
+      searchFields: query.searchFields ? query.searchFields.split(',') : ['name', 'phoneNumber'],
+      sort: query.sort ? JSON.parse(query.sort) : [],
+      filters: query.filters ? JSON.parse(query.filters) : []
+    };
+
+    return this.storesService.findAll(request, { requestingUser: user });
+  }
+
+  @Get('stats')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get store statistics (Admin only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Store statistics',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number' },
+        active: { type: 'number' },
+        pending: { type: 'number' },
+        inactive: { type: 'number' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async getStats(): Promise<StoreStats> {
+    return this.storesService.getStats();
+  }
+
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user store (Store Owner only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Current user store found',
+    type: StoreResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Store not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not a store user' })
+  async getCurrentStore(@CurrentUser() user: any): Promise<StoreResponseDto> {
+    if (user.role !== 'store') {
+      throw new ForbiddenException('Only store users can access this endpoint');
+    }
+    
+    if (!user.storeId) {
+      throw new NotFoundException('Store not found for this user');
+    }
+    
+    return this.storesService.findOne(user.storeId, user);
   }
 
   @Get(':id')

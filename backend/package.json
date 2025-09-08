@@ -19,11 +19,13 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "ts-node src/seeding/seed-cli.ts",
+    "seed:dev": "MONGODB_URI=\"mongodb://admin:admin123@localhost:27018/loyalty?authSource=admin\" NODE_ENV=development JWT_SECRET=\"your-super-secure-jwt-secret-key-change-this-in-production\" JWT_EXPIRES_IN=\"7d\" npm run seed",
     "seed:prod": "ts-node src/seeding/seed-cli.ts --production",
     "seed:clear": "ts-node src/seeding/seed-cli.ts --clear-only",
     "seed:status": "ts-node src/seeding/seed-cli.ts --status-only",
     "seed:stores": "ts-node src/seeding/seed-cli.ts --stores-only",
-    "seed:admins": "ts-node src/seeding/seed-cli.ts --admins-only"
+    "seed:admins": "ts-node src/seeding/seed-cli.ts --admins-only",
+    "migrate:user-fields": "ts-node scripts/run-migration.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

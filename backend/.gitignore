@@ -72,7 +72,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist (commented out to track build files for VPS deployment)
 
 # Gatsby files
 .cache/
@@ -103,9 +103,9 @@ public
 .yarn/install-state.gz
 .pnp.*
 
-# Build outputs
-dist/
-build/
+# Build outputs (commented out to track build files for VPS deployment)
+# dist/
+# build/
 
 # IDE and Editor files
 .vscode/

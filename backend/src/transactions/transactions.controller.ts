@@ -1,83 +1,98 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
+import { 
+  Controller, 
+  Get, 
+  Post, 
+  Body, 
+  Param, 
+  Delete, 
+  HttpCode, 
   HttpStatus,
   Query,
+  UseInterceptors,
+  ClassSerializerInterceptor
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { 
+  ApiTags, 
+  ApiOperation, 
+  ApiResponse, 
+  ApiParam, 
+  ApiQuery, 
+  ApiBearerAuth
+} from '@nestjs/swagger';
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto, UpdateTransactionDto, TransactionResponseDto } from '../dto';
-import { TransactionAuth, AdminAuth, StoreAuth, UserAuth } from '../common/security';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { CreateTransactionDto, TransactionResponseDto, CustomerTransactionDto, AddDirectCustomerDto, DirectCustomerResponseDto } from '../dto';
+import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserAuth, AdminAuth, StoreOrAdminAuth } from '../common/security';
 
-@ApiTags('transactions')
+@ApiTags('Transactions')
 @Controller('transactions')
+@UseInterceptors(ClassSerializerInterceptor)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  @AdminAuth()
+  @UserAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new transaction (Admin only)' })
+  @ApiOperation({ summary: 'Create a new transaction (Store/Admin only)' })
   @ApiResponse({ 
     status: 201, 
     description: 'Transaction created successfully',
     type: TransactionResponseDto 
   })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async create(@Body() createTransactionDto: CreateTransactionDto): Promise<TransactionResponseDto> {
-    return this.transactionsService.create(createTransactionDto);
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 409, description: 'Transaction already exists' })
+  async create(
+    @Body() createTransactionDto: CreateTransactionDto,
+    @CurrentUser() user: any
+  ): Promise<TransactionResponseDto> {
+    return this.transactionsService.create(createTransactionDto, user);
+  }
+
+  @Post('direct-customer')
+  @UserAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Add existing customer to store (Store only)' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Customer added to store successfully',
+    type: DirectCustomerResponseDto 
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Customer or store not found' })
+  @ApiResponse({ status: 409, description: 'Customer already exists in store' })
+  async addDirectCustomer(
+    @Body() addDirectCustomerDto: AddDirectCustomerDto,
+    @CurrentUser() user: any
+  ): Promise<DirectCustomerResponseDto> {
+    return this.transactionsService.addDirectCustomer(addDirectCustomerDto, user);
   }
 
   @Get()
-  @AdminAuth()
+  @UserAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all transactions (Admin only)' })
+  @ApiOperation({ summary: 'Get all transactions with pagination and filtering' })
   @ApiResponse({ 
     status: 200, 
-    description: 'List of all transactions',
-    type: [TransactionResponseDto] 
+    description: 'Transactions retrieved successfully',
+    type: ListResponseDto 
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async findAll(): Promise<TransactionResponseDto[]> {
-    return this.transactionsService.findAll();
-  }
-
-  @Get('analytics')
-  @AdminAuth()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transaction analytics (Admin only)' })
-  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by store ID' })
-  @ApiQuery({ name: 'startDate', required: false, description: 'Start date for analytics' })
-  @ApiQuery({ name: 'endDate', required: false, description: 'End date for analytics' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Transaction analytics data'
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async getAnalytics(
-    @Query('storeId') storeId?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-  ) {
-    const start = startDate ? new Date(startDate) : undefined;
-    const end = endDate ? new Date(endDate) : undefined;
-    return this.transactionsService.getAnalytics(storeId, start, end);
+  async findAll(
+    @Query() listRequest: ListRequestDto,
+    @CurrentUser() user: any
+  ): Promise<ListResponseDto<TransactionResponseDto>> {
+    return this.transactionsService.findAll(listRequest, user);
   }
 
   @Get(':id')
-  @TransactionAuth({ paramName: 'id' })
+  @UserAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transaction by ID (Owner/Store Owner/Admin only)' })
+  @ApiOperation({ summary: 'Get transaction by ID' })
   @ApiParam({ name: 'id', description: 'Transaction ID' })
   @ApiResponse({ 
     status: 200, 
@@ -86,7 +101,7 @@ export class TransactionsController {
   })
   @ApiResponse({ status: 404, description: 'Transaction not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
   async findOne(
     @Param('id') id: string,
     @CurrentUser() user: any
@@ -94,95 +109,77 @@ export class TransactionsController {
     return this.transactionsService.findOne(id, user);
   }
 
-  @Patch(':id')
-  @TransactionAuth({ paramName: 'id' })
+  @Get('store/:storeId/customers')
+  @UserAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update transaction (Owner/Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Transaction ID' })
+  @ApiOperation({ summary: 'Get customers for a specific store (Store/Admin only)' })
+  @ApiParam({ name: 'storeId', description: 'Store ID' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Transaction updated successfully',
-    type: TransactionResponseDto 
+    description: 'Store customers retrieved successfully',
+    type: [CustomerTransactionDto] 
   })
-  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  @ApiResponse({ status: 404, description: 'Store not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async getStoreCustomers(
+    @Param('storeId') storeId: string,
     @CurrentUser() user: any
-  ): Promise<TransactionResponseDto> {
-    return this.transactionsService.update(id, updateTransactionDto, user);
+  ): Promise<CustomerTransactionDto[]> {
+    return this.transactionsService.getStoreCustomers(storeId, user);
+  }
+
+  @Get('my-store/customers')
+  @StoreOrAdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get customers for the current user\'s store (Store only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Store customers retrieved successfully',
+    type: [CustomerTransactionDto] 
+  })
+  @ApiResponse({ status: 404, description: 'Store not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Store access required' })
+  async getMyStoreCustomers(
+    @CurrentUser() user: any
+  ): Promise<CustomerTransactionDto[]> {
+    return this.transactionsService.getMyStoreCustomers(user);
+  }
+
+  @Get('customer/:customerId')
+  @StoreOrAdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get transactions for a specific customer (Store/Admin only)' })
+  @ApiParam({ name: 'customerId', description: 'Customer ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Customer transactions retrieved successfully',
+    type: [TransactionResponseDto] 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
+  async getCustomerTransactions(
+    @Param('customerId') customerId: string,
+    @CurrentUser() user: any
+  ): Promise<TransactionResponseDto[]> {
+    return this.transactionsService.getCustomerTransactions(customerId, user);
   }
 
   @Delete(':id')
-  @TransactionAuth({ paramName: 'id' })
+  @AdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete transaction (Owner/Store Owner/Admin only)' })
+  @ApiOperation({ summary: 'Delete transaction (Admin only)' })
   @ApiParam({ name: 'id', description: 'Transaction ID' })
-  @ApiResponse({ status: 200, description: 'Transaction deleted successfully' })
+  @ApiResponse({ status: 204, description: 'Transaction deleted successfully' })
   @ApiResponse({ status: 404, description: 'Transaction not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Param('id') id: string,
     @CurrentUser() user: any
   ): Promise<void> {
     return this.transactionsService.remove(id, user);
-  }
-
-  @Get('user/:userId')
-  @UserAuth({ paramName: 'userId' })
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transactions by user (Self/Store Owner/Admin only)' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of transactions for the user',
-    type: [TransactionResponseDto] 
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findByUser(
-    @Param('userId') userId: string,
-    @CurrentUser() user: any
-  ): Promise<TransactionResponseDto[]> {
-    return this.transactionsService.findByUser(userId, user);
-  }
-
-  @Get('store/:storeId')
-  @StoreAuth({ paramName: 'storeId' })
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transactions by store (Store Owner/Admin only)' })
-  @ApiParam({ name: 'storeId', description: 'Store ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of transactions for the store',
-    type: [TransactionResponseDto] 
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
-  async findByStore(
-    @Param('storeId') storeId: string,
-    @CurrentUser() user: any
-  ): Promise<TransactionResponseDto[]> {
-    return this.transactionsService.findByStore(storeId, user);
-  }
-
-  @Get('type/:type')
-  @AdminAuth()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get transactions by type (Admin only)' })
-  @ApiParam({ name: 'type', description: 'Transaction type', enum: ['purchase', 'cashback', 'lottery'] })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of transactions of the specified type',
-    type: [TransactionResponseDto] 
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async findByType(@Param('type') type: 'purchase' | 'cashback' | 'lottery'): Promise<TransactionResponseDto[]> {
-    return this.transactionsService.findByType(type);
   }
 }

@@ -4,16 +4,16 @@ import { SeedingService } from './seeding.service';
 import { SeedingController } from './seeding.controller';
 import { User, UserSchema } from '../schemas/user.schema';
 import { Store, StoreSchema } from '../schemas/store.schema';
-import { Admin, AdminSchema } from '../schemas/admin.schema';
-import { ScratchCard, ScratchCardSchema } from '../schemas/scratch-card.schema';
+import { Promotion, PromotionSchema } from '../schemas/promotion.schema';
+import { PromoCode, PromoCodeSchema } from '../schemas/promoCode.schema';
 import { Transaction, TransactionSchema } from '../schemas/transaction.schema';
 import { Otp, OtpSchema } from '../schemas/otp.schema';
 import { 
   StoresSeeder, 
-  AdminsSeeder, 
   UsersSeeder, 
-  ScratchCardsSeeder, 
-  TransactionsSeeder, 
+  PromotionsSeeder,
+  PromoCodesSeeder,
+  TransactionsSeeder,
   OTPsSeeder 
 } from './seeders';
 
@@ -22,8 +22,8 @@ import {
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Store.name, schema: StoreSchema },
-      { name: Admin.name, schema: AdminSchema },
-      { name: ScratchCard.name, schema: ScratchCardSchema },
+      { name: Promotion.name, schema: PromotionSchema },
+      { name: PromoCode.name, schema: PromoCodeSchema },
       { name: Transaction.name, schema: TransactionSchema },
       { name: Otp.name, schema: OtpSchema },
     ]),
@@ -31,9 +31,9 @@ import {
   providers: [
     SeedingService,
     StoresSeeder,
-    AdminsSeeder,
     UsersSeeder,
-    ScratchCardsSeeder,
+    PromotionsSeeder,
+    PromoCodesSeeder,
     TransactionsSeeder,
     OTPsSeeder,
   ],

@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import Button from '@/components/formElements/Button'
 
-export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
+export default function GlobalError({ error }: { error: Error; reset: () => void }) {
   useEffect(() => {
     // Log the error to an error reporting service
     /* eslint-disable no-console */

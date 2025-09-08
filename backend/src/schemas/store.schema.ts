@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { globalTransformPlugin } from './global-transform.plugin';
 
 export interface StoreDocument extends Store, Document {
   _id: Types.ObjectId;
@@ -8,72 +9,21 @@ export interface StoreDocument extends Store, Document {
 }
 
 @Schema({ _id: false })
-export class LoyaltyTier {
-  @Prop({ required: true, min: 0 })
-  minAmount: number;
-
-  @Prop({ enum: ['discount', 'cashback', 'lottery'], required: true })
-  rewardType: 'discount' | 'cashback' | 'lottery';
-
-  @Prop({ required: true, min: 0 })
-  value: number;
-
-  @Prop({ required: false })
-  description?: string;
-}
-
-@Schema({ _id: false })
-export class LoyaltySettings {
-  @Prop({ type: [LoyaltyTier], default: [] })
-  tiers: LoyaltyTier[];
-
-  @Prop({ enum: ['weekly', 'monthly', 'none'], default: 'none' })
-  lotteryFrequency: 'weekly' | 'monthly' | 'none';
-
-  @Prop({ default: 0, min: 0 })
-  defaultCashbackRate: number;
-}
-
-@Schema({ _id: false })
 export class StoreAddress {
-  @Prop({ required: true, trim: true })
+  @Prop({ required: true, trim: true, maxlength: 100 })
+  province: string;
+
+  @Prop({ required: true, trim: true, maxlength: 100 })
   city: string;
 
-  @Prop({ required: false, trim: true })
-  street?: string;
-
-  @Prop({
-    type: {
-      lat: { type: Number, required: false },
-      lng: { type: Number, required: false }
-    },
-    required: false
-  })
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-}
-
-@Schema({ _id: false })
-export class StorePlan {
-  @Prop({ enum: ['free', 'premium'], default: 'free' })
-  type: 'free' | 'premium';
-
-  @Prop({ required: true, default: Date.now })
-  startDate: Date;
-
-  @Prop({ required: true })
-  endDate: Date;
+  @Prop({ required: true, trim: true, maxlength: 500 })
+  fullAddress: string;
 }
 
 @Schema({ timestamps: true })
 export class Store {
   @Prop({ required: true, trim: true, maxlength: 100 })
   name: string;
-
-  @Prop({ required: true, trim: true, maxlength: 100 })
-  ownerName: string;
 
   @Prop({
     required: true,
@@ -83,17 +33,57 @@ export class Store {
   })
   phoneNumber: string;
 
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
+  userId: Types.ObjectId;
+
   @Prop({ type: StoreAddress, required: true })
   address: StoreAddress;
 
-  @Prop({ type: LoyaltySettings, required: true })
-  loyaltySettings: LoyaltySettings;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Promotion' }], default: [] })
+  promotions: Types.ObjectId[];
 
-  @Prop({ type: StorePlan, required: true })
-  plan: StorePlan;
+  @Prop({ required: false })
+  planExpiryDate?: Date;
 
-  @Prop({ enum: ['store'], default: 'store', required: true })
-  role: string;
+  @Prop({ enum: ['active', 'pending', 'deleted', 'suspended'], default: 'active' })
+  status: string;
+
+  @Prop({ required: false, trim: true })
+  logoUrl?: string;
+
+  @Prop({ required: false, trim: true, maxlength: 500 })
+  description?: string;
+
+  @Prop({
+    type: {
+      website: { type: String, trim: true },
+      instagram: { type: String, trim: true },
+      telegram: { type: String, trim: true },
+    },
+    required: false,
+    _id: false,
+  })
+  socialLinks?: {
+    website?: string;
+    instagram?: string;
+    telegram?: string;
+  };
+
+  @Prop({
+    type: {
+      open: { type: String },  //  "09:00"
+      close: { type: String }, //  "21:00"
+    },
+    required: false,
+    _id: false,
+  })
+  workingHours?: {
+    open: string;
+    close: string;
+  };
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);
+
+// Apply global transform plugin
+StoreSchema.plugin(globalTransformPlugin);

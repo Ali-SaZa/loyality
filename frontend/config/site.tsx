@@ -2,17 +2,110 @@ import { Metadata, Viewport } from 'next'
 
 import BrainstorminIcon from '@/components/icons/BrainstormingIcon'
 import ChartTreeIcon from '@/components/icons/ChartTreeIcon'
-import CoinIcon from '@/components/icons/CoinIcon'
 import CommentAltIcon from '@/components/icons/CommentAltIcon'
 import CommentIcon from '@/components/icons/CommentIcon'
 import JobIcon from '@/components/icons/JobIcon'
-import LayersIcon from '@/components/icons/LayersIcon'
-import BookmarkIcon from '@/components/icons/BookmarkIcon'
+import DashboardIcon from '@/components/icons/DashboardIcon'
+import UserIcon from '@/components/icons/UserIcon'
+import StoreIcon from '@/components/icons/ChartTreeIcon'
+import ListIcon from '@/components/icons/ListIcon'
+import WalletIcon from '@/components/icons/WalletIcon'
+import PromotionIcon from '@/components/icons/PromotionIcon'
+import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
 
 export const siteConfig = {
   name: 'OBS',
   description: 'شبیه ساز شغلی آنلاین',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  
+  // Role-based menu configurations
+  roleMenus: {
+    admin: [
+      {
+        title: 'داشبورد ادمین',
+        icon: (className: string = 'size-6') => <DashboardIcon className={className} />,
+        link: '/admin',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'مدیریت کاربران',
+        icon: (className: string = 'size-6') => <UserIcon className={className} />,
+        link: '/admin/users',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'مدیریت فروشگاه‌ها',
+        icon: (className: string = 'size-6') => <StoreIcon className={className} />,
+        link: '/admin/stores',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'مدیریت تبلیغات',
+        icon: (className: string = 'size-6') => <PromotionIcon className={className} />,
+        link: '/admin/promotions',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'مدیریت کدهای تخفیف',
+        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
+        link: '/admin/promo-codes',
+        isShortAccess: true,
+        children: [],
+      }
+    ],
+    store: [
+      {
+        title: 'داشبورد فروشگاه',
+        icon: (className: string = 'size-6') => <DashboardIcon className={className} />,
+        link: '/store',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'تبلیغات',
+        icon: (className: string = 'size-6') => <PromotionIcon className={className} />,
+        link: '/store/promotions',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'کدهای تخفیف',
+        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
+        link: '/store/promo-codes',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'مشتریان',
+        icon: (className: string = 'size-6') => <UserIcon className={className} />,
+        link: '/store/users',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'اعمال کد تخفیف',
+        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
+        link: '/store/apply-promo-code',
+        isShortAccess: true,
+        children: [],
+      },
+    ],
+    customer: [
+      {
+        title: 'استفاده از کد تخفیف',
+        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
+        link: '/customer/use-promotion',
+        isShortAccess: true,
+        children: [],
+      },
+    ],
+  },
+
+  // Legacy userSidebar (keeping for backward compatibility)
   userSidebar: [
     // {
     //   title: 'داشبورد',
@@ -21,34 +114,34 @@ export const siteConfig = {
     //   isShortAccess: true,
     //   children: [],
     // },
-    {
-      title: 'شبیه ساز ها',
-      icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-      link: '/user/simulators',
-      isShortAccess: true,
-      children: [
-        {
-          title: 'اطلاعات شبیه ساز',
-          icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-          link: '/user/simulators/:id',
-          isShortAccess: false,
-        },
-      ],
-    },
-    {
-      title: 'تراکنش ها',
-      icon: (className: string = 'size-6') => <CoinIcon className={className} />,
-      link: '/user/transactions',
-      isShortAccess: true,
-      children: [],
-    },
-    {
-      title: 'نشان شده ها',
-      icon: (className: string = 'size-6') => <BookmarkIcon className={className} />,
-      link: '/user/bookmarks',
-      isShortAccess: true,
-      children: [],
-    },
+    // {
+    //   title: 'شبیه ساز ها',
+    //   icon: (className: string = 'size-6') => <LayersIcon className={className} />,
+    //   link: '/user/simulators',
+    //   isShortAccess: true,
+    //   children: [
+    //     {
+    //       title: 'اطلاعات شبیه ساز',
+    //       icon: (className: string = 'size-6') => <LayersIcon className={className} />,
+    //       link: '/user/simulators/:id',
+    //       isShortAccess: false,
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'تراکنش ها',
+    //   icon: (className: string = 'size-6') => <LayersIcon className={className} />,
+    //   link: '/user/transactions',
+    //   isShortAccess: true,
+    //   children: [],
+    // },
+    // {
+    //   title: 'نشان شده ها',
+    //   icon: (className: string = 'size-6') => <BookmarkIcon className={className} />,
+    //   link: '/user/bookmarks',
+    //   isShortAccess: true,
+    //   children: [],
+    // },
     {
       title: 'بلاگ ها',
       icon: (className: string = 'size-6') => <CommentAltIcon className={className} />,
@@ -120,25 +213,25 @@ export const siteConfig = {
     },
   ],
   landingNavbar: [
-    {
-      type: 'button',
-      title: 'شبیه ساز ها',
-      link: '/simulators',
-    },
-    {
-      type: 'select',
-      title: 'کسب و کار ها',
-      items: [
-        {
-          title: 'تمامی کسب و کار ها',
-          link: '/organizations',
-        },
-        {
-          title: 'درخواست شبیه ساز',
-          link: '/organizations/request',
-        },
-      ],
-    },
+    // {
+    //   type: 'button',
+    //   title: 'شبیه ساز ها',
+    //   link: '/simulators',
+    // },
+    // {
+    //   type: 'select',
+    //   title: 'کسب و کار ها',
+    //   items: [
+    //     {
+    //       title: 'تمامی کسب و کار ها',
+    //       link: '/organizations',
+    //     },
+    //     {
+    //       title: 'درخواست شبیه ساز',
+    //       link: '/organizations/request',
+    //     },
+    //   ],
+    // },
     {
       type: 'button',
       title: 'مسیر مهارت آموزی',

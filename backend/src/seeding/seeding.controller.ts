@@ -2,6 +2,7 @@ import { Controller, Post, Get, Query, HttpCode, HttpStatus } from '@nestjs/comm
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { SeedingService } from './seeding.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { PERSIAN_ERROR_MESSAGES } from '../common/errors';
 
 @ApiTags('Database Seeding')
 @Controller('seeding')
@@ -50,7 +51,7 @@ export class SeedingController {
     await this.seedingService.seedAll(environment);
     
     return {
-      message: 'Database seeded successfully',
+      message: PERSIAN_ERROR_MESSAGES.DATABASE_SEEDED_SUCCESSFULLY,
       timestamp: new Date().toISOString(),
       environment
     };
@@ -66,27 +67,39 @@ export class SeedingController {
     const stores = await this.seedingService.seedStoresOnly();
     
     return {
-      message: 'Stores seeded successfully',
+      message: PERSIAN_ERROR_MESSAGES.STORES_SEEDED_SUCCESSFULLY,
       count: stores.length,
       timestamp: new Date().toISOString()
     };
   }
 
-  @Post('seed/admins')
+  @Post('seed/promotions')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Seed admins collection only',
-    description: 'Populates only the admins collection with sample data'
+    summary: 'Seed promotions collection only',
+    description: 'Populates only the promotions collection with sample data. Requires stores to exist first.'
   })
-  async seedAdminsOnly() {
-    const admins = await this.seedingService.seedAdminsOnly();
-    
+  async seedPromotionsOnly() {
     return {
-      message: 'Admins seeded successfully',
-      count: admins.length,
+      message: PERSIAN_ERROR_MESSAGES.PROMOTIONS_SEEDING_REQUIRES_STORES,
       timestamp: new Date().toISOString()
     };
   }
+
+  @Post('seed/promo-codes')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Seed promo codes collection only',
+    description: 'Populates only the promo codes collection with sample data. Requires promotions and users to exist first.'
+  })
+  async seedPromoCodesOnly() {
+    return {
+      message: PERSIAN_ERROR_MESSAGES.PROMO_CODES_SEEDING_REQUIRES_DATA,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+
 
   @Post('seed/users')
   @HttpCode(HttpStatus.OK)
@@ -98,7 +111,7 @@ export class SeedingController {
     // Note: This would need to fetch existing stores first in a real implementation
     // For now, we'll return an error message
     return {
-      message: 'Users seeding requires existing stores. Use /seeding/seed for complete seeding.',
+      message: PERSIAN_ERROR_MESSAGES.USERS_SEEDING_REQUIRES_STORES,
       timestamp: new Date().toISOString()
     };
   }
@@ -124,7 +137,7 @@ export class SeedingController {
     await this.seedingService.clearAllData();
     
     return {
-      message: 'All data cleared successfully',
+      message: PERSIAN_ERROR_MESSAGES.ALL_DATA_CLEARED_SUCCESSFULLY,
       timestamp: new Date().toISOString()
     };
   }
@@ -142,9 +155,8 @@ export class SeedingController {
       properties: {
         users: { type: 'number', description: 'Number of users' },
         stores: { type: 'number', description: 'Number of stores' },
-        admins: { type: 'number', description: 'Number of admins' },
-        scratchCards: { type: 'number', description: 'Number of scratch cards' },
-        transactions: { type: 'number', description: 'Number of transactions' },
+        promotions: { type: 'number', description: 'Number of promotions' },
+        promoCodes: { type: 'number', description: 'Number of promo codes' },
         otps: { type: 'number', description: 'Number of OTPs' },
         timestamp: { type: 'string', format: 'date-time' }
       }

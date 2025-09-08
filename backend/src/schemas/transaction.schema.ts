@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { globalTransformPlugin } from './global-transform.plugin';
 
 export interface TransactionDocument extends Transaction, Document {
   _id: Types.ObjectId;
@@ -10,28 +11,34 @@ export interface TransactionDocument extends Transaction, Document {
 @Schema({ timestamps: true })
 export class Transaction {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
-  userId: Types.ObjectId;
+  customerId: Types.ObjectId;
+  // Reference to the customer who made the transaction
 
   @Prop({ type: Types.ObjectId, ref: 'Store', required: true, index: true })
   storeId: Types.ObjectId;
+  // Reference to the store where the transaction occurred
 
-  @Prop({
-    enum: ['purchase', 'cashback', 'lottery'],
-    required: true
-  })
-  type: 'purchase' | 'cashback' | 'lottery';
+  @Prop({ type: Types.ObjectId, ref: 'PromoCode', required: false, index: true })
+  promoCodeId?: Types.ObjectId;
+  // Reference to the promo code used (optional for direct customer additions)
 
-  @Prop({ required: true, min: 0 })
-  amount: number;
+  @Prop({ type: Types.ObjectId, ref: 'Promotion', required: false, index: true })
+  promotionId?: Types.ObjectId;
+  // Reference to the promotion (optional for direct customer additions)
 
-  @Prop({ required: false })
-  scratchCode?: string;
-
-  @Prop({ enum: ['sms', 'qr'], required: true })
-  entryMethod: 'sms' | 'qr';
-
-  @Prop({ required: false })
-  description?: string;
+  @Prop({ required: false, trim: true, maxLength: 200 })
+  notes?: string;
+  // Optional notes about this transaction
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+
+// Apply global transform plugin
+TransactionSchema.plugin(globalTransformPlugin);
+
+// Create compound indexes for better query performance
+TransactionSchema.index({ customerId: 1, storeId: 1 });
+TransactionSchema.index({ storeId: 1, createdAt: -1 });
+TransactionSchema.index({ customerId: 1, createdAt: -1 });
+TransactionSchema.index({ promoCodeId: 1 });
+TransactionSchema.index({ promotionId: 1 });

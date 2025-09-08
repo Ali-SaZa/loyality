@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { globalTransformPlugin } from './global-transform.plugin';
 
 export interface OtpDocument extends Otp, Document {
   _id: Types.ObjectId;
@@ -26,10 +27,10 @@ export class Otp {
   code: string;
 
   @Prop({
-    enum: ['login', 'scratch'],
+    enum: ['login', 'scratch', 'promo-registration'],
     required: true
   })
-  context: 'login' | 'scratch';
+  context: 'login' | 'scratch' | 'promo-registration';
 
   @Prop({ required: false })
   scratchCode?: string;
@@ -46,6 +47,9 @@ export class Otp {
 }
 
 export const OtpSchema = SchemaFactory.createForClass(Otp);
+
+// Apply global transform plugin
+OtpSchema.plugin(globalTransformPlugin);
 
 // Add TTL index for automatic cleanup after 5 minutes
 OtpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });

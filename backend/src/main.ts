@@ -36,7 +36,7 @@ async function bootstrap() {
   // Global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  // Security headers
+  // Security headers and cache control
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
@@ -44,6 +44,12 @@ async function bootstrap() {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    
+    // Cache control headers to prevent browser caching issues
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
     next();
   });
 
@@ -54,7 +60,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('users', 'Customer management endpoints')
     .addTag('stores', 'Store management endpoints')
-    .addTag('scratch-cards', 'Scratch card operations')
+
     .addTag('otp', 'OTP verification endpoints')
     .addTag('auth', 'Authentication endpoints')
     .addBearerAuth(
@@ -75,13 +81,18 @@ async function bootstrap() {
 
   // CORS configuration with security
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3001', 
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001'
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 5555;
   await app.listen(port);
   
   console.log(`🚀 Application is running on: http://localhost:${port}`);

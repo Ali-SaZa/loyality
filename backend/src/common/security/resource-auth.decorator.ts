@@ -13,11 +13,7 @@ export const ResourceAuth = (
   options: Omit<ResourceAuthMetadata, 'resourceType'> = {}
 ) => SetMetadata(RESOURCE_AUTH_KEY, { resourceType, ...options });
 
-/**
- * Decorator for scratch card endpoints
- */
-export const ScratchCardAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
-  ResourceAuth('scratch-card', options);
+
 
 /**
  * Decorator for store endpoints
@@ -31,11 +27,19 @@ export const StoreAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) 
 export const UserAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
   ResourceAuth('user', options);
 
+
+
 /**
- * Decorator for transaction endpoints
+ * Decorator for promotion endpoints
  */
-export const TransactionAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
-  ResourceAuth('transaction', options);
+export const PromotionAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
+  ResourceAuth('promotion', options);
+
+/**
+ * Decorator for promo code endpoints
+ */
+export const PromoCodeAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
+  ResourceAuth('promoCode', options);
 
 /**
  * Decorator for admin endpoints

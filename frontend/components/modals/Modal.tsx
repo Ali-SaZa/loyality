@@ -13,6 +13,7 @@ interface ModalProps {
   title?: string
   acceptBtnText?: string
   rejectBtnText?: string
+  acceptBtnColor?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
   acceptBtnDisabled?: boolean
   rejectBtnDisabled?: boolean
   hideCloseButton?: boolean
@@ -43,6 +44,7 @@ const Modal = ({
   children,
   acceptBtnText = 'بله',
   rejectBtnText = 'بستن',
+  acceptBtnColor = 'primary',
   acceptBtnDisabled = false,
   rejectBtnDisabled = false,
   hideCloseButton = false,
@@ -99,6 +101,7 @@ const Modal = ({
                   <>
                     <Button
                       className="grow"
+                      color={acceptBtnColor}
                       disabled={acceptBtnDisabled || isLoading}
                       isLoading={isLoading}
                       onClick={onAccept}

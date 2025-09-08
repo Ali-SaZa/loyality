@@ -60,12 +60,6 @@ export class StoreNotFoundException extends CustomNotFoundException {
   }
 }
 
-export class ScratchCardNotFoundException extends CustomNotFoundException {
-  constructor() {
-    super('Scratch card', 'SCRATCH_CARD_NOT_FOUND');
-  }
-}
-
 export class TransactionNotFoundException extends CustomNotFoundException {
   constructor() {
     super('Transaction', 'TRANSACTION_NOT_FOUND');
@@ -88,18 +82,6 @@ export class OTPNotFoundException extends CustomNotFoundException {
 export class InsufficientPointsException extends BadRequestException {
   constructor() {
     super(PERSIAN_ERROR_MESSAGES.INSUFFICIENT_POINTS);
-  }
-}
-
-export class ScratchCardAlreadyUsedException extends ConflictException {
-  constructor() {
-    super(PERSIAN_ERROR_MESSAGES.SCRATCH_CARD_ALREADY_USED);
-  }
-}
-
-export class ScratchCardExpiredException extends BadRequestException {
-  constructor() {
-    super(PERSIAN_ERROR_MESSAGES.SCRATCH_CARD_EXPIRED);
   }
 }
 

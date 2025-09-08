@@ -50,10 +50,10 @@ export class GlobalAuthGuard implements CanActivate {
         throw new UnauthorizedException('نقش کاربر مطابقت ندارد'); // translated to Persian
       }
 
-      // For store owners, get their store information
+      // For store owners, get their store information using the user._id from database
       let storeId: string | undefined;
       if (payload.role === 'store') {
-        const store = await this.storeModel.findOne({ phoneNumber: payload.phoneNumber }).exec();
+        const store = await this.storeModel.findOne({ userId: user._id }).exec();
         if (store) {
           storeId = store._id.toString();
         }
@@ -62,7 +62,8 @@ export class GlobalAuthGuard implements CanActivate {
       // Attach user to request for use in controllers
       request.user = {
         ...user.toObject(),
-        userId: payload.userId, // Ensure userId is available
+        _id: user._id, // Ensure _id is available
+        userId: user._id.toString(), // Use the correct userId from database
         storeId, // Include storeId for store owners
       };
       

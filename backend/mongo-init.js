@@ -1,45 +1,61 @@
 // MongoDB initialization script
 // This script runs when the MongoDB container starts for the first time
 
-// Create the loyalty database and collections
+print('Starting MongoDB initialization...');
+
+// Switch to admin database first
+db = db.getSiblingDB('admin');
+
+// Create root admin user if it doesn't exist
+try {
+  db.createUser({
+    user: 'admin',
+    pwd: 'admin123',
+    roles: [
+      { role: 'root', db: 'admin' }
+    ]
+  });
+  print('Root admin user created successfully');
+} catch (e) {
+  print('Root admin user already exists or error: ' + e.message);
+}
+
+// Create the loyalty database
 db = db.getSiblingDB('loyalty');
 
-// Create some initial collections
+// Create collections
 db.createCollection('users');
 db.createCollection('stores');
 db.createCollection('scratch_cards');
 db.createCollection('transactions');
 db.createCollection('otps');
+db.createCollection('promotions');
+db.createCollection('promo_codes');
 
-// Insert a test document to verify the database is working
-db.users.insertOne({
-  email: 'test@example.com',
-  phone: '+989123456789',
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
+print('Collections created successfully');
 
-// Switch back to admin database to create user with proper permissions
+// Switch back to admin database to create loyalty user
 db = db.getSiblingDB('admin');
 
-// Create a user for the loyalty database with appropriate permissions
-db.createUser({
-  user: 'admin',
-  pwd: 'admin123',
-  roles: [
-    {
-      role: 'readWrite',
-      db: 'loyalty'
-    },
-    {
-      role: 'dbAdmin',
-      db: 'loyalty'
-    },
-    {
-      role: 'readWrite',
-      db: 'admin'
-    }
-  ]
-});
+// Create a user specifically for the loyalty database
+try {
+  db.createUser({
+    user: 'loyalty_user',
+    pwd: 'admin123',
+    roles: [
+      {
+        role: 'readWrite',
+        db: 'loyalty'
+      },
+      {
+        role: 'dbAdmin',
+        db: 'loyalty'
+      }
+    ]
+  });
+  print('Loyalty user created successfully');
+} catch (e) {
+  print('Loyalty user already exists or error: ' + e.message);
+}
 
-print('Loyalty database initialized successfully!');
+print('MongoDB initialization completed successfully!');

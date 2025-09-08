@@ -1,61 +1,63 @@
+import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-import { NextResponse } from 'next/server'
+// Define route patterns for better organization
+const ROUTES = {
+  PUBLIC: ['/auth', '/', '/about-us', '/contact-us', '/questions'],
+  ADMIN: ['/admin'],
+  STORE: ['/store'],
+  CUSTOMER: ['/customer'],
+  USER_PROTECTED: ['/admin', '/store', '/customer']
+} as const
 
-export async function middleware(request: NextRequest) {
-  const userCookie = request.cookies.get('accessToken') // فرض بر این است که اطلاعات کاربر در کوکی ذخیره شده است
-  let loggedIn = false // متغیر برای بررسی وضعیت لاگین
-
-  // اگر کوکی موجود باشد، اطلاعات کاربر را استخراج می‌کنیم
-  if (userCookie?.value) {
-    // به value دسترسی پیدا می‌کنیم
-    try {
-      const accessToken = await JSON.parse(userCookie.value) // تبدیل رشته کوکی به شیء
-
-      loggedIn = !!accessToken // بررسی می‌کند که آیا کاربر لاگین کرده است یا نه
-    } catch (error) {
-      console.error('Error parsing user cookie:', error)
-      // اگر خطایی در پارس وجود داشته باشد، می‌توانید loggedIn را false بگذارید
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  
+  // Check if it's a public route
+  const isPublicRoute = ROUTES.PUBLIC.some(route => 
+    pathname === route || pathname.startsWith(route)
+  )
+  
+  // Check if it's a protected route
+  const isProtectedRoute = ROUTES.USER_PROTECTED.some(route => 
+    pathname.startsWith(route)
+  )
+  
+  // Allow public routes to pass through
+  if (isPublicRoute) {
+    return NextResponse.next()
+  }
+  
+  // For protected routes, check authentication
+  if (isProtectedRoute) {
+    const token = request.cookies.get('app_token')?.value || 
+                  request.cookies.get('accessToken')?.value
+    
+    // If no token, redirect to auth
+    if (!token) {
+      const authUrl = new URL('/auth', request.url)
+      authUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(authUrl)
     }
+    
+    // Token exists, let it pass through to client-side for role validation
+    // Client-side will handle role-based access control
+    return NextResponse.next()
   }
-
-  const userRoutes = ['/user', '/start-simulator', '/payment', '/start-evaluation-questions'] // روت‌هایی که فقط کاربران لاگین‌شده می‌توانند به آن دسترسی داشته باشند
-  const authRoutes = ['/auth'] // روت‌هایی که کاربر لاگین‌شده نباید به آن دسترسی داشته باشد
-
-  const currentPath = request.nextUrl.pathname
-
-  const response = NextResponse.next()
-
-  // شرط اختصاصی برای مسیر '/auth/profile'
-  if (currentPath === '/auth/profile') {
-    if (!loggedIn) {
-      const loginUrl = new URL('/auth?tab=login', request.url)
-
-      loginUrl.searchParams.set('redirect', currentPath) // ذخیره مسیر هدف به عنوان پارامتر redirect
-
-      return NextResponse.redirect(loginUrl) // به صفحه auth یا login هدایت می‌شود
-    }
-
-    return response // اجازه ادامه می‌دهد
-  }
-
-  // اگر کاربر لاگین نباشد و بخواهد به روت‌های کاربران وارد شود
-  if (!loggedIn && userRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
-    const loginUrl = new URL('/auth?tab=login', request.url)
-
-    loginUrl.searchParams.set('redirect', currentPath) // ذخیره مسیر هدف به عنوان پارامتر redirect
-
-    return NextResponse.redirect(loginUrl) // به صفحه auth یا login هدایت می‌شود
-  }
-
-  // اگر کاربر لاگین کرده باشد و بخواهد به صفحات auth وارد شود
-  if (loggedIn && authRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL('/user/simulators', request.url)) // به صفحه user هدایت می‌شود
-  }
-
-  return response // اگر همه چیز درست باشد، درخواست ادامه پیدا می‌کند
+  
+  // For all other routes, allow access
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/user/:path*', '/auth/:path*', '/start-simulator/:path*', '/payment/:path*', '/start-evaluation-questions/:path*'], // مسیرهایی که میدل‌ویر باید اجرا شود
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - api routes (handled by backend)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|api).*)',
+  ],
 }

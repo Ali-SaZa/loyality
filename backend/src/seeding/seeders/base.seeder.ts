@@ -35,5 +35,4 @@ export abstract class BaseSeeder<T extends Document> {
     return this.model.countDocuments();
   }
 
-  protected abstract getData(): any[];
 }

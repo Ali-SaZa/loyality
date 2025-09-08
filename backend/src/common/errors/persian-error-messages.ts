@@ -23,16 +23,9 @@ export const PERSIAN_ERROR_MESSAGES = {
   STORE_ALREADY_EXISTS: 'فروشگاه قبلاً وجود دارد', // translated to Persian
   STORE_PHONE_EXISTS: 'فروشگاه با این شماره موبایل قبلاً وجود دارد', // translated to Persian
   
-  // Scratch card related messages
-  SCRATCH_CARD_NOT_FOUND: 'کارت تخفیف یافت نشد', // translated to Persian
-  SCRATCH_CARD_ALREADY_USED: 'کارت تخفیف قبلاً استفاده شده است', // translated to Persian
-  SCRATCH_CARD_EXPIRED: 'کارت تخفیف منقضی شده است', // translated to Persian
-  INVALID_CARD_VALUE: 'مقدار کارت نامعتبر است', // translated to Persian
-  
   // Transaction related messages
   TRANSACTION_NOT_FOUND: 'تراکنش یافت نشد', // translated to Persian
-  TRANSACTION_FAILED: 'تراکنش ناموفق بود', // translated to Persian
-  INVALID_TRANSACTION_TYPE: 'نوع تراکنش نامعتبر است', // translated to Persian
+  TRANSACTION_ALREADY_EXISTS: 'تراکنش قبلاً وجود دارد', // translated to Persian
   
   // Admin related messages
   ADMIN_NOT_FOUND: 'مدیر یافت نشد', // translated to Persian
@@ -71,6 +64,34 @@ export const PERSIAN_ERROR_MESSAGES = {
   EXTERNAL_SERVICE_ERROR: 'خطای سرویس خارجی', // translated to Persian
   PAYMENT_GATEWAY_ERROR: 'خطای درگاه پرداخت', // translated to Persian
   SMS_SERVICE_ERROR: 'خطای سرویس پیامک', // translated to Persian
+  
+  // Success messages
+  CUSTOMER_ADDED_SUCCESSFULLY: 'مشتری با موفقیت به فروشگاه اضافه شد', // translated to Persian
+  PROFILE_RETRIEVED_SUCCESSFULLY: 'پروفایل با موفقیت دریافت شد', // translated to Persian
+  DATABASE_SEEDED_SUCCESSFULLY: 'پایگاه داده با موفقیت پر شد', // translated to Persian
+  STORES_SEEDED_SUCCESSFULLY: 'فروشگاه‌ها با موفقیت پر شدند', // translated to Persian
+  ALL_DATA_CLEARED_SUCCESSFULLY: 'همه داده‌ها با موفقیت پاک شدند', // translated to Persian
+  PROMO_CODE_IS_VALID: 'کد تخفیف معتبر است', // translated to Persian
+  OTP_SENT_SUCCESSFULLY: 'کد تایید با موفقیت ارسال شد', // translated to Persian
+  OTP_SENT: 'کد تأیید ارسال شد', // translated to Persian
+  LOYALTY_REGISTRATION_SUCCESS: 'تبریک! شما با موفقیت در برنامه وفاداری ثبت نام کردید', // translated to Persian
+  
+  // Customer related messages
+  CUSTOMER_ALREADY_IN_STORE: 'این مشتری قبلاً در فروشگاه شما ثبت نام کرده است', // translated to Persian
+  CUSTOMER_PHONE_EXISTS: 'مشتری با این شماره موبایل قبلاً وجود دارد', // translated to Persian
+  
+  // Promo code related messages
+  PROMO_CODE_NOT_FOUND: 'کد تخفیف یافت نشد', // translated to Persian
+  PROMO_CODE_DELETED: 'کد تخفیف حذف شده است', // translated to Persian
+  PROMO_CODE_ALREADY_USED: 'کد تخفیف قبلاً استفاده شده است', // translated to Persian
+  PROMO_CODE_NOT_REGISTERED: 'کد تخفیف باید قبل از استفاده به کاربری ثبت شود', // translated to Persian
+  PROMO_CODE_INVALID_STORE: 'کد تخفیف برای این فروشگاه معتبر نیست', // translated to Persian
+  PROMO_CODE_FORBIDDEN_STORE: 'شما فقط می‌توانید کدهای تخفیف فروشگاه خود را اعتبارسنجی کنید', // translated to Persian
+  
+  // Seeding related messages
+  PROMOTIONS_SEEDING_REQUIRES_STORES: 'برای پر کردن تبلیغات، فروشگاه‌های موجود لازم است. از /seeding/seed برای پر کردن کامل استفاده کنید.', // translated to Persian
+  PROMO_CODES_SEEDING_REQUIRES_DATA: 'برای پر کردن کدهای تخفیف، تبلیغات و کاربران موجود لازم است. از /seeding/seed برای پر کردن کامل استفاده کنید.', // translated to Persian
+  USERS_SEEDING_REQUIRES_STORES: 'برای پر کردن کاربران، فروشگاه‌های موجود لازم است. از /seeding/seed برای پر کردن کامل استفاده کنید.', // translated to Persian
 } as const;
 
 export type ErrorMessageKey = keyof typeof PERSIAN_ERROR_MESSAGES;

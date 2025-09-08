@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Store, StoreDocument } from '../../schemas/store.schema';
+import { User, UserDocument } from '../../schemas/user.schema';
 import { BaseSeeder } from './base.seeder';
 
 @Injectable()
 export class StoresSeeder extends BaseSeeder<StoreDocument> {
+  private users: UserDocument[] = [];
+
   constructor(
     @InjectModel(Store.name) private storesModel: Model<StoreDocument>
   ) {
     super();
+  }
+
+  setUsers(users: UserDocument[]) {
+    this.users = users;
   }
 
   protected get model(): Model<StoreDocument> {
@@ -17,75 +24,39 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
   }
 
   protected get data(): any[] {
+    if (this.users.length === 0) {
+      throw new Error('Users must be set before seeding stores');
+    }
+
+    // Find the store user (user with phone number 09122222222)
+    const storeUser = this.users.find(user => user.phoneNumber === '09122222222');
+    
+    if (!storeUser) {
+      throw new Error('Store user (09122222222) not found');
+    }
+
     return [
       {
-        name: 'Tehran Mall',
-        ownerName: 'Ahmad Rezaei',
-        phoneNumber: '09123456789',
+        name: 'Doris Accessories',
+        phoneNumber: '09122222222',
+        userId: storeUser._id,
         address: {
+          province: 'Tehran',
           city: 'Tehran',
-          street: 'Valiasr Street',
-          coordinates: { lat: 35.6892, lng: 51.3890 }
+          fullAddress: 'Valiasr Street, Tehran, Iran'
         },
-        loyaltySettings: {
-          tiers: [
-            { minAmount: 100000, rewardType: 'discount', value: 5, description: '5% discount' },
-            { minAmount: 500000, rewardType: 'cashback', value: 10, description: '10% cashback' },
-            { minAmount: 1000000, rewardType: 'lottery', value: 1, description: 'Lottery entry' }
-          ],
-          lotteryFrequency: 'monthly',
-          defaultCashbackRate: 2
+        status: 'active',
+        planExpiryDate: new Date('2024-12-31'),
+        logoUrl: 'https://example.com/doris-accessories-logo.jpg',
+        description: 'Premium accessories store with comprehensive loyalty program',
+        socialLinks: {
+          website: 'https://dorisaccessories.ir',
+          instagram: '@dorisaccessories',
+          telegram: '@dorisaccessories'
         },
-        plan: {
-          type: 'premium',
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-12-31')
-        }
-      },
-      {
-        name: 'Isfahan Bazaar',
-        ownerName: 'Fatemeh Karimi',
-        phoneNumber: '09187654321',
-        address: {
-          city: 'Isfahan',
-          street: 'Naqsh-e Jahan Square',
-          coordinates: { lat: 32.6546, lng: 51.6680 }
-        },
-        loyaltySettings: {
-          tiers: [
-            { minAmount: 50000, rewardType: 'discount', value: 3, description: '3% discount' },
-            { minAmount: 200000, rewardType: 'cashback', value: 7, description: '7% cashback' }
-          ],
-          lotteryFrequency: 'weekly',
-          defaultCashbackRate: 1.5
-        },
-        plan: {
-          type: 'free',
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-12-31')
-        }
-      },
-      {
-        name: 'Shiraz Market',
-        ownerName: 'Hassan Mohammadi',
-        phoneNumber: '09111223344',
-        address: {
-          city: 'Shiraz',
-          street: 'Vakil Bazaar',
-          coordinates: { lat: 29.5916, lng: 52.5836 }
-        },
-        loyaltySettings: {
-          tiers: [
-            { minAmount: 75000, rewardType: 'discount', value: 4, description: '4% discount' },
-            { minAmount: 300000, rewardType: 'lottery', value: 1, description: 'Lottery entry' }
-          ],
-          lotteryFrequency: 'monthly',
-          defaultCashbackRate: 2.5
-        },
-        plan: {
-          type: 'premium',
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-12-31')
+        workingHours: {
+          open: '09:00',
+          close: '21:00'
         }
       }
     ];

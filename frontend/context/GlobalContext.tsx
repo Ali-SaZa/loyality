@@ -3,6 +3,8 @@ import { usePathname } from 'next/navigation'
 import { createContext, ReactNode, useEffect, useState } from 'react'
 
 import { siteConfig } from '@/config/site'
+import { getMenuByRole } from '@/helpers/menuUtils'
+import useAuth from '@/hooks/useAuth'
 import CheckBoxIcon from '@/components/icons/CheckBoxIcon'
 import CrossCircleIcon from '@/components/icons/CrossCircleIcon'
 import CrossExclamationIcon from '@/components/icons/CrossExclamationIcon'
@@ -261,14 +263,17 @@ export const GlobalContext = createContext<GlobalContextType | undefined>(undefi
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname()
+  const { user } = useAuth()
   const [dataState, setDataState] = useState<DataState>(globalDefaultValues)
-  const [activeRoute, setActiveRoute] = useState<UserSidebarRoute>(siteConfig.userSidebar[0])
+  
+  // Get menu items based on user role
+  const menuItems = getMenuByRole(user?.role || 'customer')
+  const [activeRoute, setActiveRoute] = useState<UserSidebarRoute>(menuItems[0])
 
   useEffect(() => {
-    const active = siteConfig.userSidebar.find((item) => pathname === item.link) || siteConfig.userSidebar[0]
-
+    const active = menuItems.find((item) => pathname === item.link) || menuItems[0]
     setActiveRoute(active)
-  }, [pathname])
+  }, [pathname, menuItems])
 
   const setData = (section: string, value: any) => {
     setDataState((prevData) => {

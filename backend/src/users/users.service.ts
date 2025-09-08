@@ -1,8 +1,9 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
-import { CreateUserDto, UpdateUserDto, PurchaseDto } from '../dto';
+import { CreateUserDto, UpdateUserDto, CreateCustomerDto } from '../dto';
+import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
   UserNotFoundException, 
   CustomConflictException 
@@ -31,7 +32,7 @@ export class UsersService {
     }
 
     // Store users can view customer data related to their store
-    // This will be validated by checking if the customer has transactions with their store
+    // This will be validated by checking if the customer is related to their store
     if (requestingUser.role === 'store') {
       return;
     }
@@ -51,19 +52,107 @@ export class UsersService {
 
     const user = new this.userModel({
       ...createUserDto,
-      consents: {
-        dataCollection: createUserDto.dataCollectionConsent || false,
-        marketing: createUserDto.marketingConsent || false,
-        consentDate: createUserDto.dataCollectionConsent ? new Date() : undefined,
-      },
+
       lastActivity: new Date(),
     });
 
     return user.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async createCustomer(createCustomerDto: CreateCustomerDto): Promise<{ customer: UserDocument; isExisting: boolean }> {
+    // Check if user already exists
+    const existingUser = await this.userModel.findOne({ 
+      phoneNumber: createCustomerDto.phoneNumber 
+    });
+    
+    if (existingUser) {
+      return {
+        customer: existingUser,
+        isExisting: true
+      };
+    }
+
+    const customer = new this.userModel({
+      phoneNumber: createCustomerDto.phoneNumber,
+      firstName: createCustomerDto.firstName,
+      lastName: createCustomerDto.lastName,
+      role: 'customer',
+      status: 'active',
+      lastActivity: new Date(),
+    });
+
+    const savedCustomer = await customer.save();
+    return {
+      customer: savedCustomer,
+      isExisting: false
+    };
+  }
+
+  // Implement findAll method without generic service
+  async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<UserDocument>> {
+    const page = request.page || 1;
+    const limit = request.limit || 20;
+    const skip = (page - 1) * limit;
+
+    // Add role-based access control without leaking non-schema fields into the Mongo filter
+    // Build a safe filters object and NEVER include arbitrary objects like `requestingUser`
+    const safeAdditionalFilters: any = {};
+    if (additionalFilters && typeof additionalFilters === 'object') {
+      if (additionalFilters.requestingUser?.role === 'store' && additionalFilters.requestingUser?.storeId) {
+        // Store users can only see customers related to their store
+        // This is a simplified example - you might want to implement more sophisticated logic
+      }
+      // Do NOT copy `requestingUser` (or any other non-schema keys) into the Mongo filter
+    }
+
+    // Build filter query
+    let filterQuery: any = {};
+    
+    // Add search functionality
+    if (request.search && request.searchFields && request.searchFields.length > 0) {
+      const searchQueries = request.searchFields.map(field => ({
+        [field]: { $regex: request.search, $options: 'i' }
+      }));
+      filterQuery.$or = searchQueries;
+    }
+
+    // Add additional filters (only the safe subset)
+    Object.assign(filterQuery, safeAdditionalFilters);
+
+    // Execute queries in parallel for better performance
+    const [data, total] = await Promise.all([
+      this.userModel
+        .find(filterQuery)
+        .sort(this.buildSortQuery(request.sort))
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.userModel.countDocuments(filterQuery).exec()
+    ]);
+
+    // Convert Mongoose documents to plain objects with transforms applied
+    const plainData = data.map(doc => doc.toJSON());
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return {
+      data: plainData,
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      appliedFilters: {
+        search: request.search,
+        searchFields: request.searchFields,
+        sort: request.sort,
+        filters: request.filters
+      }
+    };
   }
 
   async findOne(id: string, requestingUser: any): Promise<User> {
@@ -95,11 +184,7 @@ export class UsersService {
       id,
       {
         ...updateUserDto,
-        consents: {
-          dataCollection: updateUserDto.dataCollectionConsent,
-          marketing: updateUserDto.marketingConsent,
-          consentDate: updateUserDto.dataCollectionConsent ? new Date() : undefined,
-        },
+
         lastActivity: new Date(),
       },
       { new: true }
@@ -126,38 +211,9 @@ export class UsersService {
     }
   }
 
-  async addPurchase(id: string, purchaseDto: PurchaseDto, requestingUser: any): Promise<User> {
-    const user = await this.userModel.findById(id).exec();
-    if (!user) {
-      throw new UserNotFoundException();
-    }
 
-    // Validate access permissions
-    await this.validateUserAccess(user, requestingUser);
 
-    // Calculate reward based on store settings (simplified for now)
-    const rewardApplied = {
-      type: 'cashback' as const,
-      value: Math.floor(purchaseDto.amount * 0.05), // 5% cashback example
-    };
-
-    const purchase = {
-      storeId: new Types.ObjectId(purchaseDto.storeId),
-      amount: purchaseDto.amount,
-      date: new Date(),
-      scratchCode: purchaseDto.scratchCode,
-      entryMethod: purchaseDto.entryMethod,
-      rewardApplied,
-    };
-
-    user.purchases.push(purchase);
-    user.totalPoints += Math.floor(purchaseDto.amount / 1000); // 1 point per 1000 IRR
-    user.lastActivity = new Date();
-
-    return user.save();
-  }
-
-  async updateConsents(id: string, dataCollection: boolean, marketing: boolean, requestingUser: any): Promise<User> {
+  async updateStatus(id: string, status: 'active' | 'blocked' | 'deleted', requestingUser: any): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
@@ -169,11 +225,7 @@ export class UsersService {
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       {
-        consents: {
-          dataCollection,
-          marketing,
-          consentDate: dataCollection ? new Date() : undefined,
-        },
+        status,
         lastActivity: new Date(),
       },
       { new: true }
@@ -183,5 +235,44 @@ export class UsersService {
       throw new UserNotFoundException();
     }
     return updatedUser;
+  }
+
+  // Get available filter options for the frontend
+  async getFilterOptions(): Promise<{
+    statuses: string[];
+    roles: string[];
+  }> {
+    const [statuses, roles] = await Promise.all([
+      this.getDistinctValues('status'),
+      this.getDistinctValues('role')
+    ]);
+
+    return {
+      statuses: statuses.filter(Boolean),
+      roles: roles.filter(Boolean)
+    };
+  }
+
+  // Helper method to get distinct values
+  private async getDistinctValues(field: string): Promise<any[]> {
+    return this.userModel.distinct(field).exec();
+  }
+
+  // Count users with optional filter
+  async count(filter: any = {}): Promise<number> {
+    return this.userModel.countDocuments(filter).exec();
+  }
+
+  // Helper method to build sort query
+  private buildSortQuery(sort: any): any {
+    if (!sort || sort.length === 0) {
+      return { createdAt: -1 };
+    }
+
+    const sortQuery: any = {};
+    sort.forEach((item: any) => {
+      sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
+    });
+    return sortQuery;
   }
 }

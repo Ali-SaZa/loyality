@@ -12,8 +12,8 @@ export const API_ROUTES = {
     SEND_VERIFY_CODE: (mobile: string) => `users/${mobile}/send-verify-code`,
   },
   USER: {
-    GET_USER: 'obs_user/profile',
-    UPDATE_PROFILE: 'obs_user/profile',
+    GET_USER: 'auth/profile',
+    UPDATE_PROFILE: 'auth/profile',
     UPDATE_AVATAR: 'user/image',
     JOB_SIMULATION_EVALUATION: 'obs_user/profile/job-simulation-evaluation',
   },
@@ -61,6 +61,15 @@ export const API_ROUTES = {
   },
   DASHBOARD: {
     GET_INDEX_PAGE_DATA: 'dashboard/index-page-data',
+  },
+  STORES: {
+    GET_ALL: 'stores',
+    GET_BY_ID: (id: string) => `stores/${id}`,
+    CREATE: 'stores',
+    UPDATE: (id: string) => `stores/${id}`,
+    DELETE: (id: string) => `stores/${id}`,
+    GET_STATS: 'stores/stats',
+    GET_FILTER_OPTIONS: 'stores/filter-options',
   },
   SKILLS: {
     GET_ALL_SKILLS: 'skills/all',

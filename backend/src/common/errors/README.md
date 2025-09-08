@@ -61,16 +61,15 @@ const userMessage = PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND;
 
 - **`UserNotFoundException`** - User not found (404)
 - **`StoreNotFoundException`** - Store not found (404)
-- **`ScratchCardNotFoundException`** - Scratch card not found (404)
-- **`TransactionNotFoundException`** - Transaction not found (404)
+
+
 - **`AdminNotFoundException`** - Admin not found (404)
 - **`OTPNotFoundException`** - OTP not found (404)
 
 ### Business Logic Exceptions
 
 - **`InsufficientPointsException`** - User doesn't have enough points (400)
-- **`ScratchCardAlreadyUsedException`** - Card already redeemed (409)
-- **`ScratchCardExpiredException`** - Card has expired (400)
+
 - **`InvalidOTPException`** - Invalid OTP code (400)
 - **`OTPExpiredException`** - OTP has expired (400)
 - **`StorePhoneExistsException`** - Store phone number conflict (409)

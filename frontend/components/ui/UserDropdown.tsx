@@ -5,50 +5,60 @@ import { User } from '@heroui/user'
 import React, { useMemo, useState } from 'react'
 
 import LogoutIcon from '../icons/LogoutIcon'
-import PasswordIcon from '../icons/PasswordIcon'
-import ChangePasswordModal from '../modals/ChangePasswordModal'
-import EditIcon from '../icons/EditIcon'
+import StyledUser from './StyledUser'
 
-import { fileAddress, getFullName } from '@/helpers'
-import { siteConfig } from '@/config/site'
+import { getMenuByRole } from '@/helpers/menuUtils'
 import useAuth from '@/hooks/useAuth'
 import useAlertModal from '@/hooks/useAlertModal'
 
-const UserDropdown = () => {
+interface UserDropdownProps {
+  useNavbarItem?: boolean
+  isOnDarkBackground?: boolean
+}
+
+const UserDropdown = ({ useNavbarItem = true, isOnDarkBackground }: UserDropdownProps) => {
   const { user, logout } = useAuth()
   const { showAlert } = useAlertModal()
-  const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] = useState(false)
+
+  // Get menu items based on user role
+  const menuItems = getMenuByRole(user?.role || 'customer')
 
   const disableKeys = useMemo(
     () =>
-      siteConfig.userSidebar
+      menuItems
         .filter((item) => item.isShortAccess)
         .map((item, index) => item?.disable && String(index))
         .filter((item) => item !== undefined),
-    [siteConfig.userSidebar]
+    [menuItems]
   )
+
+  // Determine if we're on a dark background
+  const shouldUseDarkBackground = isOnDarkBackground !== undefined ? isOnDarkBackground : useNavbarItem
+
+  // Render the trigger based on context
+  const renderTrigger = () => {
+    const userComponent = (
+      <StyledUser
+        avatarSrc="/images/man-placeholder.webp"
+        description={user?.phoneNumber}
+        isOnDarkBackground={shouldUseDarkBackground}
+        name={user?.firstName || user?.phoneNumber || 'کاربر'}
+      />
+    )
+
+    if (useNavbarItem) {
+      return <NavbarItem>{userComponent}</NavbarItem>
+    }
+
+    return userComponent
+  }
 
   return (
     <>
       <Dropdown placement="bottom-start">
-        <NavbarItem>
-          <DropdownTrigger>
-            <User
-              as="button"
-              avatarProps={{
-                src: user?.imageId
-                  ? fileAddress(user?.imageId)
-                  : user?.sex === 'S_Male'
-                    ? '/images/placeholders/man-placeholder.webp'
-                    : user?.sex === 'S_Female'
-                      ? '/images/placeholders/woman-placeholder.webp'
-                      : '/images/placeholders/portrait.webp',
-              }}
-              className="transition-transform bg-[#D9DEF1] border border-white py-1 px-2 text-text-dark [&_span]:!bg-[#D9DEF1]"
-              name={getFullName(user?.firstName, user?.lastName)}
-            />
-          </DropdownTrigger>
-        </NavbarItem>
+        <DropdownTrigger>
+          {renderTrigger()}
+        </DropdownTrigger>
 
         <DropdownMenu
           aria-label="User Actions"
@@ -59,22 +69,16 @@ const UserDropdown = () => {
             <DropdownItem
               key="user"
               className="h-14 gap-2"
-              href="/user"
+              href="/customer"
               textValue="user"
             >
               <User
                 avatarProps={{
-                  src: user?.imageId
-                    ? fileAddress(user?.imageId)
-                    : user?.sex === 'S_Male'
-                      ? '/images/placeholders/man-placeholder.webp'
-                      : user?.sex === 'S_Female'
-                        ? '/images/placeholders/woman-placeholder.webp'
-                        : '/images/placeholders/portrait.webp',
+                  src: '/images/man-placeholder.webp'
                 }}
                 className="[&_span.bg-default]:!bg-transparent"
-                description={user?.mobile?.mobile}
-                name={getFullName(user?.firstName, user?.lastName)}
+                description={user?.phoneNumber}
+                name={user?.firstName || user?.phoneNumber || 'کاربر'}
               />
             </DropdownItem>
           </DropdownSection>
@@ -82,7 +86,7 @@ const UserDropdown = () => {
             showDivider
             title="صفحات پر کاربرد"
           >
-            {siteConfig.userSidebar
+            {menuItems
               .filter((item) => item.isShortAccess)
               .map((item, index) => (
                 <DropdownItem
@@ -94,40 +98,17 @@ const UserDropdown = () => {
                 </DropdownItem>
               ))}
           </DropdownSection>
-          <DropdownSection
-            showDivider
-            title="صفحات کاربر"
-          >
-            <DropdownItem
-              key="profile"
-              href="/auth/profile"
-              startContent={<EditIcon className="size-4" />}
-            >
-              ویرایش پروفایل
-            </DropdownItem>
-            <DropdownItem
-              key="change-password"
-              startContent={<PasswordIcon className="size-5" />}
-              onPress={() => setIsOpenChangePasswordModal(true)}
-            >
-              تغییر رمز عبور
-            </DropdownItem>
-          </DropdownSection>
           <DropdownItem
             key="logout"
-            className="text-error"
+            className="text-danger"
             color="danger"
             startContent={<LogoutIcon className="size-4" />}
-            onPress={() => showAlert('برای خروج مطمئن هستید؟', logout)}
+            onClick={() => showAlert('برای خروج مطمئن هستید؟', logout)}
           >
             خروج
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
-      <ChangePasswordModal
-        isOpen={isOpenChangePasswordModal}
-        setIsOpen={setIsOpenChangePasswordModal}
-      />
     </>
   )
 }

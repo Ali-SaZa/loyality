@@ -19,7 +19,7 @@ import UserDropdown from '../ui/UserDropdown'
 import CloseIcon from '../icons/CloseIcon'
 import MenuBurgerIcon from '../icons/MenuBurgerIcon'
 import AngleDownIcon from '../icons/AngleDownIcon'
-import ObsLogo from '../ui/ObsLogo'
+import LogoContainer from '../ui/ObsLogo'
 
 import { siteConfig } from '@/config/site'
 import useAuth from '@/hooks/useAuth'
@@ -60,15 +60,15 @@ const Navbar = () => {
           <NavbarBrand>
             {isMenuOpen ? (
               <div className="-mr-10">
-                <ObsLogo
+                <LogoContainer
                   disableClick
                   iconSize={150}
                 />
               </div>
             ) : width < 1024 ? (
-              <ObsLogo iconSize={100} />
+              <LogoContainer iconSize={100} />
             ) : (
-              <ObsLogo />
+              <LogoContainer />
             )}
           </NavbarBrand>
         </NavbarContent>

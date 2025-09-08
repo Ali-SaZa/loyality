@@ -12,7 +12,7 @@ export const SendOtpFormValidation = z.object({
 })
 
 export const CheckOtpFormValidation = z.object({
-  code: z.string().min(4, 'کد وارد شده صحیح نیست').max(4, 'کد وارد شده صحیح نیست'),
+  code: z.string().min(6, 'کد وارد شده صحیح نیست').max(6, 'کد وارد شده صحیح نیست'),
 })
 
 export const UserInfoFormValidation = z

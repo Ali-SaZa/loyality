@@ -8,6 +8,7 @@ import {
   CustomBadRequestException,
   CustomUnauthorizedException 
 } from '../common/errors';
+import { PERSIAN_ERROR_MESSAGES } from '../common/errors';
 
 @Injectable()
 export class AuthService {
@@ -18,49 +19,54 @@ export class AuthService {
   ) {}
 
   async requestOtp(requestOtpDto: RequestOtpDto): Promise<{ message: string; phoneNumber: string }> {
-    const { phoneNumber } = requestOtpDto;
+    try {
+      const { phoneNumber } = requestOtpDto;
 
-    // Validate phone number format
-    const phoneRegex = /^09[0-9]{9}$/;
-    if (!phoneRegex.test(phoneNumber)) {
-      throw new BadRequestException('فرمت شماره موبایل نامعتبر است. باید به فرمت 09XXXXXXXXX باشد'); // translated to Persian
-    }
-
-    // Check if there's a recent OTP request (within 2 minutes)
-    const recentOtp = await this.otpService.findRecentOtp(phoneNumber, 'login');
-    if (recentOtp) {
-      const timeDiff = Date.now() - recentOtp.createdAt.getTime();
-      const remainingTime = Math.ceil((2 * 60 * 1000 - timeDiff) / 1000); // 2 minutes in seconds
-      
-      if (timeDiff < 2 * 60 * 1000) { // 2 minutes
-        throw new CustomBadRequestException('OTP_ALREADY_SENT', `لطفاً ${remainingTime} ثانیه صبر کنید قبل از درخواست کد تایید جدید`); // translated to Persian
+      // Validate phone number format
+      const phoneRegex = /^09[0-9]{9}$/;
+      if (!phoneRegex.test(phoneNumber)) {
+        throw new BadRequestException('فرمت شماره موبایل نامعتبر است. باید به فرمت 09XXXXXXXXX باشد'); // translated to Persian
       }
+
+      // Check if there's a recent OTP request (within 2 minutes)
+      const recentOtp = await this.otpService.findRecentOtp(phoneNumber, 'login');
+      if (recentOtp && recentOtp.createdAt) {
+        const timeDiff = Date.now() - new Date(recentOtp.createdAt).getTime();
+        const remainingTime = Math.ceil((2 * 60 * 1000 - timeDiff) / 1000); // 2 minutes in seconds
+        
+        if (timeDiff < 2 * 60 * 1000) { // 2 minutes
+          throw new CustomBadRequestException('OTP_ALREADY_SENT', `لطفاً ${remainingTime} ثانیه صبر کنید قبل از درخواست کد تایید جدید`); // translated to Persian
+        }
+      }
+
+      // Generate a 6-digit OTP code
+      // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // For testing purposes, use fixed OTP code
+      const otpCode = '123456';
+      
+      // Create OTP record with shorter expiration for security
+      await this.otpService.create({
+        phoneNumber,
+        code: otpCode,
+        context: 'login',
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes (reduced from 10)
+      });
+
+      // In a real application, you would send SMS here
+      // For now, we'll just log it (in development)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
+      }
+
+      return {
+        message: PERSIAN_ERROR_MESSAGES.OTP_SENT_SUCCESSFULLY,
+        phoneNumber,
+      };
+    } catch (error) {
+      console.error('Error in requestOtp:', error);
+      throw error;
     }
-
-    // Generate a 6-digit OTP code
-    // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // For testing purposes, use fixed OTP code
-    const otpCode = '123456';
-    
-    // Create OTP record with shorter expiration for security
-    await this.otpService.create({
-      phoneNumber,
-      code: otpCode,
-      context: 'login',
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes (reduced from 10)
-    });
-
-    // In a real application, you would send SMS here
-    // For now, we'll just log it (in development)
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
-    }
-
-    return {
-      message: 'OTP sent successfully',
-      phoneNumber,
-    };
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<AuthResponseDto> {
@@ -91,8 +97,6 @@ export class AuthService {
       // Create new user with minimal information
       user = await this.usersService.create({
         phoneNumber,
-        dataCollectionConsent: false,
-        marketingConsent: false,
       }) as UserDocument;
       isNewUser = true;
     }
@@ -117,10 +121,11 @@ export class AuthService {
       user: {
         _id: user._id,
         phoneNumber: user.phoneNumber,
-        name: user.name,
-        totalPoints: user.totalPoints,
+        firstName: user.firstName,
+        lastName: user.lastName,
+
         role: user.role,
-        tags: user.tags,
+
         lastActivity: user.lastActivity,
       },
       isNewUser,
@@ -146,36 +151,5 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
-    try {
-      const payload = this.jwtService.verify(refreshToken, {
-        issuer: 'loyalty-api',
-        audience: 'loyalty-users',
-      });
 
-      // Validate refresh token type
-      if (payload.type !== 'refresh') {
-        throw new CustomUnauthorizedException('UNAUTHORIZED');
-      }
-
-      // Generate new access token
-      const newPayload = {
-        phoneNumber: payload.phoneNumber,
-        userId: payload.userId,
-        role: payload.role,
-        iat: Math.floor(Date.now() / 1000),
-        type: 'access',
-      };
-
-      const accessToken = this.jwtService.sign(newPayload, {
-        expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-        issuer: 'loyalty-api',
-        audience: 'loyalty-users',
-      });
-
-      return { accessToken };
-    } catch (error) {
-      throw new CustomUnauthorizedException('UNAUTHORIZED');
-    }
-  }
 }

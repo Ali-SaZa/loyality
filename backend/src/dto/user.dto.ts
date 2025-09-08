@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum, IsBoolean, IsDateString, Min, MaxLength, Matches } from 'class-validator';
-import { Types } from 'mongoose';
+import { IsString, IsOptional, MaxLength, Matches } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'Iranian mobile number', example: '09123456789' })
@@ -8,60 +7,82 @@ export class CreateUserDto {
   @Matches(/^09[0-9]{9}$/)
   phoneNumber: string;
 
-  @ApiProperty({ description: 'User name', required: false, maxLength: 100 })
+  @ApiProperty({ description: 'User first name', required: false, maxLength: 100 })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name?: string;
+  firstName?: string;
 
-  @ApiProperty({ description: 'Data collection consent', default: false })
+  @ApiProperty({ description: 'User last name', required: false, maxLength: 100 })
   @IsOptional()
-  @IsBoolean()
-  dataCollectionConsent?: boolean;
+  @IsString()
+  @MaxLength(100)
+  lastName?: string;
 
-  @ApiProperty({ description: 'Marketing consent', default: false })
+
+}
+
+export class CreateCustomerDto {
+  @ApiProperty({ 
+    description: 'Customer phone number', 
+    example: '09123456789',
+    pattern: '^09[0-9]{9}$'
+  })
+  @IsString()
+  @Matches(/^09[0-9]{9}$/, { 
+    message: 'Phone number must be in format 09xxxxxxxxx' 
+  })
+  phoneNumber: string;
+
+  @ApiProperty({ 
+    description: 'Customer first name', 
+    required: false,
+    maxLength: 100
+  })
   @IsOptional()
-  @IsBoolean()
-  marketingConsent?: boolean;
+  @IsString()
+  @MaxLength(100)
+  firstName?: string;
+
+  @ApiProperty({ 
+    description: 'Customer last name', 
+    required: false,
+    maxLength: 100
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  lastName?: string;
+}
+
+export class CustomerResponseDto {
+  @ApiProperty({ description: 'Customer ID' })
+  id: string;
+
+  @ApiProperty({ description: 'Error message if customer already exists', required: false })
+  error?: string;
+
+  @ApiProperty({ description: 'Whether customer is already in this store', required: false })
+  isAlreadyInStore?: boolean;
 }
 
 export class UpdateUserDto {
-  @ApiProperty({ description: 'User name', required: false })
+  @ApiProperty({ description: 'User first name', required: false })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name?: string;
+  firstName?: string;
 
-  @ApiProperty({ description: 'Data collection consent' })
-  @IsOptional()
-  @IsBoolean()
-  dataCollectionConsent?: boolean;
-
-  @ApiProperty({ description: 'Marketing consent' })
-  @IsOptional()
-  @IsBoolean()
-  marketingConsent?: boolean;
-}
-
-export class PurchaseDto {
-  @ApiProperty({ description: 'Store ID' })
-  @IsString()
-  storeId: string;
-
-  @ApiProperty({ description: 'Purchase amount in IRR', minimum: 0 })
-  @IsNumber()
-  @Min(0)
-  amount: number;
-
-  @ApiProperty({ description: 'Scratch card code', required: false })
+  @ApiProperty({ description: 'User last name', required: false })
   @IsOptional()
   @IsString()
-  scratchCode?: string;
+  @MaxLength(100)
+  lastName?: string;
 
-  @ApiProperty({ description: 'Entry method', enum: ['sms', 'qr'] })
-  @IsEnum(['sms', 'qr'])
-  entryMethod: 'sms' | 'qr';
+
 }
+
+
 
 export class UserResponseDto {
   @ApiProperty()
@@ -71,39 +92,34 @@ export class UserResponseDto {
   phoneNumber: string;
 
   @ApiProperty()
-  name?: string;
+  firstName?: string;
 
   @ApiProperty()
-  totalPoints: number;
+  lastName?: string;
 
-  @ApiProperty()
-  purchases: Array<{
-    storeId: string;
-    amount: number;
-    date: Date;
-    scratchCode?: string;
-    entryMethod: 'sms' | 'qr';
-    rewardApplied: {
-      type: 'discount' | 'cashback' | 'lottery';
-      value: number;
-    };
-  }>;
 
-  @ApiProperty()
-  consents: {
-    dataCollection: boolean;
-    marketing: boolean;
-    consentDate?: Date;
-  };
+
+
 
   @ApiProperty()
   role: string;
 
-  @ApiProperty()
-  lastActivity?: Date;
+  @ApiProperty({ enum: ['active', 'blocked', 'deleted'] })
+  status: string;
 
   @ApiProperty()
-  tags: string[];
+  lastActivity: Date;
+
+  @ApiProperty({ description: 'Store name (for store users)', required: false })
+  storeName?: string;
+
+  @ApiProperty({ description: 'Store address (for store users)', required: false })
+  address?: string;
+
+  @ApiProperty({ description: 'Store description (for store users)', required: false })
+  description?: string;
+
+
 
   @ApiProperty()
   createdAt: Date;

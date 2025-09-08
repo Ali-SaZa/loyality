@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { RequestOtpDto, VerifyOtpDto, AuthResponseDto } from './dto/auth.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
+import { PERSIAN_ERROR_MESSAGES } from '../common/errors';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -90,7 +91,7 @@ export class AuthController {
   })
   async getProfile(@CurrentUser() user: any) {
     return {
-      message: 'Profile retrieved successfully',
+      message: PERSIAN_ERROR_MESSAGES.PROFILE_RETRIEVED_SUCCESSFULLY,
       user: {
         phoneNumber: user.phoneNumber,
         userId: user.userId,
@@ -98,4 +99,5 @@ export class AuthController {
       }
     };
   }
+
 }

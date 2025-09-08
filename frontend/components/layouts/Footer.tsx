@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ObsLogo from '../ui/ObsLogo'
+import LogoContainer from '../ui/ObsLogo'
 import PhoneIcon from '../icons/PhoneIcon'
 import InstagramIcon from '../icons/InstagramIcon'
 import LinkedInIcon from '../icons/LinkedInIcon'
@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-16 gap-y-8">
           <div className="flex flex-col gap-3 lg:gap-6 lg:col-span-2">
             <div className="border border-white bg-white/50 w-fit rounded-xl p-1">
-              <ObsLogo />
+              <LogoContainer />
             </div>
             <p className="text-justify">
               OBS پلتفرم توسعه منابع انسانی است که از طریق استانداردسازی، سیستم سازی و فرآیندسازی تخصصی مشاغل جاری در هر کسب و کار، ظرفیت

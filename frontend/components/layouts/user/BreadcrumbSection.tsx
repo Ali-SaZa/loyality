@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react'
 
 import AngleLeftIcon from '@/components/icons/AngleLeftIcon'
 import { siteConfig } from '@/config/site'
+import { getMenuByRole } from '@/helpers/menuUtils'
 import { isValidMongoId } from '@/helpers'
+import useAuth from '@/hooks/useAuth'
 import useGlobal from '@/hooks/useGlobal'
 import { UserSidebarRoute } from '@/types'
 
@@ -17,13 +19,16 @@ interface Breadcrumb {
 const BreadcrumbSection = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([])
   const { activeRoute } = useGlobal()
+  const { user } = useAuth()
   const pathname = usePathname()
 
-  useEffect(() => {
-    const activeParentRoute = siteConfig.userSidebar.find((item) => item.link.includes(pathname.split('/')[2]))
+  // Get menu items based on user role
+  const menuItems = getMenuByRole(user?.role || 'customer')
 
+  useEffect(() => {
+    const activeParentRoute = menuItems.find((item) => item.link.includes(pathname.split('/')[2]))
     setBreadcrumbs(getTitles(activeParentRoute ? activeParentRoute : activeRoute))
-  }, [pathname])
+  }, [pathname, menuItems, activeRoute])
 
   const getTitles = (data: UserSidebarRoute): Breadcrumb[] => {
     const titles: Breadcrumb[] = []

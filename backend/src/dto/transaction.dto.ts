@@ -1,95 +1,157 @@
+import { IsString, IsMongoId, IsOptional, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsEnum, IsMongoId, Min } from 'class-validator';
 
-export class CreateTransactionDto {
-  @ApiProperty({ description: 'User ID' })
+export class AddDirectCustomerDto {
+  @ApiProperty({ 
+    description: 'Customer ID to add to store', 
+    example: '507f1f77bcf86cd799439011'
+  })
   @IsMongoId()
-  userId: string;
+  customerId: string;
 
-  @ApiProperty({ description: 'Store ID' })
+  @ApiProperty({ 
+    description: 'Store ID', 
+    example: '507f1f77bcf86cd799439011'
+  })
   @IsMongoId()
   storeId: string;
 
-  @ApiProperty({ description: 'Transaction type', enum: ['purchase', 'cashback', 'lottery'] })
-  @IsEnum(['purchase', 'cashback', 'lottery'])
-  type: 'purchase' | 'cashback' | 'lottery';
-
-  @ApiProperty({ description: 'Amount in IRR', minimum: 0 })
-  @IsNumber()
-  @Min(0)
-  amount: number;
-
-  @ApiProperty({ description: 'Scratch card code', required: false })
+  @ApiProperty({ 
+    description: 'Optional notes about this customer', 
+    required: false,
+    maxLength: 200
+  })
   @IsOptional()
   @IsString()
-  scratchCode?: string;
-
-  @ApiProperty({ description: 'Entry method', enum: ['sms', 'qr'] })
-  @IsEnum(['sms', 'qr'])
-  entryMethod: 'sms' | 'qr';
-
-  @ApiProperty({ description: 'Transaction description', required: false })
-  @IsOptional()
-  @IsString()
-  description?: string;
+  @MaxLength(200)
+  notes?: string;
 }
 
-export class UpdateTransactionDto {
-  @ApiProperty({ description: 'Transaction type', required: false })
-  @IsOptional()
-  @IsEnum(['purchase', 'cashback', 'lottery'])
-  type?: 'purchase' | 'cashback' | 'lottery';
+export class DirectCustomerResponseDto {
+  @ApiProperty({ description: 'Success message' })
+  message: string;
 
-  @ApiProperty({ description: 'Amount in IRR', required: false })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  amount?: number;
+  @ApiProperty({ description: 'Customer information' })
+  customer: {
+    id: string;
+    phoneNumber: string;
+    firstName?: string;
+    lastName?: string;
+  };
 
-  @ApiProperty({ description: 'Scratch card code', required: false })
-  @IsOptional()
-  @IsString()
-  scratchCode?: string;
+  @ApiProperty({ description: 'Transaction information' })
+  transaction: {
+    id: string;
+    createdAt: Date;
+  };
+}
 
-  @ApiProperty({ description: 'Entry method', required: false })
-  @IsOptional()
-  @IsEnum(['sms', 'qr'])
-  entryMethod?: 'sms' | 'qr';
+export class CreateTransactionDto {
+  @ApiProperty({ description: 'Customer ID', example: '507f1f77bcf86cd799439011' })
+  @IsMongoId()
+  customerId: string;
 
-  @ApiProperty({ description: 'Transaction description', required: false })
-  @IsOptional()
-  @IsString()
-  description?: string;
+  @ApiProperty({ description: 'Store ID', example: '507f1f77bcf86cd799439012' })
+  @IsMongoId()
+  storeId: string;
+
+  @ApiProperty({ description: 'Promo code ID', example: '507f1f77bcf86cd799439013' })
+  @IsMongoId()
+  promoCodeId: string;
+
+  @ApiProperty({ description: 'Promotion ID', example: '507f1f77bcf86cd799439014' })
+  @IsMongoId()
+  promotionId: string;
 }
 
 export class TransactionResponseDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'Transaction ID' })
   id: string;
 
-  @ApiProperty()
-  userId: string;
+  @ApiProperty({ description: 'Customer ID' })
+  customerId: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Store ID' })
   storeId: string;
 
-  @ApiProperty({ enum: ['purchase', 'cashback', 'lottery'] })
-  type: 'purchase' | 'cashback' | 'lottery';
+  @ApiProperty({ description: 'Promo code ID', required: false })
+  promoCodeId?: string;
 
-  @ApiProperty()
-  amount: number;
+  @ApiProperty({ description: 'Promotion ID', required: false })
+  promotionId?: string;
 
-  @ApiProperty({ required: false })
-  scratchCode?: string;
-
-  @ApiProperty({ enum: ['sms', 'qr'] })
-  entryMethod: 'sms' | 'qr';
-
-  @ApiProperty({ required: false })
-  description?: string;
-
-  @ApiProperty()
+  @ApiProperty({ description: 'Transaction creation date' })
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Transaction last update date' })
   updatedAt: Date;
+
+  @ApiProperty({ description: 'Optional notes', required: false })
+  notes?: string;
+
+  // Populated fields
+  @ApiProperty({ description: 'Customer information (if populated)', required: false })
+  customer?: {
+    id: string;
+    phoneNumber: string;
+    firstName?: string;
+    lastName?: string;
+  };
+
+  @ApiProperty({ description: 'Store information (if populated)', required: false })
+  store?: {
+    id: string;
+    name: string;
+    phoneNumber: string;
+  };
+
+  @ApiProperty({ description: 'Promo code information (if populated)', required: false })
+  promoCode?: {
+    id: string;
+    code: string;
+    status: string;
+  };
+
+  @ApiProperty({ description: 'Promotion information (if populated)', required: false })
+  promotion?: {
+    id: string;
+    title: string;
+    price: number;
+    points: number;
+  };
+}
+
+export class CustomerTransactionDto {
+  @ApiProperty({ description: 'Customer ID' })
+  id: string;
+
+  @ApiProperty({ description: 'Customer phone number' })
+  phoneNumber: string;
+
+  @ApiProperty({ description: 'Customer first name', required: false })
+  firstName?: string;
+
+  @ApiProperty({ description: 'Customer last name', required: false })
+  lastName?: string;
+
+  @ApiProperty({ description: 'Customer status' })
+  status: string;
+
+  @ApiProperty({ description: 'Total number of transactions with this store' })
+  totalTransactions: number;
+
+  @ApiProperty({ description: 'Total amount spent at this store' })
+  totalSpent: number;
+
+  @ApiProperty({ description: 'Total points earned at this store' })
+  totalPointsEarned: number;
+
+  @ApiProperty({ description: 'Date of first transaction' })
+  firstTransactionDate: Date;
+
+  @ApiProperty({ description: 'Date of last transaction' })
+  lastTransactionDate: Date;
+
+  @ApiProperty({ description: 'Customer last activity' })
+  lastActivity: Date;
 }

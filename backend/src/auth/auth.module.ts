@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -12,6 +12,7 @@ import { OtpModule } from '../otp/otp.module';
 import { UsersModule } from '../users/users.module';
 import { AuthorizationService } from '../common/security/authorization.service';
 import { ResourceAuthGuard } from '../common/security/resource-auth.guard';
+import { RoleAuthGuard } from '../common/security/role-auth.guard';
 import { Store, StoreSchema } from '../schemas/store.schema';
 
 @Module({
@@ -49,7 +50,7 @@ import { Store, StoreSchema } from '../schemas/store.schema';
       { name: Store.name, schema: StoreSchema }
     ]),
     OtpModule,
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   providers: [
     AuthService, 
@@ -57,12 +58,13 @@ import { Store, StoreSchema } from '../schemas/store.schema';
     GlobalAuthGuard,
     AuthorizationService,
     ResourceAuthGuard,
+    RoleAuthGuard,
     {
       provide: APP_GUARD,
       useClass: GlobalAuthGuard,
     },
   ],
   controllers: [AuthController],
-  exports: [AuthService, JwtStrategy, PassportModule, AuthorizationService, ResourceAuthGuard],
+  exports: [AuthService, JwtStrategy, PassportModule, AuthorizationService, ResourceAuthGuard, RoleAuthGuard],
 })
 export class AuthModule {}

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:frontend": "cd frontend && npm run dev",
+    "dev:frontend": "cd frontend && PORT=${FRONTEND_PORT:-4444} npm run dev",
     "dev:backend": "cd backend && npm run start:dev",
     "dev:db": "docker compose -f docker-compose.db.yml up -d || docker-compose -f docker-compose.db.yml up -d",
     "dev:db:down": "docker compose -f docker-compose.db.yml down || docker-compose -f docker-compose.db.yml down",
