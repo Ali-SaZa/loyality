@@ -57,23 +57,7 @@ const UserNavbar = ({
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
-        <NavbarContent className="md:hidden" justify="center">
-          <div className="text-right">
-            <p className="font-bold text-xs text-white">
-              {truncateText(
-                title ||
-                  data.navbar.title ||
-                  getRoleTitle(user?.role || "customer"),
-                20,
-              )}
-            </p>
-            <p className="text-xs text-white/80">
-              {user?.firstName || user?.phoneNumber || "کاربر"}
-            </p>
-          </div>
-        </NavbarContent>
-
-        <NavbarContent className="hidden md:flex" justify="end">
+        <NavbarContent className="flex" justify="end">
           {/* SMS Balance Display for Store Users */}
           {user?.role === "store" && smsBalance !== null && !smsLoading && (
             <div className="mr-4">
