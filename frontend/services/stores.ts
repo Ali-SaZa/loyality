@@ -124,6 +124,15 @@ export interface StoreStats {
   suspended: number;
 }
 
+export interface StoreStatistics {
+  activeCampaigns: number;
+  totalPromoCodes: number;
+  customersRegisteredToday: number;
+  customersRegisteredThisMonth: number;
+  totalCustomers: number;
+  totalMessagesSent: number;
+}
+
 export interface SmsHistoryItem {
   id: string;
   sentDate: Date;
@@ -312,6 +321,17 @@ export const storesService = {
     }
   },
 
+  // Get detailed store statistics for current store
+  async getStoreStatistics(): Promise<StoreStatistics> {
+    try {
+      const response = await axiosInstance.get<StoreStatistics>("/stores/me/statistics");
+      return response.data;
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      throw new Error(errorMessage);
+    }
+  },
+
   // Get SMS history for current store
   async getSmsHistory(params?: {
     page?: number;
@@ -355,6 +375,7 @@ export const updateStore = storesService.updateStore;
 export const deleteStore = storesService.deleteStore;
 export const updateStoreStatus = storesService.updateStoreStatus;
 export const getStoreStats = storesService.getStoreStats;
+export const getStoreStatistics = storesService.getStoreStatistics;
 export const getCurrentStore = storesService.getCurrentStore;
 export const updateCurrentStore = storesService.updateCurrentStore;
 export const getStoreFilterOptions = storesService.getStoreFilterOptions;
