@@ -301,4 +301,101 @@ export class StoresController {
   ) {
     return this.storesService.sendSmsToCustomer(storeId, sendSmsToCustomerDto.userId, sendSmsToCustomerDto.text, user);
   }
+
+  @Get('me/sms/history')
+  @StoreAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get SMS history for current store (Store Owner only)' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (default: 10)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'SMS history retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              sentDate: { type: 'string', format: 'date-time' },
+              customerName: { type: 'string' },
+              customerPhone: { type: 'string' },
+              messagePreview: { type: 'string' },
+              messageText: { type: 'string' }
+            }
+          }
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+        totalPages: { type: 'number' },
+        hasNextPage: { type: 'boolean' },
+        hasPrevPage: { type: 'boolean' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not a store user' })
+  async getSmsHistory(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @CurrentUser() user: any
+  ) {
+    // For store users, use their storeId from the authenticated user
+    if (user.role === 'store') {
+      return this.storesService.getSmsHistory(user.storeId, user, page, limit);
+    }
+    throw new ForbiddenException('Only store users can access SMS history');
+  }
+
+  @Get(':id/sms/history')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get SMS history for a store (Admin only)' })
+  @ApiParam({ name: 'id', description: 'Store ID' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (default: 10)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'SMS history retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              sentDate: { type: 'string', format: 'date-time' },
+              customerName: { type: 'string' },
+              customerPhone: { type: 'string' },
+              messagePreview: { type: 'string' },
+              messageText: { type: 'string' }
+            }
+          }
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+        totalPages: { type: 'number' },
+        hasNextPage: { type: 'boolean' },
+        hasPrevPage: { type: 'boolean' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not an admin' })
+  @ApiResponse({ status: 404, description: 'Store not found' })
+  async getSmsHistoryForStore(
+    @Param('id') storeId: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @CurrentUser() user: any
+  ) {
+    return this.storesService.getSmsHistory(storeId, user, page, limit);
+  }
 }

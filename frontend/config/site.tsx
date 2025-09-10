@@ -12,6 +12,7 @@ import ListIcon from '@/components/icons/ListIcon'
 import WalletIcon from '@/components/icons/WalletIcon'
 import PromotionIcon from '@/components/icons/PromotionIcon'
 import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
+import MailIcon from '@/components/icons/MailIcon'
 
 export const siteConfig = {
   name: 'OBS',
@@ -90,6 +91,13 @@ export const siteConfig = {
         title: 'اعمال کد تخفیف',
         icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
         link: '/store/apply-promo-code',
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: 'پیامک‌های ارسالی',
+        icon: (className: string = 'size-6') => <MailIcon className={className} />,
+        link: '/store/sent-messages',
         isShortAccess: true,
         children: [],
       },

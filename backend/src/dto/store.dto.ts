@@ -284,6 +284,49 @@ export class UpdateSmsBalanceDto {
   amount: number;
 }
 
+export class SmsHistoryItemDto {
+  @ApiProperty({ description: 'SMS ID', example: '507f1f77bcf86cd799439011' })
+  id: string;
+
+  @ApiProperty({ description: 'Sent date', example: '2024-01-15T10:30:00.000Z' })
+  sentDate: Date;
+
+  @ApiProperty({ description: 'Customer full name', example: 'علی احمدی' })
+  customerName: string;
+
+  @ApiProperty({ description: 'Customer phone number', example: '09123456789' })
+  customerPhone: string;
+
+  @ApiProperty({ description: 'Message text preview (first 15 chars)', example: 'کد تخفیف شما...' })
+  messagePreview: string;
+
+  @ApiProperty({ description: 'Full message text', example: 'کد تخفیف شما آماده است. از کد WELCOME10 استفاده کنید.' })
+  messageText: string;
+}
+
+export class SmsHistoryResponseDto {
+  @ApiProperty({ description: 'List of sent SMS messages', type: [SmsHistoryItemDto] })
+  data: SmsHistoryItemDto[];
+
+  @ApiProperty({ description: 'Total number of SMS messages', example: 25 })
+  total: number;
+
+  @ApiProperty({ description: 'Current page number', example: 1 })
+  page: number;
+
+  @ApiProperty({ description: 'Number of items per page', example: 10 })
+  limit: number;
+
+  @ApiProperty({ description: 'Total number of pages', example: 3 })
+  totalPages: number;
+
+  @ApiProperty({ description: 'Whether there is a next page', example: true })
+  hasNextPage: boolean;
+
+  @ApiProperty({ description: 'Whether there is a previous page', example: false })
+  hasPrevPage: boolean;
+}
+
 export class CreateStoreWithUserDto {
   @ApiProperty({ description: 'User information for the store manager' })
   @IsObject()

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { User, UserDocument } from '../schemas/user.schema';
+import { Sms, SmsDocument } from '../schemas/sms.schema';
 import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
@@ -31,6 +32,7 @@ export class StoresService {
   constructor(
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Sms.name) private smsModel: Model<SmsDocument>,
     private smsService: SmsService,
     private transactionsService: TransactionsService,
   ) {}
@@ -479,5 +481,66 @@ export class StoresService {
     });
 
     return smsResult;
+  }
+
+  /**
+   * Get SMS history for a store
+   */
+  async getSmsHistory(
+    storeId: string,
+    user: UserContext,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<any> {
+    // Verify store access
+    const store = await this.storeModel.findById(storeId).exec();
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
+    // Check access permissions
+    if (user.role === 'store' && store.userId.toString() !== user._id.toString()) {
+      throw new ForbiddenException('You can only view SMS history for your own store');
+    }
+
+    // Calculate pagination
+    const skip = (page - 1) * limit;
+
+    // Get SMS records created by this store's user
+    const smsRecords = await this.smsModel
+      .find({ createdBy: store.userId })
+      .populate('userId', 'firstName lastName phoneNumber')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    // Get total count
+    const total = await this.smsModel.countDocuments({ createdBy: store.userId });
+
+    // Transform the data
+    const data = smsRecords.map((sms: any) => ({
+      id: sms._id.toString(),
+      sentDate: sms.createdAt,
+      customerName: sms.userId ? `${sms.userId.firstName || ''} ${sms.userId.lastName || ''}`.trim() : 'Unknown',
+      customerPhone: sms.userId?.phoneNumber || 'Unknown',
+      messagePreview: sms.text.length > 15 ? sms.text.substring(0, 15) + '...' : sms.text,
+      messageText: sms.text
+    }));
+
+    // Calculate pagination info
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage
+    };
   }
 }

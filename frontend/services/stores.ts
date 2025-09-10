@@ -116,6 +116,25 @@ export interface StoreStats {
   suspended: number
 }
 
+export interface SmsHistoryItem {
+  id: string
+  sentDate: Date
+  customerName: string
+  customerPhone: string
+  messagePreview: string
+  messageText: string
+}
+
+export interface SmsHistoryResponse {
+  data: SmsHistoryItem[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+}
+
 // Stores service functions
 export const storesService = {
   // Get all stores with pagination and filtering
@@ -246,6 +265,24 @@ export const storesService = {
       const errorMessage = handleApiError(error)
       throw new Error(errorMessage)
     }
+  },
+
+  // Get SMS history for current store
+  async getSmsHistory(params?: {
+    page?: number
+    limit?: number
+  }): Promise<SmsHistoryResponse> {
+    try {
+      const queryParams = new URLSearchParams()
+      if (params?.page) queryParams.append('page', params.page.toString())
+      if (params?.limit) queryParams.append('limit', params.limit.toString())
+
+      const response = await axiosInstance.get<SmsHistoryResponse>(`/stores/me/sms/history?${queryParams.toString()}`)
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
   }
 }
 
@@ -259,3 +296,4 @@ export const updateStoreStatus = storesService.updateStoreStatus
 export const getStoreStats = storesService.getStoreStats
 export const getCurrentStore = storesService.getCurrentStore
 export const getStoreFilterOptions = storesService.getStoreFilterOptions
+export const getSmsHistory = storesService.getSmsHistory
