@@ -28,10 +28,11 @@ This module provides comprehensive database seeding functionality for the Loyalt
 - **Store Two** (09177777777) - Store owner for Isfahan Bazaar
 - **Store Manager** (09221234567) - Store owner for Shiraz Market
 
-### Stores (3 stores)
-- **Tehran Mall** - Premium shopping mall in Tehran with comprehensive features
-- **Isfahan Bazaar** - Traditional bazaar in Isfahan with basic loyalty features  
-- **Shiraz Market** - Modern market in Shiraz with premium features and lottery system
+### Stores (4 stores)
+- **Doris Accessories** - Premium accessories store in Tehran with comprehensive loyalty program (SMS Balance: 100)
+- **Tehran Mall** - Premium shopping mall in Tehran with comprehensive features (SMS Balance: 200)
+- **Isfahan Bazaar** - Traditional bazaar in Isfahan with basic loyalty features (SMS Balance: 50)
+- **Shiraz Market** - Modern market in Shiraz with premium features and lottery system (SMS Balance: 150)
 
 ### Promotions (12 promotions)
 - **Tehran Mall**: 4 promotions (percentage, cashback, loyalty points, coupon)
@@ -133,7 +134,7 @@ GET /seeding/status
 ```json
 {
   "users": 10,
-  "stores": 3,
+  "stores": 4,
   "promotions": 12,
   "promoCodes": 25,
   "otps": 10,
