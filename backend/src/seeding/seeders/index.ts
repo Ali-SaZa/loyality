@@ -5,3 +5,4 @@ export * from './promotions.seeder';
 export * from './promo-codes.seeder';
 export * from './transactions.seeder';
 export * from './otps.seeder';
+export * from './sms.seeder';

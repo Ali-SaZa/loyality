@@ -5,7 +5,8 @@ import {
   PromotionsSeeder,
   PromoCodesSeeder,
   TransactionsSeeder,
-  OTPsSeeder 
+  OTPsSeeder,
+  SmsSeeder
 } from './seeders';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class SeedingService {
     private readonly promoCodesSeeder: PromoCodesSeeder,
     private readonly transactionsSeeder: TransactionsSeeder,
     private readonly otpsSeeder: OTPsSeeder,
+    private readonly smsSeeder: SmsSeeder,
   ) {}
 
   async seedAll(environment: 'development' | 'production' = 'development'): Promise<void> {
@@ -37,6 +39,7 @@ export class SeedingService {
       const promoCodes = await this.seedPromoCodes(promotions, users);
       const transactions = await this.seedTransactions(users, stores, promoCodes, promotions);
       await this.seedOTPs(users);
+      await this.seedSMS(users);
 
       this.logger.log(`Seeding completed successfully for ${environment} environment`);
       this.logger.log(`Created: ${users.length} users, ${stores.length} stores, ${promotions.length} promotions, ${promoCodes.length} promo codes, ${transactions.length} transactions`);
@@ -56,6 +59,7 @@ export class SeedingService {
       this.storesSeeder.clear(),
       this.usersSeeder.clear(),
       this.otpsSeeder.clear(),
+      this.smsSeeder.clear(),
     ]);
     
     this.logger.log('All data cleared successfully');
@@ -102,17 +106,24 @@ export class SeedingService {
     promoCodes: number;
     transactions: number;
     otps: number;
+    sms: number;
   }> {
-    const [users, stores, promotions, promoCodes, transactions, otps] = await Promise.all([
+    const [users, stores, promotions, promoCodes, transactions, otps, sms] = await Promise.all([
       this.usersSeeder.count(),
       this.storesSeeder.count(),
       this.promotionsSeeder.count(),
       this.promoCodesSeeder.count(),
       this.transactionsSeeder.count(),
       this.otpsSeeder.count(),
+      this.smsSeeder.count(),
     ]);
 
-    return { users, stores, promotions, promoCodes, transactions, otps };
+    return { users, stores, promotions, promoCodes, transactions, otps, sms };
+  }
+
+  private async seedSMS(users: any[]) {
+    this.smsSeeder.setUsers(users);
+    return this.smsSeeder.seed();
   }
 
   // Individual seeding methods for flexibility
@@ -147,5 +158,10 @@ export class SeedingService {
   async seedOTPsOnly(users: any[]): Promise<any[]> {
     this.otpsSeeder.setUsers(users);
     return this.otpsSeeder.seed();
+  }
+
+  async seedSMSOnly(users: any[]): Promise<any[]> {
+    this.smsSeeder.setUsers(users);
+    return this.smsSeeder.seed();
   }
 }

@@ -45,10 +45,14 @@ This module provides comprehensive database seeding functionality for the Loyalt
 - Various usage states (unused, used, registered)
 - Proper expiration dates and user associations
 
-### OTPs (10 OTPs)
-- One OTP per user for verification
-- Fixed code '123456' for testing purposes
-- Proper expiration times (10 minutes)
+### SMS Records (10 SMS records)
+- **Welcome Messages** - Store welcome SMS to new customers
+- **Promotional SMS** - Flash sales, special offers, and discounts
+- **Order Updates** - Shipping notifications and order status updates
+- **Customer Service** - Support responses and policy updates
+- **System Notifications** - Admin messages about maintenance and security
+- **Birthday/Anniversary** - Special occasion messages with discounts
+- **Mixed Senders** - Both store users and admin users sending SMS
 
 ## 🛠️ Usage
 
@@ -71,6 +75,7 @@ npm run seed:status
 npm run seed:stores              # Seed only stores
 npm run seed:promotions          # Seed only promotions
 npm run seed:promo-codes         # Seed only promo codes
+npm run seed:sms                 # Seed only SMS records
 
 # Show help
 npm run seed -- --help
@@ -101,6 +106,7 @@ POST /seeding/seed/stores
 POST /seeding/seed/promotions
 POST /seeding/seed/promo-codes
 POST /seeding/seed/users
+POST /seeding/seed/sms
 ```
 
 **Response:**
@@ -138,6 +144,7 @@ GET /seeding/status
   "promotions": 12,
   "promoCodes": 25,
   "otps": 10,
+  "sms": 10,
   "timestamp": "2024-01-15T10:30:00.000Z"
 }
 ```

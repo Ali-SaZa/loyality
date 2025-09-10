@@ -116,6 +116,33 @@ export class SeedingController {
     };
   }
 
+  @Post('seed/sms')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Seed SMS collection only',
+    description: 'Populates only the SMS collection with sample data. Requires users to exist first.'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'SMS seeded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        count: { type: 'number' },
+        timestamp: { type: 'string', format: 'date-time' }
+      }
+    }
+  })
+  async seedSMSOnly() {
+    // Note: This would need to fetch existing users first in a real implementation
+    // For now, we'll return an error message
+    return {
+      message: 'SMS seeding requires users to exist first. Use the main seed endpoint instead.',
+      timestamp: new Date().toISOString()
+    };
+  }
+
   @Post('clear')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

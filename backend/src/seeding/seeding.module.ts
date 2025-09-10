@@ -8,13 +8,15 @@ import { Promotion, PromotionSchema } from '../schemas/promotion.schema';
 import { PromoCode, PromoCodeSchema } from '../schemas/promoCode.schema';
 import { Transaction, TransactionSchema } from '../schemas/transaction.schema';
 import { Otp, OtpSchema } from '../schemas/otp.schema';
+import { Sms, SmsSchema } from '../schemas/sms.schema';
 import { 
   StoresSeeder, 
   UsersSeeder, 
   PromotionsSeeder,
   PromoCodesSeeder,
   TransactionsSeeder,
-  OTPsSeeder 
+  OTPsSeeder,
+  SmsSeeder
 } from './seeders';
 
 @Module({
@@ -26,6 +28,7 @@ import {
       { name: PromoCode.name, schema: PromoCodeSchema },
       { name: Transaction.name, schema: TransactionSchema },
       { name: Otp.name, schema: OtpSchema },
+      { name: Sms.name, schema: SmsSchema },
     ]),
   ],
   providers: [
@@ -36,6 +39,7 @@ import {
     PromoCodesSeeder,
     TransactionsSeeder,
     OTPsSeeder,
+    SmsSeeder,
   ],
   controllers: [SeedingController],
   exports: [SeedingService],
