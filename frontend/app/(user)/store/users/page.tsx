@@ -135,18 +135,13 @@ const StoreUsers = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <UserIcon className="size-8 text-primary" />
+          <UserIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-text-dark">
-              مشتریان فروشگاه
-            </h1>
-            <p className="text-text-light">
-              مدیریت مشتریان و تراکنش‌های فروشگاه
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900">مشتریان فروشگاه</h1>
           </div>
         </div>
         <Button
@@ -159,83 +154,59 @@ const StoreUsers = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل مشتریان</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {customers.length}
-                </p>
-              </div>
-              <UserIcon className="size-8 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-gray-900">
+              {customers.length}
             </div>
+            <div className="text-sm text-gray-600">کل مشتریان</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل تراکنش‌ها</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {customers.reduce(
-                    (sum, customer) => sum + customer.totalTransactions,
-                    0,
-                  )}
-                </p>
-              </div>
-              <UserIcon className="size-8 text-success" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {customers.reduce(
+                (sum, customer) => sum + customer.totalTransactions,
+                0,
+              )}
             </div>
+            <div className="text-sm text-gray-600">کل تراکنش‌ها</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل فروش</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {formatCurrency(
-                    customers.reduce(
-                      (sum, customer) => sum + customer.totalSpent,
-                      0,
-                    ),
-                  )}{" "}
-                  تومان
-                </p>
-              </div>
-              <UserIcon className="size-8 text-warning" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              {formatCurrency(
+                customers.reduce(
+                  (sum, customer) => sum + customer.totalSpent,
+                  0,
+                ),
+              )}
             </div>
+            <div className="text-sm text-gray-600">کل فروش</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل امتیازات</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {customers.reduce(
-                    (sum, customer) => sum + customer.totalPointsEarned,
-                    0,
-                  )}
-                </p>
-              </div>
-              <UserIcon className="size-8 text-danger" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-orange-600">
+              {customers.reduce(
+                (sum, customer) => sum + customer.totalPointsEarned,
+                0,
+              )}
             </div>
+            <div className="text-sm text-gray-600">کل امتیازات</div>
           </CardBody>
         </Card>
       </div>
 
       {/* Customers Table */}
-      <Card className="border-1">
-        <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست مشتریان</h3>
+      <Card>
+        <CardHeader>
+          <h3 className="text-lg font-semibold">لیست مشتریان</h3>
         </CardHeader>
-        <CardBody className="p-0">
-          <Table aria-label="لیست مشتریان">
+        <CardBody>
+          <Table aria-label="Customers table">
             <TableHeader>
               <TableColumn>نام مشتری</TableColumn>
               <TableColumn>شماره تلفن</TableColumn>
@@ -259,48 +230,50 @@ const StoreUsers = () => {
                         </span>
                       </div>
                       <div>
-                        <span className="font-medium">
+                        <div className="text-sm text-gray-600">
                           {customer.firstName && customer.lastName
                             ? `${customer.firstName} ${customer.lastName}`
                             : "نام ثبت نشده"}
-                        </span>
-                        <p className="text-xs text-text-light">
+                        </div>
+                        <div className="text-xs text-gray-500">
                           ID: {customer.id}
-                        </p>
+                        </div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">
+                    <div className="text-sm text-gray-600">
                       {formatPhoneNumber(customer.phoneNumber)}
-                    </span>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Chip
                       color={getStatusColor(customer.status)}
-                      size="sm"
                       variant="flat"
+                      size="sm"
                     >
                       {getStatusText(customer.status)}
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">
+                    <div className="text-sm text-gray-600">
                       {customer.totalTransactions}
-                    </span>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">
+                    <div className="text-sm text-gray-600">
                       {formatCurrency(customer.totalSpent)} تومان
-                    </span>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">
+                    <div className="text-sm text-gray-600">
                       {customer.totalPointsEarned}
-                    </span>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    {formatDate(customer.lastTransactionDate.toString())}
+                    <div className="text-sm text-gray-600">
+                      {formatDate(customer.lastTransactionDate.toString())}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

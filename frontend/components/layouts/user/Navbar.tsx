@@ -55,6 +55,7 @@ const UserNavbar = ({
     return getRoleConfig(role).title;
   };
 
+
   return (
     <>
       <NextUINavbar
@@ -84,14 +85,19 @@ const UserNavbar = ({
         </NavbarContent>
 
         <NavbarContent className="md:hidden" justify="center">
-          <p className="font-bold text-xs text-white">
-            {truncateText(
-              title ||
-                data.navbar.title ||
-                getRoleTitle(user?.role || "customer"),
-              20,
-            )}
-          </p>
+          <div className="text-right">
+            <p className="font-bold text-xs text-white">
+              {truncateText(
+                title ||
+                  data.navbar.title ||
+                  getRoleTitle(user?.role || "customer"),
+                20,
+              )}
+            </p>
+            <p className="text-xs text-white/80">
+              {user?.firstName || user?.phoneNumber || "کاربر"}
+            </p>
+          </div>
         </NavbarContent>
 
         <NavbarContent className="hidden md:flex" justify="end">
