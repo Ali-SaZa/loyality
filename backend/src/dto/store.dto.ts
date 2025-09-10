@@ -284,6 +284,34 @@ export class UpdateSmsBalanceDto {
   amount: number;
 }
 
+export class UpdateStoreSelfDto {
+  @ApiProperty({ description: 'Store address', required: false })
+  @IsOptional()
+  @IsObject()
+  address?: StoreAddressDto;
+
+  @ApiProperty({ description: 'Logo URL', required: false })
+  @IsOptional()
+  @IsString()
+  logoUrl?: string;
+
+  @ApiProperty({ description: 'Store description', maxLength: 500, required: false })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  description?: string;
+
+  @ApiProperty({ description: 'Social media links', required: false })
+  @IsOptional()
+  @IsObject()
+  socialLinks?: SocialLinksDto;
+
+  @ApiProperty({ description: 'Working hours', required: false })
+  @IsOptional()
+  @IsObject()
+  workingHours?: WorkingHoursDto;
+}
+
 export class SmsHistoryItemDto {
   @ApiProperty({ description: 'SMS ID', example: '507f1f77bcf86cd799439011' })
   id: string;

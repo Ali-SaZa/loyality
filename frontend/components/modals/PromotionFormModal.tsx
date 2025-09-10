@@ -50,7 +50,6 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
           price: 0,
           points: 0
         })
-        setError(null)
       }
     }
   }, [isOpen, isEditMode, promotionId])
@@ -58,7 +57,6 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
   const fetchPromotion = async (promotionId: string) => {
     try {
       setLoading(true)
-      setError(null)
       
       const promotionData = await getPromotionById(promotionId)
       setPromotion(promotionData)
@@ -71,7 +69,8 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
         points: promotionData.points
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات تبلیغ')
+      const errorMessage = err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات تبلیغ'
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -81,7 +80,6 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
     try {
       console.log('Form submitted with data:', data)
       setLoading(true)
-      setError(null)
       
       // Transform the data for API
       const transformedData: any = {
@@ -119,7 +117,8 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
       onSuccess?.()
     } catch (err) {
       console.error('Error submitting form:', err)
-      setError(err instanceof Error ? err.message : isEditMode ? 'خطا در بروزرسانی تبلیغ' : 'خطا در ایجاد تبلیغ')
+      const errorMessage = err instanceof Error ? err.message : isEditMode ? 'خطا در بروزرسانی تبلیغ' : 'خطا در ایجاد تبلیغ'
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -127,7 +126,6 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
 
   const handleClose = () => {
     onOpenChange(false)
-    setError(null)
   }
 
   const storeOptions = stores.map(store => ({
@@ -149,11 +147,6 @@ const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreate
       size="2xl"
     >
       <div className="space-y-6">
-        {error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-            <p className="text-danger text-sm">{error}</p>
-          </div>
-        )}
 
         <FormProvider {...methods}>
           <div className="space-y-6">

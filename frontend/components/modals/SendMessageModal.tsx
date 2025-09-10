@@ -11,6 +11,7 @@ import {
   SendMessageValidation,
   SendMessageData,
 } from "@/validation/sendMessage";
+import { getSmsInfo } from "@/helpers/smsUtils";
 
 interface SendMessageModalProps {
   isOpen: boolean;
@@ -85,8 +86,7 @@ const SendMessageModal = ({
       <div className="space-y-4">
         <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
           <p className="text-sm text-blue-700">
-            پیام شما به شماره تلفن مشتری ارسال خواهد شد. حداکثر ۱۶۰ کاراکتر مجاز
-            است.
+            پیام شما به شماره تلفن مشتری ارسال خواهد شد. هر ۷۰ کاراکتر معادل یک پیامک محاسبه می‌شود.
           </p>
         </div>
 
@@ -98,7 +98,11 @@ const SendMessageModal = ({
               label="متن پیام"
               placeholder="متن پیام خود را وارد کنید..."
               required
-              description={`${methods.watch("text")?.length || 0}/160 کاراکتر`}
+              description={(() => {
+                const text = methods.watch("text") || "";
+                const smsInfo = getSmsInfo(text);
+                return `${smsInfo.characterCount} کاراکتر - ${smsInfo.smsCount} پیامک`;
+              })()}
             />
           </form>
         </FormProvider>

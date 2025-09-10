@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { StoresService, StoreStats } from './stores.service';
-import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto, SendSmsToCustomerDto, UpdateSmsBalanceDto } from '../dto';
+import { CreateStoreDto, UpdateStoreDto, UpdateStoreSelfDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto, SendSmsToCustomerDto, UpdateSmsBalanceDto } from '../dto';
 import { ListRequestDto } from '../common/dto/list.dto';
 import { StoreAuth, AdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -130,6 +130,25 @@ export class StoresController {
     }
     
     return this.storesService.findOne(user.storeId, user);
+  }
+
+  @Patch('me')
+  @StoreAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update own store information (Store Owner only) - Restricted fields' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Store updated successfully',
+    type: StoreResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Store not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not a store user' })
+  async updateSelf(
+    @Body() updateStoreSelfDto: UpdateStoreSelfDto,
+    @CurrentUser() user: any
+  ): Promise<StoreResponseDto> {
+    return this.storesService.updateSelf(updateStoreSelfDto, user);
   }
 
   @Get(':id')

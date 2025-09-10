@@ -74,7 +74,6 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
     try {
       console.log('Form submitted with data:', data)
       setLoading(true)
-      setError(null)
       
       // Transform the data for API
       const transformedData: any = {

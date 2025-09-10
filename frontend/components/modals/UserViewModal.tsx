@@ -66,7 +66,8 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
         onOpenChange(false)
         onSuccess?.()
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف کاربر')
+        const errorMessage = err instanceof Error ? err.message : 'خطا در حذف کاربر'
+        toast.error(errorMessage)
       } finally {
         setLoading(false)
       }

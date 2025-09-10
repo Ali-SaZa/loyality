@@ -4,7 +4,7 @@ export const SendMessageValidation = z.object({
   text: z
     .string()
     .min(1, 'نوشتن پیام الزامی است.')
-    .max(160, 'پیام نمی‌تواند بیش از ۱۶۰ کاراکتر باشد')
+    .max(280, 'پیام نمی‌تواند بیش از ۲۸۰ کاراکتر باشد')
 })
 
 // Type definitions

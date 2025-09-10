@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
 import { User, UserDocument } from '../schemas/user.schema';
 import { Sms, SmsDocument } from '../schemas/sms.schema';
-import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
+import { CreateStoreDto, UpdateStoreDto, UpdateStoreSelfDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
   StoreNotFoundException, 
@@ -12,6 +12,7 @@ import {
 } from '../common/errors';
 import { SmsService } from '../sms/sms.service';
 import { TransactionsService } from '../transactions/transactions.service';
+import { calculateSmsCount } from "../common/utils/sms.utils";
 
 interface UserContext {
   _id: string;
@@ -273,6 +274,39 @@ export class StoresService {
   }
 
   /**
+   * Update store's own information (restricted fields only)
+   */
+  async updateSelf(updateStoreSelfDto: UpdateStoreSelfDto, user: UserContext): Promise<StoreResponseDto> {
+    if (user.role !== 'store') {
+      throw new ForbiddenException('Only store users can update their own store information');
+    }
+
+    if (!user.storeId) {
+      throw new NotFoundException('Store not found for this user');
+    }
+
+    const store = await this.storeModel.findById(user.storeId).exec();
+    if (!store) {
+      this.handleStoreNotFound();
+    }
+
+    // Validate that the user owns this store
+    this.validateStoreAccess(store, user);
+
+    const updatedStore = await this.storeModel
+      .findByIdAndUpdate(user.storeId, updateStoreSelfDto, { new: true })
+      .populate('userId', 'firstName lastName phoneNumber role')
+      .populate('promotions', 'title type status')
+      .exec();
+    
+    if (!updatedStore) {
+      this.handleStoreNotFound();
+    }
+    
+    return this.transformStoreToResponse(updatedStore);
+  }
+
+  /**
    * Remove a store with access control
    */
   async remove(id: string, user: UserContext): Promise<void> {
@@ -452,22 +486,29 @@ export class StoresService {
 
     // For store users, perform additional validations
     if (requestingUser.role === 'store') {
-      // Check if store has SMS balance
-      const hasBalance = await this.hasSmsBalance(storeId, 1);
+      // Calculate SMS count based on Persian text length (70 chars = 1 SMS)
+      const smsCount = calculateSmsCount(text);
+      
+      // Check if store has sufficient SMS balance
+      const hasBalance = await this.hasSmsBalance(storeId, smsCount);
       if (!hasBalance) {
-        throw new BadRequestException('Insufficient SMS balance. Please contact admin to add SMS credits.');
+        throw new BadRequestException(
+          `Insufficient SMS balance. This message requires ${smsCount} SMS unit(s). Please contact admin to add SMS credits.`
+        );
       }
 
       // Verify that the user is a customer of this store
       const storeCustomers = await this.transactionsService.getMyStoreCustomers(requestingUser);
-      const isCustomer = storeCustomers.some(customer => customer.id === userId);
+      const isCustomer = storeCustomers.some((customer) => customer.id === userId);
       
       if (!isCustomer) {
-        throw new ForbiddenException('You can only send SMS to your store customers');
+        throw new ForbiddenException(
+          "You can only send SMS to your store customers"
+        );
       }
 
-      // Deduct SMS balance
-      await this.updateSmsBalance(storeId, -1, requestingUser);
+      // Deduct SMS balance based on actual SMS count
+      await this.updateSmsBalance(storeId, -smsCount, requestingUser);
       
       // Record SMS sent
       await this.recordSmsSent(storeId);
