@@ -33,14 +33,10 @@ const UserSidebar = () => {
       {/* Mobile Toggle Button */}
       <button
         onClick={toggleMobileMenu}
-        className="md:hidden fixed top-4 right-4 z-[60] p-2 bg-primary text-white rounded-lg shadow-lg hover:bg-primary/90 transition-colors"
+        className="md:hidden fixed top-4 right-4 z-[45] p-2 bg-primary text-white rounded-lg shadow-lg hover:bg-primary/90 transition-colors"
         aria-label="Toggle sidebar menu"
       >
-        {isMobileOpen ? (
-          <CloseIcon className="size-5" />
-        ) : (
           <MenuBurgerIcon className="size-5" />
-        )}
       </button>
 
       {/* Mobile Overlay */}
@@ -67,16 +63,14 @@ const UserSidebar = () => {
       `}
       >
         {/* Header */}
-        <div className="py-4 px-6 flex items-center justify-center border-b border-divider bg-gradient-to-b from-background-50 to-white">
-          <div className="text-center">
-            <LogoContainer iconSize={100} />
-            <div className="mt-3">
-              <span
-                className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getRoleConfig(user?.role || "customer").bgColor} ${getRoleConfig(user?.role || "customer").textColor} border ${getRoleConfig(user?.role || "customer").borderColor}`}
-              >
-                {getRoleConfig(user?.role || "customer").title}
-              </span>
-            </div>
+        <div className="px-3 py-2.5 flex items-center justify-between border-b border-divider bg-gradient-to-b from-background-50 to-white">
+          <LogoContainer iconSize={100} />
+          <div className="mt-3">
+            <span
+              className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getRoleConfig(user?.role || "customer").bgColor} ${getRoleConfig(user?.role || "customer").textColor} border ${getRoleConfig(user?.role || "customer").borderColor}`}
+            >
+              {getRoleConfig(user?.role || "customer").title}
+            </span>
           </div>
         </div>
 
@@ -94,7 +88,7 @@ const UserSidebar = () => {
                   }`}
                   disabled={item.disable}
                   iconStart={item.icon(
-                    `size-5 ${isActive(item.link) ? "text-primary" : "text-text-light-25"}`,
+                    `size-5 ${isActive(item.link) ? "text-primary" : "text-text-light-25"}`
                   )}
                   size="lg"
                   target={item?.target ? item?.target : "_self"}

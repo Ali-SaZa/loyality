@@ -21,6 +21,7 @@ import {
 import useAuth from "@/hooks/useAuth";
 import useLoading from "@/hooks/useLoading";
 import toast from "react-hot-toast";
+import SearchIcon from "@/components/icons/SearchIcon";
 
 const ApplyPromoCodePage = () => {
   const { user } = useAuth();
@@ -28,7 +29,7 @@ const ApplyPromoCodePage = () => {
 
   const [customerPromoCodes, setCustomerPromoCodes] = useState<PromoCode[]>([]);
   const [selectedPromoCode, setSelectedPromoCode] = useState<PromoCode | null>(
-    null,
+    null
   );
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState<string>("");
   const [isLoadingPromoCodes, setIsLoadingPromoCodes] = useState(false);
@@ -72,7 +73,7 @@ const ApplyPromoCodePage = () => {
 
       // Filter only unused promo codes
       const unusedPromoCodes = response.data.filter(
-        (code) => code.status === "unused",
+        (code) => code.status === "unused"
       );
       setCustomerPromoCodes(unusedPromoCodes);
 
@@ -123,7 +124,7 @@ const ApplyPromoCodePage = () => {
       });
 
       const unusedPromoCodes = response.data.filter(
-        (code) => code.status === "unused",
+        (code) => code.status === "unused"
       );
       setCustomerPromoCodes(unusedPromoCodes);
 
@@ -169,8 +170,8 @@ const ApplyPromoCodePage = () => {
         <CardBody>
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-8 gap-2 md:gap-4 items-center">
+                <div className="col-span-1 md:col-span-7 ">
                   <Input
                     generalType="input"
                     name="phoneNumber"
@@ -184,16 +185,20 @@ const ApplyPromoCodePage = () => {
                     required
                   />
                 </div>
-                <Button
-                  type="submit"
-                  color="primary"
-                  isLoading={isLoadingPromoCodes}
-                  disabled={
-                    !watchedPhoneNumber || watchedPhoneNumber.length !== 11
-                  }
-                >
-                  جستجو
-                </Button>
+                <div className="col-span-1">
+                  <Button
+                    iconStart={<SearchIcon />}
+                    fullWidth
+                    type="submit"
+                    color="primary"
+                    isLoading={isLoadingPromoCodes}
+                    disabled={
+                      !watchedPhoneNumber || watchedPhoneNumber.length !== 11
+                    }
+                  >
+                    جستجو
+                  </Button>
+                </div>
               </div>
             </form>
           </FormProvider>
@@ -203,65 +208,80 @@ const ApplyPromoCodePage = () => {
       {/* Customer Promo Codes List */}
       {customerPromoCodes.length > 0 && (
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                کدهای تخفیف استفاده نشده مشتری
-              </h3>
-              <Chip color="success" variant="flat" size="sm">
-                {customerPromoCodes.length} کد
-              </Chip>
+          <CardHeader className="w-full">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold">
+                  کدهای تخفیف استفاده نشده مشتری
+                </h3>
+                <Chip color="success" variant="flat" size="sm">
+                  {customerPromoCodes.length} کد
+                </Chip>
+              </div>
+
+              {/* Reset Button */}
+              {customerPromoCodes.length > 0 && (
+                <div className="flex justify-center">
+                  <Button color="default" variant="light" onClick={resetForm}>
+                    جستجوی مشتری جدید
+                  </Button>
+                </div>
+              )}
             </div>
           </CardHeader>
           <CardBody>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {customerPromoCodes.map((promoCode) => (
                 <div
                   key={promoCode.id}
                   className="flex items-center justify-between p-4 bg-background-50 rounded-lg border border-divider"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Chip color="primary" variant="flat" size="sm">
-                        {promoCode.code}
-                      </Chip>
-                      <span className="text-sm text-gray-600">
-                        {promoCode.promotion?.title}
-                      </span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Chip color="primary" variant="flat" size="sm">
+                          {promoCode.code}
+                        </Chip>
+                        <span className="text-sm text-gray-600">
+                          {promoCode.promotion?.title}
+                        </span>
+                      </div>
+                      <Button
+                        color="success"
+                        variant="flat"
+                        size="sm"
+                        onClick={() => handleUsePromoCode(promoCode)}
+                      >
+                        استفاده از کد
+                      </Button>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      <p>
-                        مبلغ: {promoCode.promotion?.price?.toLocaleString()}{" "}
-                        تومان
-                      </p>
-                      <p>امتیاز: {promoCode.promotion?.points} امتیاز</p>
-                      {promoCode.notes && <p>یادداشت: {promoCode.notes}</p>}
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm text-gray-600">مبلغ:</div>
+                      <div className="text-sm font-medium">
+                        {promoCode.promotion?.price?.toLocaleString()} تومان
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm text-gray-600">امتیاز:</div>
+                      <div className="text-sm font-medium">
+                        {promoCode.promotion?.points} امتیاز
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm text-gray-600">یادداشت:</div>
+                      <div className="text-sm font-medium">
+                        {promoCode.notes}
+                      </div>
                     </div>
                   </div>
-                  <Button
-                    color="success"
-                    variant="flat"
-                    size="sm"
-                    onClick={() => handleUsePromoCode(promoCode)}
-                  >
-                    استفاده
-                  </Button>
                 </div>
               ))}
             </div>
           </CardBody>
         </Card>
       )}
-
-      {/* Reset Button */}
-      {customerPromoCodes.length > 0 && (
-        <div className="flex justify-center">
-          <Button color="default" variant="light" onClick={resetForm}>
-            جستجوی مشتری جدید
-          </Button>
-        </div>
-      )}
-
       {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={isConfirmModalOpen}

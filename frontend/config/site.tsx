@@ -96,20 +96,20 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: "مشتریان",
-        icon: (className: string = "size-6") => (
-          <UserIcon className={className} />
-        ),
-        link: "/store/users",
-        isShortAccess: true,
-        children: [],
-      },
-      {
         title: "اعمال کد تخفیف",
         icon: (className: string = "size-6") => (
           <PromoCodeIcon className={className} />
         ),
         link: "/store/apply-promo-code",
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: "مشتریان",
+        icon: (className: string = "size-6") => (
+          <UserIcon className={className} />
+        ),
+        link: "/store/users",
         isShortAccess: true,
         children: [],
       },

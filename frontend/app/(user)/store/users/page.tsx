@@ -141,11 +141,12 @@ const StoreUsers = () => {
         <div className="flex items-center gap-3">
           <UserIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">مشتریان فروشگاه</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              مشتریان فروشگاه
+            </h1>
           </div>
         </div>
         <Button
-          color="success"
           iconStart={<PlusIcon className="size-5" />}
           onClick={handleAddCustomer}
         >
@@ -168,7 +169,7 @@ const StoreUsers = () => {
             <div className="text-2xl font-bold text-green-600">
               {customers.reduce(
                 (sum, customer) => sum + customer.totalTransactions,
-                0,
+                0
               )}
             </div>
             <div className="text-sm text-gray-600">کل تراکنش‌ها</div>
@@ -180,8 +181,8 @@ const StoreUsers = () => {
               {formatCurrency(
                 customers.reduce(
                   (sum, customer) => sum + customer.totalSpent,
-                  0,
-                ),
+                  0
+                )
               )}
             </div>
             <div className="text-sm text-gray-600">کل فروش</div>
@@ -192,7 +193,7 @@ const StoreUsers = () => {
             <div className="text-2xl font-bold text-orange-600">
               {customers.reduce(
                 (sum, customer) => sum + customer.totalPointsEarned,
-                0,
+                0
               )}
             </div>
             <div className="text-sm text-gray-600">کل امتیازات</div>
@@ -294,7 +295,7 @@ const StoreUsers = () => {
                         onClick={() =>
                           handleSendMessage(
                             customer.id,
-                            `${customer.firstName} ${customer.lastName}`,
+                            `${customer.firstName} ${customer.lastName}`
                           )
                         }
                       >
