@@ -8,12 +8,10 @@ import JobIcon from "@/components/icons/JobIcon";
 import DashboardIcon from "@/components/icons/DashboardIcon";
 import UserIcon from "@/components/icons/UserIcon";
 import StoreIcon from "@/components/icons/ChartTreeIcon";
-import ListIcon from "@/components/icons/ListIcon";
-import WalletIcon from "@/components/icons/WalletIcon";
 import PromotionIcon from "@/components/icons/PromotionIcon";
 import PromoCodeIcon from "@/components/icons/PromoCodeIcon";
 import MailIcon from "@/components/icons/MailIcon";
-import SecurityIcon from "@/components/icons/SecurityIcon";
+import SettingIcon from "@/components/icons/SettingIcon";
 
 export const siteConfig = {
   name: "OBS",
@@ -91,7 +89,7 @@ export const siteConfig = {
       {
         title: "کدهای تخفیف",
         icon: (className: string = "size-6") => (
-          <PromoCodeIcon className={className} />
+          <PromoCodeIcon className={className} color="currentColor" />
         ),
         link: "/store/promo-codes",
         isShortAccess: true,
@@ -109,7 +107,7 @@ export const siteConfig = {
       {
         title: "اعمال کد تخفیف",
         icon: (className: string = "size-6") => (
-          <PromoCodeIcon className={className} />
+          <PromoCodeIcon className={className} color="currentColor" />
         ),
         link: "/store/apply-promo-code",
         isShortAccess: true,
@@ -125,11 +123,11 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: "اطلاعات فروشگاه",
+        title: "تنظیمات فروشگاه",
         icon: (className: string = "size-6") => (
-          <SecurityIcon className={className} />
+          <SettingIcon className={className} />
         ),
-        link: "/store/information",
+        link: "/store/settings",
         isShortAccess: true,
         children: [],
       },
