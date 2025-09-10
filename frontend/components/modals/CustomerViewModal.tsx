@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import {
@@ -37,7 +38,6 @@ const CustomerViewModal = ({
   const [user, setUser] = useState<User | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && customerId) {
@@ -50,7 +50,6 @@ const CustomerViewModal = ({
 
     try {
       setIsLoading(true);
-      setError(null);
 
       // Fetch user details and transactions in parallel
       const [userData, transactionsData] = await Promise.all([
@@ -102,9 +101,8 @@ const CustomerViewModal = ({
 
       setCustomer(customerObj);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات مشتری"
-      );
+      const errorMessage = err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات مشتری";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +110,6 @@ const CustomerViewModal = ({
 
   const handleClose = () => {
     onOpenChange(false);
-    setError(null);
     setCustomer(null);
     setUser(null);
     setTransactions([]);
@@ -146,12 +143,6 @@ const CustomerViewModal = ({
       hideFooter={true}
     >
       <div className="space-y-6">
-        {error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-            <p className="text-danger text-sm">{error}</p>
-          </div>
-        )}
-
         {isLoading ? (
           <div className="text-center py-8">
             <p className="text-text-light">در حال بارگذاری...</p>

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'react-hot-toast'
 
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
@@ -22,7 +23,6 @@ interface PromotionFormModalProps {
 const PromotionFormModal = ({ isOpen, onOpenChange, onSuccess, onPromotionCreated, promotionId, stores }: PromotionFormModalProps) => {
   const { setLoading } = useLoading()
   const [promotion, setPromotion] = useState<Promotion | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
   const isEditMode = !!promotionId
 

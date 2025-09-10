@@ -30,7 +30,6 @@ const AddCustomerModal = ({
   const { user } = useAuth()
   const [currentStore, setCurrentStore] = useState<any>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const methods = useForm<CreateCustomerData>({
     resolver: zodResolver(CreateCustomerValidation),
@@ -44,7 +43,6 @@ const AddCustomerModal = ({
   const onSubmit = async (data: CreateCustomerData) => {
     try {
       setIsSubmitting(true)
-      setError(null)
 
       // Get current store if not already fetched
       let store = currentStore
@@ -105,7 +103,6 @@ const AddCustomerModal = ({
       onSuccess?.()
     } catch (err) {
       const errorMessage = handleApiError(err)
-      setError(errorMessage)
       toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -114,7 +111,6 @@ const AddCustomerModal = ({
 
   const handleClose = () => {
     onOpenChange(false)
-    setError(null)
     methods.reset()
   }
 
@@ -133,12 +129,6 @@ const AddCustomerModal = ({
       size="md"
     >
       <div className="space-y-6">
-        {error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-            <p className="text-danger text-sm">{error}</p>
-          </div>
-        )}
-
         <FormProvider {...methods}>
           <div className="space-y-4">
             <Input

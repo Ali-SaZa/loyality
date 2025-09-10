@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import {
@@ -35,7 +36,6 @@ const StorePromoCodes = () => {
     registered: 0,
     deleted: 0,
   });
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPromoCodes();
@@ -46,13 +46,11 @@ const StorePromoCodes = () => {
   const fetchPromoCodes = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await getAllPromoCodes({ page: 1, limit: 50 });
       setPromoCodes(response.data);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف"
-      );
+      const errorMessage = err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -156,15 +154,6 @@ const StorePromoCodes = () => {
           </CardBody>
         </Card>
       </div>
-
-      {/* Error Message */}
-      {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardBody>
-            <p className="text-red-600">{error}</p>
-          </CardBody>
-        </Card>
-      )}
 
       {/* Promo Codes Table */}
       <Card>

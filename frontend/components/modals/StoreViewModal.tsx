@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
@@ -26,7 +27,6 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
   const { setLoading } = useLoading()
   const [store, setStore] = useState<Store | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen && storeId) {
@@ -39,11 +39,11 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
     
     try {
       setIsLoading(true)
-      setError(null)
       const storeData = await getStoreById(storeId)
       setStore(storeData)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات فروشگاه')
+      const errorMessage = err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات فروشگاه'
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -66,7 +66,8 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
         onOpenChange(false)
         onSuccess?.()
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف فروشگاه')
+        const errorMessage = err instanceof Error ? err.message : 'خطا در حذف فروشگاه'
+        toast.error(errorMessage)
       } finally {
         setLoading(false)
       }
@@ -75,7 +76,6 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
 
   const handleClose = () => {
     onOpenChange(false)
-    setError(null)
     setStore(null)
   }
 
@@ -110,12 +110,6 @@ const StoreViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, sto
       hideFooter={true}
     >
       <div className="space-y-6">
-        {error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-            <p className="text-danger text-sm">{error}</p>
-          </div>
-        )}
-
         {isLoading ? (
           <div className="text-center py-8">
             <p className="text-text-light">در حال بارگذاری...</p>

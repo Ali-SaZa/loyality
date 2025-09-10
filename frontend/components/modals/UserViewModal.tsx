@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Chip } from '@heroui/chip'
@@ -26,7 +27,6 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
   const { setLoading } = useLoading()
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -39,11 +39,11 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
     
     try {
       setIsLoading(true)
-      setError(null)
       const userData = await getUserById(userId)
       setUser(userData)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کاربر')
+      const errorMessage = err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کاربر'
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -75,7 +75,6 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
 
   const handleClose = () => {
     onOpenChange(false)
-    setError(null)
     setUser(null)
   }
 
@@ -111,12 +110,6 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
       hideFooter={true}
     >
       <div className="space-y-6">
-        {error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-            <p className="text-danger text-sm">{error}</p>
-          </div>
-        )}
-
         {isLoading ? (
           <div className="text-center py-8">
             <p className="text-text-light">در حال بارگذاری...</p>

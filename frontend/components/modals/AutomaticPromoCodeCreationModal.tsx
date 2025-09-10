@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'react-hot-toast'
 
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
@@ -25,7 +26,6 @@ const AutomaticPromoCodeCreationModal = ({
   storeName 
 }: AutomaticPromoCodeCreationModalProps) => {
   const { setLoading } = useLoading()
-  const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Extract prefix from store name (first part before space)
@@ -53,7 +53,6 @@ const AutomaticPromoCodeCreationModal = ({
     try {
       console.log('Automatic promo code creation submitted with data:', data)
       setIsSubmitting(true)
-      setError(null)
       
       const requestData: BulkCreatePromoCodesRequest = {
         promotionId,
@@ -69,7 +68,8 @@ const AutomaticPromoCodeCreationModal = ({
       onSuccess?.()
     } catch (err) {
       console.error('Error creating promo codes:', err)
-      setError(err instanceof Error ? err.message : 'خطا در ایجاد کدهای تخفیف')
+      const errorMessage = err instanceof Error ? err.message : 'خطا در ایجاد کدهای تخفیف'
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -77,7 +77,6 @@ const AutomaticPromoCodeCreationModal = ({
 
   const handleClose = () => {
     onOpenChange(false)
-    setError(null)
     methods.reset({
       prefix: defaultPrefix,
       count: 10
@@ -102,12 +101,6 @@ const AutomaticPromoCodeCreationModal = ({
       acceptBtnDisabled={isSubmitting}
     >
       <div className="space-y-6">
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-600 text-sm">{error}</p>
-          </div>
-        )}
-
         <div className="text-sm text-gray-600 mb-4">
           <p>کدهای تخفیف برای تبلیغ <strong>{promotionId}</strong> ایجاد خواهند شد.</p>
           <p>پیشوند پیش‌فرض از نام فروشگاه استخراج شده است.</p>

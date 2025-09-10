@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'react-hot-toast'
 
 import Modal from './Modal'
 import Input from '@/components/formElements/Input'
@@ -22,7 +23,6 @@ interface PromoCodeFormModalProps {
 const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotions }: PromoCodeFormModalProps) => {
   const { setLoading } = useLoading()
   const [promoCode, setPromoCode] = useState<PromoCode | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
   const isEditMode = !!promoCodeId
 
@@ -46,7 +46,6 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
           promotionId: '',
           notes: ''
         })
-        setError(null)
       }
     }
   }, [isOpen, isEditMode, promoCodeId])
@@ -54,7 +53,6 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
   const fetchPromoCode = async (promoCodeId: string) => {
     try {
       setLoading(true)
-      setError(null)
       
       const promoCodeData = await getPromoCodeById(promoCodeId)
       setPromoCode(promoCodeData)
@@ -65,7 +63,8 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
         notes: promoCodeData.notes || ''
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کد تخفیف')
+      const errorMessage = err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کد تخفیف'
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -100,7 +99,8 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
       onSuccess?.()
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در ذخیره کد تخفیف')
+      const errorMessage = err instanceof Error ? err.message : 'خطا در ذخیره کد تخفیف'
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -108,7 +108,6 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
 
   const handleClose = () => {
     onClose()
-    setError(null)
   }
 
   return (
@@ -120,11 +119,6 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
     >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-          {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input

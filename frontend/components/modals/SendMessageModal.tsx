@@ -1,22 +1,23 @@
-'use client'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'react-hot-toast'
+"use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-hot-toast";
 
-import Modal from './Modal'
-import Input from '@/components/formElements/Input'
-import Button from '@/components/formElements/Button'
-import { sendSmsToCustomer, SendSmsRequest } from '@/services/stores'
-import { SendMessageValidation, SendMessageData } from '@/validation/sendMessage'
-import useLoading from '@/hooks/useLoading'
+import Modal from "./Modal";
+import Input from "@/components/formElements/Input";
+import { sendSmsToCustomer, SendSmsRequest } from "@/services/stores";
+import {
+  SendMessageValidation,
+  SendMessageData,
+} from "@/validation/sendMessage";
 
 interface SendMessageModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  customerId: string
-  customerName: string
-  onSuccess?: () => void
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  customerId: string;
+  customerName: string;
+  onSuccess?: () => void;
 }
 
 const SendMessageModal = ({
@@ -26,49 +27,45 @@ const SendMessageModal = ({
   customerName,
   onSuccess,
 }: SendMessageModalProps) => {
-  const { setLoading } = useLoading()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const methods = useForm<SendMessageData>({
     resolver: zodResolver(SendMessageValidation),
     defaultValues: {
-      text: '',
+      text: "",
     },
-  })
+  });
 
   const onSubmit = async (data: SendMessageData) => {
     try {
-      setIsSubmitting(true)
-      setError(null)
+      setIsSubmitting(true);
 
       const smsData: SendSmsRequest = {
         userId: customerId,
         text: data.text,
-      }
+      };
 
-      await sendSmsToCustomer(smsData)
-      
-      toast.success('پیام با موفقیت ارسال شد')
-      onOpenChange(false)
-      methods.reset()
-      onSuccess?.()
+      await sendSmsToCustomer(smsData);
+
+      toast.success("پیام با موفقیت ارسال شد");
+      onOpenChange(false);
+      methods.reset();
+      onSuccess?.();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'خطا در ارسال پیام'
-      setError(errorMessage)
-      toast.error(errorMessage)
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در ارسال پیام";
+      toast.error(errorMessage);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleClose = () => {
     if (!isSubmitting) {
-      onOpenChange(false)
-      methods.reset()
-      setError(null)
+      onOpenChange(false);
+      methods.reset();
     }
-  }
+  };
 
   return (
     <Modal
@@ -86,15 +83,10 @@ const SendMessageModal = ({
       onReject={handleClose}
     >
       <div className="space-y-4">
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
-        
         <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
           <p className="text-sm text-blue-700">
-            پیام شما به شماره تلفن مشتری ارسال خواهد شد. حداکثر ۱۶۰ کاراکتر مجاز است.
+            پیام شما به شماره تلفن مشتری ارسال خواهد شد. حداکثر ۱۶۰ کاراکتر مجاز
+            است.
           </p>
         </div>
 
@@ -105,12 +97,12 @@ const SendMessageModal = ({
             label="متن پیام"
             placeholder="متن پیام خود را وارد کنید..."
             required
-            description={`${methods.watch('text')?.length || 0}/160 کاراکتر`}
+            description={`${methods.watch("text")?.length || 0}/160 کاراکتر`}
           />
         </form>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default SendMessageModal
+export default SendMessageModal;
