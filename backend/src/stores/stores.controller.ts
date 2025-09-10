@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { StoresService, StoreStats } from './stores.service';
-import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
+import { CreateStoreDto, UpdateStoreDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto, SendSmsToCustomerDto, UpdateSmsBalanceDto } from '../dto';
 import { ListRequestDto } from '../common/dto/list.dto';
 import { StoreAuth, AdminAuth } from '../common/security';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -205,10 +205,10 @@ export class StoresController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async updateSmsBalance(
     @Param('id') id: string,
-    @Body() body: { amount: number },
+    @Body() updateSmsBalanceDto: UpdateSmsBalanceDto,
     @CurrentUser() user: any
   ): Promise<StoreResponseDto> {
-    return this.storesService.updateSmsBalance(id, body.amount, user);
+    return this.storesService.updateSmsBalance(id, updateSmsBalanceDto.amount, user);
   }
 
   @Get('sms/stats')
@@ -234,10 +234,45 @@ export class StoresController {
     return this.storesService.getSmsStats();
   }
 
-  @Post(':id/sms/send-to-customer')
-  @StoreAuth({ paramName: 'id' })
+  @Post('me/sms/send-to-customer')
+  @StoreAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Send SMS to a customer (Store Owner/Admin only)' })
+  @ApiOperation({ summary: 'Send SMS to a customer (Store Owner only)' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'SMS sent successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        userId: { type: 'string' },
+        providerResponse: { type: 'string' },
+        text: { type: 'string' },
+        createdBy: { type: 'string' },
+        createdAt: { type: 'string', format: 'date-time' },
+        updatedAt: { type: 'string', format: 'date-time' }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - insufficient balance or invalid data' })
+  @ApiResponse({ status: 403, description: 'Forbidden - user is not a customer of the store' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async sendSmsToCustomerFromMyStore(
+    @Body() sendSmsToCustomerDto: SendSmsToCustomerDto,
+    @CurrentUser() user: any
+  ) {
+    // For store users, use their storeId from the authenticated user
+    if (user.role === 'store') {
+      return this.storesService.sendSmsToCustomer(user.storeId, sendSmsToCustomerDto.userId, sendSmsToCustomerDto.text, user);
+    }
+    throw new ForbiddenException('Only store users can use this endpoint');
+  }
+
+  @Post(':id/sms/send-to-customer')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Send SMS to a customer (Admin only)' })
   @ApiParam({ name: 'id', description: 'Store ID' })
   @ApiResponse({ 
     status: 201, 
@@ -261,9 +296,9 @@ export class StoresController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async sendSmsToCustomer(
     @Param('id') storeId: string,
-    @Body() body: { userId: string; text: string },
+    @Body() sendSmsToCustomerDto: SendSmsToCustomerDto,
     @CurrentUser() user: any
   ) {
-    return this.storesService.sendSmsToCustomer(storeId, body.userId, body.text, user);
+    return this.storesService.sendSmsToCustomer(storeId, sendSmsToCustomerDto.userId, sendSmsToCustomerDto.text, user);
   }
 }
