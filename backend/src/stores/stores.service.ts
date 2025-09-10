@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Store, StoreDocument } from '../schemas/store.schema';
@@ -9,6 +9,8 @@ import {
   StoreNotFoundException, 
   StorePhoneExistsException
 } from '../common/errors';
+import { SmsService } from '../sms/sms.service';
+import { TransactionsService } from '../transactions/transactions.service';
 
 interface UserContext {
   _id: string;
@@ -29,6 +31,8 @@ export class StoresService {
   constructor(
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private smsService: SmsService,
+    private transactionsService: TransactionsService,
   ) {}
 
   /**
@@ -51,6 +55,9 @@ export class StoresService {
       description: store.description,
       socialLinks: store.socialLinks,
       workingHours: store.workingHours,
+      smsBalance: store.smsBalance,
+      lastSmsSentAt: store.lastSmsSentAt,
+      totalSmsSent: store.totalSmsSent,
       createdAt: store.createdAt,
       updatedAt: store.updatedAt,
     };
@@ -340,5 +347,137 @@ export class StoresService {
       sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
     });
     return sortQuery;
+  }
+
+  /**
+   * Update SMS balance for a store
+   */
+  async updateSmsBalance(storeId: string, amount: number, user: UserContext): Promise<StoreResponseDto> {
+    const store = await this.storeModel.findById(storeId).exec();
+    if (!store) {
+      this.handleStoreNotFound();
+    }
+
+    this.validateStoreAccess(store, user);
+
+    const newBalance = Math.max(0, store.smsBalance + amount);
+    const updatedStore = await this.storeModel
+      .findByIdAndUpdate(storeId, { smsBalance: newBalance }, { new: true })
+      .populate('userId', 'firstName lastName phoneNumber role')
+      .populate('promotions', 'title type status')
+      .exec();
+
+    if (!updatedStore) {
+      this.handleStoreNotFound();
+    }
+
+    return this.transformStoreToResponse(updatedStore);
+  }
+
+  /**
+   * Record SMS sent for a store
+   */
+  async recordSmsSent(storeId: string): Promise<void> {
+    await this.storeModel.findByIdAndUpdate(storeId, {
+      $inc: { totalSmsSent: 1 },
+      $set: { lastSmsSentAt: new Date() }
+    }).exec();
+  }
+
+  /**
+   * Check if store has sufficient SMS balance
+   */
+  async hasSmsBalance(storeId: string, requiredAmount: number = 1): Promise<boolean> {
+    const store = await this.storeModel.findById(storeId).select('smsBalance').exec();
+    return store ? store.smsBalance >= requiredAmount : false;
+  }
+
+  /**
+   * Get SMS statistics for stores
+   */
+  async getSmsStats(): Promise<{
+    totalBalance: number;
+    totalSmsSent: number;
+    storesWithBalance: number;
+    averageBalance: number;
+  }> {
+    const stats = await this.storeModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalBalance: { $sum: '$smsBalance' },
+          totalSmsSent: { $sum: '$totalSmsSent' },
+          storesWithBalance: { $sum: { $cond: [{ $gt: ['$smsBalance', 0] }, 1, 0] } },
+          totalStores: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          totalBalance: 1,
+          totalSmsSent: 1,
+          storesWithBalance: 1,
+          averageBalance: { $divide: ['$totalBalance', '$totalStores'] }
+        }
+      }
+    ]).exec();
+
+    return stats[0] || { totalBalance: 0, totalSmsSent: 0, storesWithBalance: 0, averageBalance: 0 };
+  }
+
+  /**
+   * Send SMS to a customer (Store-specific business logic)
+   */
+  async sendSmsToCustomer(
+    storeId: string, 
+    userId: string, 
+    text: string, 
+    requestingUser: UserContext
+  ): Promise<any> {
+    // Validate store access
+    const store = await this.storeModel.findById(storeId).exec();
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
+    this.validateStoreAccess(store, requestingUser);
+
+    // Validate user exists
+    const recipientUser = await this.userModel.findById(userId).exec();
+    if (!recipientUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    // For store users, perform additional validations
+    if (requestingUser.role === 'store') {
+      // Check if store has SMS balance
+      const hasBalance = await this.hasSmsBalance(storeId, 1);
+      if (!hasBalance) {
+        throw new BadRequestException('Insufficient SMS balance. Please contact admin to add SMS credits.');
+      }
+
+      // Verify that the user is a customer of this store
+      const storeCustomers = await this.transactionsService.getMyStoreCustomers(requestingUser);
+      const isCustomer = storeCustomers.some(customer => customer.id === userId);
+      
+      if (!isCustomer) {
+        throw new ForbiddenException('You can only send SMS to your store customers');
+      }
+
+      // Deduct SMS balance
+      await this.updateSmsBalance(storeId, -1, requestingUser);
+      
+      // Record SMS sent
+      await this.recordSmsSent(storeId);
+    }
+
+    // Send SMS using the pure SMS service
+    const smsResult = await this.smsService.sendSms({
+      userId: userId,
+      text: text,
+      createdBy: requestingUser._id.toString()
+    });
+
+    return smsResult;
   }
 }

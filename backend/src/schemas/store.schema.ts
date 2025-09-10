@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { globalTransformPlugin } from './global-transform.plugin';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
+import { globalTransformPlugin } from "./global-transform.plugin";
 
 export interface StoreDocument extends Store, Document {
   _id: Types.ObjectId;
@@ -33,19 +33,22 @@ export class Store {
   })
   phoneNumber: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: "User", required: true, index: true })
   userId: Types.ObjectId;
 
   @Prop({ type: StoreAddress, required: true })
   address: StoreAddress;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Promotion' }], default: [] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: "Promotion" }], default: [] })
   promotions: Types.ObjectId[];
 
   @Prop({ required: false })
   planExpiryDate?: Date;
 
-  @Prop({ enum: ['active', 'pending', 'deleted', 'suspended'], default: 'active' })
+  @Prop({
+    enum: ["active", "pending", "deleted", "suspended"],
+    default: "active",
+  })
   status: string;
 
   @Prop({ required: false, trim: true })
@@ -71,7 +74,7 @@ export class Store {
 
   @Prop({
     type: {
-      open: { type: String },  //  "09:00"
+      open: { type: String }, //  "09:00"
       close: { type: String }, //  "21:00"
     },
     required: false,
@@ -81,6 +84,15 @@ export class Store {
     open: string;
     close: string;
   };
+
+  @Prop({ default: 0, min: 0 })
+  smsBalance: number;
+
+  @Prop()
+  lastSmsSentAt?: Date;
+
+  @Prop({ default: 0, min: 0 })
+  totalSmsSent: number;
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);

@@ -189,4 +189,81 @@ export class StoresController {
   ): Promise<void> {
     return this.storesService.remove(id, user);
   }
+
+  @Patch(':id/sms-balance')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update SMS balance for a store (Admin only)' })
+  @ApiParam({ name: 'id', description: 'Store ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'SMS balance updated successfully',
+    type: StoreResponseDto 
+  })
+  @ApiResponse({ status: 404, description: 'Store not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async updateSmsBalance(
+    @Param('id') id: string,
+    @Body() body: { amount: number },
+    @CurrentUser() user: any
+  ): Promise<StoreResponseDto> {
+    return this.storesService.updateSmsBalance(id, body.amount, user);
+  }
+
+  @Get('sms/stats')
+  @AdminAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get SMS statistics for all stores (Admin only)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'SMS statistics',
+    schema: {
+      type: 'object',
+      properties: {
+        totalBalance: { type: 'number' },
+        totalSmsSent: { type: 'number' },
+        storesWithBalance: { type: 'number' },
+        averageBalance: { type: 'number' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  async getSmsStats() {
+    return this.storesService.getSmsStats();
+  }
+
+  @Post(':id/sms/send-to-customer')
+  @StoreAuth({ paramName: 'id' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Send SMS to a customer (Store Owner/Admin only)' })
+  @ApiParam({ name: 'id', description: 'Store ID' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'SMS sent successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        userId: { type: 'string' },
+        providerResponse: { type: 'string' },
+        text: { type: 'string' },
+        createdBy: { type: 'string' },
+        createdAt: { type: 'string', format: 'date-time' },
+        updatedAt: { type: 'string', format: 'date-time' }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - insufficient balance or invalid data' })
+  @ApiResponse({ status: 403, description: 'Forbidden - user is not a customer of the store' })
+  @ApiResponse({ status: 404, description: 'Store or user not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async sendSmsToCustomer(
+    @Param('id') storeId: string,
+    @Body() body: { userId: string; text: string },
+    @CurrentUser() user: any
+  ) {
+    return this.storesService.sendSmsToCustomer(storeId, body.userId, body.text, user);
+  }
 }

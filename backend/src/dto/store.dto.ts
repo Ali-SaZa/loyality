@@ -100,6 +100,23 @@ export class CreateStoreDto {
   @IsOptional()
   @IsObject()
   workingHours?: WorkingHoursDto;
+
+  @ApiProperty({ description: 'SMS balance', required: false, default: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  smsBalance?: number;
+
+  @ApiProperty({ description: 'Last SMS sent timestamp', required: false })
+  @IsOptional()
+  @IsDateString()
+  lastSmsSentAt?: Date;
+
+  @ApiProperty({ description: 'Total SMS sent count', required: false, default: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  totalSmsSent?: number;
 }
 
 export class UpdateStoreDto {
@@ -161,6 +178,23 @@ export class UpdateStoreDto {
   @IsOptional()
   @IsObject()
   workingHours?: WorkingHoursDto;
+
+  @ApiProperty({ description: 'SMS balance', required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  smsBalance?: number;
+
+  @ApiProperty({ description: 'Last SMS sent timestamp', required: false })
+  @IsOptional()
+  @IsDateString()
+  lastSmsSentAt?: Date;
+
+  @ApiProperty({ description: 'Total SMS sent count', required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  totalSmsSent?: number;
 }
 
 export class StoreResponseDto {
@@ -200,6 +234,15 @@ export class StoreResponseDto {
   @ApiProperty({ required: false })
   workingHours?: WorkingHoursDto;
 
+  @ApiProperty({ description: 'SMS balance' })
+  smsBalance: number;
+
+  @ApiProperty({ description: 'Last SMS sent timestamp', required: false })
+  lastSmsSentAt?: Date;
+
+  @ApiProperty({ description: 'Total SMS sent count' })
+  totalSmsSent: number;
+
   @ApiProperty()
   createdAt: Date;
 
@@ -222,6 +265,23 @@ export class CreateStoreUserDto {
   @IsString()
   @MaxLength(100)
   lastName: string;
+}
+
+export class SendSmsToCustomerDto {
+  @ApiProperty({ description: 'User ID to send SMS to', example: '507f1f77bcf86cd799439011' })
+  @IsMongoId()
+  userId: string;
+
+  @ApiProperty({ description: 'SMS message content', example: 'Your promo code is ready!', maxLength: 160 })
+  @IsString()
+  @MaxLength(160)
+  text: string;
+}
+
+export class UpdateSmsBalanceDto {
+  @ApiProperty({ description: 'Amount to add/subtract from SMS balance', example: 10 })
+  @IsNumber()
+  amount: number;
 }
 
 export class CreateStoreWithUserDto {
