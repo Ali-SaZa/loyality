@@ -1,11 +1,11 @@
-'use client'
-import { useEffect, useState } from 'react'
+"use client";
+import { useEffect, useState } from "react";
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
     width: 0,
     height: 0,
-  })
+  });
 
   useEffect(() => {
     // تابع برای به‌روز رسانی سایز پنجره
@@ -13,20 +13,20 @@ const useWindowSize = () => {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
-      })
+      });
     }
 
     // تنظیم اولیه
-    handleResize()
+    handleResize();
 
     // اضافه کردن event listener برای تغییر سایز
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
 
     // حذف event listener برای جلوگیری از memory leak
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  return windowSize
-}
+  return windowSize;
+};
 
-export default useWindowSize
+export default useWindowSize;

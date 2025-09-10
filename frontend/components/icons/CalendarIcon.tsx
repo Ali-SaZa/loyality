@@ -1,4 +1,7 @@
-export default function CalendarIcon({ className = 'size-6', color = '#494949' }) {
+export default function CalendarIcon({
+  className = "size-6",
+  color = "#494949",
+}) {
   return (
     <svg
       className={className}
@@ -11,5 +14,5 @@ export default function CalendarIcon({ className = 'size-6', color = '#494949' }
         fill={color}
       />
     </svg>
-  )
+  );
 }

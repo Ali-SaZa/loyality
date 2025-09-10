@@ -1,10 +1,10 @@
-import React from 'react'
+import React from "react";
 
 interface PlusIconProps {
-  className?: string
+  className?: string;
 }
 
-const PlusIcon: React.FC<PlusIconProps> = ({ className = 'size-6' }) => {
+const PlusIcon: React.FC<PlusIconProps> = ({ className = "size-6" }) => {
   return (
     <svg
       className={className}
@@ -20,7 +20,7 @@ const PlusIcon: React.FC<PlusIconProps> = ({ className = 'size-6' }) => {
         d="M12 4v16m8-8H4"
       />
     </svg>
-  )
-}
+  );
+};
 
-export default PlusIcon
+export default PlusIcon;

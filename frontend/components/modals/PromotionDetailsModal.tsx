@@ -1,109 +1,137 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader } from '@heroui/card'
-import { Button } from '@heroui/button'
-import { Chip } from '@heroui/chip'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
+"use client";
+import { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
 
-import Modal from './Modal'
-import PromotionIcon from '@/components/icons/PromotionIcon'
-import { getPromotionByIdWithCodeCount, PromotionWithCodeCount } from '@/services/promotions'
-import { getPromoCodesByPromotion, PromoCode } from '@/services/promo-codes'
-import { Store } from '@/services/stores'
-import { getPromotionStatusConfig, getPromoCodeStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali } from '@/helpers'
+import Modal from "./Modal";
+import PromotionIcon from "@/components/icons/PromotionIcon";
+import {
+  getPromotionByIdWithCodeCount,
+  PromotionWithCodeCount,
+} from "@/services/promotions";
+import { getPromoCodesByPromotion, PromoCode } from "@/services/promo-codes";
+import { Store } from "@/services/stores";
+import {
+  getPromotionStatusConfig,
+  getPromoCodeStatusConfig,
+} from "@/types/enums";
+import { formatDateToPersianJalali } from "@/helpers";
 
 interface PromotionDetailsModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onEdit?: (promotionId: string) => void
-  onDelete?: (promotionId: string) => void
-  onSuccess?: () => void
-  promotionId?: string
-  stores: Store[]
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onEdit?: (promotionId: string) => void;
+  onDelete?: (promotionId: string) => void;
+  onSuccess?: () => void;
+  promotionId?: string;
+  stores: Store[];
 }
 
-const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, promotionId, stores }: PromotionDetailsModalProps) => {
-  const [promotion, setPromotion] = useState<PromotionWithCodeCount | null>(null)
-  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+const PromotionDetailsModal = ({
+  isOpen,
+  onOpenChange,
+  onEdit,
+  onDelete,
+  onSuccess,
+  promotionId,
+  stores,
+}: PromotionDetailsModalProps) => {
+  const [promotion, setPromotion] = useState<PromotionWithCodeCount | null>(
+    null,
+  );
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && promotionId) {
-      fetchPromotionDetails()
+      fetchPromotionDetails();
     }
-  }, [isOpen, promotionId])
+  }, [isOpen, promotionId]);
 
   const fetchPromotionDetails = async () => {
-    if (!promotionId) return
-    
+    if (!promotionId) return;
+
     try {
-      setIsLoading(true)
-      setError(null)
-      
+      setIsLoading(true);
+      setError(null);
+
       // Fetch promotion with code count
-      const promotionData = await getPromotionByIdWithCodeCount(promotionId)
-      setPromotion(promotionData)
-      
+      const promotionData = await getPromotionByIdWithCodeCount(promotionId);
+      setPromotion(promotionData);
+
       // Fetch promo codes for this promotion
-      const promoCodesResponse = await getPromoCodesByPromotion(promotionId, { page: 1, limit: 50 })
-      setPromoCodes(promoCodesResponse.data)
+      const promoCodesResponse = await getPromoCodesByPromotion(promotionId, {
+        page: 1,
+        limit: 50,
+      });
+      setPromoCodes(promoCodesResponse.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات تبلیغ')
+      setError(
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ",
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleEdit = () => {
     // Handler removed as requested
-  }
+  };
 
   const handleDelete = async () => {
     // Handler removed as requested
-  }
+  };
 
   const handleStatusChange = () => {
     // Handler removed as requested
-  }
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
-    setError(null)
-    setPromotion(null)
-    setPromoCodes([])
-  }
+    onOpenChange(false);
+    setError(null);
+    setPromotion(null);
+    setPromoCodes([]);
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR')
-  }
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fa-IR");
+  };
 
   const getStatusColor = (status: string) => {
-    return getPromotionStatusConfig(status).color
-  }
+    return getPromotionStatusConfig(status).color;
+  };
 
   const getStatusText = (status: string) => {
-    return getPromotionStatusConfig(status).text
-  }
+    return getPromotionStatusConfig(status).text;
+  };
 
   const getPromoCodeStatusColor = (status: string) => {
-    return getPromoCodeStatusConfig(status).color
-  }
+    return getPromoCodeStatusConfig(status).color;
+  };
 
   const getPromoCodeStatusText = (status: string) => {
-    return getPromoCodeStatusConfig(status).text
-  }
+    return getPromoCodeStatusConfig(status).text;
+  };
 
   const getStoreName = (storeId: string) => {
-    const store = stores.find(s => s.id === storeId)
-    return store ? store.name : 'نامشخص'
-  }
+    const store = stores.find((s) => s.id === storeId);
+    return store ? store.name : "نامشخص";
+  };
 
   const formatValue = (promotion: PromotionWithCodeCount) => {
-    return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`
-  }
+    return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`;
+  };
 
   return (
     <Modal
@@ -135,8 +163,10 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-text-dark">{promotion.title}</h2>
-                    {promotion.status === 'deleted' && (
+                    <h2 className="text-xl font-bold text-text-dark">
+                      {promotion.title}
+                    </h2>
+                    {promotion.status === "deleted" && (
                       <Chip size="sm" color="danger" variant="flat">
                         حذف شده
                       </Chip>
@@ -154,7 +184,9 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">اطلاعات پایه</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    اطلاعات پایه
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
@@ -169,7 +201,9 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                   )}
                   <div>
                     <label className="text-sm text-text-light">فروشگاه</label>
-                    <p className="font-medium">{getStoreName(promotion.storeId)}</p>
+                    <p className="font-medium">
+                      {getStoreName(promotion.storeId)}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">وضعیت</label>
@@ -188,7 +222,9 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                     <p className="font-medium">{formatValue(promotion)}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">تعداد کدهای تخفیف</label>
+                    <label className="text-sm text-text-light">
+                      تعداد کدهای تخفیف
+                    </label>
                     <p className="font-medium">{promotion.promoCodeCount} کد</p>
                   </div>
                 </CardBody>
@@ -196,24 +232,38 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
 
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">جزئیات</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    جزئیات
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
                     <label className="text-sm text-text-light">مبلغ خرید</label>
-                    <p className="font-medium">{promotion.price.toLocaleString()} تومان</p>
+                    <p className="font-medium">
+                      {promotion.price.toLocaleString()} تومان
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">امتیاز اعطایی</label>
+                    <label className="text-sm text-text-light">
+                      امتیاز اعطایی
+                    </label>
                     <p className="font-medium">{promotion.points} امتیاز</p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">تاریخ ایجاد</label>
-                    <p className="font-medium">{formatDateToPersianJalali(promotion.createdAt)}</p>
+                    <label className="text-sm text-text-light">
+                      تاریخ ایجاد
+                    </label>
+                    <p className="font-medium">
+                      {formatDateToPersianJalali(promotion.createdAt)}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateToPersianJalali(promotion.updatedAt)}</p>
+                    <label className="text-sm text-text-light">
+                      آخرین بروزرسانی
+                    </label>
+                    <p className="font-medium">
+                      {formatDateToPersianJalali(promotion.updatedAt)}
+                    </p>
                   </div>
                 </CardBody>
               </Card>
@@ -222,7 +272,9 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
             {/* Promo Codes Table */}
             <Card className="border-1">
               <CardHeader className="pb-3">
-                <h3 className="text-lg font-semibold text-text-dark">کدهای تخفیف</h3>
+                <h3 className="text-lg font-semibold text-text-dark">
+                  کدهای تخفیف
+                </h3>
               </CardHeader>
               <CardBody>
                 {promoCodes.length > 0 ? (
@@ -254,27 +306,33 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
                             </Chip>
                           </TableCell>
                           <TableCell>
-                            {promoCode.userId ? 'ثبت شده' : 'ثبت نشده'}
+                            {promoCode.userId ? "ثبت شده" : "ثبت نشده"}
                           </TableCell>
                           <TableCell>
                             {formatDateToPersianJalali(promoCode.createdAt)}
                           </TableCell>
                           <TableCell>
-                            {promoCode.registeredAt ? formatDateToPersianJalali(promoCode.registeredAt) : '-'}
+                            {promoCode.registeredAt
+                              ? formatDateToPersianJalali(
+                                  promoCode.registeredAt,
+                                )
+                              : "-"}
                           </TableCell>
                           <TableCell>
-                            {promoCode.usedAt ? formatDateToPersianJalali(promoCode.usedAt) : '-'}
+                            {promoCode.usedAt
+                              ? formatDateToPersianJalali(promoCode.usedAt)
+                              : "-"}
                           </TableCell>
-                          <TableCell>
-                            {promoCode.notes || '-'}
-                          </TableCell>
+                          <TableCell>{promoCode.notes || "-"}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-text-light">هیچ کد تخفیفی برای این تبلیغ یافت نشد</p>
+                    <p className="text-text-light">
+                      هیچ کد تخفیفی برای این تبلیغ یافت نشد
+                    </p>
                   </div>
                 )}
               </CardBody>
@@ -287,7 +345,7 @@ const PromotionDetailsModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSucce
         )}
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default PromotionDetailsModal
+export default PromotionDetailsModal;

@@ -1,105 +1,113 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { toast } from 'react-hot-toast'
-import { Card, CardBody, CardHeader } from '@heroui/card'
-import { Button } from '@heroui/button'
-import { Chip } from '@heroui/chip'
+"use client";
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
 
-import Modal from './Modal'
-import UserIcon from '@/components/icons/UserIcon'
-import EditIcon from '@/components/icons/EditIcon'
-import TrashIcon from '@/components/icons/TrashIcon'
-import { getUserById, deleteUser, User } from '@/services/users'
-import useLoading from '@/hooks/useLoading'
-import { getRoleConfig, getStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali, formatPhoneNumber } from '@/helpers'
+import Modal from "./Modal";
+import UserIcon from "@/components/icons/UserIcon";
+import EditIcon from "@/components/icons/EditIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
+import { getUserById, deleteUser, User } from "@/services/users";
+import useLoading from "@/hooks/useLoading";
+import { getRoleConfig, getStatusConfig } from "@/types/enums";
+import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
 
 interface UserViewModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onEdit?: (userId: string) => void
-  onDelete?: (userId: string) => void
-  onSuccess?: () => void
-  userId?: string
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onEdit?: (userId: string) => void;
+  onDelete?: (userId: string) => void;
+  onSuccess?: () => void;
+  userId?: string;
 }
 
-const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, userId }: UserViewModalProps) => {
-  const { setLoading } = useLoading()
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+const UserViewModal = ({
+  isOpen,
+  onOpenChange,
+  onEdit,
+  onDelete,
+  onSuccess,
+  userId,
+}: UserViewModalProps) => {
+  const { setLoading } = useLoading();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen && userId) {
-      fetchUser()
+      fetchUser();
     }
-  }, [isOpen, userId])
+  }, [isOpen, userId]);
 
   const fetchUser = async () => {
-    if (!userId) return
-    
+    if (!userId) return;
+
     try {
-      setIsLoading(true)
-      const userData = await getUserById(userId)
-      setUser(userData)
+      setIsLoading(true);
+      const userData = await getUserById(userId);
+      setUser(userData);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کاربر'
-      toast.error(errorMessage)
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کاربر";
+      toast.error(errorMessage);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleEdit = () => {
     if (userId && onEdit) {
-      onOpenChange(false)
-      onEdit(userId)
+      onOpenChange(false);
+      onEdit(userId);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!userId) return
-    
-    if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
+    if (!userId) return;
+
+    if (confirm("آیا از حذف این کاربر اطمینان دارید؟")) {
       try {
-        setLoading(true)
-        await deleteUser(userId)
-        onOpenChange(false)
-        onSuccess?.()
+        setLoading(true);
+        await deleteUser(userId);
+        onOpenChange(false);
+        onSuccess?.();
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'خطا در حذف کاربر'
-        toast.error(errorMessage)
+        const errorMessage =
+          err instanceof Error ? err.message : "خطا در حذف کاربر";
+        toast.error(errorMessage);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-  }
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
-    setUser(null)
-  }
+    onOpenChange(false);
+    setUser(null);
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR')
-  }
-
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fa-IR");
+  };
 
   const getStatusColor = (status: string) => {
-    return getStatusConfig(status).color
-  }
+    return getStatusConfig(status).color;
+  };
 
   const getStatusText = (status: string) => {
-    return getStatusConfig(status).text
-  }
+    return getStatusConfig(status).text;
+  };
 
   const getRoleColor = (role: string) => {
-    return getRoleConfig(role).color
-  }
+    return getRoleConfig(role).color;
+  };
 
   const getRoleText = (role: string) => {
-    return getRoleConfig(role).text
-  }
+    return getRoleConfig(role).text;
+  };
 
   return (
     <Modal
@@ -125,8 +133,8 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-text-dark">
-                    {user.firstName && user.lastName 
-                      ? `${user.firstName} ${user.lastName}` 
+                    {user.firstName && user.lastName
+                      ? `${user.firstName} ${user.lastName}`
                       : user.phoneNumber}
                   </h2>
                   <p className="text-text-light">مشاهده اطلاعات کاربر</p>
@@ -155,20 +163,30 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">اطلاعات شخصی</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    اطلاعات شخصی
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
                     <label className="text-sm text-text-light">نام</label>
-                    <p className="font-medium">{user.firstName || 'ثبت نشده'}</p>
+                    <p className="font-medium">
+                      {user.firstName || "ثبت نشده"}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">نام خانوادگی</label>
-                    <p className="font-medium">{user.lastName || 'ثبت نشده'}</p>
+                    <label className="text-sm text-text-light">
+                      نام خانوادگی
+                    </label>
+                    <p className="font-medium">{user.lastName || "ثبت نشده"}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">شماره تلفن</label>
-                    <p className="font-medium">{formatPhoneNumber(user.phoneNumber)}</p>
+                    <label className="text-sm text-text-light">
+                      شماره تلفن
+                    </label>
+                    <p className="font-medium">
+                      {formatPhoneNumber(user.phoneNumber)}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">نقش</label>
@@ -186,11 +204,11 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
                     <label className="text-sm text-text-light">وضعیت</label>
                     <div className="mt-1">
                       <Chip
-                        color={getStatusColor(user.status || 'active')}
+                        color={getStatusColor(user.status || "active")}
                         size="sm"
                         variant="flat"
                       >
-                        {getStatusText(user.status || 'active')}
+                        {getStatusText(user.status || "active")}
                       </Chip>
                     </div>
                   </div>
@@ -199,20 +217,32 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
 
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">اطلاعات سیستم</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    اطلاعات سیستم
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
-                    <label className="text-sm text-text-light">تاریخ عضویت</label>
+                    <label className="text-sm text-text-light">
+                      تاریخ عضویت
+                    </label>
                     <p className="font-medium">{formatDate(user.createdAt)}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">آخرین فعالیت</label>
-                    <p className="font-medium">{formatDateToPersianJalali(user.lastActivity)}</p>
+                    <label className="text-sm text-text-light">
+                      آخرین فعالیت
+                    </label>
+                    <p className="font-medium">
+                      {formatDateToPersianJalali(user.lastActivity)}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateToPersianJalali(user.updatedAt)}</p>
+                    <label className="text-sm text-text-light">
+                      آخرین بروزرسانی
+                    </label>
+                    <p className="font-medium">
+                      {formatDateToPersianJalali(user.updatedAt)}
+                    </p>
                   </div>
                 </CardBody>
               </Card>
@@ -225,7 +255,7 @@ const UserViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, user
         )}
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default UserViewModal
+export default UserViewModal;

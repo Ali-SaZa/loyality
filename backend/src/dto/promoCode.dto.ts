@@ -1,44 +1,45 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsEnum, 
-  IsMongoId, 
+import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsMongoId,
   Matches,
-  MaxLength
-} from 'class-validator';
+  MaxLength,
+} from "class-validator";
 
 // Create Promo Code DTO
 export class CreatePromoCodeDto {
-  @ApiProperty({ 
-    description: 'Promo code string', 
-    example: 'WELCOME50',
-    pattern: '^[A-Z0-9]{6,12}$'
+  @ApiProperty({
+    description: "Promo code string",
+    example: "WELCOME50",
+    pattern: "^[A-Z0-9]{6,12}$",
   })
   @IsString()
-  @Matches(/^[A-Z0-9]{6,12}$/, { 
-    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  @Matches(/^[A-Z0-9]{6,12}$/, {
+    message:
+      "Promo code must be 6-12 characters, uppercase letters and numbers only",
   })
   code: string;
 
-  @ApiProperty({ 
-    description: 'Promotion ID this code belongs to', 
-    example: '507f1f77bcf86cd799439011' 
+  @ApiProperty({
+    description: "Promotion ID this code belongs to",
+    example: "507f1f77bcf86cd799439011",
   })
   @IsMongoId()
   promotionId: string;
 
-  @ApiProperty({ 
-    description: 'When this specific code expires', 
-    required: false 
+  @ApiProperty({
+    description: "When this specific code expires",
+    required: false,
   })
   @IsOptional()
   expiresAt?: Date;
 
-  @ApiProperty({ 
-    description: 'Optional notes about this specific code', 
+  @ApiProperty({
+    description: "Optional notes about this specific code",
     required: false,
-    maxLength: 200
+    maxLength: 200,
   })
   @IsOptional()
   @IsString()
@@ -48,19 +49,19 @@ export class CreatePromoCodeDto {
 
 // Update Promo Code DTO
 export class UpdatePromoCodeDto {
-  @ApiProperty({ 
-    description: 'Optional notes about this specific code', 
+  @ApiProperty({
+    description: "Optional notes about this specific code",
     required: false,
-    maxLength: 200
+    maxLength: 200,
   })
   @IsOptional()
   @IsString()
   @MaxLength(200)
   notes?: string;
 
-  @ApiProperty({ 
-    description: 'When this specific code expires', 
-    required: false 
+  @ApiProperty({
+    description: "When this specific code expires",
+    required: false,
   })
   @IsOptional()
   expiresAt?: Date;
@@ -70,17 +71,17 @@ export class UpdatePromoCodeDto {
 
 // Change Status DTO
 export class ChangePromoCodeStatusDto {
-  @ApiProperty({ 
-    description: 'New status for the promo code', 
-    enum: ['unused', 'used']
+  @ApiProperty({
+    description: "New status for the promo code",
+    enum: ["unused", "used"],
   })
-  @IsEnum(['unused', 'used'])
+  @IsEnum(["unused", "used"])
   status: string;
 
-  @ApiProperty({ 
-    description: 'User ID who used the code (required when status is "used")', 
+  @ApiProperty({
+    description: 'User ID who used the code (required when status is "used")',
     required: false,
-    example: '507f1f77bcf86cd799439011'
+    example: "507f1f77bcf86cd799439011",
   })
   @IsOptional()
   @IsMongoId()
@@ -89,19 +90,20 @@ export class ChangePromoCodeStatusDto {
 
 // Validate Code DTO
 export class ValidatePromoCodeDto {
-  @ApiProperty({ 
-    description: 'Promo code to validate', 
-    example: 'WELCOME50'
+  @ApiProperty({
+    description: "Promo code to validate",
+    example: "WELCOME50",
   })
   @IsString()
-  @Matches(/^[A-Z0-9]{6,12}$/, { 
-    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  @Matches(/^[A-Z0-9]{6,12}$/, {
+    message:
+      "Promo code must be 6-12 characters, uppercase letters and numbers only",
   })
   code: string;
 
-  @ApiProperty({ 
-    description: 'Store ID where the code is being used', 
-    example: '507f1f77bcf86cd799439011'
+  @ApiProperty({
+    description: "Store ID where the code is being used",
+    example: "507f1f77bcf86cd799439011",
   })
   @IsMongoId()
   storeId: string;
@@ -118,7 +120,7 @@ export class PromoCodeResponseDto {
   @ApiProperty()
   promotionId: string;
 
-  @ApiProperty({ enum: ['unused', 'used'] })
+  @ApiProperty({ enum: ["unused", "used"] })
   status: string;
 
   @ApiProperty({ required: false })
@@ -185,44 +187,45 @@ export class PromoCodeValidationResponseDto {
 
 // Bulk Create DTO
 export class BulkCreatePromoCodesDto {
-  @ApiProperty({ 
-    description: 'Promotion ID to create codes for', 
-    example: '507f1f77bcf86cd799439011' 
+  @ApiProperty({
+    description: "Promotion ID to create codes for",
+    example: "507f1f77bcf86cd799439011",
   })
   @IsMongoId()
   promotionId: string;
 
-  @ApiProperty({ 
-    description: 'Number of codes to generate', 
+  @ApiProperty({
+    description: "Number of codes to generate",
     minimum: 1,
-    maximum: 1000
+    maximum: 1000,
   })
   @IsOptional()
   count?: number;
 
-  @ApiProperty({ 
-    description: 'Prefix for all generated codes (optional). Prefix can be any length and contain only English letters and numbers (no spaces)', 
+  @ApiProperty({
+    description:
+      "Prefix for all generated codes (optional). Prefix can be any length and contain only English letters and numbers (no spaces)",
     required: false,
-    example: 'WELCOME2024'
+    example: "WELCOME2024",
   })
   @IsOptional()
   @IsString()
-  @Matches(/^[A-Za-z0-9]*$/, { 
-    message: 'Prefix must contain only English letters and numbers (no spaces)' 
+  @Matches(/^[A-Za-z0-9]*$/, {
+    message: "Prefix must contain only English letters and numbers (no spaces)",
   })
   prefix?: string;
 
-  @ApiProperty({ 
-    description: 'When these codes expire', 
-    required: false 
+  @ApiProperty({
+    description: "When these codes expire",
+    required: false,
   })
   @IsOptional()
   expiresAt?: Date;
 
-  @ApiProperty({ 
-    description: 'Optional notes for these codes', 
+  @ApiProperty({
+    description: "Optional notes for these codes",
     required: false,
-    maxLength: 200
+    maxLength: 200,
   })
   @IsOptional()
   @IsString()
@@ -232,43 +235,44 @@ export class BulkCreatePromoCodesDto {
 
 // Register Code to User DTO
 export class RegisterPromoCodeDto {
-  @ApiProperty({ 
-    description: 'Promo code to register', 
-    example: 'WELCOME50'
+  @ApiProperty({
+    description: "Promo code to register",
+    example: "WELCOME50",
   })
   @IsString()
-  @Matches(/^[A-Z0-9]{6,12}$/, { 
-    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  @Matches(/^[A-Z0-9]{6,12}$/, {
+    message:
+      "Promo code must be 6-12 characters, uppercase letters and numbers only",
   })
   code: string;
 
-  @ApiProperty({ 
-    description: 'User phone number', 
-    example: '09123456789'
+  @ApiProperty({
+    description: "User phone number",
+    example: "09123456789",
   })
   @IsString()
-  @Matches(/^09[0-9]{9}$/, { 
-    message: 'Phone number must be in format 09xxxxxxxxx' 
+  @Matches(/^09[0-9]{9}$/, {
+    message: "Phone number must be in format 09xxxxxxxxx",
   })
   phoneNumber: string;
 }
 
 // Get User Promo Codes DTO
 export class GetUserPromoCodesDto {
-  @ApiProperty({ 
-    description: 'User phone number', 
-    example: '09123456789'
+  @ApiProperty({
+    description: "User phone number",
+    example: "09123456789",
   })
   @IsString()
-  @Matches(/^09[0-9]{9}$/, { 
-    message: 'Phone number must be in format 09xxxxxxxxx' 
+  @Matches(/^09[0-9]{9}$/, {
+    message: "Phone number must be in format 09xxxxxxxxx",
   })
   phoneNumber: string;
 
-  @ApiProperty({ 
-    description: 'Store ID to filter by (optional)', 
+  @ApiProperty({
+    description: "Store ID to filter by (optional)",
     required: false,
-    example: '507f1f77bcf86cd799439011'
+    example: "507f1f77bcf86cd799439011",
   })
   @IsOptional()
   @IsMongoId()
@@ -316,69 +320,73 @@ export class PromoCodeListResponseDto {
 
 // Promo Code Registration DTOs
 export class RegisterWithPromoCodeDto {
-  @ApiProperty({ 
-    description: 'Iranian mobile number', 
-    example: '09123456789',
-    pattern: '^09[0-9]{9}$'
+  @ApiProperty({
+    description: "Iranian mobile number",
+    example: "09123456789",
+    pattern: "^09[0-9]{9}$",
   })
   @IsString()
-  @Matches(/^09[0-9]{9}$/, { 
-    message: 'Phone number must be a valid Iranian mobile number starting with 09' 
+  @Matches(/^09[0-9]{9}$/, {
+    message:
+      "Phone number must be a valid Iranian mobile number starting with 09",
   })
   phoneNumber: string;
 
-  @ApiProperty({ 
-    description: 'Promo code to register with', 
-    example: 'WELCOME50',
-    pattern: '^[A-Z0-9]{6,12}$'
+  @ApiProperty({
+    description: "Promo code to register with",
+    example: "WELCOME50",
+    pattern: "^[A-Z0-9]{6,12}$",
   })
   @IsString()
-  @Matches(/^[A-Z0-9]{6,12}$/, { 
-    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  @Matches(/^[A-Z0-9]{6,12}$/, {
+    message:
+      "Promo code must be 6-12 characters, uppercase letters and numbers only",
   })
   promoCode: string;
 }
 
 export class VerifyPromoRegistrationDto {
-  @ApiProperty({ 
-    description: 'Iranian mobile number', 
-    example: '09123456789',
-    pattern: '^09[0-9]{9}$'
+  @ApiProperty({
+    description: "Iranian mobile number",
+    example: "09123456789",
+    pattern: "^09[0-9]{9}$",
   })
   @IsString()
-  @Matches(/^09[0-9]{9}$/, { 
-    message: 'Phone number must be a valid Iranian mobile number starting with 09' 
+  @Matches(/^09[0-9]{9}$/, {
+    message:
+      "Phone number must be a valid Iranian mobile number starting with 09",
   })
   phoneNumber: string;
 
-  @ApiProperty({ 
-    description: 'Promo code to register with', 
-    example: 'WELCOME50',
-    pattern: '^[A-Z0-9]{6,12}$'
+  @ApiProperty({
+    description: "Promo code to register with",
+    example: "WELCOME50",
+    pattern: "^[A-Z0-9]{6,12}$",
   })
   @IsString()
-  @Matches(/^[A-Z0-9]{6,12}$/, { 
-    message: 'Promo code must be 6-12 characters, uppercase letters and numbers only' 
+  @Matches(/^[A-Z0-9]{6,12}$/, {
+    message:
+      "Promo code must be 6-12 characters, uppercase letters and numbers only",
   })
   promoCode: string;
 
-  @ApiProperty({ 
-    description: '6-digit OTP code', 
-    example: '123456',
-    pattern: '^[0-9]{6}$'
+  @ApiProperty({
+    description: "6-digit OTP code",
+    example: "123456",
+    pattern: "^[0-9]{6}$",
   })
   @IsString()
-  @Matches(/^[0-9]{6}$/, { 
-    message: 'OTP code must be exactly 6 digits' 
+  @Matches(/^[0-9]{6}$/, {
+    message: "OTP code must be exactly 6 digits",
   })
   otpCode: string;
 }
 
 export class PromoRegistrationResponseDto {
-  @ApiProperty({ description: 'Success message' })
+  @ApiProperty({ description: "Success message" })
   message: string;
 
-  @ApiProperty({ description: 'User information' })
+  @ApiProperty({ description: "User information" })
   user: {
     id: string;
     phoneNumber: string;
@@ -388,7 +396,7 @@ export class PromoRegistrationResponseDto {
     createdAt: Date;
   };
 
-  @ApiProperty({ description: 'Store information' })
+  @ApiProperty({ description: "Store information" })
   store: {
     id: string;
     name: string;
@@ -411,7 +419,7 @@ export class PromoRegistrationResponseDto {
     };
   };
 
-  @ApiProperty({ description: 'Promotion information' })
+  @ApiProperty({ description: "Promotion information" })
   promotion: {
     id: string;
     title: string;
@@ -421,7 +429,7 @@ export class PromoRegistrationResponseDto {
     status: string;
   };
 
-  @ApiProperty({ description: 'Promo code information' })
+  @ApiProperty({ description: "Promo code information" })
   promoCode: {
     id: string;
     code: string;
@@ -430,7 +438,7 @@ export class PromoRegistrationResponseDto {
     notes?: string;
   };
 
-  @ApiProperty({ description: 'Transaction information' })
+  @ApiProperty({ description: "Transaction information" })
   transaction: {
     id: string;
     createdAt: Date;

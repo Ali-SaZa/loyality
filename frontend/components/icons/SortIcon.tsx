@@ -1,10 +1,10 @@
-import React from 'react'
+import React from "react";
 
 interface SortIconProps {
-  className?: string
+  className?: string;
 }
 
-const SortIcon: React.FC<SortIconProps> = ({ className = '' }) => {
+const SortIcon: React.FC<SortIconProps> = ({ className = "" }) => {
   return (
     <svg
       className={className}
@@ -29,7 +29,7 @@ const SortIcon: React.FC<SortIconProps> = ({ className = '' }) => {
         strokeLinejoin="round"
       />
     </svg>
-  )
-}
+  );
+};
 
-export default SortIcon
+export default SortIcon;

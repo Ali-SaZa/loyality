@@ -1,4 +1,7 @@
-export default function StarRatingIcon({ className = 'size-6', color = 'white' }) {
+export default function StarRatingIcon({
+  className = "size-6",
+  color = "white",
+}) {
   return (
     <svg
       className={className}
@@ -20,12 +23,9 @@ export default function StarRatingIcon({ className = 'size-6', color = 'white' }
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#FCD635" />
-          <stop
-            offset="1"
-            stopColor="#F7A928"
-          />
+          <stop offset="1" stopColor="#F7A928" />
         </linearGradient>
       </defs>
     </svg>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-export default function NotFoundIcon({ className = 'size-6' }) {
+export default function NotFoundIcon({ className = "size-6" }) {
   return (
     <svg
       width="157"
@@ -24,14 +24,7 @@ export default function NotFoundIcon({ className = 'size-6' }) {
         transform="rotate(25.1651 54.3042 0)"
         fill="#FF9228"
       />
-      <rect
-        x="29.7578"
-        y="17"
-        width="21"
-        height="21"
-        rx="6"
-        fill="white"
-      />
+      <rect x="29.7578" y="17" width="21" height="21" rx="6" fill="white" />
       <path
         d="M32.7578 53H77.7578"
         stroke="white"
@@ -124,5 +117,5 @@ export default function NotFoundIcon({ className = 'size-6' }) {
         fill="#03A9F4"
       />
     </svg>
-  )
+  );
 }

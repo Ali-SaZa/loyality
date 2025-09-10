@@ -1,4 +1,4 @@
-export default function LinkIcon({ className = 'size-6' }) {
+export default function LinkIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -22,13 +22,9 @@ export default function LinkIcon({ className = 'size-6' }) {
       </g>
       <defs>
         <clipPath id="clip0_410_2198">
-          <rect
-            width="24"
-            height="24"
-            fill="white"
-          />
+          <rect width="24" height="24" fill="white" />
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

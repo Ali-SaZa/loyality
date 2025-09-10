@@ -26,7 +26,10 @@ const UsePromotion = () => {
 
   const handleUsePromotion = async (data: { promoCode: string }) => {
     try {
-      console.log("🎟️ Use Promotion - Starting...", { data, phoneNumber: user?.phoneNumber });
+      console.log("🎟️ Use Promotion - Starting...", {
+        data,
+        phoneNumber: user?.phoneNumber,
+      });
       setLoading(true);
 
       if (!user?.phoneNumber) {
@@ -37,16 +40,17 @@ const UsePromotion = () => {
         code: data.promoCode,
         phoneNumber: user.phoneNumber,
       });
-      
+
       console.log("✅ Use Promotion - Success:", res);
       toast.success(res.message || "کد تخفیف با موفقیت ثبت شد!");
-      
+
       // Reset form after success
       form.reset();
-      
     } catch (error) {
       console.error("❌ Use Promotion - Error:", error);
-      toast.error(error instanceof Error ? error.message : "خطا در ثبت کد تخفیف");
+      toast.error(
+        error instanceof Error ? error.message : "خطا در ثبت کد تخفیف",
+      );
     } finally {
       setLoading(false);
     }
@@ -77,13 +81,8 @@ const UsePromotion = () => {
             required
             autoFocus
           />
-          
-          <Button 
-            fullWidth 
-            isLoading={loading} 
-            type="submit"
-            size="lg"
-          >
+
+          <Button fullWidth isLoading={loading} type="submit" size="lg">
             <p>تایید و ثبت کد تخفیف</p>
           </Button>
         </form>
@@ -93,10 +92,10 @@ const UsePromotion = () => {
         <p className="text-sm text-text-light-25 mb-4">
           کد تخفیف خود را ندارید؟
         </p>
-        <Button 
-          variant="light" 
+        <Button
+          variant="light"
           color="primary"
-          onClick={() => router.push('/auth/promo-registration')}
+          onClick={() => router.push("/auth/promo-registration")}
         >
           ثبت نام با کد تخفیف
         </Button>

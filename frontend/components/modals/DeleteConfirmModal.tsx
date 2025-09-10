@@ -1,37 +1,37 @@
-'use client'
-import { useState } from 'react'
+"use client";
+import { useState } from "react";
 
-import Modal from './Modal'
-import TrashIcon from '@/components/icons/TrashIcon'
+import Modal from "./Modal";
+import TrashIcon from "@/components/icons/TrashIcon";
 
 interface DeleteConfirmModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onConfirm: () => void
-  title: string
-  message: string
-  itemName?: string
-  isLoading?: boolean
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  itemName?: string;
+  isLoading?: boolean;
 }
 
-const DeleteConfirmModal = ({ 
-  isOpen, 
-  onOpenChange, 
-  onConfirm, 
-  title, 
-  message, 
+const DeleteConfirmModal = ({
+  isOpen,
+  onOpenChange,
+  onConfirm,
+  title,
+  message,
   itemName,
-  isLoading = false 
+  isLoading = false,
 }: DeleteConfirmModalProps) => {
   const handleConfirm = () => {
-    onConfirm()
-  }
+    onConfirm();
+  };
 
   const handleClose = () => {
     if (!isLoading) {
-      onOpenChange(false)
+      onOpenChange(false);
     }
-  }
+  };
 
   return (
     <Modal
@@ -61,7 +61,7 @@ const DeleteConfirmModal = ({
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default DeleteConfirmModal
+export default DeleteConfirmModal;

@@ -1,9 +1,18 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthorizationService, UserContext, ResourceAccess } from './authorization.service';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import {
+  AuthorizationService,
+  UserContext,
+  ResourceAccess,
+} from "./authorization.service";
 
 export interface ResourceAuthMetadata {
-  resourceType: 'store' | 'user' | 'promotion' | 'promoCode' | 'admin';
+  resourceType: "store" | "user" | "promotion" | "promoCode" | "admin";
   paramName?: string; // URL parameter name for resource ID
   storeIdParam?: string; // URL parameter name for store ID
   userIdParam?: string; // URL parameter name for user ID
@@ -19,8 +28,11 @@ export class ResourceAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const resourceAuth = this.reflector.get<ResourceAuthMetadata>('resourceAuth', context.getHandler());
-    
+    const resourceAuth = this.reflector.get<ResourceAuthMetadata>(
+      "resourceAuth",
+      context.getHandler(),
+    );
+
     if (!resourceAuth) {
       // No resource auth required, allow access
       return true;
@@ -30,29 +42,33 @@ export class ResourceAuthGuard implements CanActivate {
     const user = request.user as UserContext;
 
     if (!user) {
-      throw new ForbiddenException('متن کاربر یافت نشد'); // translated to Persian
+      throw new ForbiddenException("متن کاربر یافت نشد"); // translated to Persian
     }
 
     // For admin resources, we don't need a resource ID
-    if (resourceAuth.resourceType === 'admin') {
+    if (resourceAuth.resourceType === "admin") {
       const resource: ResourceAccess = {
         resourceType: resourceAuth.resourceType,
-        resourceId: 'admin', // Use a placeholder for admin resources
+        resourceId: "admin", // Use a placeholder for admin resources
         storeId: undefined,
         userId: undefined,
       };
-      
+
       await this.authorizationService.checkResourceAccess(user, resource);
       return true;
     }
 
     // Extract resource information from request for other resource types
-    const resourceId = request.params[resourceAuth.paramName || 'id'];
-    const storeId = resourceAuth.storeIdParam ? request.params[resourceAuth.storeIdParam] : undefined;
-    const userId = resourceAuth.userIdParam ? request.params[resourceAuth.userIdParam] : undefined;
+    const resourceId = request.params[resourceAuth.paramName || "id"];
+    const storeId = resourceAuth.storeIdParam
+      ? request.params[resourceAuth.storeIdParam]
+      : undefined;
+    const userId = resourceAuth.userIdParam
+      ? request.params[resourceAuth.userIdParam]
+      : undefined;
 
     if (!resourceId) {
-      throw new ForbiddenException('شناسه منبع در درخواست یافت نشد'); // translated to Persian
+      throw new ForbiddenException("شناسه منبع در درخواست یافت نشد"); // translated to Persian
     }
 
     // Create resource access object

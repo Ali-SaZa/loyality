@@ -1,4 +1,4 @@
-export default function PdfIcon({ className = 'size-6' }) {
+export default function PdfIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -35,5 +35,5 @@ export default function PdfIcon({ className = 'size-6' }) {
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

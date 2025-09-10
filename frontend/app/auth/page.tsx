@@ -57,12 +57,12 @@ const AuthContent = () => {
   const redirectToDashboard = () => {
     // If no specific redirect is set, redirect based on user role
     if (redirectTo === "/" || redirectTo === "/auth") {
-      if (user?.role === 'admin') {
-        router.replace('/admin');
-      } else if (user?.role === 'store') {
-        router.replace('/store');
+      if (user?.role === "admin") {
+        router.replace("/admin");
+      } else if (user?.role === "store") {
+        router.replace("/store");
       } else {
-        router.replace('/customer/use-promotion');
+        router.replace("/customer/use-promotion");
       }
     } else {
       router.replace(redirectTo);
@@ -177,9 +177,7 @@ const AuthContent = () => {
         </>
       ) : (
         <>
-          <p>
-            کد تایید برای شماره {sendOtpForm.getValues("mobile")} پیامک شد.
-          </p>
+          <p>کد تایید برای شماره {sendOtpForm.getValues("mobile")} پیامک شد.</p>
         </>
       )}
       {loginOtpStep === 0 ? (

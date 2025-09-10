@@ -182,7 +182,7 @@ const StoreUsers = () => {
                 <p className="text-2xl font-bold text-text-dark">
                   {customers.reduce(
                     (sum, customer) => sum + customer.totalTransactions,
-                    0
+                    0,
                   )}
                 </p>
               </div>
@@ -200,8 +200,8 @@ const StoreUsers = () => {
                   {formatCurrency(
                     customers.reduce(
                       (sum, customer) => sum + customer.totalSpent,
-                      0
-                    )
+                      0,
+                    ),
                   )}{" "}
                   تومان
                 </p>
@@ -219,7 +219,7 @@ const StoreUsers = () => {
                 <p className="text-2xl font-bold text-text-dark">
                   {customers.reduce(
                     (sum, customer) => sum + customer.totalPointsEarned,
-                    0
+                    0,
                   )}
                 </p>
               </div>
@@ -318,7 +318,12 @@ const StoreUsers = () => {
                         size="sm"
                         variant="light"
                         color="success"
-                        onClick={() => handleSendMessage(customer.id, `${customer.firstName} ${customer.lastName}`)}
+                        onClick={() =>
+                          handleSendMessage(
+                            customer.id,
+                            `${customer.firstName} ${customer.lastName}`,
+                          )
+                        }
                       >
                         <ChatArrowGrowIcon className="size-4" />
                       </Button>
@@ -355,8 +360,8 @@ const StoreUsers = () => {
         onOpenChange={(isOpen) =>
           setSendMessageModal((prev) => ({ ...prev, isOpen }))
         }
-        customerId={sendMessageModal.customerId || ''}
-        customerName={sendMessageModal.customerName || ''}
+        customerId={sendMessageModal.customerId || ""}
+        customerName={sendMessageModal.customerName || ""}
         onSuccess={handleSendMessageSuccess}
       />
     </div>

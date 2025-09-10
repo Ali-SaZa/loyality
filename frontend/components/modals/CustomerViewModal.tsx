@@ -70,20 +70,20 @@ const CustomerViewModal = ({
         totalTransactions: transactionsData.length,
         totalSpent: transactionsData.reduce(
           (sum, t) => sum + (t.promotion?.price || 0),
-          0
+          0,
         ),
         totalPointsEarned: transactionsData.reduce(
           (sum, t) => sum + (t.promotion?.points || 0),
-          0
+          0,
         ),
         firstTransactionDate:
           transactionsData.length > 0
             ? new Date(
                 Math.min(
                   ...transactionsData.map((t) =>
-                    new Date(t.createdAt).getTime()
-                  )
-                )
+                    new Date(t.createdAt).getTime(),
+                  ),
+                ),
               )
             : new Date(),
         lastTransactionDate:
@@ -91,9 +91,9 @@ const CustomerViewModal = ({
             ? new Date(
                 Math.max(
                   ...transactionsData.map((t) =>
-                    new Date(t.createdAt).getTime()
-                  )
-                )
+                    new Date(t.createdAt).getTime(),
+                  ),
+                ),
               )
             : new Date(),
         lastActivity: new Date(userData.lastActivity),
@@ -101,7 +101,8 @@ const CustomerViewModal = ({
 
       setCustomer(customerObj);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات مشتری";
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات مشتری";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -119,7 +120,6 @@ const CustomerViewModal = ({
     const date = new Date(dateString);
     return formatDateToPersianJalali(date);
   };
-
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("fa-IR").format(amount);
@@ -340,7 +340,7 @@ const CustomerViewModal = ({
                           <TableCell>
                             <span className="font-medium">
                               {formatCurrency(
-                                transaction.promotion?.price || 0
+                                transaction.promotion?.price || 0,
                               )}{" "}
                               تومان
                             </span>

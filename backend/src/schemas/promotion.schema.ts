@@ -1,44 +1,44 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { globalTransformPlugin } from './global-transform.plugin';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
+import { globalTransformPlugin } from "./global-transform.plugin";
 
 /**
  * Interface representing a Promotion document in MongoDB
  */
 export interface PromotionDocument extends Document {
   _id: Types.ObjectId;
-  storeId: Types.ObjectId;       // Reference to the Store this promotion belongs to
-  title: string;                 // Short title for display
-  description?: string;          // Optional detailed description
-  price: number;                 // Purchase amount in Toman (e.g., 100000)
-  points: number;                // Points awarded for the purchase (e.g., 1)
-  status: string;                // Status of the promotion: active, inactive, deleted, or expired
-  createdAt: Date;               // Automatically added by timestamps: true
-  updatedAt: Date;               // Automatically added by timestamps: true
+  storeId: Types.ObjectId; // Reference to the Store this promotion belongs to
+  title: string; // Short title for display
+  description?: string; // Optional detailed description
+  price: number; // Purchase amount in Toman (e.g., 100000)
+  points: number; // Points awarded for the purchase (e.g., 1)
+  status: string; // Status of the promotion: active, inactive, deleted, or expired
+  createdAt: Date; // Automatically added by timestamps: true
+  updatedAt: Date; // Automatically added by timestamps: true
 }
 
 @Schema({ timestamps: true }) // Automatically adds createdAt and updatedAt fields
 export class Promotion {
-  @Prop({ 
-    type: Types.ObjectId, 
-    ref: 'Store', 
-    required: true 
+  @Prop({
+    type: Types.ObjectId,
+    ref: "Store",
+    required: true,
   })
   storeId: Types.ObjectId;
   // Reference to the store this promotion belongs to
 
-  @Prop({ 
-    required: true, 
-    trim: true, 
-    maxlength: 100 
+  @Prop({
+    required: true,
+    trim: true,
+    maxlength: 100,
   })
   title: string;
   // Short title for display in UI
 
-  @Prop({ 
-    required: false, 
-    trim: true, 
-    maxlength: 500 
+  @Prop({
+    required: false,
+    trim: true,
+    maxlength: 500,
   })
   description?: string;
   // Optional longer description or terms and conditions
@@ -51,9 +51,9 @@ export class Promotion {
   points: number;
   // Number of points awarded for the purchase (e.g., 1 point)
 
-  @Prop({ 
-    enum: ['active', 'inactive', 'deleted', 'expired'], 
-    default: 'active' 
+  @Prop({
+    enum: ["active", "inactive", "deleted", "expired"],
+    default: "active",
   })
   status: string;
   // Status of the promotion: active, inactive, deleted, or expired

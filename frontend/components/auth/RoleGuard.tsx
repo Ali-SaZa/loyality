@@ -1,43 +1,43 @@
-'use client'
-import { useEffect, ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
-import useAuth from '@/hooks/useAuth'
-import { UserRole } from '@/types/enums'
+"use client";
+import { useEffect, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import useAuth from "@/hooks/useAuth";
+import { UserRole } from "@/types/enums";
 
 interface RoleGuardProps {
-  children: ReactNode
-  requiredRole?: UserRole
-  fallback?: ReactNode
+  children: ReactNode;
+  requiredRole?: UserRole;
+  fallback?: ReactNode;
 }
 
-export default function RoleGuard({ 
-  children, 
-  requiredRole, 
-  fallback 
+export default function RoleGuard({
+  children,
+  requiredRole,
+  fallback,
 }: RoleGuardProps) {
-  const { user, isLoading } = useAuth()
-  const router = useRouter()
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     // Don't redirect while loading
-    if (isLoading) return
+    if (isLoading) return;
 
     // If no user, redirect to auth
     if (!user) {
-      const currentPath = window.location.pathname
-      const authUrl = `/auth?redirect=${encodeURIComponent(currentPath)}`
-      router.replace(authUrl)
-      return
+      const currentPath = window.location.pathname;
+      const authUrl = `/auth?redirect=${encodeURIComponent(currentPath)}`;
+      router.replace(authUrl);
+      return;
     }
 
     // If specific role is required, check it
     if (requiredRole && user.role !== requiredRole) {
       // Redirect to user's appropriate dashboard
-      const dashboardUrl = `/${user.role}`
-      router.replace(dashboardUrl)
-      return
+      const dashboardUrl = `/${user.role}`;
+      router.replace(dashboardUrl);
+      return;
     }
-  }, [user, isLoading, requiredRole, router])
+  }, [user, isLoading, requiredRole, router]);
 
   // Show loading while checking auth
   if (isLoading) {
@@ -48,14 +48,14 @@ export default function RoleGuard({
           <p className="text-text-light">در حال بارگذاری...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Show fallback if user doesn't have access
   if (!user || (requiredRole && user.role !== requiredRole)) {
-    return fallback || null
+    return fallback || null;
   }
 
   // User is authenticated and has proper access
-  return <>{children}</>
+  return <>{children}</>;
 }

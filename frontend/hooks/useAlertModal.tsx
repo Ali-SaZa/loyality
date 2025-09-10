@@ -1,15 +1,15 @@
-import { useContext } from 'react'
+import { useContext } from "react";
 
-import { AlertModalContext } from '@/context/AlertModalContext'
+import { AlertModalContext } from "@/context/AlertModalContext";
 
 const useAlertModal = () => {
-  const context = useContext(AlertModalContext)
+  const context = useContext(AlertModalContext);
 
   if (!context) {
-    throw new Error('useAlertModal باید درون AlertModalProvider استفاده شود')
+    throw new Error("useAlertModal باید درون AlertModalProvider استفاده شود");
   }
 
-  return context
-}
+  return context;
+};
 
-export default useAlertModal
+export default useAlertModal;

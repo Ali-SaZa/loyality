@@ -15,13 +15,13 @@ Customers can enter a discount code to reduce their purchase by a specific perce
 
 **Use Cases:**
 
-* Attract new customers or encourage immediate purchases
-* Create a sense of exclusivity by offering unique codes
+- Attract new customers or encourage immediate purchases
+- Create a sense of exclusivity by offering unique codes
 
 **Examples:**
 
-* “10% off with code OFF10”
-* “50,000 Toman off your first purchase with code WELCOME50”
+- “10% off with code OFF10”
+- “50,000 Toman off your first purchase with code WELCOME50”
 
 ---
 
@@ -32,13 +32,13 @@ A percentage of the purchase amount is returned to the customer’s wallet or ac
 
 **Use Cases:**
 
-* Encourage repeat purchases
-* Increase customer loyalty by providing added value
+- Encourage repeat purchases
+- Increase customer loyalty by providing added value
 
 **Examples:**
 
-* “5% of your purchase amount will be credited back to your wallet”
-* “Spend 200,000 Toman and receive 10,000 Toman credit”
+- “5% of your purchase amount will be credited back to your wallet”
+- “Spend 200,000 Toman and receive 10,000 Toman credit”
 
 ---
 
@@ -49,13 +49,13 @@ Customers and their referred friends both receive discounts when a referral is m
 
 **Use Cases:**
 
-* Acquire new customers without direct advertising costs
-* Encourage existing users to promote the store
+- Acquire new customers without direct advertising costs
+- Encourage existing users to promote the store
 
 **Examples:**
 
-* “Invite a friend and get 50,000 Toman credit”
-* “Your friends get 10% off using your referral code”
+- “Invite a friend and get 50,000 Toman credit”
+- “Your friends get 10% off using your referral code”
 
 ---
 
@@ -66,13 +66,13 @@ Discounts are applied when a purchase reaches a specified threshold.
 
 **Use Cases:**
 
-* Increase average order value
-* Encourage larger purchases in a single order
+- Increase average order value
+- Encourage larger purchases in a single order
 
 **Examples:**
 
-* “10% off for orders above 500,000 Toman”
-* “15% off for orders over 1,000,000 Toman”
+- “10% off for orders above 500,000 Toman”
+- “15% off for orders over 1,000,000 Toman”
 
 ---
 
@@ -83,13 +83,13 @@ Reduces the price either by a percentage or a fixed amount.
 
 **Use Cases:**
 
-* Provide a simple and general discount
-* Suitable for all customers
+- Provide a simple and general discount
+- Suitable for all customers
 
 **Examples:**
 
-* “20% off all products”
-* “100,000 Toman off purchases above 500,000 Toman”
+- “20% off all products”
+- “100,000 Toman off purchases above 500,000 Toman”
 
 ---
 
@@ -100,13 +100,13 @@ Discounts are available for a short, limited time.
 
 **Use Cases:**
 
-* Encourage quick purchases
-* Create urgency and boost immediate sales
+- Encourage quick purchases
+- Create urgency and boost immediate sales
 
 **Examples:**
 
-* “30% off only until tonight”
-* “Black Friday: 50% off all products”
+- “30% off only until tonight”
+- “Black Friday: 50% off all products”
 
 ---
 
@@ -117,13 +117,13 @@ Instead of a cash discount, free shipping is offered.
 
 **Use Cases:**
 
-* Reduce the perception of extra costs for customers
-* Increase online purchase rates
+- Reduce the perception of extra costs for customers
+- Increase online purchase rates
 
 **Examples:**
 
-* “Free shipping for orders over 300,000 Toman”
-* “Free shipping for VIP members”
+- “Free shipping for orders over 300,000 Toman”
+- “Free shipping for VIP members”
 
 ---
 
@@ -134,13 +134,13 @@ Customers earn points for purchases, which can later be redeemed for discounts o
 
 **Use Cases:**
 
-* Increase repeat purchases and customer loyalty
-* Encourage users to return to the store
+- Increase repeat purchases and customer loyalty
+- Encourage users to return to the store
 
 **Examples:**
 
-* “Earn 1 point for every 10,000 Toman spent”
-* “Redeem 50 points for a gift”
+- “Earn 1 point for every 10,000 Toman spent”
+- “Redeem 50 points for a gift”
 
 ---
 
@@ -151,13 +151,13 @@ Discounts are applied based on user behavior or special events.
 
 **Use Cases:**
 
-* Increase customer engagement
-* Provide personalized or event-specific discounts
+- Increase customer engagement
+- Provide personalized or event-specific discounts
 
 **Examples:**
 
-* “10% off on your birthday”
-* “50,000 Toman credit for the first app login each month”
+- “10% off on your birthday”
+- “50,000 Toman credit for the first app login each month”
 
 ---
 
@@ -168,13 +168,13 @@ Multiple promotions can be applied to a single order, or discounts can be activa
 
 **Use Cases:**
 
-* Increase flexibility in discount systems
-* Encourage larger purchases and simultaneous use of multiple promotions
+- Increase flexibility in discount systems
+- Encourage larger purchases and simultaneous use of multiple promotions
 
 **Examples:**
 
-* “10% off + free shipping on one order”
-* “Orders above 500,000 Toman = 10% off + 50 loyalty points”
+- “10% off + free shipping on one order”
+- “Orders above 500,000 Toman = 10% off + 50 loyalty points”
 
 ---
 

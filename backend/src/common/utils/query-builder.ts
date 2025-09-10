@@ -1,16 +1,26 @@
-import { FilterQuery, SortOrder } from 'mongoose';
-import { ListRequestDto, FilterDto, SortDto } from '../dto/list.dto';
+import { FilterQuery, SortOrder } from "mongoose";
+import { ListRequestDto, FilterDto, SortDto } from "../dto/list.dto";
 
 export class QueryBuilder {
   /**
    * Builds a MongoDB filter query from the request parameters
    */
-  static buildFilterQuery<T>(request: ListRequestDto, additionalFilters: FilterQuery<T> = {}): FilterQuery<T> {
+  static buildFilterQuery<T>(
+    request: ListRequestDto,
+    additionalFilters: FilterQuery<T> = {},
+  ): FilterQuery<T> {
     const filterQuery: FilterQuery<T> = { ...additionalFilters };
 
     // Add search query if provided
-    if (request.search && request.searchFields && request.searchFields.length > 0) {
-      const searchQuery = this.buildSearchQuery(request.search, request.searchFields);
+    if (
+      request.search &&
+      request.searchFields &&
+      request.searchFields.length > 0
+    ) {
+      const searchQuery = this.buildSearchQuery(
+        request.search,
+        request.searchFields,
+      );
       if (searchQuery) {
         filterQuery.$or = searchQuery;
       }
@@ -18,7 +28,7 @@ export class QueryBuilder {
 
     // Add custom filters
     if (request.filters && request.filters.length > 0) {
-      request.filters.forEach(filter => {
+      request.filters.forEach((filter) => {
         const fieldFilter = this.buildFieldFilter(filter);
         if (fieldFilter) {
           Object.assign(filterQuery, fieldFilter);
@@ -32,11 +42,14 @@ export class QueryBuilder {
   /**
    * Builds a search query using $or with $regex for text search
    */
-  private static buildSearchQuery<T>(searchTerm: string, searchFields: string[]): any[] | null {
+  private static buildSearchQuery<T>(
+    searchTerm: string,
+    searchFields: string[],
+  ): any[] | null {
     if (!searchTerm || !searchFields.length) return null;
 
-    const searchQueries = searchFields.map(field => ({
-      [field]: { $regex: searchTerm, $options: 'i' }
+    const searchQueries = searchFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: "i" },
     }));
 
     return searchQueries;
@@ -45,37 +58,39 @@ export class QueryBuilder {
   /**
    * Builds a filter for a specific field based on the operator
    */
-  private static buildFieldFilter(filter: FilterDto): Record<string, any> | null {
+  private static buildFieldFilter(
+    filter: FilterDto,
+  ): Record<string, any> | null {
     const { field, operator, value } = filter;
 
     switch (operator) {
-      case 'eq':
+      case "eq":
         return { [field]: value };
-      
-      case 'ne':
+
+      case "ne":
         return { [field]: { $ne: value } };
-      
-      case 'gt':
+
+      case "gt":
         return { [field]: { $gt: value } };
-      
-      case 'gte':
+
+      case "gte":
         return { [field]: { $gte: value } };
-      
-      case 'lt':
+
+      case "lt":
         return { [field]: { $lt: value } };
-      
-      case 'lte':
+
+      case "lte":
         return { [field]: { $lte: value } };
-      
-      case 'in':
+
+      case "in":
         return { [field]: { $in: Array.isArray(value) ? value : [value] } };
-      
-      case 'nin':
+
+      case "nin":
         return { [field]: { $nin: Array.isArray(value) ? value : [value] } };
-      
-      case 'regex':
-        return { [field]: { $regex: value, $options: 'i' } };
-      
+
+      case "regex":
+        return { [field]: { $regex: value, $options: "i" } };
+
       default:
         return null;
     }
@@ -90,9 +105,9 @@ export class QueryBuilder {
     }
 
     const sortQuery: Record<string, SortOrder> = {};
-    
-    sort.forEach(sortItem => {
-      const direction = sortItem.direction === 'asc' ? 1 : -1;
+
+    sort.forEach((sortItem) => {
+      const direction = sortItem.direction === "asc" ? 1 : -1;
       sortQuery[sortItem.field] = direction;
     });
 
@@ -111,14 +126,17 @@ export class QueryBuilder {
    * Builds the complete query options for MongoDB operations
    */
   static buildQueryOptions(request: ListRequestDto) {
-    const { skip, limit } = this.calculatePagination(request.page || 1, request.limit || 20);
+    const { skip, limit } = this.calculatePagination(
+      request.page || 1,
+      request.limit || 20,
+    );
     const sort = this.buildSortQuery(request.sort);
 
     return {
       skip,
       limit,
       sort,
-      lean: true // For better performance when you don't need Mongoose documents
+      lean: true, // For better performance when you don't need Mongoose documents
     };
   }
 }

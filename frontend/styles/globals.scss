@@ -1,7 +1,7 @@
 @use "sass:meta";
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
-@include meta.load-css('input');
+@include meta.load-css("input");
 
 /* برای مرورگرهای WebKit (Chrome, Safari) */
 // ::-webkit-scrollbar {

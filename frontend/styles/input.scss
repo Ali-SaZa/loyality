@@ -1,9 +1,9 @@
-[data-slot='input-field'] {
-  @apply flex-row-reverse justify-end
+[data-slot="input-field"] {
+  @apply flex-row-reverse justify-end;
 }
 
-[data-slot='label'] {
-  @apply font-semibold text-sm
+[data-slot="label"] {
+  @apply font-semibold text-sm;
 }
 
 [data-slot="input-wrapper"] {

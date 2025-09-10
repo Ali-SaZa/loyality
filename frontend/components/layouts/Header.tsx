@@ -1,13 +1,13 @@
-'use client'
-import React from 'react'
+"use client";
+import React from "react";
 
-import AngleDoubleLeftIcon from '../icons/AngleDoubleLeftIcon'
+import AngleDoubleLeftIcon from "../icons/AngleDoubleLeftIcon";
 
-import Button from '@/components/formElements/Button'
-import useWindowSize from '@/hooks/useWindowSize'
+import Button from "@/components/formElements/Button";
+import useWindowSize from "@/hooks/useWindowSize";
 
 const Header = () => {
-  const { width } = useWindowSize()
+  const { width } = useWindowSize();
 
   return (
     <header className="bg-primary w-full h-[100vh] relative ">
@@ -68,7 +68,8 @@ const Header = () => {
           برنامه وفاداری، هوشمندانه پاداش بگیر
         </h1>
         <p className=" max-w-[400px] mt-6 text-medium md:text-lg font-normal leading-7 text-center md:text-right">
-          با برنامه وفاداری ما، امتیازات خود را جمع کنید و از کارت‌های جایزه و پاداش‌های ویژه بهره‌مند شوید{' '}
+          با برنامه وفاداری ما، امتیازات خود را جمع کنید و از کارت‌های جایزه و
+          پاداش‌های ویژه بهره‌مند شوید{" "}
         </p>
         <Button
           className="mt-6 w-full md:w-fit text-white"
@@ -82,7 +83,7 @@ const Header = () => {
         </Button>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

@@ -1,107 +1,121 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader } from '@heroui/card'
-import { Button } from '@heroui/button'
-import { Chip } from '@heroui/chip'
+"use client";
+import { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
 
-import Modal from './Modal'
-import PromotionIcon from '@/components/icons/PromotionIcon'
-import EditIcon from '@/components/icons/EditIcon'
-import TrashIcon from '@/components/icons/TrashIcon'
-import { getPromotionById, deletePromotion, Promotion } from '@/services/promotions'
-import { Store } from '@/services/stores'
-import useLoading from '@/hooks/useLoading'
-import { getPromotionStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali } from '@/helpers'
+import Modal from "./Modal";
+import PromotionIcon from "@/components/icons/PromotionIcon";
+import EditIcon from "@/components/icons/EditIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
+import {
+  getPromotionById,
+  deletePromotion,
+  Promotion,
+} from "@/services/promotions";
+import { Store } from "@/services/stores";
+import useLoading from "@/hooks/useLoading";
+import { getPromotionStatusConfig } from "@/types/enums";
+import { formatDateToPersianJalali } from "@/helpers";
 
 interface PromotionViewModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onEdit?: (promotionId: string) => void
-  onDelete?: (promotionId: string) => void
-  onSuccess?: () => void
-  promotionId?: string
-  stores: Store[]
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onEdit?: (promotionId: string) => void;
+  onDelete?: (promotionId: string) => void;
+  onSuccess?: () => void;
+  promotionId?: string;
+  stores: Store[];
 }
 
-const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess, promotionId, stores }: PromotionViewModalProps) => {
-  const { setLoading } = useLoading()
-  const [promotion, setPromotion] = useState<Promotion | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+const PromotionViewModal = ({
+  isOpen,
+  onOpenChange,
+  onEdit,
+  onDelete,
+  onSuccess,
+  promotionId,
+  stores,
+}: PromotionViewModalProps) => {
+  const { setLoading } = useLoading();
+  const [promotion, setPromotion] = useState<Promotion | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && promotionId) {
-      fetchPromotion()
+      fetchPromotion();
     }
-  }, [isOpen, promotionId])
+  }, [isOpen, promotionId]);
 
   const fetchPromotion = async () => {
-    if (!promotionId) return
-    
+    if (!promotionId) return;
+
     try {
-      setIsLoading(true)
-      setError(null)
-      const promotionData = await getPromotionById(promotionId)
-      setPromotion(promotionData)
+      setIsLoading(true);
+      setError(null);
+      const promotionData = await getPromotionById(promotionId);
+      setPromotion(promotionData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات تبلیغ')
+      setError(
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ",
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleEdit = () => {
     if (promotionId && onEdit) {
-      onOpenChange(false)
-      onEdit(promotionId)
+      onOpenChange(false);
+      onEdit(promotionId);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!promotionId) return
-    
-    if (confirm('آیا از حذف این تبلیغ اطمینان دارید؟')) {
+    if (!promotionId) return;
+
+    if (confirm("آیا از حذف این تبلیغ اطمینان دارید؟")) {
       try {
-        setLoading(true)
-        await deletePromotion(promotionId)
-        onOpenChange(false)
-        onSuccess?.()
+        setLoading(true);
+        await deletePromotion(promotionId);
+        onOpenChange(false);
+        onSuccess?.();
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'خطا در حذف تبلیغ')
+        setError(err instanceof Error ? err.message : "خطا در حذف تبلیغ");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-  }
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
-    setError(null)
-    setPromotion(null)
-  }
+    onOpenChange(false);
+    setError(null);
+    setPromotion(null);
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fa-IR')
-  }
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fa-IR");
+  };
 
   const getStatusColor = (status: string) => {
-    return getPromotionStatusConfig(status).color
-  }
+    return getPromotionStatusConfig(status).color;
+  };
 
   const getStatusText = (status: string) => {
-    return getPromotionStatusConfig(status).text
-  }
+    return getPromotionStatusConfig(status).text;
+  };
 
   const getStoreName = (storeId: string) => {
-    const store = stores.find(s => s.id === storeId)
-    return store ? store.name : 'نامشخص'
-  }
+    const store = stores.find((s) => s.id === storeId);
+    return store ? store.name : "نامشخص";
+  };
 
   const formatValue = (promotion: Promotion) => {
-    return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`
-  }
+    return `${promotion.price.toLocaleString()} تومان → ${promotion.points} امتیاز`;
+  };
 
   return (
     <Modal
@@ -133,8 +147,10 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-text-dark">{promotion.title}</h2>
-                    {promotion.status === 'deleted' && (
+                    <h2 className="text-xl font-bold text-text-dark">
+                      {promotion.title}
+                    </h2>
+                    {promotion.status === "deleted" && (
                       <Chip size="sm" color="danger" variant="flat">
                         حذف شده
                       </Chip>
@@ -144,7 +160,7 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {promotion.status !== 'deleted' && (
+                {promotion.status !== "deleted" && (
                   <>
                     <Button
                       color="primary"
@@ -170,7 +186,9 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">اطلاعات پایه</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    اطلاعات پایه
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
@@ -185,7 +203,9 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
                   )}
                   <div>
                     <label className="text-sm text-text-light">فروشگاه</label>
-                    <p className="font-medium">{getStoreName(promotion.storeId)}</p>
+                    <p className="font-medium">
+                      {getStoreName(promotion.storeId)}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm text-text-light">وضعیت</label>
@@ -208,15 +228,21 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
 
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">جزئیات</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    جزئیات
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
                     <label className="text-sm text-text-light">مبلغ خرید</label>
-                    <p className="font-medium">{promotion.price.toLocaleString()} تومان</p>
+                    <p className="font-medium">
+                      {promotion.price.toLocaleString()} تومان
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">امتیاز اعطایی</label>
+                    <label className="text-sm text-text-light">
+                      امتیاز اعطایی
+                    </label>
                     <p className="font-medium">{promotion.points} امتیاز</p>
                   </div>
                 </CardBody>
@@ -227,16 +253,26 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
             <div className="grid grid-cols-1 gap-6">
               <Card className="border-1">
                 <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">زمان‌بندی</h3>
+                  <h3 className="text-lg font-semibold text-text-dark">
+                    زمان‌بندی
+                  </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div>
-                    <label className="text-sm text-text-light">تاریخ ایجاد</label>
-                    <p className="font-medium">{formatDateToPersianJalali(promotion.createdAt)}</p>
+                    <label className="text-sm text-text-light">
+                      تاریخ ایجاد
+                    </label>
+                    <p className="font-medium">
+                      {formatDateToPersianJalali(promotion.createdAt)}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-text-light">آخرین بروزرسانی</label>
-                    <p className="font-medium">{formatDateToPersianJalali(promotion.updatedAt)}</p>
+                    <label className="text-sm text-text-light">
+                      آخرین بروزرسانی
+                    </label>
+                    <p className="font-medium">
+                      {formatDateToPersianJalali(promotion.updatedAt)}
+                    </p>
                   </div>
                 </CardBody>
               </Card>
@@ -249,7 +285,7 @@ const PromotionViewModal = ({ isOpen, onOpenChange, onEdit, onDelete, onSuccess,
         )}
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default PromotionViewModal
+export default PromotionViewModal;

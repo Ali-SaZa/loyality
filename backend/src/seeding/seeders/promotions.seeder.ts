@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Promotion, PromotionDocument } from '../../schemas/promotion.schema';
-import { Store, StoreDocument } from '../../schemas/store.schema';
-import { BaseSeeder } from './base.seeder';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model, Types } from "mongoose";
+import { Promotion, PromotionDocument } from "../../schemas/promotion.schema";
+import { Store, StoreDocument } from "../../schemas/store.schema";
+import { BaseSeeder } from "./base.seeder";
 
 @Injectable()
 export class PromotionsSeeder extends BaseSeeder<PromotionDocument> {
   private stores: StoreDocument[] = [];
 
   constructor(
-    @InjectModel(Promotion.name) private promotionsModel: Model<PromotionDocument>
+    @InjectModel(Promotion.name)
+    private promotionsModel: Model<PromotionDocument>,
   ) {
     super();
   }
@@ -25,98 +26,100 @@ export class PromotionsSeeder extends BaseSeeder<PromotionDocument> {
 
   protected get data(): any[] {
     if (this.stores.length === 0) {
-      throw new Error('Stores must be set before seeding promotions');
+      throw new Error("Stores must be set before seeding promotions");
     }
 
     // Find Doris Accessories store
-    const dorisStore = this.stores.find(store => store.name === 'Doris Accessories');
-    
+    const dorisStore = this.stores.find(
+      (store) => store.name === "Doris Accessories",
+    );
+
     if (!dorisStore) {
-      throw new Error('Doris Accessories store not found');
+      throw new Error("Doris Accessories store not found");
     }
 
     return [
       // Doris Accessories Promotions - 10 different promotions
       {
         storeId: dorisStore._id,
-        title: 'امتیاز ویژه خرید',
-        description: 'دریافت 1 امتیاز برای هر 100 هزار تومان خرید',
+        title: "امتیاز ویژه خرید",
+        description: "دریافت 1 امتیاز برای هر 100 هزار تومان خرید",
         price: 100000,
         points: 1,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز دوبرابری',
-        description: 'دریافت 2 امتیاز برای هر 100 هزار تومان خرید',
+        title: "امتیاز دوبرابری",
+        description: "دریافت 2 امتیاز برای هر 100 هزار تومان خرید",
         price: 100000,
         points: 2,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز خریدهای بزرگ',
-        description: 'دریافت 5 امتیاز برای هر 500 هزار تومان خرید',
+        title: "امتیاز خریدهای بزرگ",
+        description: "دریافت 5 امتیاز برای هر 500 هزار تومان خرید",
         price: 500000,
         points: 5,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز وفاداری',
-        description: 'دریافت 1 امتیاز برای هر 150 هزار تومان خرید',
+        title: "امتیاز وفاداری",
+        description: "دریافت 1 امتیاز برای هر 150 هزار تومان خرید",
         price: 150000,
         points: 1,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز ویژه مشتریان',
-        description: 'دریافت 3 امتیاز برای هر 300 هزار تومان خرید',
+        title: "امتیاز ویژه مشتریان",
+        description: "دریافت 3 امتیاز برای هر 300 هزار تومان خرید",
         price: 300000,
         points: 3,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز خرید مکرر',
-        description: 'دریافت 1 امتیاز برای هر 200 هزار تومان خرید',
+        title: "امتیاز خرید مکرر",
+        description: "دریافت 1 امتیاز برای هر 200 هزار تومان خرید",
         price: 200000,
         points: 1,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز خریدهای بزرگ',
-        description: 'دریافت 10 امتیاز برای هر 1 میلیون تومان خرید',
+        title: "امتیاز خریدهای بزرگ",
+        description: "دریافت 10 امتیاز برای هر 1 میلیون تومان خرید",
         price: 1000000,
         points: 10,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز ویژه آخر هفته',
-        description: 'دریافت 2 امتیاز برای هر 100 هزار تومان خرید',
+        title: "امتیاز ویژه آخر هفته",
+        description: "دریافت 2 امتیاز برای هر 100 هزار تومان خرید",
         price: 100000,
         points: 2,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز خریدهای متوسط',
-        description: 'دریافت 3 امتیاز برای هر 400 هزار تومان خرید',
+        title: "امتیاز خریدهای متوسط",
+        description: "دریافت 3 امتیاز برای هر 400 هزار تومان خرید",
         price: 400000,
         points: 3,
-        status: 'active'
+        status: "active",
       },
       {
         storeId: dorisStore._id,
-        title: 'امتیاز خریدهای کوچک',
-        description: 'دریافت 1 امتیاز برای هر 50 هزار تومان خرید',
+        title: "امتیاز خریدهای کوچک",
+        description: "دریافت 1 امتیاز برای هر 50 هزار تومان خرید",
         price: 50000,
         points: 1,
-        status: 'active'
-      }
+        status: "active",
+      },
     ];
   }
 

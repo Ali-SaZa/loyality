@@ -1,161 +1,176 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader } from '@heroui/card'
-import { Button } from '@heroui/button'
-import { Chip } from '@heroui/chip'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
+"use client";
+import { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
 
-import StoreIcon from '@/components/icons/ChartTreeIcon'
-import EditIcon from '@/components/icons/EditIcon'
-import TrashIcon from '@/components/icons/TrashIcon'
-import EyeIcon from '@/components/icons/EyeIcon'
-import { getAllStores, getStoreStats, deleteStore, Store, StoreStats } from '@/services/stores'
-import useLoading from '@/hooks/useLoading'
-import { getStoreStatusConfig } from '@/types/enums'
-import { formatDateToPersianJalali, formatPhoneNumber } from '@/helpers'
-import StoreFormModal from '@/components/modals/StoreFormModal'
-import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal'
-import StoreViewModal from '@/components/modals/StoreViewModal'
+import StoreIcon from "@/components/icons/ChartTreeIcon";
+import EditIcon from "@/components/icons/EditIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
+import EyeIcon from "@/components/icons/EyeIcon";
+import {
+  getAllStores,
+  getStoreStats,
+  deleteStore,
+  Store,
+  StoreStats,
+} from "@/services/stores";
+import useLoading from "@/hooks/useLoading";
+import { getStoreStatusConfig } from "@/types/enums";
+import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
+import StoreFormModal from "@/components/modals/StoreFormModal";
+import DeleteConfirmModal from "@/components/modals/DeleteConfirmModal";
+import StoreViewModal from "@/components/modals/StoreViewModal";
 
 const AdminStores = () => {
-  const { setLoading } = useLoading()
-  
-  const [stores, setStores] = useState<Store[]>([])
+  const { setLoading } = useLoading();
+
+  const [stores, setStores] = useState<Store[]>([]);
   const [stats, setStats] = useState<StoreStats>({
     total: 0,
     active: 0,
     pending: 0,
     deleted: 0,
-    suspended: 0
-  })
-  const [error, setError] = useState<string | null>(null)
+    suspended: 0,
+  });
+  const [error, setError] = useState<string | null>(null);
 
   // Store form modal state
   const [storeFormModal, setStoreFormModal] = useState({
     isOpen: false,
-    storeId: undefined as string | undefined
-  })
+    storeId: undefined as string | undefined,
+  });
 
   // Store view modal state
   const [storeViewModal, setStoreViewModal] = useState({
     isOpen: false,
-    storeId: undefined as string | undefined
-  })
+    storeId: undefined as string | undefined,
+  });
 
   // Delete confirmation modal state
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
-    storeId: '',
-    storeName: '',
-    isLoading: false
-  })
+    storeId: "",
+    storeName: "",
+    isLoading: false,
+  });
 
   useEffect(() => {
-    fetchStores()
-    fetchStats()
-  }, [])
+    fetchStores();
+    fetchStats();
+  }, []);
 
   const fetchStores = async () => {
     try {
-      setLoading(true)
-      setError(null)
-      const response = await getAllStores({ page: 1, limit: 50 })
-      setStores(response.data)
+      setLoading(true);
+      setError(null);
+      const response = await getAllStores({ page: 1, limit: 50 });
+      setStores(response.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری فروشگاه‌ها')
+      setError(
+        err instanceof Error ? err.message : "خطا در بارگذاری فروشگاه‌ها",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchStats = async () => {
     try {
-      const statsData = await getStoreStats()
-      setStats(statsData)
+      const statsData = await getStoreStats();
+      setStats(statsData);
     } catch (err) {
-      console.error('Error fetching stats:', err)
+      console.error("Error fetching stats:", err);
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
-    return getStoreStatusConfig(status).color
-  }
+    return getStoreStatusConfig(status).color;
+  };
 
   const getStatusText = (status: string) => {
-    return getStoreStatusConfig(status).text
-  }
+    return getStoreStatusConfig(status).text;
+  };
 
   const formatDate = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return formatDateToPersianJalali(date)
-  }
+    const date =
+      typeof dateString === "string" ? new Date(dateString) : dateString;
+    return formatDateToPersianJalali(date);
+  };
 
-
-  const getAddressText = (address: Store['address']) => {
-    const parts = []
-    if (address.city) parts.push(address.city)
-    if (address.province) parts.push(address.province)
-    return parts.join('، ') || 'آدرس ثبت نشده'
-  }
+  const getAddressText = (address: Store["address"]) => {
+    const parts = [];
+    if (address.city) parts.push(address.city);
+    if (address.province) parts.push(address.province);
+    return parts.join("، ") || "آدرس ثبت نشده";
+  };
 
   const handleViewStore = (storeId: string) => {
     setStoreViewModal({
       isOpen: true,
-      storeId
-    })
-  }
+      storeId,
+    });
+  };
 
   const handleEditStore = (storeId: string) => {
     setStoreFormModal({
       isOpen: true,
-      storeId
-    })
-  }
+      storeId,
+    });
+  };
 
   const handleDeleteStore = (storeId: string) => {
-    const store = stores.find(s => s.id === storeId)
+    const store = stores.find((s) => s.id === storeId);
     setDeleteModal({
       isOpen: true,
       storeId,
-      storeName: store?.name || 'نامشخص',
-      isLoading: false
-    })
-  }
+      storeName: store?.name || "نامشخص",
+      isLoading: false,
+    });
+  };
 
   const handleDeleteConfirm = async () => {
     try {
-      setDeleteModal(prev => ({ ...prev, isLoading: true }))
-      await deleteStore(deleteModal.storeId)
-      await fetchStores() // Refresh the list
-      await fetchStats() // Refresh stats
+      setDeleteModal((prev) => ({ ...prev, isLoading: true }));
+      await deleteStore(deleteModal.storeId);
+      await fetchStores(); // Refresh the list
+      await fetchStats(); // Refresh stats
       setDeleteModal({
         isOpen: false,
-        storeId: '',
-        storeName: '',
-        isLoading: false
-      })
+        storeId: "",
+        storeName: "",
+        isLoading: false,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در حذف فروشگاه')
-      setDeleteModal(prev => ({ ...prev, isLoading: false }))
+      setError(err instanceof Error ? err.message : "خطا در حذف فروشگاه");
+      setDeleteModal((prev) => ({ ...prev, isLoading: false }));
     }
-  }
+  };
 
   const handleAddStore = () => {
     setStoreFormModal({
       isOpen: true,
-      storeId: undefined
-    })
-  }
+      storeId: undefined,
+    });
+  };
 
   const handleStoreFormSuccess = () => {
-    fetchStores() // Refresh the list
-    fetchStats() // Refresh stats
-  }
+    fetchStores(); // Refresh the list
+    fetchStats(); // Refresh stats
+  };
 
   const handleStoreViewSuccess = () => {
-    fetchStores() // Refresh the list
-    fetchStats() // Refresh stats
-  }
+    fetchStores(); // Refresh the list
+    fetchStats(); // Refresh stats
+  };
 
   if (error) {
     return (
@@ -171,7 +186,7 @@ const AdminStores = () => {
           </CardBody>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -181,8 +196,12 @@ const AdminStores = () => {
         <div className="flex items-center gap-3">
           <StoreIcon className="size-8 text-success" />
           <div>
-            <h1 className="text-2xl font-bold text-text-dark">مدیریت فروشگاه‌ها</h1>
-            <p className="text-text-light">مشاهده و مدیریت تمام فروشگاه‌های سیستم</p>
+            <h1 className="text-2xl font-bold text-text-dark">
+              مدیریت فروشگاه‌ها
+            </h1>
+            <p className="text-text-light">
+              مشاهده و مدیریت تمام فروشگاه‌های سیستم
+            </p>
           </div>
         </div>
         <Button
@@ -201,7 +220,9 @@ const AdminStores = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-text-light mb-1">فروشگاه‌های فعال</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.active}</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {stats.active}
+                </p>
               </div>
               <StoreIcon className="size-8 text-success" />
             </div>
@@ -213,7 +234,9 @@ const AdminStores = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-text-light mb-1">در انتظار تایید</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.pending}</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {stats.pending}
+                </p>
               </div>
               <StoreIcon className="size-8 text-warning" />
             </div>
@@ -225,7 +248,9 @@ const AdminStores = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-text-light mb-1">معلق</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.suspended}</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {stats.suspended}
+                </p>
               </div>
               <StoreIcon className="size-8 text-danger" />
             </div>
@@ -237,7 +262,9 @@ const AdminStores = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-text-light mb-1">حذف شده</p>
-                <p className="text-2xl font-bold text-text-dark">{stats.deleted}</p>
+                <p className="text-2xl font-bold text-text-dark">
+                  {stats.deleted}
+                </p>
               </div>
               <StoreIcon className="size-8 text-default" />
             </div>
@@ -248,7 +275,9 @@ const AdminStores = () => {
       {/* Stores Table */}
       <Card className="border-1">
         <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست فروشگاه‌ها</h3>
+          <h3 className="text-lg font-semibold text-text-dark">
+            لیست فروشگاه‌ها
+          </h3>
         </CardHeader>
         <CardBody className="p-0">
           <Table aria-label="لیست فروشگاه‌ها">
@@ -272,7 +301,9 @@ const AdminStores = () => {
                       </div>
                       <div>
                         <span className="font-medium">{store.name}</span>
-                        <p className="text-xs text-text-light">{formatPhoneNumber(store.phoneNumber)}</p>
+                        <p className="text-xs text-text-light">
+                          {formatPhoneNumber(store.phoneNumber)}
+                        </p>
                       </div>
                     </div>
                   </TableCell>
@@ -287,15 +318,21 @@ const AdminStores = () => {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <span className="text-sm">{getAddressText(store.address)}</span>
+                      <span className="text-sm">
+                        {getAddressText(store.address)}
+                      </span>
                       <p className="text-xs text-text-light">
-                        {store.address.fullAddress ? store.address.fullAddress.substring(0, 30) + '...' : 'آدرس کامل ثبت نشده'}
+                        {store.address.fullAddress
+                          ? store.address.fullAddress.substring(0, 30) + "..."
+                          : "آدرس کامل ثبت نشده"}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="text-center">
-                      <span className="font-medium">{store.promotions?.length || 0}</span>
+                      <span className="font-medium">
+                        {store.promotions?.length || 0}
+                      </span>
                       <p className="text-xs text-text-light">تبلیغ فعال</p>
                     </div>
                   </TableCell>
@@ -344,7 +381,9 @@ const AdminStores = () => {
       {/* Store Form Modal */}
       <StoreFormModal
         isOpen={storeFormModal.isOpen}
-        onOpenChange={(isOpen) => setStoreFormModal(prev => ({ ...prev, isOpen }))}
+        onOpenChange={(isOpen) =>
+          setStoreFormModal((prev) => ({ ...prev, isOpen }))
+        }
         onSuccess={handleStoreFormSuccess}
         storeId={storeFormModal.storeId}
       />
@@ -352,7 +391,9 @@ const AdminStores = () => {
       {/* Store View Modal */}
       <StoreViewModal
         isOpen={storeViewModal.isOpen}
-        onOpenChange={(isOpen) => setStoreViewModal(prev => ({ ...prev, isOpen }))}
+        onOpenChange={(isOpen) =>
+          setStoreViewModal((prev) => ({ ...prev, isOpen }))
+        }
         onEdit={handleEditStore}
         onDelete={handleDeleteStore}
         onSuccess={handleStoreViewSuccess}
@@ -362,7 +403,9 @@ const AdminStores = () => {
       {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={deleteModal.isOpen}
-        onOpenChange={(isOpen) => setDeleteModal(prev => ({ ...prev, isOpen }))}
+        onOpenChange={(isOpen) =>
+          setDeleteModal((prev) => ({ ...prev, isOpen }))
+        }
         onConfirm={handleDeleteConfirm}
         title="حذف فروشگاه"
         message="آیا از حذف این فروشگاه اطمینان دارید؟"
@@ -370,7 +413,7 @@ const AdminStores = () => {
         isLoading={deleteModal.isLoading}
       />
     </div>
-  )
-}
+  );
+};
 
-export default AdminStores
+export default AdminStores;

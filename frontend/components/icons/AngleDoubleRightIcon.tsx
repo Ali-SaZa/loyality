@@ -1,4 +1,7 @@
-export default function AngleDoubleRightIcon({ className = 'size-6', color = '#3A4D9A' }) {
+export default function AngleDoubleRightIcon({
+  className = "size-6",
+  color = "#3A4D9A",
+}) {
   return (
     <svg
       className={className}
@@ -15,5 +18,5 @@ export default function AngleDoubleRightIcon({ className = 'size-6', color = '#3
         fill={color}
       />
     </svg>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   Navbar as NextUINavbar,
   NavbarBrand,
@@ -7,63 +7,65 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-} from '@heroui/navbar'
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown'
-import { Button as NextUiButton } from '@heroui/button'
-import React, { useState } from 'react'
-import { Accordion, AccordionItem } from '@heroui/accordion'
-import { Link } from '@heroui/link'
-import { usePathname } from 'next/navigation'
+} from "@heroui/navbar";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/dropdown";
+import { Button as NextUiButton } from "@heroui/button";
+import React, { useState } from "react";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Link } from "@heroui/link";
+import { usePathname } from "next/navigation";
 
-import UserDropdown from '../ui/UserDropdown'
-import CloseIcon from '../icons/CloseIcon'
-import MenuBurgerIcon from '../icons/MenuBurgerIcon'
-import AngleDownIcon from '../icons/AngleDownIcon'
-import LogoContainer from '../ui/ObsLogo'
+import UserDropdown from "../ui/UserDropdown";
+import CloseIcon from "../icons/CloseIcon";
+import MenuBurgerIcon from "../icons/MenuBurgerIcon";
+import AngleDownIcon from "../icons/AngleDownIcon";
+import LogoContainer from "../ui/ObsLogo";
 
-import { siteConfig } from '@/config/site'
-import useAuth from '@/hooks/useAuth'
-import useWindowSize from '@/hooks/useWindowSize'
-import Button from '@/components/formElements/Button'
-import useAlertModal from '@/hooks/useAlertModal'
+import { siteConfig } from "@/config/site";
+import useAuth from "@/hooks/useAuth";
+import useWindowSize from "@/hooks/useWindowSize";
+import Button from "@/components/formElements/Button";
+import useAlertModal from "@/hooks/useAlertModal";
 
 const Navbar = () => {
-  const { user, logout } = useAuth()
-  const { showAlert } = useAlertModal()
-  const { width } = useWindowSize()
-  const pathname = usePathname()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user, logout } = useAuth();
+  const { showAlert } = useAlertModal();
+  const { width } = useWindowSize();
+  const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const accordionItemClasses = {
-    base: 'border-b',
-    title: 'text-medium text-text-default',
-    content: 'pr-4 pt-0 text-sm bg-background-50 rounded-lg',
-  }
+    base: "border-b",
+    title: "text-medium text-text-default",
+    content: "pr-4 pt-0 text-sm bg-background-50 rounded-lg",
+  };
 
   const isActiveNavbarLink = (link: string) => {
-    return pathname === link
-  }
+    return pathname === link;
+  };
 
   return (
     <>
       <NextUINavbar
-        className={`bg-background-primary fixed ${isMenuOpen ? 'bg-background-primary' : 'bg-background-primary/70'} [&_header]:!max-w-[1366px]`}
+        className={`bg-background-primary fixed ${isMenuOpen ? "bg-background-primary" : "bg-background-primary/70"} [&_header]:!max-w-[1366px]`}
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
         <NavbarContent>
           <NavbarMenuToggle
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="lg:hidden"
             icon={!isMenuOpen ? <MenuBurgerIcon /> : <React.Fragment />}
           />
           <NavbarBrand>
             {isMenuOpen ? (
               <div className="-mr-10">
-                <LogoContainer
-                  disableClick
-                  iconSize={150}
-                />
+                <LogoContainer disableClick iconSize={150} />
               </div>
             ) : width < 1024 ? (
               <LogoContainer iconSize={100} />
@@ -72,13 +74,10 @@ const Navbar = () => {
             )}
           </NavbarBrand>
         </NavbarContent>
-        <NavbarContent
-          className="hidden lg:flex gap-4"
-          justify="center"
-        >
+        <NavbarContent className="hidden lg:flex gap-4" justify="center">
           {siteConfig.landingNavbar.map((item: any, index) => {
             switch (item.type) {
-              case 'select':
+              case "select":
                 return (
                   <Dropdown key={index}>
                     <NavbarItem>
@@ -99,7 +98,7 @@ const Navbar = () => {
                       className="w-full"
                       color="primary"
                       itemClasses={{
-                        base: 'gap-4',
+                        base: "gap-4",
                       }}
                       variant="flat"
                     >
@@ -107,14 +106,16 @@ const Navbar = () => {
                         <DropdownItem
                           key={i}
                           href={selectItem.link}
-                          target={selectItem?.target ? selectItem?.target : '_self'}
+                          target={
+                            selectItem?.target ? selectItem?.target : "_self"
+                          }
                         >
                           {selectItem.title}
                         </DropdownItem>
                       ))}
                     </DropdownMenu>
                   </Dropdown>
-                )
+                );
 
               default:
                 return (
@@ -124,32 +125,34 @@ const Navbar = () => {
                   >
                     <Button
                       className="font-normal"
-                      target={item?.target ? item?.target : '_self'}
+                      target={item?.target ? item?.target : "_self"}
                       to={item.link}
-                      variant={isActiveNavbarLink(item.link) ? 'solid' : 'flat'}
+                      variant={isActiveNavbarLink(item.link) ? "solid" : "flat"}
                     >
                       {item.title}
                     </Button>
                   </NavbarItem>
-                )
+                );
             }
           })}
         </NavbarContent>
         {!isMenuOpen ? (
-          <NavbarContent justify="end">{!user ? <Button to="/auth">همین الان ثبت نام کن</Button> : <UserDropdown />}</NavbarContent>
+          <NavbarContent justify="end">
+            {!user ? (
+              <Button to="/auth">همین الان ثبت نام کن</Button>
+            ) : (
+              <UserDropdown />
+            )}
+          </NavbarContent>
         ) : (
-          <Button
-            iconOnly
-            variant="light"
-            onClick={() => setIsMenuOpen(false)}
-          >
+          <Button iconOnly variant="light" onClick={() => setIsMenuOpen(false)}>
             <CloseIcon />
           </Button>
         )}
         <NavbarMenu className="gap-0 bg-white">
           {siteConfig.landingNavbar.map((item: any, index) => {
             switch (item.type) {
-              case 'select':
+              case "select":
                 return (
                   <NavbarMenuItem key={index}>
                     <Accordion
@@ -165,9 +168,11 @@ const Navbar = () => {
                         {item.items.map((selectItem: any, i: number) => (
                           <Link
                             key={i}
-                            className={`${i !== item.items!.length - 1 && 'border-b '} py-3 text-text-dark block text-sm font-light`}
+                            className={`${i !== item.items!.length - 1 && "border-b "} py-3 text-text-dark block text-sm font-light`}
                             href={selectItem.link}
-                            target={selectItem?.target ? selectItem?.target : '_self'}
+                            target={
+                              selectItem?.target ? selectItem?.target : "_self"
+                            }
                             onPress={() => setIsMenuOpen(false)}
                           >
                             {selectItem.title}
@@ -176,7 +181,7 @@ const Navbar = () => {
                       </AccordionItem>
                     </Accordion>
                   </NavbarMenuItem>
-                )
+                );
 
               default:
                 return (
@@ -186,34 +191,28 @@ const Navbar = () => {
                     isActive={isActiveNavbarLink(item.link)}
                   >
                     <Link
-                      className={`text-medium font-light ${isActiveNavbarLink(item.link) ? 'text-primary font-semibold' : 'text-text-dark'} `}
+                      className={`text-medium font-light ${isActiveNavbarLink(item.link) ? "text-primary font-semibold" : "text-text-dark"} `}
                       href={item.link}
-                      target={item?.target ? item?.target : '_self'}
+                      target={item?.target ? item?.target : "_self"}
                       onPress={() => setIsMenuOpen(false)}
                     >
                       {item.title}
                     </Link>
                   </NavbarMenuItem>
-                )
+                );
             }
           })}
 
-          <NavbarMenuItem
-            key="item6"
-            className="mt-6"
-          >
+          <NavbarMenuItem key="item6" className="mt-6">
             {!user ? (
-              <Button
-                fullWidth
-                to="/auth"
-              >
+              <Button fullWidth to="/auth">
                 همین الان ثبت نام کن
               </Button>
             ) : (
               <Button
                 fullWidth
                 color="danger"
-                onClick={() => showAlert('برای خروج مطمئن هستید؟', logout)}
+                onClick={() => showAlert("برای خروج مطمئن هستید؟", logout)}
               >
                 خروج
               </Button>
@@ -222,7 +221,7 @@ const Navbar = () => {
         </NavbarMenu>
       </NextUINavbar>
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

@@ -10,12 +10,19 @@ import {
   HttpStatus,
   Query,
   ForbiddenException,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { PromoCodesService } from './promo-codes.service';
-import { 
-  CreatePromoCodeDto, 
-  UpdatePromoCodeDto, 
+} from "@nestjs/common";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+  ApiQuery,
+} from "@nestjs/swagger";
+import { PromoCodesService } from "./promo-codes.service";
+import {
+  CreatePromoCodeDto,
+  UpdatePromoCodeDto,
   ChangePromoCodeStatusDto,
   ValidatePromoCodeDto,
   PromoCodeResponseDto,
@@ -27,53 +34,61 @@ import {
   GetUserPromoCodesDto,
   RegisterWithPromoCodeDto,
   VerifyPromoRegistrationDto,
-  PromoRegistrationResponseDto
-} from '../dto';
-import { PromotionAuth, AdminAuth, PromoCodeAuth, StoreOrAdminAuth } from '../common/security';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { Public } from '../auth/decorators/public.decorator';
-import { ListRequestDto } from '../common/dto/list.dto';
+  PromoRegistrationResponseDto,
+} from "../dto";
+import {
+  PromotionAuth,
+  AdminAuth,
+  PromoCodeAuth,
+  StoreOrAdminAuth,
+} from "../common/security";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
+import { Public } from "../auth/decorators/public.decorator";
+import { ListRequestDto } from "../common/dto/list.dto";
 
-@ApiTags('promo-codes')
-@Controller('promo-codes')
+@ApiTags("promo-codes")
+@Controller("promo-codes")
 export class PromoCodesController {
   constructor(private readonly promoCodesService: PromoCodesService) {}
 
   @Post()
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new promo code (Store/Admin only)' })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Promo code created successfully',
-    type: PromoCodeResponseDto 
+  @ApiOperation({ summary: "Create a new promo code (Store/Admin only)" })
+  @ApiResponse({
+    status: 201,
+    description: "Promo code created successfully",
+    type: PromoCodeResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  @ApiResponse({ status: 409, description: 'Promo code already exists' })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 409, description: "Promo code already exists" })
   async create(
     @Body() createPromoCodeDto: CreatePromoCodeDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeResponseDto> {
     return this.promoCodesService.create(createPromoCodeDto, user);
   }
 
-  @Post('bulk')
+  @Post("bulk")
   @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create multiple promo codes at once with optional prefix (Store/Admin only)' })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Promo codes created successfully',
-    type: [PromoCodeResponseDto]
+  @ApiOperation({
+    summary:
+      "Create multiple promo codes at once with optional prefix (Store/Admin only)",
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({
+    status: 201,
+    description: "Promo codes created successfully",
+    type: [PromoCodeResponseDto],
+  })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async bulkCreate(
     @Body() bulkCreateDto: BulkCreatePromoCodesDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeResponseDto[]> {
     return this.promoCodesService.bulkCreate(bulkCreateDto, user);
   }
@@ -81,45 +96,58 @@ export class PromoCodesController {
   @Get()
   @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all promo codes with pagination and filtering (Store/Admin only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promo codes retrieved successfully',
-    type: PromoCodeListResponseDto 
+  @ApiOperation({
+    summary:
+      "Get all promo codes with pagination and filtering (Store/Admin only)",
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
+  @ApiResponse({
+    status: 200,
+    description: "Promo codes retrieved successfully",
+    type: PromoCodeListResponseDto,
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Store/Admin access required",
+  })
   async findAll(
     @Query() listRequest: ListRequestDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeListResponseDto> {
     return this.promoCodesService.findAll(listRequest, user);
   }
 
-  @Get('stats')
+  @Get("stats")
   @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promo code statistics (Store/Admin only)' })
-  @ApiQuery({ name: 'promotionId', required: false, description: 'Filter by specific promotion ID (Admin only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Statistics retrieved successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        total: { type: 'number' },
-        unused: { type: 'number' },
-        used: { type: 'number' },
-        registered: { type: 'number' },
-        deleted: { type: 'number' }
-      }
-    }
+  @ApiOperation({ summary: "Get promo code statistics (Store/Admin only)" })
+  @ApiQuery({
+    name: "promotionId",
+    required: false,
+    description: "Filter by specific promotion ID (Admin only)",
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
+  @ApiResponse({
+    status: 200,
+    description: "Statistics retrieved successfully",
+    schema: {
+      type: "object",
+      properties: {
+        total: { type: "number" },
+        unused: { type: "number" },
+        used: { type: "number" },
+        registered: { type: "number" },
+        deleted: { type: "number" },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Store/Admin access required",
+  })
   async getStats(
-    @Query('promotionId') promotionId?: string,
-    @CurrentUser() user?: any
+    @Query("promotionId") promotionId?: string,
+    @CurrentUser() user?: any,
   ): Promise<{
     total: number;
     unused: number;
@@ -130,247 +158,286 @@ export class PromoCodesController {
     return this.promoCodesService.getStats(promotionId, user);
   }
 
-  @Get(':id')
+  @Get(":id")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get a specific promo code by ID (Store/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promo code ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promo code found',
-    type: PromoCodeResponseDto 
+  @ApiOperation({
+    summary: "Get a specific promo code by ID (Store/Admin only)",
   })
-  @ApiResponse({ status: 404, description: 'Promo code not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiParam({ name: "id", description: "Promo code ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promo code found",
+    type: PromoCodeResponseDto,
+  })
+  @ApiResponse({ status: 404, description: "Promo code not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async findOne(
-    @Param('id') id: string,
-    @CurrentUser() user: any
+    @Param("id") id: string,
+    @CurrentUser() user: any,
   ): Promise<PromoCodeResponseDto> {
     return this.promoCodesService.findOne(id, user);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update a promo code (Store/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promo code ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promo code updated successfully',
-    type: PromoCodeResponseDto 
+  @ApiOperation({ summary: "Update a promo code (Store/Admin only)" })
+  @ApiParam({ name: "id", description: "Promo code ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promo code updated successfully",
+    type: PromoCodeResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 404, description: 'Promo code not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 404, description: "Promo code not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async update(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updatePromoCodeDto: UpdatePromoCodeDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeResponseDto> {
     return this.promoCodesService.update(id, updatePromoCodeDto, user);
   }
 
-  @Patch(':id/status')
+  @Patch(":id/status")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update promo code status (Store/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promo code ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promo code status updated successfully',
-    type: PromoCodeResponseDto 
+  @ApiOperation({ summary: "Update promo code status (Store/Admin only)" })
+  @ApiParam({ name: "id", description: "Promo code ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promo code status updated successfully",
+    type: PromoCodeResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 404, description: 'Promo code not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 404, description: "Promo code not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async updateStatus(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() changeStatusDto: ChangePromoCodeStatusDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeResponseDto> {
     return this.promoCodesService.updateStatus(id, changeStatusDto, user);
   }
 
-  @Post('validate')
+  @Post("validate")
   @PromoCodeAuth()
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Validate a promo code for store use (Store/Admin only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Validation result',
-    type: PromoCodeValidationResponseDto 
+  @ApiOperation({
+    summary: "Validate a promo code for store use (Store/Admin only)",
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({
+    status: 200,
+    description: "Validation result",
+    type: PromoCodeValidationResponseDto,
+  })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async validateCode(
     @Body() validateDto: ValidatePromoCodeDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeValidationResponseDto> {
     return this.promoCodesService.validateCode(validateDto, user);
   }
 
-  @Post('register')
+  @Post("register")
   @PromoCodeAuth()
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Register a promo code to a user (Customer only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promo code registered successfully',
-    type: PromoCodeResponseDto 
+  @ApiOperation({ summary: "Register a promo code to a user (Customer only)" })
+  @ApiResponse({
+    status: 200,
+    description: "Promo code registered successfully",
+    type: PromoCodeResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  @ApiResponse({ status: 404, description: 'Promo code or user not found' })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 404, description: "Promo code or user not found" })
   async registerCodeToUser(
     @Body() registerDto: RegisterPromoCodeDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeResponseDto> {
     // Ensure customer can only register codes to their own phone number
-    if (user.role !== 'customer' || user.phoneNumber !== registerDto.phoneNumber) {
-      throw new ForbiddenException('You can only register codes to your own phone number');
+    if (
+      user.role !== "customer" ||
+      user.phoneNumber !== registerDto.phoneNumber
+    ) {
+      throw new ForbiddenException(
+        "You can only register codes to your own phone number",
+      );
     }
-    return this.promoCodesService.registerCodeToUser(registerDto.code, registerDto.phoneNumber);
+    return this.promoCodesService.registerCodeToUser(
+      registerDto.code,
+      registerDto.phoneNumber,
+    );
   }
 
-  @Get('user/:phoneNumber')
+  @Get("user/:phoneNumber")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all promo codes registered to a user by phone number (Store/Admin only)' })
-  @ApiParam({ name: 'phoneNumber', description: 'User phone number' })
-  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by specific store ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'User promo codes retrieved successfully',
-    type: UserPromoCodesResponseDto
+  @ApiOperation({
+    summary:
+      "Get all promo codes registered to a user by phone number (Store/Admin only)",
   })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiParam({ name: "phoneNumber", description: "User phone number" })
+  @ApiQuery({
+    name: "storeId",
+    required: false,
+    description: "Filter by specific store ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "User promo codes retrieved successfully",
+    type: UserPromoCodesResponseDto,
+  })
+  @ApiResponse({ status: 404, description: "User not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async getUserPromoCodes(
-    @Param('phoneNumber') phoneNumber: string,
-    @Query('storeId') storeId?: string,
-    @CurrentUser() user?: any
+    @Param("phoneNumber") phoneNumber: string,
+    @Query("storeId") storeId?: string,
+    @CurrentUser() user?: any,
   ): Promise<UserPromoCodesResponseDto> {
     return this.promoCodesService.getUserPromoCodes(phoneNumber, storeId, user);
   }
 
-  @Get('promotion/:promotionId')
+  @Get("promotion/:promotionId")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all promo codes for a specific promotion (Store/Admin only)' })
-  @ApiParam({ name: 'promotionId', description: 'Promotion ID' })
-  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
-  @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promo codes for promotion retrieved successfully',
-    type: PromoCodeListResponseDto
+  @ApiOperation({
+    summary: "Get all promo codes for a specific promotion (Store/Admin only)",
   })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiParam({ name: "promotionId", description: "Promotion ID" })
+  @ApiQuery({ name: "page", required: false, description: "Page number" })
+  @ApiQuery({ name: "limit", required: false, description: "Items per page" })
+  @ApiQuery({
+    name: "status",
+    required: false,
+    description: "Filter by status",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Promo codes for promotion retrieved successfully",
+    type: PromoCodeListResponseDto,
+  })
+  @ApiResponse({ status: 404, description: "Promotion not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async getPromoCodesByPromotion(
-    @Param('promotionId') promotionId: string,
+    @Param("promotionId") promotionId: string,
     @Query() query: any,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromoCodeListResponseDto> {
     const request: ListRequestDto = {
       page: parseInt(query.page) || 1,
       limit: parseInt(query.limit) || 20,
       search: query.search,
-      searchFields: query.searchFields ? query.searchFields.split(',') : ['code', 'notes'],
+      searchFields: query.searchFields
+        ? query.searchFields.split(",")
+        : ["code", "notes"],
       sort: query.sort ? JSON.parse(query.sort) : [],
-      filters: query.filters ? JSON.parse(query.filters) : {}
+      filters: query.filters ? JSON.parse(query.filters) : {},
     };
 
     // Add promotion filter
     const additionalFilters = { promotionId };
-    
+
     return this.promoCodesService.findAll(request, user, additionalFilters);
   }
 
-  @Get('my-codes')
+  @Get("my-codes")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user\'s promo codes (Customer only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'User\'s promo codes retrieved successfully',
-    type: UserPromoCodesResponseDto
+  @ApiOperation({ summary: "Get current user's promo codes (Customer only)" })
+  @ApiResponse({
+    status: 200,
+    description: "User's promo codes retrieved successfully",
+    type: UserPromoCodesResponseDto,
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   async getMyPromoCodes(
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<UserPromoCodesResponseDto> {
-    if (user.role !== 'customer') {
-      throw new ForbiddenException('Only customers can access their own promo codes');
+    if (user.role !== "customer") {
+      throw new ForbiddenException(
+        "Only customers can access their own promo codes",
+      );
     }
-    return this.promoCodesService.getUserPromoCodes(user.phoneNumber, undefined, user);
+    return this.promoCodesService.getUserPromoCodes(
+      user.phoneNumber,
+      undefined,
+      user,
+    );
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete a promo code (Store/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promo code ID' })
-  @ApiResponse({ status: 204, description: 'Promo code deleted successfully' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 404, description: 'Promo code not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiOperation({ summary: "Delete a promo code (Store/Admin only)" })
+  @ApiParam({ name: "id", description: "Promo code ID" })
+  @ApiResponse({ status: 204, description: "Promo code deleted successfully" })
+  @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 404, description: "Promo code not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
-    @Param('id') id: string,
-    @CurrentUser() user: any
+    @Param("id") id: string,
+    @CurrentUser() user: any,
   ): Promise<void> {
     return this.promoCodesService.remove(id, user);
   }
 
-  @Post('register/send-otp')
+  @Post("register/send-otp")
   @Public()
-  @ApiOperation({ summary: 'Send OTP for promo code registration' })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'OTP sent successfully',
+  @ApiOperation({ summary: "Send OTP for promo code registration" })
+  @ApiResponse({
+    status: 201,
+    description: "OTP sent successfully",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        message: { type: 'string', example: 'کد تأیید ارسال شد' },
-        otpId: { type: 'string', example: '507f1f77bcf86cd799439011' }
-      }
-    }
+        message: { type: "string", example: "کد تأیید ارسال شد" },
+        otpId: { type: "string", example: "507f1f77bcf86cd799439011" },
+      },
+    },
   })
-  @ApiResponse({ status: 400, description: 'Bad request - Invalid promo code or phone number' })
-  @ApiResponse({ status: 404, description: 'Promo code not found' })
+  @ApiResponse({
+    status: 400,
+    description: "Bad request - Invalid promo code or phone number",
+  })
+  @ApiResponse({ status: 404, description: "Promo code not found" })
   @HttpCode(HttpStatus.CREATED)
   async sendOtpForPromoRegistration(
-    @Body() registerDto: RegisterWithPromoCodeDto
+    @Body() registerDto: RegisterWithPromoCodeDto,
   ): Promise<{ message: string; otpId: string }> {
     return this.promoCodesService.sendOtpForPromoRegistration(registerDto);
   }
 
-  @Post('register/verify')
+  @Post("register/verify")
   @Public()
-  @ApiOperation({ summary: 'Verify OTP and complete promo code registration' })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Registration completed successfully',
-    type: PromoRegistrationResponseDto
+  @ApiOperation({ summary: "Verify OTP and complete promo code registration" })
+  @ApiResponse({
+    status: 201,
+    description: "Registration completed successfully",
+    type: PromoRegistrationResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request - Invalid OTP or promo code' })
-  @ApiResponse({ status: 404, description: 'Promo code or store not found' })
+  @ApiResponse({
+    status: 400,
+    description: "Bad request - Invalid OTP or promo code",
+  })
+  @ApiResponse({ status: 404, description: "Promo code or store not found" })
   @HttpCode(HttpStatus.CREATED)
   async verifyPromoRegistration(
-    @Body() verifyDto: VerifyPromoRegistrationDto
+    @Body() verifyDto: VerifyPromoRegistrationDto,
   ): Promise<PromoRegistrationResponseDto> {
     return this.promoCodesService.verifyPromoRegistration(verifyDto);
   }

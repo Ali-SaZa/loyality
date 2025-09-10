@@ -1,4 +1,4 @@
-export default function JobIcon({ className = 'size-6' }) {
+export default function JobIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -27,5 +27,5 @@ export default function JobIcon({ className = 'size-6' }) {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }

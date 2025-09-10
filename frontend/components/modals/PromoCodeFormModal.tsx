@@ -1,124 +1,148 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'react-hot-toast'
+"use client";
+import { useState, useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-hot-toast";
 
-import Modal from './Modal'
-import Input from '@/components/formElements/Input'
-import Button from '@/components/formElements/Button'
-import useLoading from '@/hooks/useLoading'
-import { CreatePromoCodeValidation, UpdatePromoCodeValidation, CreatePromoCodeData, UpdatePromoCodeData } from '@/validation/promoCode'
-import { PromoCode, getPromoCodeById, createPromoCode, updatePromoCode, CreatePromoCodeRequest, UpdatePromoCodeRequest } from '@/services/promo-codes'
-import { Promotion } from '@/services/promotions'
+import Modal from "./Modal";
+import Input from "@/components/formElements/Input";
+import Button from "@/components/formElements/Button";
+import useLoading from "@/hooks/useLoading";
+import {
+  CreatePromoCodeValidation,
+  UpdatePromoCodeValidation,
+  CreatePromoCodeData,
+  UpdatePromoCodeData,
+} from "@/validation/promoCode";
+import {
+  PromoCode,
+  getPromoCodeById,
+  createPromoCode,
+  updatePromoCode,
+  CreatePromoCodeRequest,
+  UpdatePromoCodeRequest,
+} from "@/services/promo-codes";
+import { Promotion } from "@/services/promotions";
 
 interface PromoCodeFormModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSuccess?: () => void
-  promoCodeId?: string // If provided, it's edit mode
-  promotions: Promotion[]
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+  promoCodeId?: string; // If provided, it's edit mode
+  promotions: Promotion[];
 }
 
-const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotions }: PromoCodeFormModalProps) => {
-  const { setLoading } = useLoading()
-  const [promoCode, setPromoCode] = useState<PromoCode | null>(null)
+const PromoCodeFormModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  promoCodeId,
+  promotions,
+}: PromoCodeFormModalProps) => {
+  const { setLoading } = useLoading();
+  const [promoCode, setPromoCode] = useState<PromoCode | null>(null);
 
-  const isEditMode = !!promoCodeId
+  const isEditMode = !!promoCodeId;
 
   const methods = useForm<CreatePromoCodeData | UpdatePromoCodeData>({
-    resolver: zodResolver(isEditMode ? UpdatePromoCodeValidation : CreatePromoCodeValidation),
+    resolver: zodResolver(
+      isEditMode ? UpdatePromoCodeValidation : CreatePromoCodeValidation,
+    ),
     defaultValues: {
-      code: '',
-      promotionId: '',
-      notes: ''
-    }
-  })
+      code: "",
+      promotionId: "",
+      notes: "",
+    },
+  });
 
   useEffect(() => {
     if (isOpen) {
       if (isEditMode && promoCodeId) {
-        fetchPromoCode(promoCodeId)
+        fetchPromoCode(promoCodeId);
       } else {
         // Reset form for create mode
         methods.reset({
-          code: '',
-          promotionId: '',
-          notes: ''
-        })
+          code: "",
+          promotionId: "",
+          notes: "",
+        });
       }
     }
-  }, [isOpen, isEditMode, promoCodeId])
+  }, [isOpen, isEditMode, promoCodeId]);
 
   const fetchPromoCode = async (promoCodeId: string) => {
     try {
-      setLoading(true)
-      
-      const promoCodeData = await getPromoCodeById(promoCodeId)
-      setPromoCode(promoCodeData)
-      
+      setLoading(true);
+
+      const promoCodeData = await getPromoCodeById(promoCodeId);
+      setPromoCode(promoCodeData);
+
       methods.reset({
         code: promoCodeData.code,
         promotionId: promoCodeData.promotionId,
-        notes: promoCodeData.notes || ''
-      })
+        notes: promoCodeData.notes || "",
+      });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کد تخفیف'
-      toast.error(errorMessage)
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کد تخفیف";
+      toast.error(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const onSubmit = async (data: CreatePromoCodeData | UpdatePromoCodeData) => {
     try {
-      console.log('Form submitted with data:', data)
-      setLoading(true)
-      
+      console.log("Form submitted with data:", data);
+      setLoading(true);
+
       // Transform the data for API
       const transformedData: any = {
-        ...data
-      }
-      
+        ...data,
+      };
+
       // Remove any undefined values to clean up the object
-      Object.keys(transformedData).forEach(key => {
+      Object.keys(transformedData).forEach((key) => {
         if (transformedData[key] === undefined) {
-          delete transformedData[key]
+          delete transformedData[key];
         }
-      })
-      
-      console.log('Transformed data:', transformedData)
-      
+      });
+
+      console.log("Transformed data:", transformedData);
+
       if (isEditMode && promoCodeId) {
-        await updatePromoCode(promoCodeId, transformedData as UpdatePromoCodeRequest)
+        await updatePromoCode(
+          promoCodeId,
+          transformedData as UpdatePromoCodeRequest,
+        );
       } else {
-        await createPromoCode(transformedData as CreatePromoCodeRequest)
+        await createPromoCode(transformedData as CreatePromoCodeRequest);
       }
-      
-      onSuccess?.()
-      onClose()
+
+      onSuccess?.();
+      onClose();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'خطا در ذخیره کد تخفیف'
-      toast.error(errorMessage)
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در ذخیره کد تخفیف";
+      toast.error(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   return (
     <Modal
       isOpen={isOpen}
       onOpenChange={handleClose}
-      title={isEditMode ? 'ویرایش کد تخفیف' : 'افزودن کد تخفیف جدید'}
+      title={isEditMode ? "ویرایش کد تخفیف" : "افزودن کد تخفیف جدید"}
       size="2xl"
     >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               name="code"
@@ -133,10 +157,13 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
               name="promotionId"
               generalType="select"
               label="تبلیغ"
-              selectOptions={promotions.map(promotion => ({
+              selectOptions={promotions.map((promotion) => ({
                 code: promotion.id,
-                name: promotion.status === 'deleted' ? `${promotion.title} (حذف شده)` : promotion.title,
-                disabled: promotion.status === 'deleted' // Disable deleted promotions
+                name:
+                  promotion.status === "deleted"
+                    ? `${promotion.title} (حذف شده)`
+                    : promotion.title,
+                disabled: promotion.status === "deleted", // Disable deleted promotions
               }))}
               placeholder="انتخاب تبلیغ"
               description="تبلیغی که این کد به آن تعلق دارد"
@@ -153,24 +180,17 @@ const PromoCodeFormModal = ({ isOpen, onClose, onSuccess, promoCodeId, promotion
           />
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="submit"
-              color="primary"
-            >
-              {isEditMode ? 'ویرایش' : 'افزودن'}
+            <Button type="submit" color="primary">
+              {isEditMode ? "ویرایش" : "افزودن"}
             </Button>
-            <Button
-              type="button"
-              variant="light"
-              onClick={handleClose}
-            >
+            <Button type="button" variant="light" onClick={handleClose}>
               انصراف
             </Button>
           </div>
         </form>
       </FormProvider>
     </Modal>
-  )
-}
+  );
+};
 
-export default PromoCodeFormModal
+export default PromoCodeFormModal;

@@ -1,4 +1,7 @@
-export default function MenuBurgerIcon({ className = 'size-6', color = '#3A4D9A' }) {
+export default function MenuBurgerIcon({
+  className = "size-6",
+  color = "#3A4D9A",
+}) {
   return (
     <svg
       className={className}
@@ -22,13 +25,9 @@ export default function MenuBurgerIcon({ className = 'size-6', color = '#3A4D9A'
       </g>
       <defs>
         <clipPath id="clip0_410_2259">
-          <rect
-            width="24"
-            height="24"
-            fill="white"
-          />
+          <rect width="24" height="24" fill="white" />
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

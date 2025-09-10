@@ -5,6 +5,7 @@ This guide explains how to configure firewall rules on popular cloud providers t
 ## Common Cloud Providers
 
 ### 1. DigitalOcean
+
 If you're using DigitalOcean, you need to configure their firewall:
 
 1. **Go to DigitalOcean Dashboard**
@@ -26,6 +27,7 @@ Outbound Rules:
 ```
 
 ### 2. AWS EC2
+
 If you're using AWS EC2:
 
 1. **Go to EC2 Dashboard**
@@ -52,6 +54,7 @@ Source: Your IP (for security)
 ```
 
 ### 3. Google Cloud Platform
+
 If you're using GCP:
 
 1. **Go to VPC Network → Firewall**
@@ -70,6 +73,7 @@ Protocols and ports: tcp:3000,3001,27017,22
 ```
 
 ### 4. Azure
+
 If you're using Azure:
 
 1. **Go to Virtual Machines**
@@ -98,6 +102,7 @@ Source: Any
 ```
 
 ### 5. Linode
+
 If you're using Linode:
 
 1. **Go to Firewalls in Linode Dashboard**
@@ -129,21 +134,27 @@ Action: Accept
 ## Complete Setup Process
 
 ### Step 1: Configure Cloud Provider Firewall
+
 Follow the instructions above for your specific cloud provider.
 
 ### Step 2: Configure VPS Firewall
+
 Run the port opening script on your VPS:
+
 ```bash
 ./open-vps-ports.sh
 ```
 
 ### Step 3: Start Services
+
 ```bash
 ./start-docker.sh
 ```
 
 ### Step 4: Test Connectivity
+
 From your local system:
+
 ```bash
 ./test-vps-connectivity.sh
 ```
@@ -151,6 +162,7 @@ From your local system:
 ## Security Recommendations
 
 ### For Production:
+
 1. **Restrict SSH access** to your specific IP address
 2. **Use HTTPS** instead of HTTP (ports 80/443)
 3. **Consider using a reverse proxy** (nginx) to handle traffic
@@ -158,6 +170,7 @@ From your local system:
 5. **Use strong passwords** and JWT secrets
 
 ### For Development:
+
 1. **Allow all traffic** on your app ports for easier testing
 2. **Keep SSH access** restricted to your IP
 3. **Monitor logs** for any suspicious activity

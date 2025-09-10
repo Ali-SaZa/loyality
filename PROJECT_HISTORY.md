@@ -15,9 +15,11 @@
 ## 📖 EXECUTIVE SUMMARY (READ THIS FOR QUICK UNDERSTANDING)
 
 ### What This Project Is
+
 A **Loyalty Program System** - a full-stack application that manages customer rewards, store operations, and transaction tracking for businesses that want to offer scratch card rewards and loyalty points to their customers.
 
 ### Core Business Logic
+
 1. **Users** register and earn loyalty points through purchases
 2. **Stores** can generate and distribute scratch cards to customers
 3. **Scratch Cards** have monetary value and can be redeemed for rewards
@@ -26,6 +28,7 @@ A **Loyalty Program System** - a full-stack application that manages customer re
 6. **Admin Panel** manages stores, users, and system operations
 
 ### Technical Architecture
+
 - **Backend**: NestJS (Node.js + TypeScript) REST API - **100% COMPLETE**
 - **Frontend**: Next.js (React + TypeScript) with modern UI components - **FOUNDATION COMPLETE, IMPLEMENTATION IN PROGRESS**
 - **Database**: MongoDB with Mongoose ODM
@@ -35,6 +38,7 @@ A **Loyalty Program System** - a full-stack application that manages customer re
 - **Structure**: Modular architecture with separate modules for each business domain
 
 ### Current State
+
 - **Backend Foundation**: 100% Complete (project structure, schemas, DTOs, modules)
 - **Backend Implementation**: 100% Complete (all services, controllers, and business logic implemented)
 - **Backend Security**: 100% Complete (comprehensive authorization and security measures)
@@ -44,6 +48,7 @@ A **Loyalty Program System** - a full-stack application that manages customer re
 - **Ready For**: **COMPLETE FRONTEND REBUILD** for Loyalty Program functionality
 
 ### What You Need to Do Next
+
 1. ✅ **Backend Business Logic** - All services fully implemented
 2. ✅ **Backend API Endpoints** - All controllers complete with Swagger docs
 3. ✅ **Backend Security System** - Comprehensive authorization and access control
@@ -57,6 +62,7 @@ A **Loyalty Program System** - a full-stack application that manages customer re
 11. 🔄 **Deployment** - Test Docker setup and deploy
 
 ### Key Files to Understand
+
 - **Backend**: `backend/src/schemas/` - Database models (User, Store, ScratchCard, Transaction, OTP, Admin)
 - **Backend**: `backend/src/dto/` - Data validation and transfer objects
 - **Backend**: `backend/src/users/`, `backend/src/stores/`, `backend/src/scratch-cards/` - Core business modules
@@ -73,11 +79,12 @@ A **Loyalty Program System** - a full-stack application that manages customer re
 
 **Project Name:** Loyalty Program System  
 **Technology Stack:** NestJS (Backend), Next.js (Frontend), MongoDB, Docker  
-**Project Type:** Full-stack loyalty/rewards program system  
+**Project Type:** Full-stack loyalty/rewards program system
 
 ## 🎯 BUSINESS REQUIREMENTS
 
 Based on the business consultation document, this system should handle:
+
 - User registration and authentication
 - Store management
 - Scratch card generation and redemption
@@ -94,8 +101,9 @@ Based on the business consultation document, this system should handle:
 Successfully removed all unnecessary pages and directories that belonged to the "Online Business Simulation" project, keeping only the essential pages for the Loyalty Program:
 
 ### ✅ **PAGES KEPT (Essential for Loyalty Program)**
+
 - **`page.tsx`** - Main dashboard page (after login)
-- **`auth/`** - Login/authentication page  
+- **`auth/`** - Login/authentication page
 - **`error.tsx`** - Error handling page
 - **`global-error.tsx`** - Global error handling
 - **`not-found.tsx`** - 404 page
@@ -103,6 +111,7 @@ Successfully removed all unnecessary pages and directories that belonged to the 
 - **`providers.tsx`** - Context providers
 
 ### ❌ **PAGES DELETED (Not needed for Loyalty Program)**
+
 - **`(landing)/`** - Landing page with simulators, organizations, evaluation questions
 - **`user/`** - User-specific pages (simulators, transactions, bookmarks, evaluators)
 - **`start-evaluation-questions/`** - Evaluation questions system
@@ -114,6 +123,7 @@ Successfully removed all unnecessary pages and directories that belonged to the 
 **Result**: Clean, focused frontend structure ready for Loyalty Program implementation.
 
 ### 🔧 **ADDITIONAL CLEANUP COMPLETED**
+
 - **Removed unused component files**: `SimulatorSortModal.tsx`, `SimulatorFilterModal.tsx`
 - **Cleaned up configuration**: Commented out simulator/organization navigation in `site.tsx`
 - **Updated Header component**: Changed content from "Online Business Simulation" to "Loyalty Program" messaging
@@ -129,18 +139,21 @@ Successfully removed all unnecessary pages and directories that belonged to the 
 
 **Problem**: After login, users were seeing a loading spinner on the main page instead of being automatically redirected to the auth page when not authenticated.
 
-**Root Cause**: 
+**Root Cause**:
+
 1. **Race condition** between middleware and page-level authentication check
 2. **Inefficient redirect logic** using `router.back()` and `router.refresh()`
 3. **Loading spinner showing** during redirect operations
 
 **Solution Implemented**:
+
 1. **Fixed redirect function**: Replaced `routerBackWithRefresh()` with `redirectToDashboard()` using `router.push('/')`
 2. **Enhanced middleware**: Added comprehensive logging and improved authentication flow
 3. **Improved page logic**: Added `isRedirecting` state to prevent loading spinner during redirects
 4. **Better error handling**: Used `router.replace()` instead of `router.push()` for auth redirects
 
 **Files Modified**:
+
 - `frontend/middleware.ts` - Enhanced authentication logic and logging
 - `frontend/app/auth/page.tsx` - Fixed redirect function
 - `frontend/app/page.tsx` - Added redirect state management and improved loading logic
@@ -150,17 +163,20 @@ Successfully removed all unnecessary pages and directories that belonged to the 
 ## 🏗️ ARCHITECTURE & STRUCTURE
 
 ### Backend Framework
+
 - **NestJS** - Modern Node.js framework with TypeScript
 - **MongoDB** - NoSQL database with Mongoose ODM
 - **Docker** - Containerization for development and deployment
 
 ### Frontend Framework
+
 - **Next.js 14** - Modern React framework with App Router
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first CSS framework
 - **Modern UI Components** - Reusable component library
 
 ### Project Structure
+
 ```
 ├── backend/                 # Backend API (NestJS) - ✅ 100% COMPLETE
 │   ├── src/
@@ -190,6 +206,7 @@ Successfully removed all unnecessary pages and directories that belonged to the 
 ## 🚨 **CRITICAL DISCOVERY: FRONTEND PROJECT MISMATCH**
 
 ### **What I Found**
+
 After reviewing both projects thoroughly, I discovered that:
 
 1. **Backend**: ✅ **100% CORRECT** - This is the Loyalty Program API with all business logic implemented
@@ -198,22 +215,26 @@ After reviewing both projects thoroughly, I discovered that:
 ### **Evidence of Frontend Mismatch**
 
 #### **Package.json Analysis**
+
 - **Name**: `"obs-user-frontend"` (OBS = Online Business Simulation)
 - **Description**: Business simulation platform, not loyalty program
 - **Dependencies**: Simulation-specific packages (wavesurfer.js, leaflet, chart.js for business analytics)
 
 #### **Project Structure Analysis**
+
 - **Routes**: `/simulators/`, `/evaluators/`, `/evaluation-questions/` (business simulation routes)
 - **Components**: `SimulatorCard`, `CourseCard`, `AchievementCard` (simulation components)
 - **Services**: `simulations.ts`, `jobCategories.ts`, `skills.ts` (simulation services)
 - **Layout**: RTL Persian layout for business simulation platform
 
 #### **README Analysis**
+
 - **Title**: "Next.js & NextUI Template" for business simulation
 - **Description**: "شبیه ساز آنلاین کسب و کار" (Online Business Simulation)
 - **Meta tags**: All reference business simulation, not loyalty program
 
 ### **What This Means**
+
 - **Backend**: Ready for production use with Loyalty Program
 - **Frontend**: Must be **COMPLETELY REBUILT** for Loyalty Program functionality
 - **Current Frontend**: Can be deleted or moved to separate project
@@ -222,6 +243,7 @@ After reviewing both projects thoroughly, I discovered that:
 ## 📝 WORK COMPLETED
 
 ### 1. Backend Setup & Configuration ✅
+
 - ✅ Created NestJS project structure
 - ✅ Configured TypeScript and ESLint
 - ✅ Set up MongoDB connection
@@ -229,6 +251,7 @@ After reviewing both projects thoroughly, I discovered that:
 - ✅ Added comprehensive README documentation
 
 ### 2. Backend Database Schemas ✅
+
 - ✅ **User Schema** - User registration, authentication, loyalty points
 - ✅ **Store Schema** - Store information and management
 - ✅ **Scratch Card Schema** - Scratch card generation and redemption
@@ -237,6 +260,7 @@ After reviewing both projects thoroughly, I discovered that:
 - ✅ **Admin Schema** - Administrative functionality
 
 ### 3. Backend DTOs (Data Transfer Objects) ✅
+
 - ✅ **User DTOs** - Registration, login, profile updates
 - ✅ **Store DTOs** - Store creation and management
 - ✅ **Scratch Card DTOs** - Card generation and redemption
@@ -244,6 +268,7 @@ After reviewing both projects thoroughly, I discovered that:
 - ✅ **OTP DTOs** - OTP verification requests
 
 ### 4. Backend Core Modules ✅
+
 - ✅ **Users Module** - User management service and controller
 - ✅ **Stores Module** - Store management service and controller
 - ✅ **Scratch Cards Module** - Scratch card service and controller
@@ -252,12 +277,14 @@ After reviewing both projects thoroughly, I discovered that:
 - ✅ **Admins Module** - Admin management service and controller
 
 ### 5. Backend Docker Configuration ✅
+
 - ✅ **Dockerfile** - Application containerization
 - ✅ **docker-compose.yml** - Multi-service orchestration
 - ✅ **mongo-init.js** - MongoDB initialization script
 - ✅ **docker-scripts.sh** - Development automation scripts
 
 ### 6. **NEW: Comprehensive Security System** ✅
+
 - ✅ **JWT Authentication** - Enhanced with userId, issuer, audience validation
 - ✅ **Role-Based Access Control** - Admin, Store, Customer roles
 - ✅ **Resource Authorization** - Comprehensive access control for all resources
@@ -266,24 +293,28 @@ After reviewing both projects thoroughly, I discovered that:
 - ✅ **Input Validation** - Enhanced validation with security options
 
 ### 7. **NEW: Complete Scratch Card Flow** ✅
+
 - ✅ **QR Code Registration** - Customers can register cards via QR scanning
 - ✅ **Access Control** - Proper authorization for viewing registered cards
 - ✅ **User Ownership** - Cards are properly assigned to customers
 - ✅ **Store Isolation** - Store owners can only access their store's cards
 
 ### 8. **NEW: Database Seeding System** ✅
+
 - ✅ **Comprehensive Seeding** - All entities with realistic data
 - ✅ **Modular Architecture** - Separate seeders for each collection
 - ✅ **Environment Awareness** - Different behavior for dev/prod
 - ✅ **Referential Integrity** - Proper relationships between entities
 
 ### 9. **NEW: Enhanced Error Handling** ✅
+
 - ✅ **Persian Language Support** - All error messages in Persian
 - ✅ **Custom Exception Classes** - Entity-specific error handling
 - ✅ **Global Exception Filter** - Consistent error responses
 - ✅ **MongoDB Integration** - Proper database error handling
 
 ### 10. **NEW: Frontend Project Structure** ❌ **WRONG PROJECT**
+
 - ❌ **Next.js 14 Setup** - This is "Online Business Simulation" project
 - ❌ **TypeScript Configuration** - Wrong project configuration
 - ❌ **Project Structure** - Business simulation architecture, not loyalty program
@@ -295,6 +326,7 @@ After reviewing both projects thoroughly, I discovered that:
 ## 🔒 **COMPREHENSIVE SECURITY IMPLEMENTATION**
 
 ### **Critical Security Vulnerability Resolved**
+
 **Problem**: The system had a massive security breach where users could access data they shouldn't have access to.
 
 **Example**: User Ali could access discount codes from Hassan's store by simply knowing the ID.
@@ -302,6 +334,7 @@ After reviewing both projects thoroughly, I discovered that:
 ### **Security Fixes Implemented**
 
 #### **1. JWT Token Enhancement**
+
 - **userId is now ALWAYS included** in JWT tokens
 - Enhanced token validation with issuer/audience claims
 - Strict algorithm restriction (HS256 only)
@@ -310,14 +343,16 @@ After reviewing both projects thoroughly, I discovered that:
 #### **2. Comprehensive Authorization System**
 
 ##### **Resource Authorization Guard**
+
 - `ResourceAuthGuard` - Centralized authorization logic
 - Automatically extracts user context from JWT token
 - Validates user permissions for each resource type
 
 ##### **Authorization Decorators**
+
 ```typescript
 @ScratchCardAuth({ paramName: 'id' })     // Scratch card access
-@StoreAuth({ paramName: 'id' })           // Store access  
+@StoreAuth({ paramName: 'id' })           // Store access
 @UserAuth({ paramName: 'id' })            // User data access
 @TransactionAuth({ paramName: 'id' })     // Transaction access
 @AdminAuth()                              // Admin-only access
@@ -325,18 +360,19 @@ After reviewing both projects thoroughly, I discovered that:
 
 #### **3. Role-Based Access Control Matrix**
 
-| Resource Type | Customer | Store User | Admin |
-|---------------|----------|------------|-------|
-| **Own Profile** | ✅ Full | ✅ Full | ✅ Full |
-| **Other Users** | ❌ None | ⚠️ Store-related only | ✅ Full |
-| **Own Store** | ❌ None | ✅ Full | ✅ Full |
-| **Other Stores** | ⚠️ Read-only | ❌ None | ✅ Full |
-| **Own Scratch Cards** | ✅ Full | ✅ Full | ✅ Full |
-| **Store Scratch Cards** | ❌ None | ✅ Full | ✅ Full |
-| **Own Transactions** | ✅ Full | ✅ Full | ✅ Full |
-| **Store Transactions** | ❌ None | ✅ Full | ✅ Full |
+| Resource Type           | Customer     | Store User            | Admin   |
+| ----------------------- | ------------ | --------------------- | ------- |
+| **Own Profile**         | ✅ Full      | ✅ Full               | ✅ Full |
+| **Other Users**         | ❌ None      | ⚠️ Store-related only | ✅ Full |
+| **Own Store**           | ❌ None      | ✅ Full               | ✅ Full |
+| **Other Stores**        | ⚠️ Read-only | ❌ None               | ✅ Full |
+| **Own Scratch Cards**   | ✅ Full      | ✅ Full               | ✅ Full |
+| **Store Scratch Cards** | ❌ None      | ✅ Full               | ✅ Full |
+| **Own Transactions**    | ✅ Full      | ✅ Full               | ✅ Full |
+| **Store Transactions**  | ❌ None      | ✅ Full               | ✅ Full |
 
 #### **4. Security Features**
+
 - **Two-Layer Authorization**: Guard level + Service level validation
 - **Resource Isolation**: Users can only access their own data
 - **Store Separation**: Store owners can't see other stores' data
@@ -347,6 +383,7 @@ After reviewing both projects thoroughly, I discovered that:
 ### **Security Flow Example**
 
 #### **Before (INSECURE)**:
+
 ```
 1. Ali logs in → gets JWT token
 2. Ali knows Hassan's scratch card ID: "abc123"
@@ -355,6 +392,7 @@ After reviewing both projects thoroughly, I discovered that:
 ```
 
 #### **After (SECURE)**:
+
 ```
 1. Ali logs in → gets JWT token with userId
 2. Ali tries: GET /scratch-cards/abc123
@@ -370,15 +408,18 @@ After reviewing both projects thoroughly, I discovered that:
 ### **Complete Flow Implemented**
 
 #### **1. Admin Creates Encrypted Code**
+
 - Admin creates scratch card with unique code
 - Code is assigned to a specific store
 - Status: `unused`, `userId: null`
 
 #### **2. Store Distributes Code to Customer**
+
 - Store gives the code to their customer
 - Customer receives the QR code (can be scanned)
 
 #### **3. Customer Registers Code via QR**
+
 - **New Endpoint**: `POST /scratch-cards/register/:code`
 - Customer scans QR code and calls this endpoint
 - System validates:
@@ -388,6 +429,7 @@ After reviewing both projects thoroughly, I discovered that:
 - **Result**: `userId` is set to customer's ID, `entryMethod: 'qr'`
 
 #### **4. Customer Views Their Registered Code**
+
 - **New Endpoint**: `GET /scratch-cards/my-cards`
 - Customer can view all their registered scratch cards
 - **Existing Endpoint**: `GET /scratch-cards/:id` (with proper authorization)
@@ -395,9 +437,11 @@ After reviewing both projects thoroughly, I discovered that:
 ### **API Endpoints for Scratch Cards**
 
 #### **Public Endpoints**
+
 - `GET /scratch-cards/code/:code` - Get card info by code (for QR display)
 
 #### **Protected Endpoints**
+
 - `POST /scratch-cards/register/:code` - **NEW**: Register card by QR code
 - `GET /scratch-cards/my-cards` - **NEW**: View own registered cards
 - `GET /scratch-cards/:id` - View specific card (with authorization)
@@ -405,6 +449,7 @@ After reviewing both projects thoroughly, I discovered that:
 - `GET /scratch-cards/store/:storeId` - View store's cards (with authorization)
 
 ### **Security Features for Scratch Cards**
+
 1. **Role-Based Access**: Only customers can register cards
 2. **Duplicate Prevention**: Cards can't be registered by multiple users
 3. **Expiration Check**: Expired cards can't be registered
@@ -414,6 +459,7 @@ After reviewing both projects thoroughly, I discovered that:
 ## 🚨 **FRONTEND IMPLEMENTATION STATUS - CRITICAL ISSUE**
 
 ### **Current Frontend is WRONG PROJECT**
+
 - ❌ **Project Name**: "obs-user-frontend" (Online Business Simulation)
 - ❌ **Business Domain**: Business simulation platform, not loyalty program
 - ❌ **Components**: Simulation-specific (SimulatorCard, CourseCard, etc.)
@@ -422,12 +468,14 @@ After reviewing both projects thoroughly, I discovered that:
 - ❌ **Layout**: Business simulation UI, not loyalty program UI
 
 ### **What Needs to Happen**
+
 1. **Delete Current Frontend**: Remove all simulation-related code
 2. **Create New Frontend**: Build from scratch for Loyalty Program
 3. **Implement Loyalty Features**: User dashboard, store management, scratch card interface
 4. **Connect to Backend**: Integrate with existing Loyalty Program API
 
 ### **New Frontend Requirements**
+
 - **User Interface**: Customer loyalty dashboard, points tracking
 - **Store Interface**: Store owner dashboard, scratch card management
 - **Admin Interface**: System administration, user management
@@ -437,6 +485,7 @@ After reviewing both projects thoroughly, I discovered that:
 ## 🔧 TECHNICAL IMPLEMENTATION DETAILS
 
 ### Backend Database Models
+
 - **User Model**: Includes loyalty points, store association, transaction history
 - **Store Model**: Store details, location, operating hours
 - **Scratch Card Model**: Card generation, redemption status, value
@@ -445,6 +494,7 @@ After reviewing both projects thoroughly, I discovered that:
 - **Admin Model**: Administrative privileges and access control
 
 ### Backend API Endpoints Structure
+
 - **Users**: Registration, login, profile management, loyalty points
 - **Stores**: Store CRUD operations, location management
 - **Scratch Cards**: Generation, redemption, validation, QR registration
@@ -452,6 +502,7 @@ After reviewing both projects thoroughly, I discovered that:
 - **OTP**: Generation, verification, expiration handling
 
 ### Frontend Architecture - **NEEDS COMPLETE REBUILD**
+
 - **Next.js 14**: Modern React framework with App Router
 - **TypeScript**: Full type safety and development experience
 - **Component Library**: Organized business and UI components for LOYALTY PROGRAM
@@ -460,6 +511,7 @@ After reviewing both projects thoroughly, I discovered that:
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 
 ### Security Features
+
 - JWT-based authentication with enhanced security
 - Comprehensive role-based access control
 - Resource-specific authorization
@@ -470,6 +522,7 @@ After reviewing both projects thoroughly, I discovered that:
 ## 🚧 CURRENT STATUS
 
 ### What's Working ✅
+
 - ✅ **Backend**: Complete project structure and architecture
 - ✅ **Backend**: All database schemas defined and implemented
 - ✅ **Backend**: All DTOs created with validation
@@ -487,12 +540,14 @@ After reviewing both projects thoroughly, I discovered that:
 - ✅ **Infrastructure**: Multi-service Docker orchestration
 
 ### What's Broken ❌
+
 - ❌ **Frontend**: Completely wrong project (Online Business Simulation)
 - ❌ **Frontend**: No loyalty program functionality
 - ❌ **Frontend**: Wrong business domain and components
 - ❌ **Frontend**: Cannot be used for Loyalty Program
 
 ### What Needs Implementation 🔄
+
 - 🔄 **Frontend UI Components** - **COMPLETE REBUILD** for Loyalty Program
 - 🔄 **Frontend Authentication** - **COMPLETE REBUILD** for Loyalty Program
 - 🔄 **Frontend Dashboard** - **COMPLETE REBUILD** for Loyalty Program
@@ -501,6 +556,7 @@ After reviewing both projects thoroughly, I discovered that:
 - 🔄 **Deployment** - Test Docker setup and deploy
 
 ### What's Been Added
+
 - ✅ **Database Seeding System** - Comprehensive seeding with modular architecture
   - Individual seeders for each collection (Stores, Admins, Users, Scratch Cards, Transactions, OTPs)
   - Base seeder class with common functionality
@@ -531,11 +587,13 @@ After reviewing both projects thoroughly, I discovered that:
 ## 📋 NEXT STEPS PRIORITY
 
 ### **CRITICAL PRIORITY** 🚨
+
 1. 🚨 **Delete Current Frontend** - Remove all simulation-related code
 2. 🚨 **Create New Frontend** - Build from scratch for Loyalty Program
 3. 🚨 **Implement Core Features** - User dashboard, store management, scratch card interface
 
 ### High Priority
+
 1. ✅ **Backend Core service logic** - All modules fully implemented
 2. ✅ **Backend API endpoints** - All controllers complete with Swagger docs
 3. ✅ **Backend Security system** - Comprehensive authorization and access control
@@ -545,6 +603,7 @@ After reviewing both projects thoroughly, I discovered that:
 7. 🔄 **Testing** - Set up and run comprehensive tests for both frontend and backend
 
 ### Medium Priority
+
 1. **Complete frontend UI components** for all loyalty program operations
 2. **Implement frontend authentication flow** with JWT integration for loyalty system
 3. **Create dashboard interfaces** for users, stores, and admins in loyalty program
@@ -553,6 +612,7 @@ After reviewing both projects thoroughly, I discovered that:
 6. **Implement logging** and monitoring
 
 ### Low Priority
+
 1. **Performance optimization** and caching
 2. **Advanced features** like analytics and reporting
 3. **Mobile app integration** considerations
@@ -561,6 +621,7 @@ After reviewing both projects thoroughly, I discovered that:
 ## 🐳 DOCKER COMMANDS
 
 ### Development
+
 ```bash
 # Start all services (backend, frontend, database)
 ./start-docker.sh
@@ -576,6 +637,7 @@ docker-compose down
 ```
 
 ### Manual Docker Commands
+
 ```bash
 # Build and start all services
 docker-compose up --build
@@ -612,6 +674,7 @@ docker-compose up backend
 ## 💡 DEVELOPMENT NOTES
 
 ### Code Style
+
 - **Backend**: Follow NestJS best practices and conventions
 - **Frontend**: Follow Next.js and React best practices for LOYALTY PROGRAM
 - Use TypeScript strict mode for both frontend and backend
@@ -619,12 +682,14 @@ docker-compose up backend
 - Add comprehensive JSDoc comments
 
 ### Testing Strategy
+
 - **Backend**: Unit tests for all services, integration tests for controllers
 - **Frontend**: Unit tests for components, integration tests for pages
 - E2E tests for critical user flows
 - Mock external dependencies
 
 ### Security Considerations
+
 - Validate all input data on both frontend and backend
 - Implement proper authentication with JWT
 - Use environment variables for secrets
@@ -633,6 +698,7 @@ docker-compose up backend
 - **NEW**: Role-based access control
 
 ### Frontend Development - **CRITICAL REBUILD REQUIRED**
+
 - **DELETE**: All simulation-related code and components
 - **CREATE**: New loyalty program-specific components
 - **IMPLEMENT**: User dashboard, store management, scratch card interface
@@ -644,6 +710,7 @@ docker-compose up backend
 ## 📞 SUPPORT & QUESTIONS
 
 If you have questions about:
+
 - **Business Logic**: Refer to `Summary_of_Business_Consultation.markdown`
 - **Backend Implementation**: Check the existing code structure in `backend/src/`
 - **Frontend Implementation**: **REBUILD REQUIRED** - Current frontend is wrong project
@@ -664,9 +731,11 @@ If you have questions about:
 ## 🔍 **COMPREHENSIVE PROJECT REVIEW COMPLETED**
 
 ### **Review Summary**
+
 I have completed a thorough review of both the backend and frontend projects. Here are my key findings:
 
 #### **Backend Project (Loyalty Program API) - ✅ 100% COMPLETE**
+
 - **Architecture**: NestJS with TypeScript, MongoDB, comprehensive security
 - **Business Logic**: All modules fully implemented (Users, Stores, Scratch Cards, Transactions, OTP, Admins)
 - **Security**: JWT authentication, role-based access control, resource authorization
@@ -675,6 +744,7 @@ I have completed a thorough review of both the backend and frontend projects. He
 - **Status**: Production-ready backend for Loyalty Program
 
 #### **Frontend Project - ❌ COMPLETELY WRONG PROJECT**
+
 - **Project Name**: "obs-user-frontend" (Online Business Simulation)
 - **Business Domain**: Business simulation platform, NOT loyalty program
 - **Components**: Simulation-specific (SimulatorCard, CourseCard, etc.)
@@ -684,12 +754,14 @@ I have completed a thorough review of both the backend and frontend projects. He
 - **Status**: Cannot be used for Loyalty Program - must be completely rebuilt
 
 ### **Immediate Action Required**
+
 1. ✅ **Delete Current Frontend**: Remove all simulation-related code
 2. ✅ **Create New Frontend**: Build from scratch for Loyalty Program
 3. 🔄 **Implement Core Features**: User dashboard, store management, scratch card interface
 4. ✅ **Integrate with Backend**: Connect to existing Loyalty Program API
 
 ### **Development Priority**
+
 - ✅ **Critical**: Frontend rebuild for Loyalty Program - **AUTHENTICATION COMPLETED**
 - 🔄 **High**: Complete core features (dashboard, store management, scratch cards)
 - 🔄 **Medium**: Testing and deployment preparation
@@ -702,6 +774,7 @@ The project is in a critical state where the backend is production-ready but the
 ## 🎉 **AUTHENTICATION SYSTEM COMPLETED - FIRST MAJOR MILESTONE ACHIEVED**
 
 ### **What Has Been Implemented**
+
 ✅ **Complete Authentication Flow** - Phone number input + OTP verification  
 ✅ **Modern UI Components** - Using HeroUI with Tailwind CSS  
 ✅ **API Integration** - Frontend connects to backend Loyalty Program API  
@@ -709,9 +782,10 @@ The project is in a critical state where the backend is production-ready but the
 ✅ **User Dashboard** - Basic dashboard for authenticated users  
 ✅ **Token Management** - JWT token storage and management  
 ✅ **Error Handling** - Comprehensive error messages in Persian  
-✅ **Responsive Design** - Mobile-first approach  
+✅ **Responsive Design** - Mobile-first approach
 
 ### **Authentication Components Created**
+
 1. **`/auth` Page** - Main authentication page with phone input and OTP verification
 2. **`/auth/layout.tsx`** - Authentication layout with gradient background
 3. **`/services/auth.ts`** - Axios-based authentication service with proper error handling
@@ -722,6 +796,7 @@ The project is in a critical state where the backend is production-ready but the
 8. **`config/api.ts`** - API configuration and helper functions
 
 ### **Authentication Flow**
+
 1. **User enters phone number** → Validation and API call to backend
 2. **Backend sends OTP** → 6-digit code (123456 for testing)
 3. **User enters OTP** → Verification with backend API
@@ -729,6 +804,7 @@ The project is in a critical state where the backend is production-ready but the
 5. **Route Protection** → Middleware checks authentication for all routes
 
 ### **Technical Implementation**
+
 - **Frontend**: Next.js 14 with App Router, TypeScript, HeroUI
 - **State Management**: React hooks with local state
 - **API Integration**: Axios with interceptors, proper error handling, and automatic token management
@@ -739,6 +815,7 @@ The project is in a critical state where the backend is production-ready but the
 - **Responsive Design**: Mobile-first approach with proper breakpoints
 
 ### **Next Steps for Frontend Completion**
+
 1. 🔄 **User Profile Management** - Edit profile, update information
 2. 🔄 **Store Management Interface** - Store owner dashboard
 3. 🔄 **Scratch Card Interface** - QR code scanning, card management
@@ -753,6 +830,7 @@ The authentication system is now fully functional and provides a solid foundatio
 ## 🧹 **CODE CLEANUP COMPLETED - UNNECESSARY CODE REMOVED**
 
 ### **What Was Cleaned Up**
+
 ✅ **Removed Next.js API Routes** - No longer needed since we use Axios directly to backend  
 ✅ **Simplified API Configuration** - Removed unused endpoints and helper functions  
 ✅ **Cleaned Up Axios Config** - Removed unused helper functions  
@@ -767,9 +845,10 @@ The authentication system is now fully functional and provides a solid foundatio
 ✅ **Frontend Success Messages** - Added toast notifications for OTP requests
 ✅ **Simplified to OTP-Only** - Removed password-based login, streamlined authentication flow  
 ✅ **Authentication Flow Fixed** - Proper middleware protection with cookie-based auth tokens  
-✅ **Dashboard Error Fixed** - Added null checks and fallback values for user data  
+✅ **Dashboard Error Fixed** - Added null checks and fallback values for user data
 
 ### **Benefits of Axios Implementation**
+
 - **Better Error Handling** - Centralized error handling with Persian messages
 - **Automatic Token Management** - Tokens automatically injected into requests
 - **Request/Response Interceptors** - Automatic authentication error handling
@@ -778,6 +857,7 @@ The authentication system is now fully functional and provides a solid foundatio
 - **Easier Testing** - Better mocking and testing capabilities
 
 ### **Current Clean Architecture**
+
 ```
 frontend/
 ├── config/
@@ -807,12 +887,14 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 ## 🏗️ **Architecture Changes Made**
 
 ### **1. Unified Layout System**
+
 - **Removed separate layouts** for admin and store users
 - **Created single user layout** (`/app/(user)/layout.tsx`) that handles all authenticated users
 - **Dynamic menu rendering** based on `user.role` instead of route-based layouts
 - **Consistent navigation experience** across all user types
 
 ### **2. Route Restructuring**
+
 - **Moved ALL authenticated routes** under the unified `(user)` layout:
   - `/admin/*` → `/(user)/admin/*`
   - `/store/*` → `/(user)/store/*`
@@ -821,6 +903,7 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 - **Simplified URL structure** while maintaining functionality
 
 ### **3. Role-Based Menu Configuration**
+
 - **Updated `frontend/config/site.tsx`** with comprehensive role-specific menus:
   - **Admin Menu**: Dashboard, User Management, Store Management, Admin Management, Transactions, Scratch Cards, Reports, Settings
   - **Store Menu**: Dashboard, Product Management, Discount Cards, Transactions, Customers, Reports
@@ -831,6 +914,7 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 ## 🔧 **Technical Implementation**
 
 ### **New Files Created:**
+
 - `frontend/helpers/menuUtils.ts` - Menu utility functions with role-based logic
 - `frontend/app/(user)/admin/page.tsx` - Main admin dashboard
 - `frontend/app/(user)/admin/users/page.tsx` - User management interface
@@ -838,6 +922,7 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 - `frontend/app/(user)/layout.tsx` - Unified layout for all authenticated users
 
 ### **Updated Files:**
+
 - `frontend/config/site.tsx` - Added role-based menu configurations
 - `frontend/components/layouts/user/Sidebar.tsx` - Now uses role-based menus
 - `frontend/components/layouts/user/Navbar.tsx` - Now uses role-based menus
@@ -848,6 +933,7 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 - `frontend/app/page.tsx` - Updated with role-based redirects
 
 ### **Removed Files:**
+
 - `frontend/app/admin/layout.tsx` - No longer needed
 - `frontend/app/store/layout.tsx` - No longer needed
 - `frontend/app/dashboard/page.tsx` - Replaced with direct role routes
@@ -858,18 +944,21 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 ## 🔐 **Security Implementation**
 
 ### **Middleware Protection:**
+
 - **Enhanced middleware** with role-based route detection
 - **Logs all route access** with role identification
 - **Monitors unauthorized access attempts** to protected routes
 - **Route classification**: `/admin/*`, `/store/*`, `/user/*`
 
 ### **Client-Side Protection:**
+
 - **Role verification** on every protected page
 - **Automatic redirects** for unauthorized users
 - **Loading states** while checking permissions
 - **Consistent security model** across all routes
 
 ### **Access Control Rules:**
+
 - **Admin users** → Can access `/admin/*`, `/store/*`, `/user/*`
 - **Store users** → Can access `/store/*`, `/user/*` (NOT `/admin/*`)
 - **Customer users** → Can access `/user/*` (NOT `/admin/*` or `/store/*`)
@@ -879,12 +968,14 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 ## 🎨 **UI/UX Improvements**
 
 ### **Visual Role Indicators:**
+
 - **Role badges** in sidebar showing "پنل ادمین", "پنل فروشگاه", or "پنل مشتری"
 - **Color-coded navigation** for different user types
 - **Consistent design language** across all interfaces
 - **Professional branding** for each role
 
 ### **Navigation Components:**
+
 - **Dynamic sidebar** that changes based on user role
 - **Role-specific navbar** with appropriate titles and information
 - **Responsive design** for all device sizes
@@ -895,16 +986,20 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 ## 🚀 **Current Working Routes**
 
 ### **Admin Routes:**
+
 - ✅ `/admin` - Admin dashboard (with sidenav + navbar)
 - ✅ `/admin/users` - User management (with sidenav + navbar)
 
 ### **Store Routes:**
+
 - ✅ `/store` - Store dashboard (with sidenav + navbar)
 
 ### **Customer Routes:**
+
 - ✅ `/user` - Customer dashboard (with sidenav + navbar)
 
 ### **Public Routes:**
+
 - ✅ `/` - Landing page for non-authenticated users
 - ✅ `/auth` - Login/register page
 
@@ -913,6 +1008,7 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 ## 🔄 **User Flow & Redirects**
 
 ### **Login Flow:**
+
 1. **User logs in** → System detects their role
 2. **Automatic redirect** to role-specific dashboard:
    - **Admin** → `/admin`
@@ -920,6 +1016,7 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
    - **Customer** → `/user`
 
 ### **Navigation Experience:**
+
 - **All authenticated users** see the same layout structure
 - **Menu content changes** based on user role
 - **Consistent navigation** across all pages
@@ -942,9 +1039,10 @@ The codebase is now clean, focused, and follows best practices with Axios for AP
 
 ## 🎯 **Result**
 
-**Every logged-in user now sees both sidenav AND navbar on every authenticated page, with proper role-based access control!** 
+**Every logged-in user now sees both sidenav AND navbar on every authenticated page, with proper role-based access control!**
 
 The system is now:
+
 - **Secure** - Customers cannot access admin/store routes
 - **User-friendly** - Each role sees appropriate menus and functionality
 - **Professional** - Enterprise-grade navigation and security
@@ -958,6 +1056,7 @@ Your loyalty program has been transformed into a **professional, secure, and use
 ## 📊 **Updated Project Status**
 
 ### **Frontend Implementation Progress:**
+
 - ✅ **Authentication System** - 100% Complete
 - ✅ **Role-Based Navigation** - 100% Complete
 - ✅ **Unified Layout System** - 100% Complete
@@ -966,6 +1065,7 @@ Your loyalty program has been transformed into a **professional, secure, and use
 - 🔄 **Testing & Deployment** - 0% Complete
 
 ### **Overall Project Status:**
+
 - **Backend**: ✅ 100% Complete (Production-ready)
 - **Frontend**: ✅ 75% Complete (Core architecture and navigation complete)
 - **Security**: ✅ 100% Complete (Comprehensive role-based access control)
@@ -973,6 +1073,7 @@ Your loyalty program has been transformed into a **professional, secure, and use
 - **Deployment**: 🔄 0% Complete (Needs testing and configuration)
 
 ### **Next Major Milestones:**
+
 1. 🔄 **Complete Core Features** - Implement dashboard content for all roles
 2. 🔄 **Testing Framework** - Set up comprehensive testing
 3. 🔄 **Production Deployment** - Deploy and monitor system
@@ -991,7 +1092,8 @@ Your loyalty program has been transformed into a **professional, secure, and use
 
 **Issue Identified**: During the role-based menu implementation, I mistakenly created separate `AdminSidebar` and `AdminNavbar` components, which goes against our agreed unified architecture.
 
-**Correct Architecture**: 
+**Correct Architecture**:
+
 - **One unified layout** for all authenticated users
 - **Same sidebar and navbar components** for everyone
 - **Only menu content changes** based on `user.role`
@@ -1002,11 +1104,13 @@ Your loyalty program has been transformed into a **professional, secure, and use
 ## 🔧 **Cleanup Actions Taken**
 
 ### **Files Removed:**
+
 - ❌ `frontend/components/layouts/admin/AdminSidebar.tsx` - Redundant component
 - ❌ `frontend/components/layouts/admin/AdminNavbar.tsx` - Redundant component
 - ❌ `frontend/components/layouts/admin/` - Empty directory removed
 
 ### **Current Unified System:**
+
 - ✅ **Single Layout**: `/(user)/layout.tsx` uses only `UserSidebar` and `UserNavbar`
 - ✅ **Role-Based Menus**: `getMenuByRole(user.role)` handles all menu variations
 - ✅ **Dynamic Content**: Sidebar and navbar adapt content based on user role
@@ -1017,6 +1121,7 @@ Your loyalty program has been transformed into a **professional, secure, and use
 ## 🎯 **How the Unified System Works**
 
 ### **Layout Structure:**
+
 ```typescript
 // Single layout for ALL authenticated users
 <UserSidebar />     // Shows different menus based on user.role
@@ -1025,11 +1130,13 @@ Your loyalty program has been transformed into a **professional, secure, and use
 ```
 
 ### **Menu Adaptation:**
+
 1. **Admin users** → See admin menu items (Dashboard, User Management, etc.)
 2. **Store users** → See store menu items (Dashboard, Product Management, etc.)
 3. **Customer users** → See customer menu items (Dashboard, My Cards, etc.)
 
 ### **Visual Adaptation:**
+
 - **Role badges** change color and text based on user role
 - **Navbar titles** change based on user role
 - **Menu items** filter and display based on user role
@@ -1051,12 +1158,14 @@ Your loyalty program has been transformed into a **professional, secure, and use
 ## 🚀 **Current Status After Cleanup**
 
 ### **What's Working:**
+
 - ✅ **Unified Navigation** - All users see same sidebar/navbar structure
 - ✅ **Role-Based Menus** - Menu content changes based on user role
 - ✅ **Clean Architecture** - No redundant components
 - ✅ **Consistent UX** - Same navigation experience for all users
 
 ### **Architecture Confirmed:**
+
 - **One layout system** for all authenticated users
 - **Dynamic menu rendering** based on `user.role`
 - **Unified component structure** with role-based content
@@ -1083,16 +1192,19 @@ The system now correctly follows the agreed architecture: **one unified navigati
 ## ❌ **Issues Found During Review**
 
 ### **1. Route Mismatch in Customer Menu**
+
 - **Problem**: Customer menu items pointed to `/user/*` routes that didn't exist
 - **Impact**: Broken navigation for customer users
 - **Root Cause**: Menu configuration didn't match actual route structure
 
 ### **2. Incorrect Redirect Logic**
+
 - **Problem**: Multiple redirects pointed to non-existent `/user` routes
 - **Impact**: Users redirected to broken pages after login
 - **Files Affected**: `page.tsx`, `admin/page.tsx`, `store/page.tsx`, `UserDropdown.tsx`
 
 ### **3. Missing Customer Route Implementation**
+
 - **Problem**: Customer menu referenced routes like `/user/my-cards`, `/user/profile` that weren't implemented
 - **Impact**: Incomplete customer experience
 - **Status**: Routes need to be implemented in future development
@@ -1102,6 +1214,7 @@ The system now correctly follows the agreed architecture: **one unified navigati
 ## ✅ **Fixes Applied**
 
 ### **1. Customer Menu Route Correction**
+
 - **Before**: Customer menu pointed to `/user/*` routes
 - **After**: Customer menu now points to correct routes:
   - Dashboard: `/` (main user dashboard)
@@ -1111,12 +1224,14 @@ The system now correctly follows the agreed architecture: **one unified navigati
   - Profile: `/profile` (to be implemented)
 
 ### **2. Redirect Logic Fixes**
+
 - **Main Page**: Customer redirects now go to `/` instead of `/user`
 - **Admin Pages**: Non-admin users redirected to `/` (customer) or `/store` (store)
 - **Store Pages**: Non-store users redirected to `/` (customer) or `/admin` (admin)
 - **UserDropdown**: Dashboard link now points to `/` instead of `/user`
 
 ### **3. Route Structure Alignment**
+
 - **Current Working Routes**:
   - `/` - Customer dashboard (main user page)
   - `/admin` - Admin dashboard
@@ -1129,6 +1244,7 @@ The system now correctly follows the agreed architecture: **one unified navigati
 ## 🏗️ **Current Architecture Status**
 
 ### **✅ What's Working Perfectly:**
+
 1. **Unified Layout System** - Single layout for all authenticated users
 2. **Role-Based Menu Logic** - `getMenuByRole()` function works correctly
 3. **Route Protection** - Middleware and client-side security working
@@ -1136,11 +1252,13 @@ The system now correctly follows the agreed architecture: **one unified navigati
 5. **Build Process** - No compilation errors, clean build
 
 ### **🔄 What Needs Implementation:**
+
 1. **Customer Routes** - `/my-cards`, `/my-transactions`, `/stores`, `/profile`
 2. **Store Routes** - `/store/products`, `/store/scratch-cards`, etc.
 3. **Admin Routes** - `/admin/stores`, `/admin/transactions`, etc.
 
 ### **📁 Current Route Structure:**
+
 ```
 frontend/app/
 ├── page.tsx                    # Landing page + customer dashboard
@@ -1160,17 +1278,20 @@ frontend/app/
 ## 🎯 **How the Fixed System Works**
 
 ### **User Flow After Login:**
+
 1. **Admin users** → Redirected to `/admin` → See admin menu items
-2. **Store users** → Redirected to `/store` → See store menu items  
+2. **Store users** → Redirected to `/store` → See store menu items
 3. **Customer users** → Redirected to `/` → See customer menu items
 
 ### **Menu Adaptation:**
+
 - **Same sidebar/navbar components** for all users
 - **Menu content changes** based on `user.role`
 - **Routes point to actual implemented pages**
 - **No broken links or redirects**
 
 ### **Security & Access Control:**
+
 - **Middleware logging** for all route access attempts
 - **Client-side role verification** on protected pages
 - **Automatic redirects** for unauthorized users
@@ -1181,11 +1302,13 @@ frontend/app/
 ## 🚀 **Next Development Steps**
 
 ### **Immediate Priorities:**
+
 1. **Implement Customer Routes** - Create pages for `/my-cards`, `/my-transactions`, etc.
 2. **Implement Store Routes** - Create pages for store management features
 3. **Implement Admin Routes** - Create pages for admin management features
 
 ### **Architecture Benefits Confirmed:**
+
 - **Unified navigation system** working perfectly
 - **Role-based content adaptation** functioning correctly
 - **Clean, maintainable codebase** with no duplicate components
@@ -1224,6 +1347,7 @@ frontend/app/
 ## 🎯 **What Was Changed**
 
 ### **1. Customer Route Structure**
+
 - **Before**: Customer routes were at root level (`/`, `/my-cards`, `/profile`, etc.)
 - **After**: Customer routes now use `/customer/*` prefix:
   - `/customer` - Customer dashboard
@@ -1233,12 +1357,14 @@ frontend/app/
   - `/customer/profile` - User profile
 
 ### **2. New Index Page Structure**
+
 - **Root Route (`/`)** - Now serves as a welcome/index page for authenticated users
 - **Role-Based Welcome** - Shows appropriate welcome message based on user role
 - **Quick Navigation** - Provides direct access to role-specific dashboards
 - **User Information** - Displays basic user info and points (for customers)
 
 ### **3. Updated Redirect Logic**
+
 - **Admin users** → `/admin` (unchanged)
 - **Store users** → `/store` (unchanged)
 - **Customer users** → `/customer` (updated from `/`)
@@ -1248,6 +1374,7 @@ frontend/app/
 ## 🔧 **Technical Implementation**
 
 ### **Files Modified:**
+
 - `frontend/config/site.tsx` - Updated customer menu links to use `/customer/*` routes
 - `frontend/middleware.ts` - Updated customer route detection from `/user` to `/customer`
 - `frontend/app/page.tsx` - Updated redirect logic and created new index page
@@ -1257,6 +1384,7 @@ frontend/app/
 - `frontend/components/ui/UserDropdown.tsx` - Updated dashboard link
 
 ### **New Files Created:**
+
 - `frontend/app/(user)/customer/page.tsx` - New customer dashboard page
 - `frontend/app/(user)/customer/` - Customer route directory structure
 
@@ -1265,6 +1393,7 @@ frontend/app/
 ## 🎨 **New User Experience**
 
 ### **Index Page (`/`) - Welcome & Navigation**
+
 - **Role-specific welcome messages** with appropriate colors and branding
 - **Quick access buttons** to role-specific dashboards
 - **User information display** with avatar and role indicator
@@ -1272,6 +1401,7 @@ frontend/app/
 - **Clean, professional interface** that serves as a landing page
 
 ### **Customer Dashboard (`/customer`) - Full Functionality**
+
 - **Complete customer dashboard** with all features
 - **Loyalty points display** and management
 - **Quick action buttons** for common tasks
@@ -1283,18 +1413,21 @@ frontend/app/
 ## 🚀 **Benefits of New Architecture**
 
 ### **1. Cleaner Route Structure**
+
 - **Logical separation** between different user types
 - **Consistent naming** convention (`/admin/*`, `/store/*`, `/customer/*`)
 - **Easier navigation** and URL management
 - **Better SEO** with descriptive routes
 
 ### **2. Improved User Experience**
+
 - **Welcome page** provides context and quick navigation
 - **Role-specific branding** and messaging
 - **Faster access** to main functionality
 - **Professional appearance** with proper landing pages
 
 ### **3. Better Development Experience**
+
 - **Clear route organization** makes development easier
 - **Easier to add new features** to specific user types
 - **Better testing** with isolated route groups
@@ -1305,10 +1438,12 @@ frontend/app/
 ## 🔍 **Current Route Structure**
 
 ### **Public Routes:**
+
 - `/` - Landing page for non-authenticated users
 - `/auth` - Authentication pages
 
 ### **Protected Routes:**
+
 - `/` - Welcome/index page for authenticated users
 - `/admin` - Admin dashboard
 - `/admin/users` - User management
@@ -1317,6 +1452,7 @@ frontend/app/
 - `/customer/*` - Customer-specific features (to be implemented)
 
 ### **Route Flow:**
+
 1. **User logs in** → Redirected to role-specific dashboard
 2. **Admin** → `/admin` (admin dashboard)
 3. **Store** → `/store` (store dashboard)
@@ -1338,12 +1474,14 @@ frontend/app/
 ## 🔄 **Next Steps for Customer Features**
 
 ### **Immediate Implementation:**
+
 1. **`/customer/my-cards`** - Customer's discount card management
 2. **`/customer/my-transactions`** - Transaction history and details
 3. **`/customer/stores`** - Store listings and information
 4. **`/customer/profile`** - User profile management
 
 ### **Future Enhancements:**
+
 1. **QR Code scanning** for scratch cards
 2. **Points redemption** interface
 3. **Store reviews** and ratings

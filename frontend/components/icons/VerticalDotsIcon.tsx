@@ -1,4 +1,7 @@
-export default function VerticalDotsIcon({ className = 'size-6', color = '#494949' }) {
+export default function VerticalDotsIcon({
+  className = "size-6",
+  color = "#494949",
+}) {
   return (
     <svg
       className={className}
@@ -22,13 +25,9 @@ export default function VerticalDotsIcon({ className = 'size-6', color = '#49494
       </g>
       <defs>
         <clipPath id="clip0_410_2263">
-          <rect
-            width="24"
-            height="24"
-            fill="white"
-          />
+          <rect width="24" height="24" fill="white" />
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

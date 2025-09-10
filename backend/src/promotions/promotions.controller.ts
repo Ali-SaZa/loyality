@@ -9,40 +9,52 @@ import {
   HttpCode,
   HttpStatus,
   Query,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { PromotionsService } from './promotions.service';
-import { 
-  CreatePromotionDto, 
-  UpdatePromotionDto, 
-  PromotionResponseDto, 
+} from "@nestjs/common";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+  ApiQuery,
+} from "@nestjs/swagger";
+import { PromotionsService } from "./promotions.service";
+import {
+  CreatePromotionDto,
+  UpdatePromotionDto,
+  PromotionResponseDto,
   ChangePromotionStatusDto,
-  PromotionListResponseDto 
-} from '../dto';
-import { PromotionAuth, AdminAuth, StoreOrAdminAuth } from '../common/security';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { ListRequestDto } from '../common/dto/list.dto';
+  PromotionListResponseDto,
+} from "../dto";
+import { PromotionAuth, AdminAuth, StoreOrAdminAuth } from "../common/security";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
+import { ListRequestDto } from "../common/dto/list.dto";
 
-@ApiTags('promotions')
-@Controller('promotions')
+@ApiTags("promotions")
+@Controller("promotions")
 export class PromotionsController {
   constructor(private readonly promotionsService: PromotionsService) {}
 
   @Post()
   @PromotionAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new points-based promotion (Store Owner/Admin only)' })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Promotion created successfully',
-    type: PromotionResponseDto 
+  @ApiOperation({
+    summary: "Create a new points-based promotion (Store Owner/Admin only)",
   })
-  @ApiResponse({ status: 400, description: 'Invalid promotion data' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Store access required' })
+  @ApiResponse({
+    status: 201,
+    description: "Promotion created successfully",
+    type: PromotionResponseDto,
+  })
+  @ApiResponse({ status: 400, description: "Invalid promotion data" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Store access required",
+  })
   async create(
     @Body() createPromotionDto: CreatePromotionDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromotionResponseDto> {
     return this.promotionsService.create(createPromotionDto, user);
   }
@@ -50,53 +62,67 @@ export class PromotionsController {
   @Get()
   @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all promotions with pagination and filtering' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of promotions with pagination',
-    type: PromotionListResponseDto 
+  @ApiOperation({ summary: "Get all promotions with pagination and filtering" })
+  @ApiResponse({
+    status: 200,
+    description: "List of promotions with pagination",
+    type: PromotionListResponseDto,
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
-  @ApiQuery({ name: 'search', required: false, description: 'Search term' })
-  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by store ID' })
-  @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
-  async findAll(
-    @Query() query: any,
-    @CurrentUser() user: any
-  ): Promise<any> {
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiQuery({ name: "page", required: false, description: "Page number" })
+  @ApiQuery({ name: "limit", required: false, description: "Items per page" })
+  @ApiQuery({ name: "search", required: false, description: "Search term" })
+  @ApiQuery({
+    name: "storeId",
+    required: false,
+    description: "Filter by store ID",
+  })
+  @ApiQuery({
+    name: "status",
+    required: false,
+    description: "Filter by status",
+  })
+  async findAll(@Query() query: any, @CurrentUser() user: any): Promise<any> {
     const request: ListRequestDto = {
       page: parseInt(query.page) || 1,
       limit: parseInt(query.limit) || 20,
       search: query.search,
-      searchFields: query.searchFields ? query.searchFields.split(',') : ['title', 'description'],
+      searchFields: query.searchFields
+        ? query.searchFields.split(",")
+        : ["title", "description"],
       sort: query.sort ? JSON.parse(query.sort) : [],
-      filters: query.filters ? JSON.parse(query.filters) : {}
+      filters: query.filters ? JSON.parse(query.filters) : {},
     };
 
     const additionalFilters: any = {
-      requestingUser: user
+      requestingUser: user,
     };
 
     return this.promotionsService.findAll(request, additionalFilters);
   }
 
-  @Get('stats')
+  @Get("stats")
   @StoreOrAdminAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promotion statistics (Store/Admin only)' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promotion statistics',
-    type: Object 
+  @ApiOperation({ summary: "Get promotion statistics (Store/Admin only)" })
+  @ApiResponse({
+    status: 200,
+    description: "Promotion statistics",
+    type: Object,
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Store/Admin access required' })
-  @ApiQuery({ name: 'storeId', required: false, description: 'Filter by store ID (Admin only)' })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Store/Admin access required",
+  })
+  @ApiQuery({
+    name: "storeId",
+    required: false,
+    description: "Filter by store ID (Admin only)",
+  })
   async getStats(
-    @Query('storeId') storeId?: string,
-    @CurrentUser() user?: any
+    @Query("storeId") storeId?: string,
+    @CurrentUser() user?: any,
   ): Promise<{
     total: number;
     active: number;
@@ -107,103 +133,125 @@ export class PromotionsController {
     return this.promotionsService.getPromotionStats(storeId, user);
   }
 
-  @Get(':id')
-  @PromotionAuth({ paramName: 'id' })
+  @Get(":id")
+  @PromotionAuth({ paramName: "id" })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promotion by ID (Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promotion ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promotion found',
-    type: PromotionResponseDto 
+  @ApiOperation({ summary: "Get promotion by ID (Store Owner/Admin only)" })
+  @ApiParam({ name: "id", description: "Promotion ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promotion found",
+    type: PromotionResponseDto,
   })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 404, description: "Promotion not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Insufficient permissions",
+  })
   async findOne(
-    @Param('id') id: string,
-    @CurrentUser() user: any
+    @Param("id") id: string,
+    @CurrentUser() user: any,
   ): Promise<PromotionResponseDto> {
     return this.promotionsService.findOne(id, user);
   }
 
-  @Get(':id/with-codes')
-  @PromotionAuth({ paramName: 'id' })
+  @Get(":id/with-codes")
+  @PromotionAuth({ paramName: "id" })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get promotion by ID with promo code count (Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promotion ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promotion found with code count',
-    type: PromotionResponseDto 
+  @ApiOperation({
+    summary:
+      "Get promotion by ID with promo code count (Store Owner/Admin only)",
   })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiParam({ name: "id", description: "Promotion ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promotion found with code count",
+    type: PromotionResponseDto,
+  })
+  @ApiResponse({ status: 404, description: "Promotion not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Insufficient permissions",
+  })
   async findOneWithCodeCount(
-    @Param('id') id: string,
-    @CurrentUser() user: any
+    @Param("id") id: string,
+    @CurrentUser() user: any,
   ): Promise<PromotionResponseDto & { promoCodeCount: number }> {
     return this.promotionsService.getPromotionWithCodeCount(id, user);
   }
 
-  @Patch(':id')
-  @PromotionAuth({ paramName: 'id' })
+  @Patch(":id")
+  @PromotionAuth({ paramName: "id" })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update promotion information (Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promotion ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promotion updated successfully',
-    type: PromotionResponseDto 
+  @ApiOperation({
+    summary: "Update promotion information (Store Owner/Admin only)",
   })
-  @ApiResponse({ status: 400, description: 'Invalid update data' })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiParam({ name: "id", description: "Promotion ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promotion updated successfully",
+    type: PromotionResponseDto,
+  })
+  @ApiResponse({ status: 400, description: "Invalid update data" })
+  @ApiResponse({ status: 404, description: "Promotion not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Insufficient permissions",
+  })
   async update(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updatePromotionDto: UpdatePromotionDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromotionResponseDto> {
     return this.promotionsService.update(id, updatePromotionDto, user);
   }
 
-  @Patch(':id/status')
-  @PromotionAuth({ paramName: 'id' })
+  @Patch(":id/status")
+  @PromotionAuth({ paramName: "id" })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Change promotion status (Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promotion ID' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Promotion status updated successfully',
-    type: PromotionResponseDto 
+  @ApiOperation({ summary: "Change promotion status (Store Owner/Admin only)" })
+  @ApiParam({ name: "id", description: "Promotion ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promotion status updated successfully",
+    type: PromotionResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Invalid status transition' })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiResponse({ status: 400, description: "Invalid status transition" })
+  @ApiResponse({ status: 404, description: "Promotion not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Insufficient permissions",
+  })
   async changeStatus(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() changeStatusDto: ChangePromotionStatusDto,
-    @CurrentUser() user: any
+    @CurrentUser() user: any,
   ): Promise<PromotionResponseDto> {
     return this.promotionsService.changeStatus(id, changeStatusDto, user);
   }
 
-  @Delete(':id')
-  @PromotionAuth({ paramName: 'id' })
+  @Delete(":id")
+  @PromotionAuth({ paramName: "id" })
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete promotion (soft delete) (Store Owner/Admin only)' })
-  @ApiParam({ name: 'id', description: 'Promotion ID' })
-  @ApiResponse({ status: 200, description: 'Promotion deleted successfully' })
-  @ApiResponse({ status: 404, description: 'Promotion not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
+  @ApiOperation({
+    summary: "Delete promotion (soft delete) (Store Owner/Admin only)",
+  })
+  @ApiParam({ name: "id", description: "Promotion ID" })
+  @ApiResponse({ status: 200, description: "Promotion deleted successfully" })
+  @ApiResponse({ status: 404, description: "Promotion not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Insufficient permissions",
+  })
   @HttpCode(HttpStatus.OK)
   async remove(
-    @Param('id') id: string,
-    @CurrentUser() user: any
+    @Param("id") id: string,
+    @CurrentUser() user: any,
   ): Promise<void> {
     return this.promotionsService.remove(id, user);
   }

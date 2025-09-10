@@ -28,7 +28,7 @@ const ApplyPromoCodePage = () => {
 
   const [customerPromoCodes, setCustomerPromoCodes] = useState<PromoCode[]>([]);
   const [selectedPromoCode, setSelectedPromoCode] = useState<PromoCode | null>(
-    null
+    null,
   );
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState<string>("");
   const [isLoadingPromoCodes, setIsLoadingPromoCodes] = useState(false);
@@ -72,7 +72,7 @@ const ApplyPromoCodePage = () => {
 
       // Filter only unused promo codes
       const unusedPromoCodes = response.data.filter(
-        (code) => code.status === "unused"
+        (code) => code.status === "unused",
       );
       setCustomerPromoCodes(unusedPromoCodes);
 
@@ -129,7 +129,7 @@ const ApplyPromoCodePage = () => {
       });
 
       const unusedPromoCodes = response.data.filter(
-        (code) => code.status === "unused"
+        (code) => code.status === "unused",
       );
       setCustomerPromoCodes(unusedPromoCodes);
 

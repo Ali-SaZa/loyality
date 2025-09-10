@@ -1,23 +1,23 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { SeedingService } from './seeding.service';
-import { SeedingController } from './seeding.controller';
-import { User, UserSchema } from '../schemas/user.schema';
-import { Store, StoreSchema } from '../schemas/store.schema';
-import { Promotion, PromotionSchema } from '../schemas/promotion.schema';
-import { PromoCode, PromoCodeSchema } from '../schemas/promoCode.schema';
-import { Transaction, TransactionSchema } from '../schemas/transaction.schema';
-import { Otp, OtpSchema } from '../schemas/otp.schema';
-import { Sms, SmsSchema } from '../schemas/sms.schema';
-import { 
-  StoresSeeder, 
-  UsersSeeder, 
+import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { SeedingService } from "./seeding.service";
+import { SeedingController } from "./seeding.controller";
+import { User, UserSchema } from "../schemas/user.schema";
+import { Store, StoreSchema } from "../schemas/store.schema";
+import { Promotion, PromotionSchema } from "../schemas/promotion.schema";
+import { PromoCode, PromoCodeSchema } from "../schemas/promoCode.schema";
+import { Transaction, TransactionSchema } from "../schemas/transaction.schema";
+import { Otp, OtpSchema } from "../schemas/otp.schema";
+import { Sms, SmsSchema } from "../schemas/sms.schema";
+import {
+  StoresSeeder,
+  UsersSeeder,
   PromotionsSeeder,
   PromoCodesSeeder,
   TransactionsSeeder,
   OTPsSeeder,
-  SmsSeeder
-} from './seeders';
+  SmsSeeder,
+} from "./seeders";
 
 @Module({
   imports: [

@@ -1,27 +1,27 @@
-'use client'
-import React from 'react'
-import { usePathname } from 'next/navigation'
-import UserSidebar from '@/components/layouts/user/Sidebar'
-import UserNavbar from '@/components/layouts/user/Navbar'
-import RoleGuard from '@/components/auth/RoleGuard'
-import { UserRole } from '@/types/enums'
+"use client";
+import React from "react";
+import { usePathname } from "next/navigation";
+import UserSidebar from "@/components/layouts/user/Sidebar";
+import UserNavbar from "@/components/layouts/user/Navbar";
+import RoleGuard from "@/components/auth/RoleGuard";
+import { UserRole } from "@/types/enums";
 
 interface UserLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const UserLayout = ({ children }: UserLayoutProps) => {
-  const pathname = usePathname()
-  
+  const pathname = usePathname();
+
   // Determine required role based on current path
   const getRequiredRole = (path: string): UserRole | undefined => {
-    if (path.startsWith('/admin')) return UserRole.ADMIN
-    if (path.startsWith('/store')) return UserRole.STORE
-    if (path.startsWith('/customer')) return UserRole.CUSTOMER
-    return undefined // Allow access to general user routes
-  }
+    if (path.startsWith("/admin")) return UserRole.ADMIN;
+    if (path.startsWith("/store")) return UserRole.STORE;
+    if (path.startsWith("/customer")) return UserRole.CUSTOMER;
+    return undefined; // Allow access to general user routes
+  };
 
-  const requiredRole = getRequiredRole(pathname)
+  const requiredRole = getRequiredRole(pathname);
 
   return (
     <RoleGuard requiredRole={requiredRole}>
@@ -35,7 +35,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
         </div>
       </div>
     </RoleGuard>
-  )
-}
+  );
+};
 
-export default UserLayout
+export default UserLayout;

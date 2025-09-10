@@ -1,23 +1,36 @@
-import { Button as NextUiButton } from '@heroui/button'
-import { Link } from '@heroui/link'
-import React, { forwardRef } from 'react'
+import { Button as NextUiButton } from "@heroui/button";
+import { Link } from "@heroui/link";
+import React, { forwardRef } from "react";
 
 interface ButtonProps {
-  children: React.ReactNode
-  color?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
-  variant?: 'solid' | 'bordered' | 'light' | 'flat' | 'faded' | 'shadow' | 'ghost'
-  type?: 'button' | 'submit' | 'reset'
-  target?: '_blank' | '_self'
-  disabled?: boolean
-  isLoading?: boolean
-  iconOnly?: boolean
-  fullWidth?: boolean
-  iconStart?: React.ReactNode
-  iconEnd?: React.ReactNode
-  className?: string
-  to?: string
-  onClick?: () => void
+  children: React.ReactNode;
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "danger";
+  size?: "sm" | "md" | "lg";
+  variant?:
+    | "solid"
+    | "bordered"
+    | "light"
+    | "flat"
+    | "faded"
+    | "shadow"
+    | "ghost";
+  type?: "button" | "submit" | "reset";
+  target?: "_blank" | "_self";
+  disabled?: boolean;
+  isLoading?: boolean;
+  iconOnly?: boolean;
+  fullWidth?: boolean;
+  iconStart?: React.ReactNode;
+  iconEnd?: React.ReactNode;
+  className?: string;
+  to?: string;
+  onClick?: () => void;
 }
 
 // با استفاده از forwardRef
@@ -25,11 +38,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
-      color = 'primary',
+      color = "primary",
       size,
       variant,
-      type = 'button',
-      target = '_self',
+      type = "button",
+      target = "_self",
       disabled,
       isLoading,
       iconOnly,
@@ -40,14 +53,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       to,
       onClick,
     },
-    ref
+    ref,
   ) => {
-    const isLink = Boolean(to)
+    const isLink = Boolean(to);
 
     return (
       <NextUiButton
         ref={ref} // اضافه کردن ref به Button
-        as={isLink ? Link : 'button'}
+        as={isLink ? Link : "button"}
         className={`font-semibold ${className}`}
         color={color}
         endContent={iconEnd}
@@ -66,10 +79,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {children}
       </NextUiButton>
-    )
-  }
-)
+    );
+  },
+);
 
-Button.displayName = 'Button'
+Button.displayName = "Button";
 
-export default Button
+export default Button;

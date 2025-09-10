@@ -1,4 +1,4 @@
-export default function FilterIcon({ className = 'size-6' }) {
+export default function FilterIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -58,5 +58,5 @@ export default function FilterIcon({ className = 'size-6' }) {
         strokeLinecap="round"
       />
     </svg>
-  )
+  );
 }

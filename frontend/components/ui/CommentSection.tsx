@@ -1,7 +1,15 @@
-'use client'
-import React from 'react'
+"use client";
+import React from "react";
 
-const CommentSection = ({ title, description, children }: { title: string; description: string; children: React.ReactNode }) => {
+const CommentSection = ({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) => {
   return (
     <div className="flex flex-col pb-28">
       <div className="flex flex-col container pt-10 md:pt-16 pb-10 relative">
@@ -17,7 +25,7 @@ const CommentSection = ({ title, description, children }: { title: string; descr
       </div>
       <div className="w-full container">{children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default CommentSection
+export default CommentSection;

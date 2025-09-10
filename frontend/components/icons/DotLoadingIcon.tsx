@@ -1,4 +1,4 @@
-export default function DotLoadingIcon({ className = 'size-6' }) {
+export default function DotLoadingIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -60,5 +60,5 @@ export default function DotLoadingIcon({ className = 'size-6' }) {
         ></animate>
       </circle>
     </svg>
-  )
+  );
 }

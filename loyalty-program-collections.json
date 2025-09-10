@@ -324,7 +324,12 @@
           "required": true,
           "items": {
             "type": "String",
-            "enum": ["manage_stores", "view_reports", "run_lottery", "manage_users"]
+            "enum": [
+              "manage_stores",
+              "view_reports",
+              "run_lottery",
+              "manage_users"
+            ]
           }
         },
         {

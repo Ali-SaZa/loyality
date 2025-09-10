@@ -28,7 +28,7 @@ export class CustomConflictException extends ConflictException {
 export class CustomBadRequestException extends BadRequestException {
   constructor(
     messageKey: ErrorMessageKey = "BAD_REQUEST",
-    customMessage?: string
+    customMessage?: string,
   ) {
     const message = customMessage || PERSIAN_ERROR_MESSAGES[messageKey];
     super(message);
@@ -116,7 +116,7 @@ export class SmsInsufficientBalanceException extends BadRequestException {
       const message =
         PERSIAN_ERROR_MESSAGES.SMS_INSUFFICIENT_BALANCE_WITH_COUNT.replace(
           "{count}",
-          smsCount.toString()
+          smsCount.toString(),
         );
       super(message);
     } else {

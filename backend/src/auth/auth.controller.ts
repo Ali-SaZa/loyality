@@ -1,93 +1,112 @@
-import { Controller, Post, Get, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { RequestOtpDto, VerifyOtpDto, AuthResponseDto } from './dto/auth.dto';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { Public } from './decorators/public.decorator';
-import { PERSIAN_ERROR_MESSAGES } from '../common/errors';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  HttpCode,
+  HttpStatus,
+} from "@nestjs/common";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
+import { AuthService } from "./auth.service";
+import { RequestOtpDto, VerifyOtpDto, AuthResponseDto } from "./dto/auth.dto";
+import { CurrentUser } from "./decorators/current-user.decorator";
+import { Public } from "./decorators/public.decorator";
+import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 
-@ApiTags('Authentication')
-@Controller('auth')
+@ApiTags("Authentication")
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('request-otp')
+  @Post("request-otp")
   @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Request OTP for phone number',
-    description: 'Sends a 6-digit OTP code to the specified phone number for authentication'
+    summary: "Request OTP for phone number",
+    description:
+      "Sends a 6-digit OTP code to the specified phone number for authentication",
   })
   @ApiBody({ type: RequestOtpDto })
   @ApiResponse({
     status: 200,
-    description: 'OTP sent successfully',
+    description: "OTP sent successfully",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        message: { type: 'string', example: 'OTP sent successfully' },
-        phoneNumber: { type: 'string', example: '09123456789' }
-      }
-    }
+        message: { type: "string", example: "OTP sent successfully" },
+        phoneNumber: { type: "string", example: "09123456789" },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid phone number format'
+    description: "Invalid phone number format",
   })
   @ApiResponse({
     status: 429,
-    description: 'Too many requests - please wait before requesting another OTP'
+    description:
+      "Too many requests - please wait before requesting another OTP",
   })
   async requestOtp(@Body() requestOtpDto: RequestOtpDto) {
     return this.authService.requestOtp(requestOtpDto);
   }
 
-  @Post('verify-otp')
+  @Post("verify-otp")
   @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Verify OTP and authenticate user',
-    description: 'Verifies the OTP code and returns JWT token. Creates new user if phone number does not exist.'
+    summary: "Verify OTP and authenticate user",
+    description:
+      "Verifies the OTP code and returns JWT token. Creates new user if phone number does not exist.",
   })
   @ApiBody({ type: VerifyOtpDto })
   @ApiResponse({
     status: 200,
-    description: 'OTP verified successfully',
-    type: AuthResponseDto
+    description: "OTP verified successfully",
+    type: AuthResponseDto,
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid OTP code'
+    description: "Invalid OTP code",
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid input data'
+    description: "Invalid input data",
   })
-  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto): Promise<AuthResponseDto> {
+  async verifyOtp(
+    @Body() verifyOtpDto: VerifyOtpDto,
+  ): Promise<AuthResponseDto> {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
-  @Get('profile')
+  @Get("profile")
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Get current user profile',
-    description: 'Protected endpoint that returns the current authenticated user profile'
+    summary: "Get current user profile",
+    description:
+      "Protected endpoint that returns the current authenticated user profile",
   })
   @ApiResponse({
     status: 200,
-    description: 'Current user profile retrieved successfully',
+    description: "Current user profile retrieved successfully",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        phoneNumber: { type: 'string' },
-        userId: { type: 'string' },
-        role: { type: 'string' }
-      }
-    }
+        phoneNumber: { type: "string" },
+        userId: { type: "string" },
+        role: { type: "string" },
+      },
+    },
   })
   @ApiResponse({
     status: 401,
-    description: 'Unauthorized - Invalid or missing JWT token'
+    description: "Unauthorized - Invalid or missing JWT token",
   })
   async getProfile(@CurrentUser() user: any) {
     return {
@@ -95,9 +114,8 @@ export class AuthController {
       user: {
         phoneNumber: user.phoneNumber,
         userId: user.userId,
-        role: user.role
-      }
+        role: user.role,
+      },
     };
   }
-
 }

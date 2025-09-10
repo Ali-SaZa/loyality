@@ -1,4 +1,4 @@
-export default function GoogleIcon({ className = 'size-6' }) {
+export default function GoogleIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -26,13 +26,9 @@ export default function GoogleIcon({ className = 'size-6' }) {
       </g>
       <defs>
         <clipPath id="clip0_2839_53067">
-          <rect
-            width="24"
-            height="24"
-            fill="white"
-          />
+          <rect width="24" height="24" fill="white" />
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

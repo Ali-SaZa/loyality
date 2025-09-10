@@ -1,160 +1,165 @@
-import React, { useMemo, useRef, useState } from 'react'
-import { Progress } from '@heroui/progress'
-import toast from 'react-hot-toast'
+import React, { useMemo, useRef, useState } from "react";
+import { Progress } from "@heroui/progress";
+import toast from "react-hot-toast";
 
-import CloudUploadIcon from '../icons/CloudUploadIcon'
-import TrashIcon from '../icons/TrashIcon'
-import CloseIcon from '../icons/CloseIcon'
-import FileCheckIcon from '../icons/FileCheckIcon'
-import CloudDownloadIcon from '../icons/CloudDownloadIcon'
+import CloudUploadIcon from "../icons/CloudUploadIcon";
+import TrashIcon from "../icons/TrashIcon";
+import CloseIcon from "../icons/CloseIcon";
+import FileCheckIcon from "../icons/FileCheckIcon";
+import CloudDownloadIcon from "../icons/CloudDownloadIcon";
 
-import axiosInstance from '@/config/axios'
-import { FILE_SERVER_URL } from '@/config/env'
-import Button from '@/components/formElements/Button'
-import { handleDownload, truncateText } from '@/helpers'
+import axiosInstance from "@/config/axios";
+import { FILE_SERVER_URL } from "@/config/env";
+import Button from "@/components/formElements/Button";
+import { handleDownload, truncateText } from "@/helpers";
 
 interface FileItem {
-  id: string
-  name: string
-  size: string
-  type?: string
-  uploadPercentage: number
-  fileId?: string
+  id: string;
+  name: string;
+  size: string;
+  type?: string;
+  uploadPercentage: number;
+  fileId?: string;
 }
 
 interface UploadFileProps {
-  buttonText?: string
-  accept?: string[]
-  className?: string
-  fileUploaded: (fileId: string, mode?: 'save' | 'remove') => void
-  fileId?: string
-  noInteraction?: boolean
+  buttonText?: string;
+  accept?: string[];
+  className?: string;
+  fileUploaded: (fileId: string, mode?: "save" | "remove") => void;
+  fileId?: string;
+  noInteraction?: boolean;
 }
 
 const FileUpload = ({
-  buttonText = 'آپلود فایل',
+  buttonText = "آپلود فایل",
   accept = [],
-  className = '',
+  className = "",
   fileUploaded,
   fileId,
   noInteraction = false,
 }: UploadFileProps) => {
-  const [files, setFiles] = useState<FileItem[]>([])
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [abortController, setAbortController] = useState<AbortController | null>(null)
-  const requestTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
+  const requestTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const formatFileSize = (bytes: number) => {
     const formatNumber = (number: number) => {
-      return parseFloat(number.toFixed(2)).toString()
-    }
+      return parseFloat(number.toFixed(2)).toString();
+    };
 
     if (bytes < 1024) {
-      return bytes + ' B'
+      return bytes + " B";
     } else if (bytes < 1048576) {
-      return formatNumber(bytes / 1024) + ' KB '
+      return formatNumber(bytes / 1024) + " KB ";
     } else if (bytes < 1073741824) {
-      return formatNumber(bytes / 1048576) + ' MB '
+      return formatNumber(bytes / 1048576) + " MB ";
     } else {
-      return formatNumber(bytes / 1073741824) + ' GB '
+      return formatNumber(bytes / 1073741824) + " GB ";
     }
-  }
+  };
 
   const findFileFormat = (type: string) => {
-    if (type.indexOf('image') > -1) return 'PFT_Image'
-    else if (type.indexOf('video') > -1) return 'PFT_Video'
-    else if (type.indexOf('audio') > -1) return 'PFT_Audio'
-    else if (type.indexOf('pdf') > -1) return 'PFT_Text'
-  }
+    if (type.indexOf("image") > -1) return "PFT_Image";
+    else if (type.indexOf("video") > -1) return "PFT_Video";
+    else if (type.indexOf("audio") > -1) return "PFT_Audio";
+    else if (type.indexOf("pdf") > -1) return "PFT_Text";
+  };
 
-  const hasType = (type: string) => accept.some((item) => item?.toLowerCase()?.includes(type))
+  const hasType = (type: string) =>
+    accept.some((item) => item?.toLowerCase()?.includes(type));
 
   const acceptFile = useMemo(() => {
     if (!accept.length) {
-      return '*'
+      return "*";
     } else {
-      let acceptableFormat = []
+      let acceptableFormat = [];
 
-      if (hasType('image'))
-        acceptableFormat.push('image/*') // Accept all image types
-      else if (hasType('audio'))
-        acceptableFormat.push('audio/*') // Accept all audio types
-      else if (hasType('video'))
-        acceptableFormat.push('video/*') // Accept all video types
-      else if (hasType('text'))
+      if (hasType("image"))
+        acceptableFormat.push("image/*"); // Accept all image types
+      else if (hasType("audio"))
+        acceptableFormat.push("audio/*"); // Accept all audio types
+      else if (hasType("video"))
+        acceptableFormat.push("video/*"); // Accept all video types
+      else if (hasType("text"))
         acceptableFormat.push(
-          '.pdf',
-          '.txt',
-          '.doc',
-          '.pptx',
-          '.xlsx',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'text/plain', // پوشش تمام فایل‌های متنی ساده
-          'text/csv', // فایل‌های CSV
-          'text/html', // فایل‌های HTML
-          'text/markdown', // فایل‌های Markdown
-          'application/msword', // فایل‌های Word قدیمی
-          'application/rtf', // فایل‌های RTF
-          'application/vnd.ms-excel',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'application/vnd.ms-powerpoint',
-          'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-        )
+          ".pdf",
+          ".txt",
+          ".doc",
+          ".pptx",
+          ".xlsx",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "text/plain", // پوشش تمام فایل‌های متنی ساده
+          "text/csv", // فایل‌های CSV
+          "text/html", // فایل‌های HTML
+          "text/markdown", // فایل‌های Markdown
+          "application/msword", // فایل‌های Word قدیمی
+          "application/rtf", // فایل‌های RTF
+          "application/vnd.ms-excel",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.ms-powerpoint",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        );
 
-      return acceptableFormat.join(',')
+      return acceptableFormat.join(",");
     }
-  }, [accept])
+  }, [accept]);
 
   const hintText = useMemo(() => {
-    let text = ''
+    let text = "";
 
-    if (hasType('image')) text = 'SVG, PNG, JPG, GIF'
-    else if (hasType('audio')) text += text.length ? ', MP3, WAV' : 'MP3, WAV'
-    else if (hasType('video')) text += text.length ? ', MP4' : 'MP4'
-    else if (hasType('text')) text += text.length ? ', PDF, TXT, DOCX, PPTX, XLSX' : 'PDF, TXT, DOCX, PPTX, XLSX'
+    if (hasType("image")) text = "SVG, PNG, JPG, GIF";
+    else if (hasType("audio")) text += text.length ? ", MP3, WAV" : "MP3, WAV";
+    else if (hasType("video")) text += text.length ? ", MP4" : "MP4";
+    else if (hasType("text"))
+      text += text.length
+        ? ", PDF, TXT, DOCX, PPTX, XLSX"
+        : "PDF, TXT, DOCX, PPTX, XLSX";
 
-    return text
-  }, [accept])
+    return text;
+  }, [accept]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
 
     if (file) {
       const textMimeTypes = [
-        'text/plain', // فایل‌های متنی ساده
-        'text/csv', // فایل‌های CSV
-        'text/html', // فایل‌های HTML
-        'text/markdown', // فایل‌های Markdown
-        'application/pdf', // فایل‌های PDF
-        'application/rtf', // فایل‌های RTF
-        'application/msword', // فایل‌های Word قدیمی
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // فایل‌های Word جدید
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      ]
+        "text/plain", // فایل‌های متنی ساده
+        "text/csv", // فایل‌های CSV
+        "text/html", // فایل‌های HTML
+        "text/markdown", // فایل‌های Markdown
+        "application/pdf", // فایل‌های PDF
+        "application/rtf", // فایل‌های RTF
+        "application/msword", // فایل‌های Word قدیمی
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // فایل‌های Word جدید
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ];
 
       if (textMimeTypes.includes(file.type)) {
         // بررسی می‌کند که آیا acceptFile شامل هر کدام از MIME type های متنی است یا خیر
         if (!textMimeTypes.some((type) => acceptFile.includes(type))) {
-          toast.error('فایل انتخاب شده باید یک فایل مورد قبول باشد.')
+          toast.error("فایل انتخاب شده باید یک فایل مورد قبول باشد.");
 
-          return
+          return;
         }
       } else {
         // برای سایر انواع فایل‌ها، بررسی تطبیق نوع اصلی MIME
-        const fileType = file.type.split('/')[0]
-        const acceptedType = acceptFile.split('/')[0]
+        const fileType = file.type.split("/")[0];
+        const acceptedType = acceptFile.split("/")[0];
 
         if (fileType !== acceptedType) {
-          toast.error('فایل انتخاب شده باید یک فایل مورد قبول باشد.')
+          toast.error("فایل انتخاب شده باید یک فایل مورد قبول باشد.");
 
-          return
+          return;
         }
       }
 
-      setSelectedFile(file)
+      setSelectedFile(file);
       setFiles((prev) => [
         ...prev,
         {
@@ -164,36 +169,42 @@ const FileUpload = ({
           type: findFileFormat(file.type),
           uploadPercentage: 0,
         },
-      ])
+      ]);
 
-      if (requestTimeoutRef.current) clearTimeout(requestTimeoutRef.current)
+      if (requestTimeoutRef.current) clearTimeout(requestTimeoutRef.current);
 
       requestTimeoutRef.current = setTimeout(() => {
-        handleUpload(file)
-      }, 500)
+        handleUpload(file);
+      }, 500);
     }
-  }
+  };
 
   const handleUpload = (file: File) => {
-    const data = new FormData()
+    const data = new FormData();
 
-    data.append('file', file)
+    data.append("file", file);
 
-    const controller = new AbortController()
+    const controller = new AbortController();
 
-    setAbortController(controller)
+    setAbortController(controller);
 
     axiosInstance
       .post(FILE_SERVER_URL, data, {
         signal: controller.signal,
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
-            const uploadPercentage = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+            const uploadPercentage = Math.round(
+              (progressEvent.loaded / progressEvent.total) * 100,
+            );
 
-            setFiles((prev) => prev.map((f) => (f.name === file.name ? { ...f, uploadPercentage } : f)))
+            setFiles((prev) =>
+              prev.map((f) =>
+                f.name === file.name ? { ...f, uploadPercentage } : f,
+              ),
+            );
           }
         },
       })
@@ -202,35 +213,39 @@ const FileUpload = ({
           const newFile = {
             id: result.data.data.id,
             url: result.data.data.url,
-          }
+          };
 
-          setFiles((prev) => prev.map((f) => (f.name === file.name ? { ...f, fileId: newFile.id } : f)))
-          fileUploaded(newFile.id)
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.name === file.name ? { ...f, fileId: newFile.id } : f,
+            ),
+          );
+          fileUploaded(newFile.id);
         } else {
-          console.error('File upload failed!')
+          console.error("File upload failed!");
         }
       })
       .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('Upload canceled')
+        if (error.name === "AbortError") {
+          console.log("Upload canceled");
         } else {
-          console.error('Upload failed:', error)
+          console.error("Upload failed:", error);
         }
-      })
-  }
+      });
+  };
 
   const cancelUpload = () => {
     if (abortController) {
-      abortController.abort()
-      setFiles((prev) => prev.slice(0, -1))
-      setAbortController(null)
+      abortController.abort();
+      setFiles((prev) => prev.slice(0, -1));
+      setAbortController(null);
     }
-  }
+  };
 
   const removeFile = (fileId: string) => {
-    setFiles((prev) => prev.filter((file) => file.id !== fileId))
-    fileUploaded(fileId, 'remove')
-  }
+    setFiles((prev) => prev.filter((file) => file.id !== fileId));
+    fileUploaded(fileId, "remove");
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -239,7 +254,7 @@ const FileUpload = ({
           <input
             accept={acceptFile}
             id="file-upload"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             type="file"
             onChange={handleFileChange}
           />
@@ -251,8 +266,12 @@ const FileUpload = ({
               <CloudUploadIcon className="size-6 md:size-[38px] text-text-dark" />
             </div>
             <div className="flex flex-col items-center text-center gap-3">
-              <p className="text-secondary font-bold text-sm md:text-medium">{buttonText}</p>
-              <p className="text-text-light text-sm md:text-medium">{hintText}</p>
+              <p className="text-secondary font-bold text-sm md:text-medium">
+                {buttonText}
+              </p>
+              <p className="text-text-light text-sm md:text-medium">
+                {hintText}
+              </p>
             </div>
           </label>
         </div>
@@ -262,7 +281,7 @@ const FileUpload = ({
           <div
             className="flex items-center gap-4 grow ml-6 cursor-pointer"
             role="button"
-            onClick={() => handleDownload(fileId, 'فایل دانلود شده')}
+            onClick={() => handleDownload(fileId, "فایل دانلود شده")}
           >
             <div className="rounded-full bg-background-primary size-12 flex items-center justify-center">
               <CloudDownloadIcon className="size-6 text-primary" />
@@ -275,7 +294,7 @@ const FileUpload = ({
               className="rounded-full absolute top-2 left-2 z-50"
               color="default"
               variant="light"
-              onClick={() => fileUploaded(fileId, 'remove')}
+              onClick={() => fileUploaded(fileId, "remove")}
             >
               <TrashIcon className="size-5 text-text" />
             </Button>
@@ -318,7 +337,9 @@ const FileUpload = ({
                   </div>
                   <div className="flex flex-col gap-1 grow">
                     <div className="flex flex-col">
-                      <p className="text-text-dark text-sm md:text-medium">{truncateText(file.name, 30)}</p>
+                      <p className="text-text-dark text-sm md:text-medium">
+                        {truncateText(file.name, 30)}
+                      </p>
                       <p
                         className="font-light text-end text-sm md:text-medium"
                         dir="ltr"
@@ -327,7 +348,9 @@ const FileUpload = ({
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <p className="font-medium text-text-dark">{file.uploadPercentage}%</p>
+                      <p className="font-medium text-text-dark">
+                        {file.uploadPercentage}%
+                      </p>
                       <Progress
                         aria-label="Loading..."
                         color="secondary"
@@ -350,7 +373,7 @@ const FileUpload = ({
           </div>
         ))}
     </div>
-  )
-}
+  );
+};
 
-export default FileUpload
+export default FileUpload;

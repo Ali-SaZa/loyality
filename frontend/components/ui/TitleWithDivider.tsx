@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const TitleWithDivider = ({ title }: { title: string }) => {
   return (
@@ -7,7 +7,7 @@ const TitleWithDivider = ({ title }: { title: string }) => {
       <p className="text-text-dark text-nowrap">{title}</p>
       <div className="w-full h-[1px] bg-background-70 " />
     </div>
-  )
-}
+  );
+};
 
-export default TitleWithDivider
+export default TitleWithDivider;

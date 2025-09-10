@@ -1,4 +1,7 @@
-export default function HeadphoneIcon({ className = 'size-20', color = 'white' }) {
+export default function HeadphoneIcon({
+  className = "size-20",
+  color = "white",
+}) {
   return (
     <svg
       className={className}
@@ -22,10 +25,7 @@ export default function HeadphoneIcon({ className = 'size-20', color = 'white' }
           filterUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
-          <feFlood
-            floodOpacity="0"
-            result="BackgroundImageFix"
-          />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -34,10 +34,7 @@ export default function HeadphoneIcon({ className = 'size-20', color = 'white' }
           />
           <feOffset dy="4" />
           <feGaussianBlur stdDeviation="10" />
-          <feComposite
-            in2="hardAlpha"
-            operator="out"
-          />
+          <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"
             values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.46 0"
@@ -56,5 +53,5 @@ export default function HeadphoneIcon({ className = 'size-20', color = 'white' }
         </filter>
       </defs>
     </svg>
-  )
+  );
 }

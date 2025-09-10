@@ -1,4 +1,4 @@
-export default function CloseIcon({ className = 'size-6', color = '#3A4D9A' }) {
+export default function CloseIcon({ className = "size-6", color = "#3A4D9A" }) {
   return (
     <svg
       className={className}
@@ -11,5 +11,5 @@ export default function CloseIcon({ className = 'size-6', color = '#3A4D9A' }) {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }

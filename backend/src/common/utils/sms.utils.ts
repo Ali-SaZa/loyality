@@ -12,7 +12,7 @@ export function calculateSmsCount(text: string): number {
   if (!text || text.trim().length === 0) {
     return 0;
   }
-  
+
   // For Persian text, every 70 characters equals 1 SMS
   // Maximum 280 characters = 4 SMS units
   const characterCount = text.length;
@@ -32,10 +32,10 @@ export function getSmsInfo(text: string): {
   const characterCount = text?.length || 0;
   const smsCount = calculateSmsCount(text);
   const maxCharacters = 280; // Maximum characters allowed for SMS
-  
+
   return {
     characterCount,
     smsCount,
-    maxCharacters
+    maxCharacters,
   };
 }

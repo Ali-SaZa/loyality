@@ -1,4 +1,7 @@
-export default function TelegramIcon({ className = 'size-6', color = '#0A66C2' }) {
+export default function TelegramIcon({
+  className = "size-6",
+  color = "#0A66C2",
+}) {
   return (
     <svg
       className={className}
@@ -26,12 +29,9 @@ export default function TelegramIcon({ className = 'size-6', color = '#0A66C2' }
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#2AABEE" />
-          <stop
-            offset="1"
-            stopColor="#229ED9"
-          />
+          <stop offset="1" stopColor="#229ED9" />
         </linearGradient>
       </defs>
     </svg>
-  )
+  );
 }

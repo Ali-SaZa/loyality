@@ -1,4 +1,4 @@
-export default function DollarIcon({ className = 'size-6' }) {
+export default function DollarIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -14,13 +14,9 @@ export default function DollarIcon({ className = 'size-6' }) {
       </g>
       <defs>
         <clipPath id="clip0_410_1910">
-          <rect
-            fill="white"
-            height="24"
-            width="24"
-          />
+          <rect fill="white" height="24" width="24" />
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import { SetMetadata } from '@nestjs/common';
-import { ResourceAuthMetadata } from './resource-auth.guard';
+import { SetMetadata } from "@nestjs/common";
+import { ResourceAuthMetadata } from "./resource-auth.guard";
 
-export const RESOURCE_AUTH_KEY = 'resourceAuth';
+export const RESOURCE_AUTH_KEY = "resourceAuth";
 
 /**
  * Decorator to protect a resource endpoint
@@ -9,42 +9,42 @@ export const RESOURCE_AUTH_KEY = 'resourceAuth';
  * @param options - Authorization options
  */
 export const ResourceAuth = (
-  resourceType: ResourceAuthMetadata['resourceType'],
-  options: Omit<ResourceAuthMetadata, 'resourceType'> = {}
+  resourceType: ResourceAuthMetadata["resourceType"],
+  options: Omit<ResourceAuthMetadata, "resourceType"> = {},
 ) => SetMetadata(RESOURCE_AUTH_KEY, { resourceType, ...options });
-
-
 
 /**
  * Decorator for store endpoints
  */
-export const StoreAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
-  ResourceAuth('store', options);
+export const StoreAuth = (
+  options?: Omit<ResourceAuthMetadata, "resourceType">,
+) => ResourceAuth("store", options);
 
 /**
  * Decorator for user endpoints
  */
-export const UserAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
-  ResourceAuth('user', options);
-
-
+export const UserAuth = (
+  options?: Omit<ResourceAuthMetadata, "resourceType">,
+) => ResourceAuth("user", options);
 
 /**
  * Decorator for promotion endpoints
  */
-export const PromotionAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
-  ResourceAuth('promotion', options);
+export const PromotionAuth = (
+  options?: Omit<ResourceAuthMetadata, "resourceType">,
+) => ResourceAuth("promotion", options);
 
 /**
  * Decorator for promo code endpoints
  */
-export const PromoCodeAuth = (options?: Omit<ResourceAuthMetadata, 'resourceType'>) =>
-  ResourceAuth('promoCode', options);
+export const PromoCodeAuth = (
+  options?: Omit<ResourceAuthMetadata, "resourceType">,
+) => ResourceAuth("promoCode", options);
 
 /**
  * Decorator for admin endpoints
  */
-export const AdminAuth = () => ResourceAuth('admin');
+export const AdminAuth = () => ResourceAuth("admin");
 
 /**
  * Decorator for self-access only (user can only access their own data)

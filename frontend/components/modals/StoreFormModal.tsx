@@ -41,7 +41,7 @@ const StoreFormModal = ({
 
   const methods = useForm<StoreFormData | StoreUpdateData>({
     resolver: zodResolver(
-      isEditMode ? StoreUpdateValidation : StoreFormValidation
+      isEditMode ? StoreUpdateValidation : StoreFormValidation,
     ),
     defaultValues: {
       name: "",
@@ -134,7 +134,7 @@ const StoreFormModal = ({
       } as any);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات فروشگاه"
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات فروشگاه",
       );
     } finally {
       setLoading(false);
@@ -162,7 +162,7 @@ const StoreFormModal = ({
           ? err.message
           : isEditMode
             ? "خطا در بروزرسانی فروشگاه"
-            : "خطا در ایجاد فروشگاه"
+            : "خطا در ایجاد فروشگاه",
       );
     } finally {
       setLoading(false);

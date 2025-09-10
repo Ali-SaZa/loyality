@@ -1,50 +1,57 @@
-import type { ColumnStaticSize } from '@react-types/table'
+import type { ColumnStaticSize } from "@react-types/table";
 
 type PropsWithParams = {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
 type PaymentDetailType = {
-  title: string
-  value: string
-}
+  title: string;
+  value: string;
+};
 
 interface UserSidebarRoute {
-  title: string
-  icon: (className?: string) => JSX.Element
-  link: string
-  isShortAccess: boolean
-  disable?: boolean
-  target?: string
-  children?: UserSidebarRoute[]
+  title: string;
+  icon: (className?: string) => JSX.Element;
+  link: string;
+  isShortAccess: boolean;
+  disable?: boolean;
+  target?: string;
+  children?: UserSidebarRoute[];
 }
 
 interface ApiWithParams {
   filters?: {
-    [key: string]: any
-  }
-  sort?: string
-  page?: number
-  pageSize?: number
+    [key: string]: any;
+  };
+  sort?: string;
+  page?: number;
+  pageSize?: number;
 }
 
 type EvaluationDetailType = {
-  jobSimulationTitle: string
-  cost: number
-}
+  jobSimulationTitle: string;
+  cost: number;
+};
 
-type NextUiColorType = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | undefined
+type NextUiColorType =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger"
+  | undefined;
 
 type PaginationListColumnType = {
-  label: string
-  field: string
-  sortable?: boolean
-  filterable?: boolean
-  type?: 'text' | 'number' | 'inputFromTo' | 'select' | 'date' | 'dateFromTo'
-  filterItems?: any[]
-  maxWidth?: ColumnStaticSize
-  minWidth?: ColumnStaticSize
-  width?: ColumnStaticSize
-  visibleForTitleFilter?: boolean
-}
+  label: string;
+  field: string;
+  sortable?: boolean;
+  filterable?: boolean;
+  type?: "text" | "number" | "inputFromTo" | "select" | "date" | "dateFromTo";
+  filterItems?: any[];
+  maxWidth?: ColumnStaticSize;
+  minWidth?: ColumnStaticSize;
+  width?: ColumnStaticSize;
+  visibleForTitleFilter?: boolean;
+};

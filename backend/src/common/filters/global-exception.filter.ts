@@ -5,10 +5,10 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { MongooseError } from 'mongoose';
-import { PERSIAN_ERROR_MESSAGES } from '../errors/persian-error-messages';
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { MongooseError } from "mongoose";
+import { PERSIAN_ERROR_MESSAGES } from "../errors/persian-error-messages";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -28,8 +28,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const response = exception.getResponse() as any;
-      
-      if (typeof response === 'string') {
+
+      if (typeof response === "string") {
         message = response;
         error = this.getErrorType(status);
       } else {
@@ -41,7 +41,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // Handle MongoDB specific errors
       status = this.handleMongoError(exception);
       message = this.getMongoErrorMessage(exception);
-      error = 'Database Error';
+      error = "Database Error";
       details = {
         code: (exception as any).code,
         codeName: (exception as any).codeName,
@@ -50,16 +50,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // Handle generic JavaScript errors
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = PERSIAN_ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
-      error = 'Internal Server Error';
+      error = "Internal Server Error";
       details = {
         name: exception.name,
-        stack: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+        stack:
+          process.env.NODE_ENV === "development" ? exception.stack : undefined,
       };
     } else {
       // Handle unknown errors
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = PERSIAN_ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
-      error = 'Unknown Error';
+      error = "Unknown Error";
     }
 
     // Log the error
@@ -71,9 +72,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         method: request.method,
         status,
         timestamp: new Date().toISOString(),
-        userAgent: request.get('User-Agent'),
+        userAgent: request.get("User-Agent"),
         ip: request.ip,
-      }
+      },
     );
 
     // Create error response
@@ -94,29 +95,29 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private getErrorType(status: number): string {
     switch (status) {
       case HttpStatus.BAD_REQUEST:
-        return 'درخواست نامعتبر'; // translated to Persian
+        return "درخواست نامعتبر"; // translated to Persian
       case HttpStatus.UNAUTHORIZED:
-        return 'دسترسی غیرمجاز'; // translated to Persian
+        return "دسترسی غیرمجاز"; // translated to Persian
       case HttpStatus.FORBIDDEN:
-        return 'دسترسی ممنوع'; // translated to Persian
+        return "دسترسی ممنوع"; // translated to Persian
       case HttpStatus.NOT_FOUND:
-        return 'یافت نشد'; // translated to Persian
+        return "یافت نشد"; // translated to Persian
       case HttpStatus.CONFLICT:
-        return 'تضاد'; // translated to Persian
+        return "تضاد"; // translated to Persian
       case HttpStatus.UNPROCESSABLE_ENTITY:
-        return 'خطای اعتبارسنجی'; // translated to Persian
+        return "خطای اعتبارسنجی"; // translated to Persian
       case HttpStatus.TOO_MANY_REQUESTS:
-        return 'تعداد درخواست بیش از حد'; // translated to Persian
+        return "تعداد درخواست بیش از حد"; // translated to Persian
       case HttpStatus.INTERNAL_SERVER_ERROR:
-        return 'خطای داخلی سرور'; // translated to Persian
+        return "خطای داخلی سرور"; // translated to Persian
       case HttpStatus.SERVICE_UNAVAILABLE:
-        return 'سرویس در دسترس نیست'; // translated to Persian
+        return "سرویس در دسترس نیست"; // translated to Persian
       default:
-        return 'خطا'; // translated to Persian
+        return "خطا"; // translated to Persian
     }
   }
 
-    private handleMongoError(error: MongooseError): number {
+  private handleMongoError(error: MongooseError): number {
     const mongoError = error as any;
     switch (mongoError.code) {
       case 11000: // Duplicate key error

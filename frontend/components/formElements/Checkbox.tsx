@@ -1,31 +1,35 @@
-import React, { PropsWithChildren } from 'react'
-import { Checkbox as NextUiCheckbox } from '@heroui/checkbox'
-import { cn } from '@heroui/theme'
+import React, { PropsWithChildren } from "react";
+import { Checkbox as NextUiCheckbox } from "@heroui/checkbox";
+import { cn } from "@heroui/theme";
 
 interface CheckboxProps {
-  className?: string
-  value: any
+  className?: string;
+  value: any;
 }
 
-const Checkbox = ({ children, className, value }: PropsWithChildren<CheckboxProps>) => {
+const Checkbox = ({
+  children,
+  className,
+  value,
+}: PropsWithChildren<CheckboxProps>) => {
   return (
     <NextUiCheckbox
-      aria-label={'checkbox'}
+      aria-label={"checkbox"}
       classNames={{
         base: cn(
-          'inline-flex w-full max-w-full m-0 bg-background-10',
-          'hover:bg-content2 items-center justify-start',
-          'cursor-pointer rounded-xl p-4 border-2 border-transparent',
-          'data-[selected=true]:border-primary data-[selected=true]:bg-background-70',
-          className
+          "inline-flex w-full max-w-full m-0 bg-background-10",
+          "hover:bg-content2 items-center justify-start",
+          "cursor-pointer rounded-xl p-4 border-2 border-transparent",
+          "data-[selected=true]:border-primary data-[selected=true]:bg-background-70",
+          className,
         ),
-        label: 'w-full',
+        label: "w-full",
       }}
       value={value}
     >
       {children}
     </NextUiCheckbox>
-  )
-}
+  );
+};
 
-export default Checkbox
+export default Checkbox;

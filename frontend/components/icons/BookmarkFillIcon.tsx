@@ -1,4 +1,4 @@
-export default function BookmarkFillIcon({ className = 'size-6' }) {
+export default function BookmarkFillIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -14,13 +14,9 @@ export default function BookmarkFillIcon({ className = 'size-6' }) {
       </g>
       <defs>
         <clipPath id="clip0_395_22751">
-          <rect
-            width="24.0004"
-            height="23.7877"
-            fill="white"
-          />
+          <rect width="24.0004" height="23.7877" fill="white" />
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

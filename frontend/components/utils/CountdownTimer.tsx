@@ -1,15 +1,21 @@
-import React from 'react'
-import Countdown, { CountdownRenderProps } from 'react-countdown'
+import React from "react";
+import Countdown, { CountdownRenderProps } from "react-countdown";
 
-const CountdownTimer = ({ time = 120000, onComplete }: { time?: number; onComplete: () => void }) => {
+const CountdownTimer = ({
+  time = 120000,
+  onComplete,
+}: {
+  time?: number;
+  onComplete: () => void;
+}) => {
   // تابع رندر برای نمایش دقیقه و ثانیه
   const renderer = ({ minutes, seconds }: CountdownRenderProps) => {
     return (
       <span>
-        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+        {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
       </span>
-    )
-  }
+    );
+  };
 
   return (
     // شمارش معکوس به مدت ۲ دقیقه (120000 میلی‌ثانیه)
@@ -18,7 +24,7 @@ const CountdownTimer = ({ time = 120000, onComplete }: { time?: number; onComple
       renderer={renderer}
       onComplete={onComplete}
     />
-  )
-}
+  );
+};
 
-export default CountdownTimer
+export default CountdownTimer;

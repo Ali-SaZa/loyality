@@ -1,14 +1,14 @@
-'use client'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CustomerIndexPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     // Redirect to the use-promotion page
-    router.replace('/customer/use-promotion')
-  }, [router])
+    router.replace("/customer/use-promotion");
+  }, [router]);
 
   // Show loading while redirecting
   return (
@@ -18,5 +18,5 @@ export default function CustomerIndexPage() {
         <p className="text-text-light">در حال انتقال...</p>
       </div>
     </div>
-  )
+  );
 }

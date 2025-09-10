@@ -1,20 +1,32 @@
-import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Store, StoreDocument } from '../schemas/store.schema';
-import { User, UserDocument } from '../schemas/user.schema';
-import { Sms, SmsDocument } from '../schemas/sms.schema';
-import { CreateStoreDto, UpdateStoreDto, UpdateStoreSelfDto, StoreResponseDto, CreateStoreWithUserDto, StoreWithUserResponseDto } from '../dto';
-import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
-import { 
-  StoreNotFoundException, 
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model, Types } from "mongoose";
+import { Store, StoreDocument } from "../schemas/store.schema";
+import { User, UserDocument } from "../schemas/user.schema";
+import { Sms, SmsDocument } from "../schemas/sms.schema";
+import {
+  CreateStoreDto,
+  UpdateStoreDto,
+  UpdateStoreSelfDto,
+  StoreResponseDto,
+  CreateStoreWithUserDto,
+  StoreWithUserResponseDto,
+} from "../dto";
+import { ListRequestDto, ListResponseDto } from "../common/dto/list.dto";
+import {
+  StoreNotFoundException,
   StorePhoneExistsException,
   SmsInsufficientBalanceException,
   SmsCustomerRestrictionException,
-  SmsHistoryAccessDeniedException
-} from '../common/errors';
-import { SmsService } from '../sms/sms.service';
-import { TransactionsService } from '../transactions/transactions.service';
+  SmsHistoryAccessDeniedException,
+} from "../common/errors";
+import { SmsService } from "../sms/sms.service";
+import { TransactionsService } from "../transactions/transactions.service";
 import { calculateSmsCount } from "../common/utils/sms.utils";
 
 interface UserContext {
@@ -49,11 +61,16 @@ export class StoresService {
       id: store._id.toString(),
       name: store.name,
       phoneNumber: store.phoneNumber,
-      userId: typeof store.userId === 'object' && store.userId._id ? store.userId._id.toString() : store.userId.toString(),
+      userId:
+        typeof store.userId === "object" && store.userId._id
+          ? store.userId._id.toString()
+          : store.userId.toString(),
       address: store.address,
-      promotions: store.promotions.map(promo => {
+      promotions: store.promotions.map((promo) => {
         // Handle both populated objects and ObjectIds
-        return typeof promo === 'object' && promo._id ? promo._id.toString() : promo.toString();
+        return typeof promo === "object" && promo._id
+          ? promo._id.toString()
+          : promo.toString();
       }),
       planExpiryDate: store.planExpiryDate,
       status: store.status,
@@ -72,18 +89,21 @@ export class StoresService {
   /**
    * Consolidated validation for store creation
    */
-  private async validateStoreCreation(phoneNumber: string, userId?: string): Promise<void> {
+  private async validateStoreCreation(
+    phoneNumber: string,
+    userId?: string,
+  ): Promise<void> {
     const [existingStore, user] = await Promise.all([
       this.storeModel.findOne({ phoneNumber }).exec(),
-      userId ? this.userModel.findById(userId).exec() : Promise.resolve(null)
+      userId ? this.userModel.findById(userId).exec() : Promise.resolve(null),
     ]);
-    
+
     if (existingStore) {
       throw new StorePhoneExistsException();
     }
-    
+
     if (userId && !user) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException("User not found");
     }
   }
 
@@ -93,7 +113,9 @@ export class StoresService {
   private async validateUserCreation(phoneNumber: string): Promise<void> {
     const existingUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (existingUser) {
-      throw new BadRequestException('User with this phone number already exists');
+      throw new BadRequestException(
+        "User with this phone number already exists",
+      );
     }
   }
 
@@ -101,7 +123,7 @@ export class StoresService {
    * Sanitize search input to prevent regex injection
    */
   private sanitizeSearchQuery(search: string): string {
-    return search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   /**
@@ -112,20 +134,27 @@ export class StoresService {
   }
 
   private handleAccessDenied(): never {
-    throw new ForbiddenException('Access denied. You do not have permission to access this store.');
+    throw new ForbiddenException(
+      "Access denied. You do not have permission to access this store.",
+    );
   }
 
   /**
    * Create a new store
    */
   async create(createStoreDto: CreateStoreDto): Promise<StoreResponseDto> {
-    await this.validateStoreCreation(createStoreDto.phoneNumber, createStoreDto.userId);
+    await this.validateStoreCreation(
+      createStoreDto.phoneNumber,
+      createStoreDto.userId,
+    );
 
     // Convert string IDs to ObjectIds
     const storeData = {
       ...createStoreDto,
       userId: new Types.ObjectId(createStoreDto.userId),
-      promotions: createStoreDto.promotions ? createStoreDto.promotions.map(id => new Types.ObjectId(id)) : []
+      promotions: createStoreDto.promotions
+        ? createStoreDto.promotions.map((id) => new Types.ObjectId(id))
+        : [],
     };
 
     const store = new this.storeModel(storeData);
@@ -136,19 +165,21 @@ export class StoresService {
   /**
    * Create a new store with user
    */
-  async createStoreWithUser(createStoreWithUserDto: CreateStoreWithUserDto): Promise<StoreWithUserResponseDto> {
+  async createStoreWithUser(
+    createStoreWithUserDto: CreateStoreWithUserDto,
+  ): Promise<StoreWithUserResponseDto> {
     // Validate both user and store creation
     await Promise.all([
       this.validateUserCreation(createStoreWithUserDto.user.phoneNumber),
-      this.validateStoreCreation(createStoreWithUserDto.store.phoneNumber)
+      this.validateStoreCreation(createStoreWithUserDto.store.phoneNumber),
     ]);
 
     // Create the user first
     const userData = {
       ...createStoreWithUserDto.user,
-      role: 'store',
-      status: 'active',
-      lastActivity: new Date()
+      role: "store",
+      status: "active",
+      lastActivity: new Date(),
     };
 
     const user = new this.userModel(userData);
@@ -158,7 +189,7 @@ export class StoresService {
     const storeData = {
       ...createStoreWithUserDto.store,
       userId: savedUser._id,
-      status: 'active'
+      status: "active",
     };
 
     const store = new this.storeModel(storeData);
@@ -168,34 +199,39 @@ export class StoresService {
       user: {
         id: savedUser._id.toString(),
         phoneNumber: savedUser.phoneNumber,
-        firstName: savedUser.firstName || '',
-        lastName: savedUser.lastName || '',
+        firstName: savedUser.firstName || "",
+        lastName: savedUser.lastName || "",
         role: savedUser.role,
         createdAt: savedUser.createdAt,
-        updatedAt: savedUser.updatedAt
+        updatedAt: savedUser.updatedAt,
       },
-      store: this.transformStoreToResponse(savedStore)
+      store: this.transformStoreToResponse(savedStore),
     };
   }
 
   /**
    * Find all stores with pagination and filtering (optimized)
    */
-  async findAll(request: ListRequestDto, additionalFilters: Record<string, any> = {}): Promise<ListResponseDto<StoreResponseDto>> {
+  async findAll(
+    request: ListRequestDto,
+    additionalFilters: Record<string, any> = {},
+  ): Promise<ListResponseDto<StoreResponseDto>> {
     const page = request.page || 1;
     const limit = Math.min(request.limit || 20, 100); // Cap at 100 for performance
     const skip = (page - 1) * limit;
 
     // Add role-based access control
-    if (additionalFilters.requestingUser?.role === 'store') {
+    if (additionalFilters.requestingUser?.role === "store") {
       // Use _id from JWT strategy or userId
-      const storeUserId = additionalFilters.requestingUser._id || additionalFilters.requestingUser.userId;
-      additionalFilters['userId'] = storeUserId;
+      const storeUserId =
+        additionalFilters.requestingUser._id ||
+        additionalFilters.requestingUser.userId;
+      additionalFilters["userId"] = storeUserId;
     }
 
     // Build filter query with sanitized search
     let filterQuery: Record<string, any> = {};
-    
+
     // Add additional filters - properly apply role-based filtering
     Object.assign(filterQuery, additionalFilters);
 
@@ -203,17 +239,17 @@ export class StoresService {
     const [rawData, total] = await Promise.all([
       this.storeModel
         .find(filterQuery)
-        .populate('userId', 'firstName lastName phoneNumber role')
-        .populate('promotions', 'title type status')
+        .populate("userId", "firstName lastName phoneNumber role")
+        .populate("promotions", "title type status")
         .sort(this.buildSortQuery(request.sort || []))
         .skip(skip)
         .limit(limit)
         .exec(),
-      this.storeModel.countDocuments(filterQuery).exec()
+      this.storeModel.countDocuments(filterQuery).exec(),
     ]);
 
     // Transform documents to response DTOs
-    const data = rawData.map(store => this.transformStoreToResponse(store));
+    const data = rawData.map((store) => this.transformStoreToResponse(store));
 
     const totalPages = Math.ceil(total / limit);
 
@@ -229,8 +265,8 @@ export class StoresService {
         search: request.search,
         searchFields: request.searchFields,
         sort: request.sort,
-        filters: request.filters
-      }
+        filters: request.filters,
+      },
     };
   }
 
@@ -240,10 +276,10 @@ export class StoresService {
   async findOne(id: string, user: UserContext): Promise<StoreResponseDto> {
     const store = await this.storeModel
       .findById(id)
-      .populate('userId', 'firstName lastName phoneNumber role')
-      .populate('promotions', 'title type status')
+      .populate("userId", "firstName lastName phoneNumber role")
+      .populate("promotions", "title type status")
       .exec();
-    
+
     if (!store) {
       this.handleStoreNotFound();
     }
@@ -255,7 +291,11 @@ export class StoresService {
   /**
    * Update a store with access control
    */
-  async update(id: string, updateStoreDto: UpdateStoreDto, user: UserContext): Promise<StoreResponseDto> {
+  async update(
+    id: string,
+    updateStoreDto: UpdateStoreDto,
+    user: UserContext,
+  ): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
       this.handleStoreNotFound();
@@ -265,27 +305,32 @@ export class StoresService {
 
     const updatedStore = await this.storeModel
       .findByIdAndUpdate(id, updateStoreDto, { new: true })
-      .populate('userId', 'firstName lastName phoneNumber role')
-      .populate('promotions', 'title type status')
+      .populate("userId", "firstName lastName phoneNumber role")
+      .populate("promotions", "title type status")
       .exec();
-    
+
     if (!updatedStore) {
       this.handleStoreNotFound();
     }
-    
+
     return this.transformStoreToResponse(updatedStore);
   }
 
   /**
    * Update store's own information (restricted fields only)
    */
-  async updateSelf(updateStoreSelfDto: UpdateStoreSelfDto, user: UserContext): Promise<StoreResponseDto> {
-    if (user.role !== 'store') {
-      throw new ForbiddenException('Only store users can update their own store information');
+  async updateSelf(
+    updateStoreSelfDto: UpdateStoreSelfDto,
+    user: UserContext,
+  ): Promise<StoreResponseDto> {
+    if (user.role !== "store") {
+      throw new ForbiddenException(
+        "Only store users can update their own store information",
+      );
     }
 
     if (!user.storeId) {
-      throw new NotFoundException('Store not found for this user');
+      throw new NotFoundException("Store not found for this user");
     }
 
     const store = await this.storeModel.findById(user.storeId).exec();
@@ -298,14 +343,14 @@ export class StoresService {
 
     const updatedStore = await this.storeModel
       .findByIdAndUpdate(user.storeId, updateStoreSelfDto, { new: true })
-      .populate('userId', 'firstName lastName phoneNumber role')
-      .populate('promotions', 'title type status')
+      .populate("userId", "firstName lastName phoneNumber role")
+      .populate("promotions", "title type status")
       .exec();
-    
+
     if (!updatedStore) {
       this.handleStoreNotFound();
     }
-    
+
     return this.transformStoreToResponse(updatedStore);
   }
 
@@ -329,12 +374,14 @@ export class StoresService {
   /**
    * Find store by phone number
    */
-  async findByPhoneNumber(phoneNumber: string): Promise<StoreResponseDto | null> {
+  async findByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<StoreResponseDto | null> {
     const store = await this.storeModel
       .findOne({ phoneNumber })
-      .populate('userId', 'firstName lastName phoneNumber role')
+      .populate("userId", "firstName lastName phoneNumber role")
       .exec();
-    
+
     return store ? this.transformStoreToResponse(store) : null;
   }
 
@@ -344,10 +391,10 @@ export class StoresService {
   async getStats(): Promise<StoreStats> {
     const [total, active, pending, deleted, suspended] = await Promise.all([
       this.storeModel.countDocuments().exec(),
-      this.storeModel.countDocuments({ status: 'active' }).exec(),
-      this.storeModel.countDocuments({ status: 'pending' }).exec(),
-      this.storeModel.countDocuments({ status: 'deleted' }).exec(),
-      this.storeModel.countDocuments({ status: 'suspended' }).exec()
+      this.storeModel.countDocuments({ status: "active" }).exec(),
+      this.storeModel.countDocuments({ status: "pending" }).exec(),
+      this.storeModel.countDocuments({ status: "deleted" }).exec(),
+      this.storeModel.countDocuments({ status: "suspended" }).exec(),
     ]);
 
     return { total, active, pending, deleted, suspended };
@@ -357,16 +404,17 @@ export class StoresService {
    * Validate store access permissions
    */
   private validateStoreAccess(store: StoreDocument, user: UserContext): void {
-    if (user.role === 'admin') {
+    if (user.role === "admin") {
       return;
     }
 
     // Handle both populated and non-populated userId references
-    const storeUserId = typeof store.userId === 'object' && store.userId._id 
-      ? store.userId._id.toString() 
-      : store.userId.toString();
+    const storeUserId =
+      typeof store.userId === "object" && store.userId._id
+        ? store.userId._id.toString()
+        : store.userId.toString();
 
-    if (user.role === 'store' && user._id.toString() === storeUserId) {
+    if (user.role === "store" && user._id.toString() === storeUserId) {
       return;
     }
 
@@ -383,7 +431,7 @@ export class StoresService {
 
     const sortQuery: Record<string, 1 | -1> = {};
     sort.forEach((item: any) => {
-      sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
+      sortQuery[item.field] = item.direction === "asc" ? 1 : -1;
     });
     return sortQuery;
   }
@@ -391,7 +439,11 @@ export class StoresService {
   /**
    * Update SMS balance for a store
    */
-  async updateSmsBalance(storeId: string, amount: number, user: UserContext): Promise<StoreResponseDto> {
+  async updateSmsBalance(
+    storeId: string,
+    amount: number,
+    user: UserContext,
+  ): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
       this.handleStoreNotFound();
@@ -402,8 +454,8 @@ export class StoresService {
     const newBalance = Math.max(0, store.smsBalance + amount);
     const updatedStore = await this.storeModel
       .findByIdAndUpdate(storeId, { smsBalance: newBalance }, { new: true })
-      .populate('userId', 'firstName lastName phoneNumber role')
-      .populate('promotions', 'title type status')
+      .populate("userId", "firstName lastName phoneNumber role")
+      .populate("promotions", "title type status")
       .exec();
 
     if (!updatedStore) {
@@ -417,17 +469,25 @@ export class StoresService {
    * Record SMS sent for a store
    */
   async recordSmsSent(storeId: string): Promise<void> {
-    await this.storeModel.findByIdAndUpdate(storeId, {
-      $inc: { totalSmsSent: 1 },
-      $set: { lastSmsSentAt: new Date() }
-    }).exec();
+    await this.storeModel
+      .findByIdAndUpdate(storeId, {
+        $inc: { totalSmsSent: 1 },
+        $set: { lastSmsSentAt: new Date() },
+      })
+      .exec();
   }
 
   /**
    * Check if store has sufficient SMS balance
    */
-  async hasSmsBalance(storeId: string, requiredAmount: number = 1): Promise<boolean> {
-    const store = await this.storeModel.findById(storeId).select('smsBalance').exec();
+  async hasSmsBalance(
+    storeId: string,
+    requiredAmount: number = 1,
+  ): Promise<boolean> {
+    const store = await this.storeModel
+      .findById(storeId)
+      .select("smsBalance")
+      .exec();
     return store ? store.smsBalance >= requiredAmount : false;
   }
 
@@ -440,43 +500,54 @@ export class StoresService {
     storesWithBalance: number;
     averageBalance: number;
   }> {
-    const stats = await this.storeModel.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalBalance: { $sum: '$smsBalance' },
-          totalSmsSent: { $sum: '$totalSmsSent' },
-          storesWithBalance: { $sum: { $cond: [{ $gt: ['$smsBalance', 0] }, 1, 0] } },
-          totalStores: { $sum: 1 }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          totalBalance: 1,
-          totalSmsSent: 1,
-          storesWithBalance: 1,
-          averageBalance: { $divide: ['$totalBalance', '$totalStores'] }
-        }
-      }
-    ]).exec();
+    const stats = await this.storeModel
+      .aggregate([
+        {
+          $group: {
+            _id: null,
+            totalBalance: { $sum: "$smsBalance" },
+            totalSmsSent: { $sum: "$totalSmsSent" },
+            storesWithBalance: {
+              $sum: { $cond: [{ $gt: ["$smsBalance", 0] }, 1, 0] },
+            },
+            totalStores: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            totalBalance: 1,
+            totalSmsSent: 1,
+            storesWithBalance: 1,
+            averageBalance: { $divide: ["$totalBalance", "$totalStores"] },
+          },
+        },
+      ])
+      .exec();
 
-    return stats[0] || { totalBalance: 0, totalSmsSent: 0, storesWithBalance: 0, averageBalance: 0 };
+    return (
+      stats[0] || {
+        totalBalance: 0,
+        totalSmsSent: 0,
+        storesWithBalance: 0,
+        averageBalance: 0,
+      }
+    );
   }
 
   /**
    * Send SMS to a customer (Store-specific business logic)
    */
   async sendSmsToCustomer(
-    storeId: string, 
-    userId: string, 
-    text: string, 
-    requestingUser: UserContext
+    storeId: string,
+    userId: string,
+    text: string,
+    requestingUser: UserContext,
   ): Promise<any> {
     // Validate store access
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException('Store not found');
+      throw new NotFoundException("Store not found");
     }
 
     this.validateStoreAccess(store, requestingUser);
@@ -484,14 +555,14 @@ export class StoresService {
     // Validate user exists
     const recipientUser = await this.userModel.findById(userId).exec();
     if (!recipientUser) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
 
     // For store users, perform additional validations
-    if (requestingUser.role === 'store') {
+    if (requestingUser.role === "store") {
       // Calculate SMS count based on Persian text length (70 chars = 1 SMS)
       const smsCount = calculateSmsCount(text);
-      
+
       // Check if store has sufficient SMS balance
       const hasBalance = await this.hasSmsBalance(storeId, smsCount);
       if (!hasBalance) {
@@ -499,16 +570,19 @@ export class StoresService {
       }
 
       // Verify that the user is a customer of this store
-      const storeCustomers = await this.transactionsService.getMyStoreCustomers(requestingUser);
-      const isCustomer = storeCustomers.some((customer) => customer.id === userId);
-      
+      const storeCustomers =
+        await this.transactionsService.getMyStoreCustomers(requestingUser);
+      const isCustomer = storeCustomers.some(
+        (customer) => customer.id === userId,
+      );
+
       if (!isCustomer) {
         throw new SmsCustomerRestrictionException();
       }
 
       // Deduct SMS balance based on actual SMS count
       await this.updateSmsBalance(storeId, -smsCount, requestingUser);
-      
+
       // Record SMS sent
       await this.recordSmsSent(storeId);
     }
@@ -517,7 +591,7 @@ export class StoresService {
     const smsResult = await this.smsService.sendSms({
       userId: userId,
       text: text,
-      createdBy: requestingUser._id.toString()
+      createdBy: requestingUser._id.toString(),
     });
 
     return smsResult;
@@ -530,16 +604,19 @@ export class StoresService {
     storeId: string,
     user: UserContext,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<any> {
     // Verify store access
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException('Store not found');
+      throw new NotFoundException("Store not found");
     }
 
     // Check access permissions
-    if (user.role === 'store' && store.userId.toString() !== user._id.toString()) {
+    if (
+      user.role === "store" &&
+      store.userId.toString() !== user._id.toString()
+    ) {
       throw new SmsHistoryAccessDeniedException();
     }
 
@@ -549,23 +626,28 @@ export class StoresService {
     // Get SMS records created by this store's user
     const smsRecords = await this.smsModel
       .find({ createdBy: store.userId })
-      .populate('userId', 'firstName lastName phoneNumber')
+      .populate("userId", "firstName lastName phoneNumber")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
     // Get total count
-    const total = await this.smsModel.countDocuments({ createdBy: store.userId });
+    const total = await this.smsModel.countDocuments({
+      createdBy: store.userId,
+    });
 
     // Transform the data
     const data = smsRecords.map((sms: any) => ({
       id: sms._id.toString(),
       sentDate: sms.createdAt,
-      customerName: sms.userId ? `${sms.userId.firstName || ''} ${sms.userId.lastName || ''}`.trim() : 'Unknown',
-      customerPhone: sms.userId?.phoneNumber || 'Unknown',
-      messagePreview: sms.text.length > 15 ? sms.text.substring(0, 15) + '...' : sms.text,
-      messageText: sms.text
+      customerName: sms.userId
+        ? `${sms.userId.firstName || ""} ${sms.userId.lastName || ""}`.trim()
+        : "Unknown",
+      customerPhone: sms.userId?.phoneNumber || "Unknown",
+      messagePreview:
+        sms.text.length > 15 ? sms.text.substring(0, 15) + "..." : sms.text,
+      messageText: sms.text,
     }));
 
     // Calculate pagination info
@@ -580,7 +662,7 @@ export class StoresService {
       limit,
       totalPages,
       hasNextPage,
-      hasPrevPage
+      hasPrevPage,
     };
   }
 }

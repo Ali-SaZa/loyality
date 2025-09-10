@@ -3,12 +3,10 @@ export default function PromotionIcon({ className = "size-6" }) {
     <svg
       version="1.1"
       id="OFFER"
-  
       width="24px"
       height="24px"
       viewBox="0 0 1800 1800"
       enableBackground="new 0 0 1800 1800"
-
     >
       <g>
         <path

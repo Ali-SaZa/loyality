@@ -1,24 +1,24 @@
-'use client'
-import { useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import toast from 'react-hot-toast'
+"use client";
+import { useState } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 
-import Modal from './Modal'
-import Input from '@/components/formElements/Input'
-import useLoading from '@/hooks/useLoading'
-import useAuth from '@/hooks/useAuth'
-import { getCurrentStore } from '@/services/stores'
-import axiosInstance, { handleApiError } from '@/config/axios'
+import Modal from "./Modal";
+import Input from "@/components/formElements/Input";
+import useLoading from "@/hooks/useLoading";
+import useAuth from "@/hooks/useAuth";
+import { getCurrentStore } from "@/services/stores";
+import axiosInstance, { handleApiError } from "@/config/axios";
 import {
   CreateCustomerValidation,
   CreateCustomerData,
-} from '@/validation/customer'
+} from "@/validation/customer";
 
 interface AddCustomerModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onSuccess?: () => void
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onSuccess?: () => void;
 }
 
 const AddCustomerModal = ({
@@ -26,93 +26,99 @@ const AddCustomerModal = ({
   onOpenChange,
   onSuccess,
 }: AddCustomerModalProps) => {
-  const { setLoading } = useLoading()
-  const { user } = useAuth()
-  const [currentStore, setCurrentStore] = useState<any>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { setLoading } = useLoading();
+  const { user } = useAuth();
+  const [currentStore, setCurrentStore] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const methods = useForm<CreateCustomerData>({
     resolver: zodResolver(CreateCustomerValidation),
     defaultValues: {
-      phoneNumber: '',
-      firstName: '',
-      lastName: '',
+      phoneNumber: "",
+      firstName: "",
+      lastName: "",
     },
-  })
+  });
 
   const onSubmit = async (data: CreateCustomerData) => {
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
       // Get current store if not already fetched
-      let store = currentStore
-      if (!store && user?.role === 'store') {
-        store = await getCurrentStore()
-        setCurrentStore(store)
+      let store = currentStore;
+      if (!store && user?.role === "store") {
+        store = await getCurrentStore();
+        setCurrentStore(store);
       }
 
       // Validate that we have a store ID
       if (!store?.id) {
-        throw new Error('فروشگاه یافت نشد. لطفاً دوباره تلاش کنید.')
+        throw new Error("فروشگاه یافت نشد. لطفاً دوباره تلاش کنید.");
       }
 
       // Step 1: Create customer (or get existing customer)
-      const createCustomerResponse = await axiosInstance.post('/users/customers', {
-        phoneNumber: data.phoneNumber,
-        firstName: data.firstName,
-        lastName: data.lastName,
-      })
+      const createCustomerResponse = await axiosInstance.post(
+        "/users/customers",
+        {
+          phoneNumber: data.phoneNumber,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        },
+      );
 
-      const customerId = createCustomerResponse.data.id
-      const isExistingCustomer = createCustomerResponse.data.error
-      const isAlreadyInStore = createCustomerResponse.data.isAlreadyInStore
+      const customerId = createCustomerResponse.data.id;
+      const isExistingCustomer = createCustomerResponse.data.error;
+      const isAlreadyInStore = createCustomerResponse.data.isAlreadyInStore;
 
       // Handle case where customer is already in this store
       if (isAlreadyInStore) {
-        toast.error('این مشتری قبلاً در فروشگاه شما ثبت شده است')
-        onOpenChange(false)
-        methods.reset()
-        return
+        toast.error("این مشتری قبلاً در فروشگاه شما ثبت شده است");
+        onOpenChange(false);
+        methods.reset();
+        return;
       }
 
       // Show appropriate message if customer already exists but not in store
       if (isExistingCustomer) {
-        toast.success('مشتری با این شماره تلفن قبلاً ثبت شده است. در حال اضافه کردن به فروشگاه...')
+        toast.success(
+          "مشتری با این شماره تلفن قبلاً ثبت شده است. در حال اضافه کردن به فروشگاه...",
+        );
       }
 
       // Step 2: Add customer to store (whether new or existing)
       const addDirectCustomerResponse = await axiosInstance.post(
-        '/transactions/direct-customer',
+        "/transactions/direct-customer",
         {
           customerId,
           storeId: store.id, // Use the validated store ID
           // notes is optional and can be added later if needed
-        }
-      )
+        },
+      );
 
       // Show success message
-      const successMessage = isExistingCustomer 
-        ? 'مشتری موجود با موفقیت به فروشگاه اضافه شد'
-        : addDirectCustomerResponse.data.message || 'مشتری جدید با موفقیت اضافه شد'
-      
-      toast.success(successMessage)
+      const successMessage = isExistingCustomer
+        ? "مشتری موجود با موفقیت به فروشگاه اضافه شد"
+        : addDirectCustomerResponse.data.message ||
+          "مشتری جدید با موفقیت اضافه شد";
+
+      toast.success(successMessage);
 
       // Close modal and reset form
-      onOpenChange(false)
-      methods.reset()
-      onSuccess?.()
+      onOpenChange(false);
+      methods.reset();
+      onSuccess?.();
     } catch (err) {
-      const errorMessage = handleApiError(err)
-      toast.error(errorMessage)
+      const errorMessage = handleApiError(err);
+      toast.error(errorMessage);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
-    methods.reset()
-  }
+    onOpenChange(false);
+    methods.reset();
+  };
 
   return (
     <Modal
@@ -163,7 +169,7 @@ const AddCustomerModal = ({
         </FormProvider>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default AddCustomerModal
+export default AddCustomerModal;

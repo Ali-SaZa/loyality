@@ -1,12 +1,12 @@
-@use 'variables';
+@use "variables";
 
 /* لیست رنگ‌های مختلف */
 $colors: (
-        'primary': variables.$primary-color,
-        'secondary': variables.$secondary-color,
-        'success': variables.$success-color,
-        'warning': variables.$warning-color,
-        'danger': variables.$error-color,
+  "primary": variables.$primary-color,
+  "secondary": variables.$secondary-color,
+  "success": variables.$success-color,
+  "warning": variables.$warning-color,
+  "danger": variables.$error-color,
 );
 
 .swiper {

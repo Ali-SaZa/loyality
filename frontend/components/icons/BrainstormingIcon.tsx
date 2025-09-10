@@ -1,4 +1,4 @@
-export default function BrainstorminIcon({ className = 'size-6' }) {
+export default function BrainstorminIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -31,5 +31,5 @@ export default function BrainstorminIcon({ className = 'size-6' }) {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }

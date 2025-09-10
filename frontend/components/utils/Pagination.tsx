@@ -1,14 +1,18 @@
-import { Pagination as NextUiPagination } from '@heroui/pagination'
-import '@/styles/pagination.scss'
-import React from 'react'
+import { Pagination as NextUiPagination } from "@heroui/pagination";
+import "@/styles/pagination.scss";
+import React from "react";
 
 interface CustomPaginationProps {
-  total: number
-  currentPage: number
-  onPageChange: React.Dispatch<React.SetStateAction<number>>
+  total: number;
+  currentPage: number;
+  onPageChange: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Pagination = ({ total, currentPage, onPageChange }: CustomPaginationProps) => {
+const Pagination = ({
+  total,
+  currentPage,
+  onPageChange,
+}: CustomPaginationProps) => {
   return (
     <NextUiPagination
       showControls
@@ -18,7 +22,7 @@ const Pagination = ({ total, currentPage, onPageChange }: CustomPaginationProps)
       total={total}
       onChange={onPageChange} // اتصال setPage به تغییر صفحه
     />
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;

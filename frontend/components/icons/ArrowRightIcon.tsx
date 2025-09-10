@@ -1,4 +1,7 @@
-export default function ArrowRightIcon({ className = 'size-6', color = 'white' }) {
+export default function ArrowRightIcon({
+  className = "size-6",
+  color = "white",
+}) {
   return (
     <svg
       className={className}
@@ -11,5 +14,5 @@ export default function ArrowRightIcon({ className = 'size-6', color = 'white' }
         fill={color}
       />
     </svg>
-  )
+  );
 }

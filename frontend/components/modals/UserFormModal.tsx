@@ -1,136 +1,160 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+"use client";
+import { useState, useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import Modal from './Modal'
-import Input from '@/components/formElements/Input'
-import useLoading from '@/hooks/useLoading'
-import { CreateUserFormValidation, UpdateUserFormValidation, UserFormData, UserUpdateData } from '@/validation/user'
-import { UserRole, UserStatus } from '@/types/enums'
-import { User, getUserById, createUser, updateUser, usersService } from '@/services/users'
-
-
+import Modal from "./Modal";
+import Input from "@/components/formElements/Input";
+import useLoading from "@/hooks/useLoading";
+import {
+  CreateUserFormValidation,
+  UpdateUserFormValidation,
+  UserFormData,
+  UserUpdateData,
+} from "@/validation/user";
+import { UserRole, UserStatus } from "@/types/enums";
+import {
+  User,
+  getUserById,
+  createUser,
+  updateUser,
+  usersService,
+} from "@/services/users";
 
 interface UserFormModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onSuccess?: () => void
-  userId?: string // If provided, it's edit mode
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onSuccess?: () => void;
+  userId?: string; // If provided, it's edit mode
 }
 
-const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModalProps) => {
-  const { setLoading } = useLoading()
-  const [user, setUser] = useState<User | null>(null)
-  const [error, setError] = useState<string | null>(null)
+const UserFormModal = ({
+  isOpen,
+  onOpenChange,
+  onSuccess,
+  userId,
+}: UserFormModalProps) => {
+  const { setLoading } = useLoading();
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const isEditMode = !!userId
+  const isEditMode = !!userId;
 
   const methods = useForm<UserFormData | UserUpdateData>({
-    resolver: zodResolver(isEditMode ? UpdateUserFormValidation : CreateUserFormValidation),
+    resolver: zodResolver(
+      isEditMode ? UpdateUserFormValidation : CreateUserFormValidation,
+    ),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      phoneNumber: '',
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
       role: UserRole.CUSTOMER,
-      status: UserStatus.ACTIVE
-    }
-  })
+      status: UserStatus.ACTIVE,
+    },
+  });
 
   useEffect(() => {
     if (isOpen) {
       if (isEditMode && userId) {
-        fetchUser(userId)
+        fetchUser(userId);
       } else {
         // Reset form for create mode
         methods.reset({
-          firstName: '',
-          lastName: '',
-          phoneNumber: '',
+          firstName: "",
+          lastName: "",
+          phoneNumber: "",
           role: UserRole.CUSTOMER,
-          status: UserStatus.ACTIVE
-        })
-        setError(null)
+          status: UserStatus.ACTIVE,
+        });
+        setError(null);
       }
     }
-  }, [isOpen, isEditMode, userId])
+  }, [isOpen, isEditMode, userId]);
 
   const fetchUser = async (userId: string) => {
     try {
-      setLoading(true)
-      setError(null)
-      
-      const userData = await getUserById(userId)
-      setUser(userData)
-      
+      setLoading(true);
+      setError(null);
+
+      const userData = await getUserById(userId);
+      setUser(userData);
+
       methods.reset({
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
         phoneNumber: userData.phoneNumber,
         role: userData.role as UserRole,
-        status: userData.status as UserStatus || UserStatus.ACTIVE
-      })
+        status: (userData.status as UserStatus) || UserStatus.ACTIVE,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در بارگذاری اطلاعات کاربر')
+      setError(
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کاربر",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const onSubmit = async (data: UserFormData | UserUpdateData) => {
     try {
-      setLoading(true)
-      setError(null)
-      
+      setLoading(true);
+      setError(null);
+
       if (isEditMode && userId) {
         // Update existing user - handle both general update and status update
         const userData = {
           firstName: data.firstName || undefined,
-          lastName: data.lastName || undefined
-        }
-        
+          lastName: data.lastName || undefined,
+        };
+
         // Update basic user info
-        await updateUser(userId, userData)
-        
+        await updateUser(userId, userData);
+
         // Update status separately if it changed
         if (user && user.status !== data.status && data.status) {
-          await usersService.updateUserStatus(userId, data.status)
+          await usersService.updateUserStatus(userId, data.status);
         }
       } else {
         // Create new user
         const userData = {
           phoneNumber: data.phoneNumber!,
           firstName: data.firstName || undefined,
-          lastName: data.lastName || undefined
-        }
-        
-        await createUser(userData)
+          lastName: data.lastName || undefined,
+        };
+
+        await createUser(userData);
       }
-      
-      onOpenChange(false)
-      onSuccess?.()
+
+      onOpenChange(false);
+      onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : isEditMode ? 'خطا در بروزرسانی کاربر' : 'خطا در ایجاد کاربر')
+      setError(
+        err instanceof Error
+          ? err.message
+          : isEditMode
+            ? "خطا در بروزرسانی کاربر"
+            : "خطا در ایجاد کاربر",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
-    setError(null)
-  }
+    onOpenChange(false);
+    setError(null);
+  };
 
   const roleOptions = [
-    { code: UserRole.CUSTOMER, name: 'مشتری' },
-    { code: UserRole.STORE, name: 'فروشگاه' }
-  ]
+    { code: UserRole.CUSTOMER, name: "مشتری" },
+    { code: UserRole.STORE, name: "فروشگاه" },
+  ];
 
   const statusOptions = [
-    { code: UserStatus.ACTIVE, name: 'فعال' },
-    { code: UserStatus.BLOCKED, name: 'مسدود' },
-    ...(isEditMode ? [{ code: UserStatus.DELETED, name: 'حذف شده' }] : [])
-  ]
+    { code: UserStatus.ACTIVE, name: "فعال" },
+    { code: UserStatus.BLOCKED, name: "مسدود" },
+    ...(isEditMode ? [{ code: UserStatus.DELETED, name: "حذف شده" }] : []),
+  ];
 
   return (
     <Modal
@@ -139,8 +163,8 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
       onClose={handleClose}
       onAccept={methods.handleSubmit(onSubmit)}
       onReject={handleClose}
-      title={isEditMode ? 'ویرایش کاربر' : 'افزودن کاربر جدید'}
-      acceptBtnText={isEditMode ? 'بروزرسانی کاربر' : 'ایجاد کاربر'}
+      title={isEditMode ? "ویرایش کاربر" : "افزودن کاربر جدید"}
+      acceptBtnText={isEditMode ? "بروزرسانی کاربر" : "ایجاد کاربر"}
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
       size="lg"
@@ -203,7 +227,7 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
                 placeholder="نام کاربر"
                 inputType="text"
               />
-              
+
               <Input
                 generalType="input"
                 name="lastName"
@@ -216,7 +240,7 @@ const UserFormModal = ({ isOpen, onOpenChange, onSuccess, userId }: UserFormModa
         </FormProvider>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default UserFormModal
+export default UserFormModal;

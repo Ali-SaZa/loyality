@@ -1,16 +1,20 @@
 # Simplified Points-Based Promotion System
 
 ## Overview
+
 We have successfully simplified the promotion system to focus only on **points-based promotions** with a clean and simple structure.
 
 ## What Was Simplified
 
 ### 🎯 **Core Concept**
+
 - **Before**: Complex promotion system with 11 different types (coupon, cashback, referral, etc.)
 - **After**: Simple points-based system where users buy X amount and get Y points
 
 ### 📊 **Schema Changes**
+
 **Old Schema (Complex):**
+
 ```typescript
 {
   type: 'coupon' | 'cashback' | 'referral' | 'conditional' | 'percentage' | 'fixed' | 'flashSale' | 'freeShipping' | 'loyaltyPoints' | 'behavioral' | 'stackable',
@@ -33,6 +37,7 @@ We have successfully simplified the promotion system to focus only on **points-b
 ```
 
 **New Schema (Simple):**
+
 ```typescript
 {
   storeId: Types.ObjectId,
@@ -47,6 +52,7 @@ We have successfully simplified the promotion system to focus only on **points-b
 ### 🔧 **Files Updated**
 
 #### Backend Changes:
+
 1. **Schema**: `backend/src/schemas/promotion.schema.ts`
 2. **DTOs**: `backend/src/dto/promotion.dto.ts`
 3. **Service**: `backend/src/promotions/promotions.service.ts`
@@ -55,9 +61,10 @@ We have successfully simplified the promotion system to focus only on **points-b
 6. **New Promo Codes Seeder**: `backend/src/seeding/seeders/promo-codes.seeder.ts`
 
 #### Frontend Changes:
+
 1. **Service**: `frontend/services/promotions.ts`
 2. **Validation**: `frontend/validation/promotion.ts`
-3. **Components**: 
+3. **Components**:
    - `frontend/components/modals/PromotionFormModal.tsx`
    - `frontend/components/modals/PromotionBasicModal.tsx`
    - `frontend/components/modals/PromotionViewModal.tsx`
@@ -65,6 +72,7 @@ We have successfully simplified the promotion system to focus only on **points-b
 5. **Enums**: `frontend/types/enums.ts`
 
 ### 🗑️ **Removed Components**
+
 - Complex promotion types and their validation logic
 - Two-step promotion creation process
 - Complex form fields (dates, usage limits, stackable options, etc.)
@@ -73,18 +81,21 @@ We have successfully simplified the promotion system to focus only on **points-b
 ## 🎉 **Benefits of Simplification**
 
 ### ✅ **For Developers:**
+
 - **Cleaner Code**: 70% reduction in complexity
 - **Easier Maintenance**: Single promotion type to maintain
 - **Faster Development**: Simple schema and validation
 - **Better Testing**: Fewer edge cases to test
 
 ### ✅ **For Users:**
+
 - **Intuitive Interface**: Simple form with just essential fields
 - **Clear Value Proposition**: "Buy X, Get Y points"
 - **Faster Setup**: No complex configuration needed
 - **Less Confusion**: One clear promotion type
 
 ### ✅ **For Business:**
+
 - **Faster Time to Market**: Simple system can be deployed quickly
 - **Easier Training**: Staff can learn one promotion type
 - **Reduced Errors**: Fewer configuration options mean fewer mistakes
@@ -93,6 +104,7 @@ We have successfully simplified the promotion system to focus only on **points-b
 ## 📝 **Example Usage**
 
 ### Creating a Promotion:
+
 ```typescript
 {
   storeId: "507f1f77bcf86cd799439011",
@@ -104,6 +116,7 @@ We have successfully simplified the promotion system to focus only on **points-b
 ```
 
 ### Result:
+
 - Customer buys 100,000 Toman → Gets 1 point
 - Customer buys 200,000 Toman → Gets 2 points
 - Customer buys 500,000 Toman → Gets 5 points
@@ -111,6 +124,7 @@ We have successfully simplified the promotion system to focus only on **points-b
 ## 🚀 **Ready for Production**
 
 The simplified system is now:
+
 - ✅ **Backend**: Compiled and tested
 - ✅ **Frontend**: Built and validated
 - ✅ **Database**: Schema updated
@@ -121,6 +135,7 @@ The simplified system is now:
 ## 🔮 **Future Extensions**
 
 When you're ready to add more complexity, you can easily extend this system by:
+
 1. Adding new promotion types
 2. Including date ranges
 3. Adding usage limits

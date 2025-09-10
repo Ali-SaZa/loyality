@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Transaction, TransactionDocument } from '../../schemas/transaction.schema';
-import { User, UserDocument } from '../../schemas/user.schema';
-import { Store, StoreDocument } from '../../schemas/store.schema';
-import { PromoCode, PromoCodeDocument } from '../../schemas/promoCode.schema';
-import { Promotion, PromotionDocument } from '../../schemas/promotion.schema';
-import { BaseSeeder } from './base.seeder';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model, Types } from "mongoose";
+import {
+  Transaction,
+  TransactionDocument,
+} from "../../schemas/transaction.schema";
+import { User, UserDocument } from "../../schemas/user.schema";
+import { Store, StoreDocument } from "../../schemas/store.schema";
+import { PromoCode, PromoCodeDocument } from "../../schemas/promoCode.schema";
+import { Promotion, PromotionDocument } from "../../schemas/promotion.schema";
+import { BaseSeeder } from "./base.seeder";
 
 @Injectable()
 export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
@@ -16,11 +19,14 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
   private promotions: PromotionDocument[] = [];
 
   constructor(
-    @InjectModel(Transaction.name) private transactionModel: Model<TransactionDocument>,
+    @InjectModel(Transaction.name)
+    private transactionModel: Model<TransactionDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
-    @InjectModel(PromoCode.name) private promoCodeModel: Model<PromoCodeDocument>,
-    @InjectModel(Promotion.name) private promotionModel: Model<PromotionDocument>
+    @InjectModel(PromoCode.name)
+    private promoCodeModel: Model<PromoCodeDocument>,
+    @InjectModel(Promotion.name)
+    private promotionModel: Model<PromotionDocument>,
   ) {
     super();
   }
@@ -31,48 +37,54 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
 
   protected get data(): any[] {
     if (this.users.length === 0) {
-      throw new Error('Users must be set before seeding transactions');
+      throw new Error("Users must be set before seeding transactions");
     }
     if (this.stores.length === 0) {
-      throw new Error('Stores must be set before seeding transactions');
+      throw new Error("Stores must be set before seeding transactions");
     }
     if (this.promoCodes.length === 0) {
-      throw new Error('Promo codes must be set before seeding transactions');
+      throw new Error("Promo codes must be set before seeding transactions");
     }
     if (this.promotions.length === 0) {
-      throw new Error('Promotions must be set before seeding transactions');
+      throw new Error("Promotions must be set before seeding transactions");
     }
 
     const now = new Date();
     const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     // Get the customer user (09123333333)
-    const customerUser = this.users.find(user => user.phoneNumber === '09123333333');
-    
+    const customerUser = this.users.find(
+      (user) => user.phoneNumber === "09123333333",
+    );
+
     if (!customerUser) {
-      throw new Error('Customer user (09123333333) not found');
+      throw new Error("Customer user (09123333333) not found");
     }
 
     // Get Doris Accessories store
-    const dorisStore = this.stores.find(store => store.name === 'Doris Accessories');
-    
+    const dorisStore = this.stores.find(
+      (store) => store.name === "Doris Accessories",
+    );
+
     if (!dorisStore) {
-      throw new Error('Doris Accessories store not found');
+      throw new Error("Doris Accessories store not found");
     }
 
     // Get used promo codes for the customer (first 15 codes)
-    const usedPromoCodes = this.promoCodes.filter(promoCode => 
-      promoCode.status === 'used' && 
-      promoCode.userId && 
-      promoCode.userId.toString() === customerUser._id.toString()
+    const usedPromoCodes = this.promoCodes.filter(
+      (promoCode) =>
+        promoCode.status === "used" &&
+        promoCode.userId &&
+        promoCode.userId.toString() === customerUser._id.toString(),
     );
 
     const transactions: any[] = [];
 
     // Create transactions for the 15 used promo codes
     usedPromoCodes.forEach((promoCode, index) => {
-      const promotion = this.promotions.find(promotion => 
-        promotion._id.toString() === promoCode.promotionId.toString()
+      const promotion = this.promotions.find(
+        (promotion) =>
+          promotion._id.toString() === promoCode.promotionId.toString(),
       );
 
       if (promotion && promoCode.usedAt) {
@@ -82,7 +94,7 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
           promoCodeId: promoCode._id,
           promotionId: promotion._id,
           createdAt: promoCode.usedAt,
-          updatedAt: promoCode.usedAt
+          updatedAt: promoCode.usedAt,
         });
       }
     });

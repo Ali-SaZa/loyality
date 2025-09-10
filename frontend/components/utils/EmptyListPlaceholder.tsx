@@ -1,15 +1,15 @@
-import React from 'react'
+import React from "react";
 
-import NotFoundIcon from '../icons/NotFoundIcon'
+import NotFoundIcon from "../icons/NotFoundIcon";
 
 interface EmptyListPlaceholderProps {
-  title?: string
-  description?: string
+  title?: string;
+  description?: string;
 }
 
 const EmptyListPlaceholder = ({
-  title = 'نتیجه‌ای یافت نشد',
-  description = 'گزینه های جستجو یا فیلتر خود را تنظیم کنید تا آنچه را که به دنبال آن هستید بیابید.',
+  title = "نتیجه‌ای یافت نشد",
+  description = "گزینه های جستجو یا فیلتر خود را تنظیم کنید تا آنچه را که به دنبال آن هستید بیابید.",
 }: EmptyListPlaceholderProps) => {
   return (
     <div className="flex flex-col items-center justify-center gap-8 my-10">
@@ -19,7 +19,7 @@ const EmptyListPlaceholder = ({
         <p className="text-text-light-25 text-sm text-center">{description}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EmptyListPlaceholder
+export default EmptyListPlaceholder;

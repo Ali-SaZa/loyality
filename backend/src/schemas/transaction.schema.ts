@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { globalTransformPlugin } from './global-transform.plugin';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
+import { globalTransformPlugin } from "./global-transform.plugin";
 
 export interface TransactionDocument extends Transaction, Document {
   _id: Types.ObjectId;
@@ -10,19 +10,29 @@ export interface TransactionDocument extends Transaction, Document {
 
 @Schema({ timestamps: true })
 export class Transaction {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: "User", required: true, index: true })
   customerId: Types.ObjectId;
   // Reference to the customer who made the transaction
 
-  @Prop({ type: Types.ObjectId, ref: 'Store', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: "Store", required: true, index: true })
   storeId: Types.ObjectId;
   // Reference to the store where the transaction occurred
 
-  @Prop({ type: Types.ObjectId, ref: 'PromoCode', required: false, index: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: "PromoCode",
+    required: false,
+    index: true,
+  })
   promoCodeId?: Types.ObjectId;
   // Reference to the promo code used (optional for direct customer additions)
 
-  @Prop({ type: Types.ObjectId, ref: 'Promotion', required: false, index: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: "Promotion",
+    required: false,
+    index: true,
+  })
   promotionId?: Types.ObjectId;
   // Reference to the promotion (optional for direct customer additions)
 

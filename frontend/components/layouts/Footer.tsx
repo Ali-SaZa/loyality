@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react";
 
-import LogoContainer from '../ui/ObsLogo'
-import PhoneIcon from '../icons/PhoneIcon'
-import InstagramIcon from '../icons/InstagramIcon'
-import LinkedInIcon from '../icons/LinkedInIcon'
-import TelegramIcon from '../icons/TelegramIcon'
+import LogoContainer from "../ui/ObsLogo";
+import PhoneIcon from "../icons/PhoneIcon";
+import InstagramIcon from "../icons/InstagramIcon";
+import LinkedInIcon from "../icons/LinkedInIcon";
+import TelegramIcon from "../icons/TelegramIcon";
 
-import Button from '@/components/formElements/Button'
+import Button from "@/components/formElements/Button";
 
 const Footer = () => {
   return (
@@ -18,8 +18,10 @@ const Footer = () => {
               <LogoContainer />
             </div>
             <p className="text-justify">
-              OBS پلتفرم توسعه منابع انسانی است که از طریق استانداردسازی، سیستم سازی و فرآیندسازی تخصصی مشاغل جاری در هر کسب و کار، ظرفیت
-              جذابی جهت بهبود عملکرد نیروی انسانی فعلی سازمان ها و آموزش هدفمند نیروهای مشتاق به کار در کسب و کارهای بزرگ فراهم می سازد
+              OBS پلتفرم توسعه منابع انسانی است که از طریق استانداردسازی، سیستم
+              سازی و فرآیندسازی تخصصی مشاغل جاری در هر کسب و کار، ظرفیت جذابی
+              جهت بهبود عملکرد نیروی انسانی فعلی سازمان ها و آموزش هدفمند
+              نیروهای مشتاق به کار در کسب و کارهای بزرگ فراهم می سازد
             </p>
           </div>
           {/* <div className="grid grid-cols-2 gap-10">
@@ -57,8 +59,14 @@ const Footer = () => {
           <div className="flex flex-col gap-3 lg:gap-6">
             <p className="font-bold text-lg">ارتباط با ما</p>
             <div className="flex flex-col gap-4">
-              <p>شاهرود، بلوار دانشگاه، پارک علم و فناوری استان سمنان.مدیا پارک نیتک</p>
-              <p>مشهد،خیابان امام خمینی،خیابان شهید تولایی،پارک فاوا، طبقه چهارم، مدیا پارک نیتک</p>
+              <p>
+                شاهرود، بلوار دانشگاه، پارک علم و فناوری استان سمنان.مدیا پارک
+                نیتک
+              </p>
+              <p>
+                مشهد،خیابان امام خمینی،خیابان شهید تولایی،پارک فاوا، طبقه چهارم،
+                مدیا پارک نیتک
+              </p>
               <div className="flex items-center justify-between">
                 <a href="tel:09422010070,907">
                   <Button
@@ -71,10 +79,7 @@ const Footer = () => {
                   </Button>
                 </a>
                 <div className="w-[1px] bg-white h-6" />
-                <a
-                  className="text-end"
-                  href="mailto:info@obs.ir"
-                >
+                <a className="text-end" href="mailto:info@obs.ir">
                   info@obs.ir
                 </a>
               </div>
@@ -108,11 +113,13 @@ const Footer = () => {
               <TelegramIcon />
             </Button>
           </div>
-          <p className="text-text-dark">&copy; {new Date().getFullYear()} تمامی حقوق متعلق به نیتک می باشد.</p>
+          <p className="text-text-dark">
+            &copy; {new Date().getFullYear()} تمامی حقوق متعلق به نیتک می باشد.
+          </p>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

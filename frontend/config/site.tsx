@@ -1,112 +1,136 @@
-import { Metadata, Viewport } from 'next'
+import { Metadata, Viewport } from "next";
 
-import BrainstorminIcon from '@/components/icons/BrainstormingIcon'
-import ChartTreeIcon from '@/components/icons/ChartTreeIcon'
-import CommentAltIcon from '@/components/icons/CommentAltIcon'
-import CommentIcon from '@/components/icons/CommentIcon'
-import JobIcon from '@/components/icons/JobIcon'
-import DashboardIcon from '@/components/icons/DashboardIcon'
-import UserIcon from '@/components/icons/UserIcon'
-import StoreIcon from '@/components/icons/ChartTreeIcon'
-import ListIcon from '@/components/icons/ListIcon'
-import WalletIcon from '@/components/icons/WalletIcon'
-import PromotionIcon from '@/components/icons/PromotionIcon'
-import PromoCodeIcon from '@/components/icons/PromoCodeIcon'
-import MailIcon from '@/components/icons/MailIcon'
+import BrainstorminIcon from "@/components/icons/BrainstormingIcon";
+import ChartTreeIcon from "@/components/icons/ChartTreeIcon";
+import CommentAltIcon from "@/components/icons/CommentAltIcon";
+import CommentIcon from "@/components/icons/CommentIcon";
+import JobIcon from "@/components/icons/JobIcon";
+import DashboardIcon from "@/components/icons/DashboardIcon";
+import UserIcon from "@/components/icons/UserIcon";
+import StoreIcon from "@/components/icons/ChartTreeIcon";
+import ListIcon from "@/components/icons/ListIcon";
+import WalletIcon from "@/components/icons/WalletIcon";
+import PromotionIcon from "@/components/icons/PromotionIcon";
+import PromoCodeIcon from "@/components/icons/PromoCodeIcon";
+import MailIcon from "@/components/icons/MailIcon";
 
 export const siteConfig = {
-  name: 'OBS',
-  description: 'شبیه ساز شغلی آنلاین',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  
+  name: "OBS",
+  description: "شبیه ساز شغلی آنلاین",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+
   // Role-based menu configurations
   roleMenus: {
     admin: [
       {
-        title: 'داشبورد ادمین',
-        icon: (className: string = 'size-6') => <DashboardIcon className={className} />,
-        link: '/admin',
+        title: "داشبورد ادمین",
+        icon: (className: string = "size-6") => (
+          <DashboardIcon className={className} />
+        ),
+        link: "/admin",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'مدیریت کاربران',
-        icon: (className: string = 'size-6') => <UserIcon className={className} />,
-        link: '/admin/users',
+        title: "مدیریت کاربران",
+        icon: (className: string = "size-6") => (
+          <UserIcon className={className} />
+        ),
+        link: "/admin/users",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'مدیریت فروشگاه‌ها',
-        icon: (className: string = 'size-6') => <StoreIcon className={className} />,
-        link: '/admin/stores',
+        title: "مدیریت فروشگاه‌ها",
+        icon: (className: string = "size-6") => (
+          <StoreIcon className={className} />
+        ),
+        link: "/admin/stores",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'مدیریت تبلیغات',
-        icon: (className: string = 'size-6') => <PromotionIcon className={className} />,
-        link: '/admin/promotions',
+        title: "مدیریت تبلیغات",
+        icon: (className: string = "size-6") => (
+          <PromotionIcon className={className} />
+        ),
+        link: "/admin/promotions",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'مدیریت کدهای تخفیف',
-        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
-        link: '/admin/promo-codes',
+        title: "مدیریت کدهای تخفیف",
+        icon: (className: string = "size-6") => (
+          <PromoCodeIcon className={className} />
+        ),
+        link: "/admin/promo-codes",
         isShortAccess: true,
         children: [],
-      }
+      },
     ],
     store: [
       {
-        title: 'داشبورد فروشگاه',
-        icon: (className: string = 'size-6') => <DashboardIcon className={className} />,
-        link: '/store',
+        title: "داشبورد فروشگاه",
+        icon: (className: string = "size-6") => (
+          <DashboardIcon className={className} />
+        ),
+        link: "/store",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'تبلیغات',
-        icon: (className: string = 'size-6') => <PromotionIcon className={className} />,
-        link: '/store/promotions',
+        title: "تبلیغات",
+        icon: (className: string = "size-6") => (
+          <PromotionIcon className={className} />
+        ),
+        link: "/store/promotions",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'کدهای تخفیف',
-        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
-        link: '/store/promo-codes',
+        title: "کدهای تخفیف",
+        icon: (className: string = "size-6") => (
+          <PromoCodeIcon className={className} />
+        ),
+        link: "/store/promo-codes",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'مشتریان',
-        icon: (className: string = 'size-6') => <UserIcon className={className} />,
-        link: '/store/users',
+        title: "مشتریان",
+        icon: (className: string = "size-6") => (
+          <UserIcon className={className} />
+        ),
+        link: "/store/users",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'اعمال کد تخفیف',
-        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
-        link: '/store/apply-promo-code',
+        title: "اعمال کد تخفیف",
+        icon: (className: string = "size-6") => (
+          <PromoCodeIcon className={className} />
+        ),
+        link: "/store/apply-promo-code",
         isShortAccess: true,
         children: [],
       },
       {
-        title: 'پیامک‌های ارسالی',
-        icon: (className: string = 'size-6') => <MailIcon className={className} />,
-        link: '/store/sent-messages',
+        title: "پیامک‌های ارسالی",
+        icon: (className: string = "size-6") => (
+          <MailIcon className={className} />
+        ),
+        link: "/store/sent-messages",
         isShortAccess: true,
         children: [],
       },
     ],
     customer: [
       {
-        title: 'استفاده از کد تخفیف',
-        icon: (className: string = 'size-6') => <PromoCodeIcon className={className} />,
-        link: '/customer/use-promotion',
+        title: "استفاده از کد تخفیف",
+        icon: (className: string = "size-6") => (
+          <PromoCodeIcon className={className} />
+        ),
+        link: "/customer/use-promotion",
         isShortAccess: true,
         children: [],
       },
@@ -151,11 +175,13 @@ export const siteConfig = {
     //   children: [],
     // },
     {
-      title: 'بلاگ ها',
-      icon: (className: string = 'size-6') => <CommentAltIcon className={className} />,
-      link: 'https://lms.obs.ir/blog-list',
+      title: "بلاگ ها",
+      icon: (className: string = "size-6") => (
+        <CommentAltIcon className={className} />
+      ),
+      link: "https://lms.obs.ir/blog-list",
       isShortAccess: false,
-      target: '_blank',
+      target: "_blank",
       children: [],
     },
     // {
@@ -188,33 +214,39 @@ export const siteConfig = {
     //   children: [],
     // },
     {
-      title: 'کسب و کار ها',
-      icon: (className: string = 'size-6') => <ChartTreeIcon className={className} />,
-      link: '/user/businesses',
+      title: "کسب و کار ها",
+      icon: (className: string = "size-6") => (
+        <ChartTreeIcon className={className} />
+      ),
+      link: "/user/businesses",
       isShortAccess: false,
       disable: true,
       children: [],
     },
     {
-      title: 'شغل ها',
-      icon: (className: string = 'size-6') => <JobIcon className={className} />,
-      link: '/user/jobs',
+      title: "شغل ها",
+      icon: (className: string = "size-6") => <JobIcon className={className} />,
+      link: "/user/jobs",
       isShortAccess: false,
       disable: true,
       children: [],
     },
     {
-      title: 'مهارت ها',
-      icon: (className: string = 'size-6') => <BrainstorminIcon className={className} />,
-      link: '/user/skills',
+      title: "مهارت ها",
+      icon: (className: string = "size-6") => (
+        <BrainstorminIcon className={className} />
+      ),
+      link: "/user/skills",
       isShortAccess: false,
       disable: true,
       children: [],
     },
     {
-      title: 'نظرات',
-      icon: (className: string = 'size-6') => <CommentIcon className={className} />,
-      link: '/user/comments',
+      title: "نظرات",
+      icon: (className: string = "size-6") => (
+        <CommentIcon className={className} />
+      ),
+      link: "/user/comments",
       isShortAccess: false,
       disable: true,
       children: [],
@@ -241,10 +273,10 @@ export const siteConfig = {
     //   ],
     // },
     {
-      type: 'button',
-      title: 'مسیر مهارت آموزی',
-      link: 'https://lms.obs.ir',
-      target: '_blank',
+      type: "button",
+      title: "مسیر مهارت آموزی",
+      link: "https://lms.obs.ir",
+      target: "_blank",
     },
     // {
     //   type: 'select',
@@ -265,10 +297,10 @@ export const siteConfig = {
     //   ],
     // },
     {
-      type: 'button',
-      title: 'بلاگ',
-      link: 'https://lms.obs.ir/blog-list',
-      target: '_blank',
+      type: "button",
+      title: "بلاگ",
+      link: "https://lms.obs.ir/blog-list",
+      target: "_blank",
     },
     // {
     //   type: 'button',
@@ -286,25 +318,25 @@ export const siteConfig = {
     //   link: '/contact-us',
     // },
     {
-      type: 'select',
-      title: 'آشنایی با OBS',
+      type: "select",
+      title: "آشنایی با OBS",
       items: [
         {
-          title: 'درباره ما',
-          link: '/about-us',
+          title: "درباره ما",
+          link: "/about-us",
         },
         {
-          title: 'ارتباط با ما',
-          link: '/contact-us',
+          title: "ارتباط با ما",
+          link: "/contact-us",
         },
         {
-          title: 'سوالات متدوال',
-          link: '/questions',
+          title: "سوالات متدوال",
+          link: "/questions",
         },
       ],
     },
   ],
-}
+};
 
 export const metadata: Metadata = {
   title: {
@@ -313,10 +345,10 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: '/favicon.ico',
+    icon: "/favicon.ico",
   },
-}
+};
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: 'white' }],
-}
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "white" }],
+};

@@ -1,69 +1,63 @@
 #!/usr/bin/env node
 
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module';
-import { SeedingService } from './seeding.service';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "../app.module";
+import { SeedingService } from "./seeding.service";
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const seedingService = app.get(SeedingService);
 
   try {
-    console.log('🚀 Starting database seeding...');
-    
+    console.log("🚀 Starting database seeding...");
+
     // Get command line arguments
     const args = process.argv.slice(2);
-    const environment = args.includes('--production') ? 'production' : 'development';
-    const clearOnly = args.includes('--clear-only');
-    const statusOnly = args.includes('--status-only');
-    const storesOnly = args.includes('--stores-only');
+    const environment = args.includes("--production")
+      ? "production"
+      : "development";
+    const clearOnly = args.includes("--clear-only");
+    const statusOnly = args.includes("--status-only");
+    const storesOnly = args.includes("--stores-only");
 
-    
     if (statusOnly) {
-      console.log('📊 Getting database status...');
+      console.log("📊 Getting database status...");
       const status = await seedingService.getSeedingStatus();
-      console.log('Database Status:');
+      console.log("Database Status:");
       console.log(`  Users: ${status.users}`);
       console.log(`  Stores: ${status.stores}`);
-
-
 
       console.log(`  OTPs: ${status.otps}`);
       return;
     }
-    
+
     if (clearOnly) {
-      console.log('🗑️  Clearing all data...');
+      console.log("🗑️  Clearing all data...");
       await seedingService.clearAllData();
-      console.log('✅ All data cleared successfully');
+      console.log("✅ All data cleared successfully");
       return;
     }
-    
+
     if (storesOnly) {
-      console.log('🏪 Seeding stores only...');
+      console.log("🏪 Seeding stores only...");
       const stores = await seedingService.seedStoresOnly();
       console.log(`✅ Created ${stores.length} stores`);
       return;
     }
-    
 
-    
     console.log(`🌱 Seeding database for ${environment} environment...`);
     await seedingService.seedAll(environment);
-    console.log('✅ Database seeded successfully!');
-    
+    console.log("✅ Database seeded successfully!");
+
     // Show final status
     const status = await seedingService.getSeedingStatus();
-    console.log('\n📊 Final Database Status:');
+    console.log("\n📊 Final Database Status:");
     console.log(`  Users: ${status.users}`);
     console.log(`  Stores: ${status.stores}`);
 
-
-
     console.log(`  OTPs: ${status.otps}`);
-    
   } catch (error) {
-    console.error('❌ Seeding failed:', error);
+    console.error("❌ Seeding failed:", error);
     process.exit(1);
   } finally {
     await app.close();
@@ -71,7 +65,7 @@ async function bootstrap() {
 }
 
 // Handle command line usage
-if (process.argv.includes('--help') || process.argv.includes('-h')) {
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
   console.log(`
 🌱 Loyalty Program Database Seeder
 

@@ -36,7 +36,7 @@ import { RateLimiterMiddleware } from "./common/security/rate-limiter.middleware
           });
           return connection;
         },
-      }
+      },
     ),
     UsersModule,
     StoresModule,

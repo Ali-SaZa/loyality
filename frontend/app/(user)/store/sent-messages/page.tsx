@@ -1,62 +1,74 @@
-'use client'
-import React, { useState, useEffect } from 'react'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
-import { Pagination } from '@heroui/pagination'
-import { Spinner } from '@heroui/spinner'
-import { getSmsHistory, SmsHistoryItem, SmsHistoryResponse } from '@/services/stores'
-import useAlertModal from '@/hooks/useAlertModal'
-import { formatDateToPersianJalali } from '@/helpers'
+"use client";
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
+import { Pagination } from "@heroui/pagination";
+import { Spinner } from "@heroui/spinner";
+import {
+  getSmsHistory,
+  SmsHistoryItem,
+  SmsHistoryResponse,
+} from "@/services/stores";
+import useAlertModal from "@/hooks/useAlertModal";
+import { formatDateToPersianJalali } from "@/helpers";
 
 const SentMessagesPage = () => {
-  const [smsHistory, setSmsHistory] = useState<SmsHistoryResponse | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [error, setError] = useState<string | null>(null)
-  const { showAlert } = useAlertModal()
+  const [smsHistory, setSmsHistory] = useState<SmsHistoryResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+  const { showAlert } = useAlertModal();
 
   const fetchSmsHistory = async (page: number = 1) => {
     try {
-      setLoading(true)
-      setError(null)
-      const response = await getSmsHistory({ page, limit: 10 })
-      setSmsHistory(response)
+      setLoading(true);
+      setError(null);
+      const response = await getSmsHistory({ page, limit: 10 });
+      setSmsHistory(response);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'خطا در دریافت تاریخچه پیامک‌ها'
-      setError(errorMessage)
-      showAlert(errorMessage)
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در دریافت تاریخچه پیامک‌ها";
+      setError(errorMessage);
+      showAlert(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchSmsHistory(currentPage)
-  }, [currentPage])
+    fetchSmsHistory(currentPage);
+  }, [currentPage]);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+    setCurrentPage(page);
+  };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <Spinner size="lg" />
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="text-center py-8">
         <p className="text-red-500 text-lg">{error}</p>
-        <button 
+        <button
           onClick={() => fetchSmsHistory(currentPage)}
           className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
         >
           تلاش مجدد
         </button>
       </div>
-    )
+    );
   }
 
   if (!smsHistory || smsHistory.data.length === 0) {
@@ -64,7 +76,7 @@ const SentMessagesPage = () => {
       <div className="text-center py-8">
         <p className="text-gray-500 text-lg">هنوز هیچ پیامکی ارسال نکرده‌اید</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -94,7 +106,7 @@ const SentMessagesPage = () => {
                 </TableCell>
                 <TableCell>
                   <div className="font-medium">
-                    {sms.customerName || 'نامشخص'}
+                    {sms.customerName || "نامشخص"}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -104,9 +116,7 @@ const SentMessagesPage = () => {
                 </TableCell>
                 <TableCell>
                   <div className="text-sm max-w-xs">
-                    <span title={sms.messageText}>
-                      {sms.messagePreview}
-                    </span>
+                    <span title={sms.messageText}>{sms.messagePreview}</span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -128,7 +138,7 @@ const SentMessagesPage = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SentMessagesPage
+export default SentMessagesPage;

@@ -1,18 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Otp, OtpDocument } from '../schemas/otp.schema';
-import { CreateOtpDto, UpdateOtpDto, OtpResponseDto } from '../dto';
-import { 
-  OTPNotFoundException,
-  InvalidOTPException
-} from '../common/errors';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Otp, OtpDocument } from "../schemas/otp.schema";
+import { CreateOtpDto, UpdateOtpDto, OtpResponseDto } from "../dto";
+import { OTPNotFoundException, InvalidOTPException } from "../common/errors";
 
 @Injectable()
 export class OtpService {
-  constructor(
-    @InjectModel(Otp.name) private otpModel: Model<OtpDocument>,
-  ) {}
+  constructor(@InjectModel(Otp.name) private otpModel: Model<OtpDocument>) {}
 
   private transformOtpToResponse(otp: OtpDocument): OtpResponseDto {
     return {
@@ -33,11 +28,12 @@ export class OtpService {
     // Convert string date to Date object if needed
     const otpData = {
       ...createOtpDto,
-      expiresAt: typeof createOtpDto.expiresAt === 'string' 
-        ? new Date(createOtpDto.expiresAt) 
-        : createOtpDto.expiresAt
+      expiresAt:
+        typeof createOtpDto.expiresAt === "string"
+          ? new Date(createOtpDto.expiresAt)
+          : createOtpDto.expiresAt,
     };
-    
+
     const otp = new this.otpModel(otpData);
     const savedOtp = await otp.save();
     return this.transformOtpToResponse(savedOtp);
@@ -45,7 +41,7 @@ export class OtpService {
 
   async findAll(): Promise<OtpResponseDto[]> {
     const otps = await this.otpModel.find().exec();
-    return otps.map(otp => this.transformOtpToResponse(otp));
+    return otps.map((otp) => this.transformOtpToResponse(otp));
   }
 
   async findOne(id: string): Promise<OtpResponseDto> {
@@ -58,84 +54,107 @@ export class OtpService {
 
   async findByPhoneNumber(phoneNumber: string): Promise<OtpResponseDto[]> {
     const otps = await this.otpModel.find({ phoneNumber }).exec();
-    return otps.map(otp => this.transformOtpToResponse(otp));
+    return otps.map((otp) => this.transformOtpToResponse(otp));
   }
 
-  async findActiveByPhoneNumber(phoneNumber: string, context: 'login' | 'scratch' | 'promo-registration'): Promise<OtpResponseDto | null> {
-    const otp = await this.otpModel.findOne({
-      phoneNumber,
-      context,
-      status: 'sent',
-      expiresAt: { $gt: new Date() }
-    }).exec();
-    
+  async findActiveByPhoneNumber(
+    phoneNumber: string,
+    context: "login" | "scratch" | "promo-registration",
+  ): Promise<OtpResponseDto | null> {
+    const otp = await this.otpModel
+      .findOne({
+        phoneNumber,
+        context,
+        status: "sent",
+        expiresAt: { $gt: new Date() },
+      })
+      .exec();
+
     return otp ? this.transformOtpToResponse(otp) : null;
   }
 
-  async findRecentOtp(phoneNumber: string, context: 'login' | 'scratch' | 'promo-registration'): Promise<OtpResponseDto | null> {
+  async findRecentOtp(
+    phoneNumber: string,
+    context: "login" | "scratch" | "promo-registration",
+  ): Promise<OtpResponseDto | null> {
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-    
-    const otp = await this.otpModel.findOne({
-      phoneNumber,
-      context,
-      createdAt: { $gt: twoMinutesAgo }
-    }).sort({ createdAt: -1 }).exec();
-    
+
+    const otp = await this.otpModel
+      .findOne({
+        phoneNumber,
+        context,
+        createdAt: { $gt: twoMinutesAgo },
+      })
+      .sort({ createdAt: -1 })
+      .exec();
+
     return otp ? this.transformOtpToResponse(otp) : null;
   }
 
-  async update(id: string, updateOtpDto: UpdateOtpDto): Promise<OtpResponseDto> {
+  async update(
+    id: string,
+    updateOtpDto: UpdateOtpDto,
+  ): Promise<OtpResponseDto> {
     const otp = await this.otpModel
       .findByIdAndUpdate(id, updateOtpDto, { new: true })
       .exec();
-    
+
     if (!otp) {
       throw new OTPNotFoundException();
     }
-    
+
     return this.transformOtpToResponse(otp);
   }
 
-  async updateStatus(id: string, status: 'sent' | 'verified' | 'expired'): Promise<OtpResponseDto> {
+  async updateStatus(
+    id: string,
+    status: "sent" | "verified" | "expired",
+  ): Promise<OtpResponseDto> {
     const otp = await this.otpModel
       .findByIdAndUpdate(id, { status }, { new: true })
       .exec();
-    
+
     if (!otp) {
       throw new OTPNotFoundException();
     }
-    
+
     return this.transformOtpToResponse(otp);
   }
 
-  async verifyOtp(phoneNumber: string, code: string, context: 'login' | 'scratch' | 'promo-registration'): Promise<OtpResponseDto> {
-    const otp = await this.otpModel.findOne({
-      phoneNumber,
-      code,
-      context,
-      status: 'sent',
-      expiresAt: { $gt: new Date() }
-    }).exec();
-    
+  async verifyOtp(
+    phoneNumber: string,
+    code: string,
+    context: "login" | "scratch" | "promo-registration",
+  ): Promise<OtpResponseDto> {
+    const otp = await this.otpModel
+      .findOne({
+        phoneNumber,
+        code,
+        context,
+        status: "sent",
+        expiresAt: { $gt: new Date() },
+      })
+      .exec();
+
     if (!otp) {
       throw new InvalidOTPException();
     }
-    
-    otp.status = 'verified';
+
+    otp.status = "verified";
     const savedOtp = await otp.save();
-    
+
     return this.transformOtpToResponse(savedOtp);
   }
 
   async expireOtp(id: string): Promise<OtpResponseDto> {
     const otp = await this.otpModel
-      .findByIdAndUpdate(id, { status: 'expired' }, { new: true })
+      .findByIdAndUpdate(id, { status: "expired" }, { new: true })
       .exec();
-    
+
     if (!otp) {
       throw new OTPNotFoundException();
     }
-    
+
     return this.transformOtpToResponse(otp);
   }
 
@@ -147,8 +166,10 @@ export class OtpService {
   }
 
   async cleanupExpiredOtps(): Promise<void> {
-    await this.otpModel.deleteMany({
-      expiresAt: { $lt: new Date() }
-    }).exec();
+    await this.otpModel
+      .deleteMany({
+        expiresAt: { $lt: new Date() },
+      })
+      .exec();
   }
 }

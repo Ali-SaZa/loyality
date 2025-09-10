@@ -1,19 +1,19 @@
-'use client'
-import React from 'react'
-import { useDisclosure } from '@heroui/modal'
+"use client";
+import React from "react";
+import { useDisclosure } from "@heroui/modal";
 
-import Modal from '@/components/modals/Modal'
-import useLoading from '@/hooks/useLoading'
-import DotLoadingIcon from '@/components/icons/DotLoadingIcon'
-import LogoContainer from '@/components/ui/ObsLogo'
+import Modal from "@/components/modals/Modal";
+import useLoading from "@/hooks/useLoading";
+import DotLoadingIcon from "@/components/icons/DotLoadingIcon";
+import LogoContainer from "@/components/ui/ObsLogo";
 
 const Loading = () => {
-  const { onOpenChange } = useDisclosure()
-  const { loading } = useLoading()
+  const { onOpenChange } = useDisclosure();
+  const { loading } = useLoading();
 
   return (
     <Modal
-      key={loading ? '1' : '0'}
+      key={loading ? "1" : "0"}
       hideCloseButton
       hideFooter
       hideHeader
@@ -30,7 +30,7 @@ const Loading = () => {
         </p>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default Loading
+export default Loading;

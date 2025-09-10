@@ -1,56 +1,61 @@
-'use client'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+"use client";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import Modal from './Modal'
-import Input from '@/components/formElements/Input'
-import { BasicPromotionValidation } from '@/validation/promotion'
-import { Store } from '@/services/stores'
+import Modal from "./Modal";
+import Input from "@/components/formElements/Input";
+import { BasicPromotionValidation } from "@/validation/promotion";
+import { Store } from "@/services/stores";
 
 type BasicPromotionData = {
-  storeId: string
-  title: string
-  description?: string
-}
+  storeId: string;
+  title: string;
+  description?: string;
+};
 
 interface PromotionBasicModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  onNext: (data: BasicPromotionData) => void
-  stores: Store[]
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onNext: (data: BasicPromotionData) => void;
+  stores: Store[];
 }
 
-const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: PromotionBasicModalProps) => {
+const PromotionBasicModal = ({
+  isOpen,
+  onOpenChange,
+  onNext,
+  stores,
+}: PromotionBasicModalProps) => {
   const methods = useForm<BasicPromotionData>({
     resolver: zodResolver(BasicPromotionValidation),
     defaultValues: {
-      storeId: '',
-      title: '',
-      description: ''
-    }
-  })
+      storeId: "",
+      title: "",
+      description: "",
+    },
+  });
 
   const onSubmit = (data: BasicPromotionData) => {
-    console.log('Basic modal submitted:', data)
-    onNext(data)
-  }
+    console.log("Basic modal submitted:", data);
+    onNext(data);
+  };
 
-  const handleSubmit = methods.handleSubmit(onSubmit)
+  const handleSubmit = methods.handleSubmit(onSubmit);
 
   const handleAccept = () => {
-    console.log('Accept button clicked')
-    handleSubmit()
-  }
+    console.log("Accept button clicked");
+    handleSubmit();
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
-    methods.reset()
-  }
+    onOpenChange(false);
+    methods.reset();
+  };
 
-  const storeOptions = stores.map(store => ({
+  const storeOptions = stores.map((store) => ({
     code: store.id,
-    name: store.name
-  }))
+    name: store.name,
+  }));
 
   return (
     <Modal
@@ -90,7 +95,7 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
                 inputType="text"
                 required={true}
               />
-              
+
               <Input
                 generalType="input"
                 name="description"
@@ -103,15 +108,16 @@ const PromotionBasicModal = ({ isOpen, onOpenChange, onNext, stores }: Promotion
             {/* Info about points-based promotions */}
             <div className="p-4 bg-info-50 border border-info-200 rounded-lg">
               <p className="text-info text-sm">
-                <strong>تبلیغ امتیازی:</strong> در این نوع تبلیغ، مشتریان با خرید مبلغ مشخصی، 
-                امتیاز دریافت می‌کنند که می‌توانند در خریدهای بعدی استفاده کنند.
+                <strong>تبلیغ امتیازی:</strong> در این نوع تبلیغ، مشتریان با
+                خرید مبلغ مشخصی، امتیاز دریافت می‌کنند که می‌توانند در خریدهای
+                بعدی استفاده کنند.
               </p>
             </div>
           </div>
         </FormProvider>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default PromotionBasicModal
+export default PromotionBasicModal;

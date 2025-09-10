@@ -1,9 +1,11 @@
 # Frontend Development Plan - Loyalty Program
 
 ## Project Overview
+
 Building a modern, responsive frontend for the Loyalty Program API using Next.js, HeroUI, Axios, and TypeScript. The frontend will serve both customers and store owners with different interfaces and functionalities.
 
 ## Tech Stack
+
 - **Framework**: Next.js 14+ (App Router)
 - **UI Library**: HeroUI (built on Tailwind CSS v4+)
 - **CSS Framework**: Tailwind CSS v4+ (latest version)
@@ -16,6 +18,7 @@ Building a modern, responsive frontend for the Loyalty Program API using Next.js
 - **Maps**: Leaflet (for store locations)
 
 ## Project Structure
+
 ```
 frontend/
 ├── src/
@@ -46,6 +49,7 @@ frontend/
 ## Development Phases
 
 ### Phase 1: Project Setup & Foundation (Week 1)
+
 1. **Initialize Next.js project**
    - Create Next.js app with TypeScript
    - Configure Tailwind CSS v4+ and HeroUI
@@ -65,6 +69,7 @@ frontend/
    - Install additional utilities (date-fns, zod, etc.)
 
 ### Phase 2: Authentication System (Week 2)
+
 1. **OTP Authentication Flow**
    - Phone number input component
    - OTP verification component
@@ -78,6 +83,7 @@ frontend/
    - Session persistence
 
 ### Phase 3: Customer Interface (Week 3-4)
+
 1. **Customer Dashboard**
    - Points overview and history
    - Purchase tracking
@@ -97,6 +103,7 @@ frontend/
    - Privacy controls
 
 ### Phase 4: Store Owner Interface (Week 5-6)
+
 1. **Store Dashboard**
    - Sales analytics
    - Customer insights
@@ -116,6 +123,7 @@ frontend/
    - Bulk operations
 
 ### Phase 5: Advanced Features (Week 7-8)
+
 1. **Real-time Updates**
    - WebSocket integration
    - Live notifications
@@ -135,6 +143,7 @@ frontend/
 ## Key Features to Implement
 
 ### Customer Features
+
 - **Authentication**: OTP-based login with phone number
 - **Dashboard**: Points balance, purchase history, rewards
 - **Store Discovery**: Find nearby stores with loyalty programs
@@ -143,6 +152,7 @@ frontend/
 - **Profile Management**: Personal info and consent preferences
 
 ### Store Owner Features
+
 - **Store Dashboard**: Sales metrics and customer insights
 - **Loyalty Management**: Configure tiers and rewards
 - **Customer Management**: View and manage customer data
@@ -150,6 +160,7 @@ frontend/
 - **Scratch Card Management**: Create and manage reward cards
 
 ### Admin Features
+
 - **System Overview**: Platform-wide analytics
 - **User Management**: Customer and store owner administration
 - **Transaction Monitoring**: System-wide transaction tracking
@@ -158,6 +169,7 @@ frontend/
 ## Technical Considerations
 
 ### Security
+
 - JWT token management
 - API rate limiting
 - Input validation and sanitization
@@ -165,6 +177,7 @@ frontend/
 - XSS and CSRF protection
 
 ### Performance
+
 - Image optimization
 - Code splitting
 - Lazy loading
@@ -172,6 +185,7 @@ frontend/
 - Bundle size optimization
 
 ### Accessibility
+
 - WCAG 2.1 AA compliance
 - Keyboard navigation
 - Screen reader support
@@ -179,6 +193,7 @@ frontend/
 - Responsive design
 
 ### Internationalization
+
 - Persian (Farsi) language support
 - RTL layout support
 - Currency formatting (IRR)
@@ -187,6 +202,7 @@ frontend/
 ## API Integration Strategy
 
 ### API Client Setup
+
 - Centralized Axios instance
 - Request/response interceptors
 - Error handling middleware
@@ -194,6 +210,7 @@ frontend/
 - Rate limiting handling
 
 ### Data Management
+
 - React Query for server state
 - Optimistic updates
 - Background refetching
@@ -201,6 +218,7 @@ frontend/
 - Loading states
 
 ### Real-time Features
+
 - WebSocket connections
 - Event-driven updates
 - Push notifications
@@ -209,18 +227,21 @@ frontend/
 ## Testing Strategy
 
 ### Unit Testing
+
 - Component testing with Jest and React Testing Library
 - Hook testing
 - Utility function testing
 - Mock API responses
 
 ### Integration Testing
+
 - API integration tests
 - Authentication flow tests
 - Form submission tests
 - Navigation tests
 
 ### E2E Testing
+
 - Critical user journeys
 - Cross-browser testing
 - Mobile device testing
@@ -229,18 +250,21 @@ frontend/
 ## Deployment & DevOps
 
 ### Build Process
+
 - Automated testing
 - Code quality checks
 - Bundle analysis
 - Performance monitoring
 
 ### Deployment
+
 - Vercel deployment
 - Environment configuration
 - CI/CD pipeline
 - Monitoring and logging
 
 ### Post-Deployment
+
 - Performance monitoring
 - Error tracking
 - User analytics
@@ -249,18 +273,21 @@ frontend/
 ## Success Metrics
 
 ### Technical Metrics
+
 - Lighthouse score > 90
 - First Contentful Paint < 1.5s
 - Time to Interactive < 3.5s
 - Bundle size < 250KB
 
 ### User Experience Metrics
+
 - User engagement rates
 - Task completion rates
 - Error rates
 - User satisfaction scores
 
 ### Business Metrics
+
 - User registration rates
 - Store adoption rates
 - Transaction volumes
@@ -269,18 +296,21 @@ frontend/
 ## Risk Mitigation
 
 ### Technical Risks
+
 - API integration complexity
 - Performance bottlenecks
 - Browser compatibility issues
 - Mobile responsiveness challenges
 
 ### Business Risks
+
 - User adoption challenges
 - Feature scope creep
 - Timeline delays
 - Resource constraints
 
 ### Mitigation Strategies
+
 - Phased development approach
 - Regular stakeholder feedback
 - Continuous testing and validation

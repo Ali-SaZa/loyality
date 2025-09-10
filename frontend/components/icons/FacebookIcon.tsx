@@ -1,4 +1,4 @@
-export default function FacebookIcon({ className = 'size-6' }) {
+export default function FacebookIcon({ className = "size-6" }) {
   return (
     <svg
       className={className}
@@ -11,5 +11,5 @@ export default function FacebookIcon({ className = 'size-6' }) {
         fill="#1877F2"
       />
     </svg>
-  )
+  );
 }

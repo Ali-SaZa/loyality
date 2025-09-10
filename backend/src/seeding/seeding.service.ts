@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { 
-  StoresSeeder, 
-  UsersSeeder, 
+import { Injectable, Logger } from "@nestjs/common";
+import {
+  StoresSeeder,
+  UsersSeeder,
   PromotionsSeeder,
   PromoCodesSeeder,
   TransactionsSeeder,
   OTPsSeeder,
-  SmsSeeder
-} from './seeders';
+  SmsSeeder,
+} from "./seeders";
 
 @Injectable()
 export class SeedingService {
@@ -23,12 +23,14 @@ export class SeedingService {
     private readonly smsSeeder: SmsSeeder,
   ) {}
 
-  async seedAll(environment: 'development' | 'production' = 'development'): Promise<void> {
+  async seedAll(
+    environment: "development" | "production" = "development",
+  ): Promise<void> {
     this.logger.log(`Starting seeding for ${environment} environment...`);
 
     try {
       // Clear existing data if development
-      if (environment === 'development') {
+      if (environment === "development") {
         await this.clearAllData();
       }
 
@@ -37,21 +39,30 @@ export class SeedingService {
       const stores = await this.seedStores(users);
       const promotions = await this.seedPromotions(stores);
       const promoCodes = await this.seedPromoCodes(promotions, users);
-      const transactions = await this.seedTransactions(users, stores, promoCodes, promotions);
+      const transactions = await this.seedTransactions(
+        users,
+        stores,
+        promoCodes,
+        promotions,
+      );
       await this.seedOTPs(users);
       await this.seedSMS(users);
 
-      this.logger.log(`Seeding completed successfully for ${environment} environment`);
-      this.logger.log(`Created: ${users.length} users, ${stores.length} stores, ${promotions.length} promotions, ${promoCodes.length} promo codes, ${transactions.length} transactions`);
+      this.logger.log(
+        `Seeding completed successfully for ${environment} environment`,
+      );
+      this.logger.log(
+        `Created: ${users.length} users, ${stores.length} stores, ${promotions.length} promotions, ${promoCodes.length} promo codes, ${transactions.length} transactions`,
+      );
     } catch (error) {
-      this.logger.error('Seeding failed:', error);
+      this.logger.error("Seeding failed:", error);
       throw error;
     }
   }
 
   async clearAllData(): Promise<void> {
-    this.logger.log('Clearing all existing data...');
-    
+    this.logger.log("Clearing all existing data...");
+
     await Promise.all([
       this.transactionsSeeder.clear(),
       this.promoCodesSeeder.clear(),
@@ -61,8 +72,8 @@ export class SeedingService {
       this.otpsSeeder.clear(),
       this.smsSeeder.clear(),
     ]);
-    
-    this.logger.log('All data cleared successfully');
+
+    this.logger.log("All data cleared successfully");
   }
 
   private async seedStores(users: any[]) {
@@ -81,7 +92,12 @@ export class SeedingService {
     return this.promoCodesSeeder.seed();
   }
 
-  private async seedTransactions(users: any[], stores: any[], promoCodes: any[], promotions: any[]) {
+  private async seedTransactions(
+    users: any[],
+    stores: any[],
+    promoCodes: any[],
+    promotions: any[],
+  ) {
     this.transactionsSeeder.setUsers(users);
     this.transactionsSeeder.setStores(stores);
     this.transactionsSeeder.setPromoCodes(promoCodes);
@@ -108,15 +124,16 @@ export class SeedingService {
     otps: number;
     sms: number;
   }> {
-    const [users, stores, promotions, promoCodes, transactions, otps, sms] = await Promise.all([
-      this.usersSeeder.count(),
-      this.storesSeeder.count(),
-      this.promotionsSeeder.count(),
-      this.promoCodesSeeder.count(),
-      this.transactionsSeeder.count(),
-      this.otpsSeeder.count(),
-      this.smsSeeder.count(),
-    ]);
+    const [users, stores, promotions, promoCodes, transactions, otps, sms] =
+      await Promise.all([
+        this.usersSeeder.count(),
+        this.storesSeeder.count(),
+        this.promotionsSeeder.count(),
+        this.promoCodesSeeder.count(),
+        this.transactionsSeeder.count(),
+        this.otpsSeeder.count(),
+        this.smsSeeder.count(),
+      ]);
 
     return { users, stores, promotions, promoCodes, transactions, otps, sms };
   }
@@ -142,7 +159,12 @@ export class SeedingService {
     return this.promoCodesSeeder.seed();
   }
 
-  async seedTransactionsOnly(users: any[], stores: any[], promoCodes: any[], promotions: any[]): Promise<any[]> {
+  async seedTransactionsOnly(
+    users: any[],
+    stores: any[],
+    promoCodes: any[],
+    promotions: any[],
+  ): Promise<any[]> {
     this.transactionsSeeder.setUsers(users);
     this.transactionsSeeder.setStores(stores);
     this.transactionsSeeder.setPromoCodes(promoCodes);

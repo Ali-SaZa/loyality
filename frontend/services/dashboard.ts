@@ -1,14 +1,16 @@
-import { API_ROUTES, HANDLE_ERROR } from './config'
+import { API_ROUTES, HANDLE_ERROR } from "./config";
 
-import axiosInstance from '@/config/axios'
+import axiosInstance from "@/config/axios";
 
 export const GET_INDEX_PAGE_DATA = async () => {
   try {
-    const response = await axiosInstance.get(API_ROUTES.DASHBOARD.GET_INDEX_PAGE_DATA)
+    const response = await axiosInstance.get(
+      API_ROUTES.DASHBOARD.GET_INDEX_PAGE_DATA,
+    );
 
-    return response
+    return response;
   } catch (error) {
-    HANDLE_ERROR(error)
-    throw error
+    HANDLE_ERROR(error);
+    throw error;
   }
-}
+};

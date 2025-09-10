@@ -49,7 +49,8 @@ const AdminPromoCodes = () => {
       const response = await getAllPromoCodes({ page: 1, limit: 50 });
       setPromoCodes(response.data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف";
+      const errorMessage =
+        err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف";
       toast.error(errorMessage);
     } finally {
       setLoading(false);

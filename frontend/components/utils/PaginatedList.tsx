@@ -1,50 +1,80 @@
-'use client'
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { Selection, SortDescriptor, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown'
-import { Input } from '@heroui/input'
-import { Pagination } from '@heroui/pagination'
-import { Button as NextUiButton } from '@heroui/button'
-import qs from 'qs'
-import DatePicker, { DateObject } from 'react-multi-date-picker'
-import persian from 'react-date-object/calendars/persian'
-import persian_fa from 'react-date-object/locales/persian_fa'
-import toast from 'react-hot-toast'
-import { useDisclosure } from '@heroui/modal'
-import { Accordion, AccordionItem } from '@heroui/accordion'
-import { Select, SelectItem } from '@heroui/select'
-import { Chip } from '@heroui/chip'
+"use client";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Selection,
+  SortDescriptor,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@heroui/table";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/dropdown";
+import { Input } from "@heroui/input";
+import { Pagination } from "@heroui/pagination";
+import { Button as NextUiButton } from "@heroui/button";
+import qs from "qs";
+import DatePicker, { DateObject } from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+import toast from "react-hot-toast";
+import { useDisclosure } from "@heroui/modal";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Select, SelectItem } from "@heroui/select";
+import { Chip } from "@heroui/chip";
 
-import AngleDownIcon from '../icons/AngleDownIcon'
-import SearchAltIcon from '../icons/SearchAltIcon'
-import AngleLeftIcon from '../icons/AngleLeftIcon'
-import DotLoadingIcon from '../icons/DotLoadingIcon'
-import Modal from '../modals/Modal'
+import AngleDownIcon from "../icons/AngleDownIcon";
+import SearchAltIcon from "../icons/SearchAltIcon";
+import AngleLeftIcon from "../icons/AngleLeftIcon";
+import DotLoadingIcon from "../icons/DotLoadingIcon";
+import Modal from "../modals/Modal";
 
-import axiosInstance from '@/config/axios'
-import { convertPersianToEnglish, convertToISOFormat, downloadExcel, isEmptyObject } from '@/helpers'
-import Button from '@/components/formElements/Button'
-import useAlertModal from '@/hooks/useAlertModal'
-import TrashIcon from '@/components/icons/TrashIcon'
-import ArrowsVIcon from '@/components/icons/ArrowsVIcon'
-import { ApiWithParams, PaginationListColumnType } from '@/types'
+import axiosInstance from "@/config/axios";
+import {
+  convertPersianToEnglish,
+  convertToISOFormat,
+  downloadExcel,
+  isEmptyObject,
+} from "@/helpers";
+import Button from "@/components/formElements/Button";
+import useAlertModal from "@/hooks/useAlertModal";
+import TrashIcon from "@/components/icons/TrashIcon";
+import ArrowsVIcon from "@/components/icons/ArrowsVIcon";
+import { ApiWithParams, PaginationListColumnType } from "@/types";
 
-type ChildrenType = Record<string, (data: any, cellValue: any) => React.ReactNode>
+type ChildrenType = Record<
+  string,
+  (data: any, cellValue: any) => React.ReactNode
+>;
 
 interface CustomTableProps {
-  columns: PaginationListColumnType[]
-  staticData?: any[]
-  initialVisibleColumns?: string[]
-  selectionMode?: 'single' | 'multiple' | 'none'
-  url?: string
-  children?: ChildrenType | never[]
-  searchField?: string
-  urlParams?: ApiWithParams
-  hasDynamicButton?: boolean
-  dynamicButtonText?: string
-  onDynamicButtonClick?: () => void
-  dynamicTopSection?: React.ReactNode
-  filterPrefix?: string
+  columns: PaginationListColumnType[];
+  staticData?: any[];
+  initialVisibleColumns?: string[];
+  selectionMode?: "single" | "multiple" | "none";
+  url?: string;
+  children?: ChildrenType | never[];
+  searchField?: string;
+  urlParams?: ApiWithParams;
+  hasDynamicButton?: boolean;
+  dynamicButtonText?: string;
+  onDynamicButtonClick?: () => void;
+  dynamicTopSection?: React.ReactNode;
+  filterPrefix?: string;
 }
 
 const PaginatedList = forwardRef(
@@ -53,96 +83,106 @@ const PaginatedList = forwardRef(
       columns = [],
       staticData = [],
       initialVisibleColumns = [],
-      selectionMode = 'none',
+      selectionMode = "none",
       url,
       children = {},
       searchField,
       urlParams = {
         page: 1,
         pageSize: 20,
-        sort: '',
+        sort: "",
         filters: {},
       },
       hasDynamicButton,
-      dynamicButtonText = 'افزودن',
+      dynamicButtonText = "افزودن",
       onDynamicButtonClick,
       dynamicTopSection,
       filterPrefix,
     }: CustomTableProps,
-    ref
+    ref,
   ) => {
-    type DataType = (typeof data)[0]
+    type DataType = (typeof data)[0];
 
     const rowsPerPageOptions = [
       {
         key: 20,
-        label: '20 ردیف',
+        label: "20 ردیف",
       },
       {
         key: 30,
-        label: '30 ردیف',
+        label: "30 ردیف",
       },
       {
         key: 45,
-        label: '45 ردیف',
+        label: "45 ردیف",
       },
       {
         key: 50,
-        label: '50 ردیف',
+        label: "50 ردیف",
       },
       {
         key: 100,
-        label: '100 ردیف',
+        label: "100 ردیف",
       },
-    ]
+    ];
 
-    const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
-    const { showAlert } = useAlertModal()
+    const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
+    const { showAlert } = useAlertModal();
 
-    const [filtersForceRender, setFiltersForceRender] = useState(1)
-    const [data, setData] = useState<any[]>(staticData)
-    const [filters, setFilters] = useState<any>({})
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]))
-    const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(initialVisibleColumns))
-    const [page, setPage] = useState(urlParams.page || 1)
-    const [rowsPerPage, setRowsPerPage] = useState(urlParams.pageSize || rowsPerPageOptions[0].key)
-    const [totalItems, setTotalItems] = useState(0)
-    const [isLoading, setIsLoading] = useState(false)
+    const [filtersForceRender, setFiltersForceRender] = useState(1);
+    const [data, setData] = useState<any[]>(staticData);
+    const [filters, setFilters] = useState<any>({});
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(
+      new Set(initialVisibleColumns),
+    );
+    const [page, setPage] = useState(urlParams.page || 1);
+    const [rowsPerPage, setRowsPerPage] = useState(
+      urlParams.pageSize || rowsPerPageOptions[0].key,
+    );
+    const [totalItems, setTotalItems] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-      column: searchField ? searchField : 'createdAt',
-      direction: 'ascending',
-    })
+      column: searchField ? searchField : "createdAt",
+      direction: "ascending",
+    });
 
     // استفاده از useRef برای تشخیص اولین اجرا
-    const isFirstRender = useRef(true)
+    const isFirstRender = useRef(true);
 
     // Exposing the function to parent or other components
     useImperativeHandle(ref, () => ({
       exelReport,
       filters,
-    }))
+    }));
 
     const handleFetch = async (params?: ApiWithParams) => {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
 
         const response = await axiosInstance.get(url!, {
           params: params ? params : urlParams,
-          paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'brackets' }),
-        })
+          paramsSerializer: (params) =>
+            qs.stringify(params, { arrayFormat: "brackets" }),
+        });
 
-        setData(response.data.data)
-        setTotalItems(response.data.response.totalItemsCount)
-        if (initialVisibleColumns.length === 0 && response?.data?.data?.length) {
-          setVisibleColumns(new Set([...Object.keys(response.data.data[0]), 'actions']))
+        setData(response.data.data);
+        setTotalItems(response.data.response.totalItemsCount);
+        if (
+          initialVisibleColumns.length === 0 &&
+          response?.data?.data?.length
+        ) {
+          setVisibleColumns(
+            new Set([...Object.keys(response.data.data[0]), "actions"]),
+          );
         }
       } catch (error: any) {
-        console.log('error', error)
-        toast.error(error.message)
+        console.log("error", error);
+        toast.error(error.message);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
     useEffect(() => {
       if (url) {
@@ -150,49 +190,54 @@ const PaginatedList = forwardRef(
           ...urlParams,
           page,
           pageSize: rowsPerPage,
-        }
+        };
 
-        handleFetch(params)
+        handleFetch(params);
       }
-    }, [url, page, rowsPerPage])
+    }, [url, page, rowsPerPage]);
 
     useEffect(() => {
       if (staticData?.length) {
-        setData(staticData)
-        setTotalItems(staticData.length)
+        setData(staticData);
+        setTotalItems(staticData.length);
       }
-    }, [staticData])
+    }, [staticData]);
 
     const handleSort = async () => {
-      const sortString = sortDescriptor.direction === 'ascending' ? sortDescriptor.column! : `-${sortDescriptor.column!}`
+      const sortString =
+        sortDescriptor.direction === "ascending"
+          ? sortDescriptor.column!
+          : `-${sortDescriptor.column!}`;
       const params = {
         ...urlParams,
         page,
         pageSize: rowsPerPage,
         sort: sortString as string,
-      }
+      };
 
-      await handleFetch(params)
-    }
+      await handleFetch(params);
+    };
 
     const headerColumns = useMemo(() => {
-      if (visibleColumns === 'all' || visibleColumns.size === 0) return columns
+      if (visibleColumns === "all" || visibleColumns.size === 0) return columns;
 
-      return columns.filter((column) => Array.from(visibleColumns).includes(column.field))
-    }, [visibleColumns])
+      return columns.filter((column) =>
+        Array.from(visibleColumns).includes(column.field),
+      );
+    }, [visibleColumns]);
 
-    const pages = Math.ceil(totalItems / rowsPerPage)
+    const pages = Math.ceil(totalItems / rowsPerPage);
 
     useEffect(() => {
       // چک کردن اینکه آیا اولین اجرا است یا نه
       if (isFirstRender.current) {
-        isFirstRender.current = false
+        isFirstRender.current = false;
 
-        return // از اجرای درخواست در بار اول جلوگیری می‌کند
+        return; // از اجرای درخواست در بار اول جلوگیری می‌کند
       }
 
-      handleSort()
-    }, [sortDescriptor])
+      handleSort();
+    }, [sortDescriptor]);
 
     // const renderCell = useCallback((item: DataType, columnKey: React.Key) => {
     //   const cellValue = item[columnKey as keyof DataType]
@@ -204,52 +249,64 @@ const PaginatedList = forwardRef(
 
     const renderCell = useCallback(
       (item: DataType, columnKey: React.Key) => {
-        const cellValue = item[columnKey as keyof DataType]
+        const cellValue = item[columnKey as keyof DataType];
 
         // Ensure children is of type ChildrenType before using it
-        if (children && typeof children === 'object' && !(children instanceof Array) && (columnKey as string) in children) {
-          const columnKeyString = columnKey as keyof typeof children
+        if (
+          children &&
+          typeof children === "object" &&
+          !(children instanceof Array) &&
+          (columnKey as string) in children
+        ) {
+          const columnKeyString = columnKey as keyof typeof children;
 
-          return children[columnKeyString](item, cellValue)
+          return children[columnKeyString](item, cellValue);
         }
 
-        return cellValue
+        return cellValue;
       },
-      [children]
-    )
+      [children],
+    );
 
     const onNextPage = useCallback(() => {
       if (page < pages) {
-        setPage(page + 1)
+        setPage(page + 1);
       }
-    }, [page, pages])
+    }, [page, pages]);
 
     const onPreviousPage = useCallback(() => {
       if (page > 1) {
-        setPage(page - 1)
+        setPage(page - 1);
       }
-    }, [page])
+    }, [page]);
 
-    const onRowsPerPageChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value))
-      setPage(1)
-    }, [])
+    const onRowsPerPageChange = useCallback(
+      (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
+      },
+      [],
+    );
 
     const handleClearFilter = () => {
-      setFilters({})
-    }
+      setFilters({});
+    };
 
     const handleRemoveFilter = (field: string) => {
       setFilters((prevFilters: any) => {
-        const newFilters = { ...prevFilters }
+        const newFilters = { ...prevFilters };
 
-        delete newFilters[field]
+        delete newFilters[field];
 
-        return newFilters
-      })
-    }
+        return newFilters;
+      });
+    };
 
-    const handleSetFilter = (field: string, value: string | number, nestedField?: string) => {
+    const handleSetFilter = (
+      field: string,
+      value: string | number,
+      nestedField?: string,
+    ) => {
       setFilters((prevFilters: any) => {
         if (nestedField) {
           return {
@@ -258,59 +315,65 @@ const PaginatedList = forwardRef(
               ...prevFilters[field],
               [nestedField]: value,
             },
-          }
+          };
         } else {
           return {
             ...prevFilters,
             [field]: value,
-          }
+          };
         }
-      })
-    }
+      });
+    };
 
-    const isNestedFilter = (value: any): value is { from: string; to: string } => {
-      return typeof value === 'object' && value !== null && ('from' in value || 'to' in value)
-    }
+    const isNestedFilter = (
+      value: any,
+    ): value is { from: string; to: string } => {
+      return (
+        typeof value === "object" &&
+        value !== null &&
+        ("from" in value || "to" in value)
+      );
+    };
 
     const createFilterObject = (): Record<string, string> => {
-      const result: Record<string, string> = {}
+      const result: Record<string, string> = {};
 
       Object.entries(filters).forEach(([key, value]) => {
-        if (value === 'null' || value === '') {
+        if (value === "null" || value === "") {
           // حذف فیلترهای خالی یا null
-          return
+          return;
         }
 
         if (isNestedFilter(value)) {
-          let filterString = ''
+          let filterString = "";
 
           if (value.from) {
-            filterString += value.from
+            filterString += value.from;
           }
 
           if (value.to) {
             if (value.from) {
-              filterString += `,${value.to}`
+              filterString += `,${value.to}`;
             } else {
-              filterString += `,${value.to}` // کاما قبل از to اگر from وجود نداشت
+              filterString += `,${value.to}`; // کاما قبل از to اگر from وجود نداشت
             }
           } else if (value.from) {
-            filterString += ',' // کاما بعد از from اگر to وجود نداشت
+            filterString += ","; // کاما بعد از from اگر to وجود نداشت
           }
 
-          if (filterString !== '') {
-            result[key] = filterString
+          if (filterString !== "") {
+            result[key] = filterString;
           }
-        } else if (typeof value === 'string') {
-          result[key] = value
+        } else if (typeof value === "string") {
+          result[key] = value;
         }
-      })
+      });
 
-      return result
-    }
+      return result;
+    };
 
     const preparingFilter = (resultType?: number) => {
-      const filterObject = createFilterObject()
+      const filterObject = createFilterObject();
       let params: { [p: string]: any } = {
         ...urlParams,
         page,
@@ -319,42 +382,48 @@ const PaginatedList = forwardRef(
           ...urlParams.filters,
           ...filterObject,
         },
-      }
+      };
 
       // اگر resultType وجود داشت، آن را به params اضافه کن
       if (resultType !== undefined) {
-        params.resultType = resultType
+        params.resultType = resultType;
       }
 
       // اگر filterPrefix وجود داشت، کلیدها را با prefix به‌روز کن
       if (filterPrefix) {
-        params = Object.fromEntries(Object.entries(params).map(([key, value]) => [`${filterPrefix}.${key}`, value]))
+        params = Object.fromEntries(
+          Object.entries(params).map(([key, value]) => [
+            `${filterPrefix}.${key}`,
+            value,
+          ]),
+        );
       }
 
-      return params
-    }
+      return params;
+    };
 
     const runFilters = async () => {
-      await handleFetch(preparingFilter())
-      setFiltersForceRender((prev) => prev + 1)
-      setPage(1)
-      onClose()
-    }
+      await handleFetch(preparingFilter());
+      setFiltersForceRender((prev) => prev + 1);
+      setPage(1);
+      onClose();
+    };
 
     const exelReport = async (fileName: string, newUrl: string) => {
-      setIsLoading(true)
+      setIsLoading(true);
 
-      const params = preparingFilter(1)
+      const params = preparingFilter(1);
 
       const response = await axiosInstance.get(newUrl || url!, {
         params: params,
-        paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'brackets' }),
-      })
+        paramsSerializer: (params) =>
+          qs.stringify(params, { arrayFormat: "brackets" }),
+      });
 
-      downloadExcel(response.data.response.fileData, fileName)
+      downloadExcel(response.data.response.fileData, fileName);
 
-      setIsLoading(false)
-    }
+      setIsLoading(false);
+    };
 
     const topContent = useMemo(() => {
       return (
@@ -388,9 +457,13 @@ const PaginatedList = forwardRef(
                   onSelectionChange={setVisibleColumns}
                 >
                   {columns.map((column) => {
-                    if (column?.visibleForTitleFilter === false) return null
+                    if (column?.visibleForTitleFilter === false) return null;
 
-                    return <DropdownItem key={column.field}>{column.label}</DropdownItem>
+                    return (
+                      <DropdownItem key={column.field}>
+                        {column.label}
+                      </DropdownItem>
+                    );
                   })}
                 </DropdownMenu>
               </Dropdown>
@@ -398,18 +471,26 @@ const PaginatedList = forwardRef(
           </div>
           <div className="flex flex-col md:flex-row items-center gap-2">
             {dynamicTopSection}
-            {hasDynamicButton && <Button onClick={onDynamicButtonClick}>{dynamicButtonText}</Button>}
+            {hasDynamicButton && (
+              <Button onClick={onDynamicButtonClick}>
+                {dynamicButtonText}
+              </Button>
+            )}
           </div>
         </div>
-      )
-    }, [visibleColumns, onRowsPerPageChange, data.length])
+      );
+    }, [visibleColumns, onRowsPerPageChange, data.length]);
 
     const bottomContent = useMemo(() => {
       return (
         <div className="py-2 px-2 flex flex-col lg:flex-row gap-2 justify-between items-center">
-          {selectionMode !== 'none' && (
+          {selectionMode !== "none" && (
             <div className="flex items-center text-nowrap gap-2 text-small text-default-400">
-              <span>{selectedKeys === 'all' ? 'تمامی سطر ها انتخاب شدند' : `${selectedKeys.size} تا از ${data.length} انتخاب شدند`}</span>
+              <span>
+                {selectedKeys === "all"
+                  ? "تمامی سطر ها انتخاب شدند"
+                  : `${selectedKeys.size} تا از ${data.length} انتخاب شدند`}
+              </span>
               <span>|</span>
               <span>تعداد کل: {data.length}</span>
             </div>
@@ -425,10 +506,7 @@ const PaginatedList = forwardRef(
                 onChange={(e) => setRowsPerPage(Number(e.target.value))}
               >
                 {(row) => (
-                  <SelectItem
-                    key={row.key}
-                    textValue={row.label}
-                  >
+                  <SelectItem key={row.key} textValue={row.label}>
                     {row.label}
                   </SelectItem>
                 )}
@@ -449,7 +527,9 @@ const PaginatedList = forwardRef(
             <Button
               color="default"
               disabled={page === 1}
-              iconStart={<AngleLeftIcon className="size-6 rotate-180 text-text" />}
+              iconStart={
+                <AngleLeftIcon className="size-6 rotate-180 text-text" />
+              }
               size="sm"
               variant="flat"
               onClick={onPreviousPage}
@@ -468,8 +548,8 @@ const PaginatedList = forwardRef(
             </Button>
           </div>
         </div>
-      )
-    }, [selectedKeys, data.length, page, pages])
+      );
+    }, [selectedKeys, data.length, page, pages]);
 
     return (
       <>
@@ -502,16 +582,16 @@ const PaginatedList = forwardRef(
             {(column) => (
               <TableColumn
                 key={column.field}
-                align={column.field === 'actions' ? 'end' : 'start'}
+                align={column.field === "actions" ? "end" : "start"}
                 // allowsSorting={column.sortable}
                 maxWidth={column?.maxWidth}
                 minWidth={column?.minWidth}
                 width={column?.width}
                 onClick={(e) => {
-                  const target = e.target as HTMLElement
+                  const target = e.target as HTMLElement;
 
-                  if (target.tagName === 'INPUT') {
-                    target.focus()
+                  if (target.tagName === "INPUT") {
+                    target.focus();
                   }
                 }}
               >
@@ -528,40 +608,55 @@ const PaginatedList = forwardRef(
                         onClick={() =>
                           setSortDescriptor((prev) => ({
                             column: column.field,
-                            direction: prev.direction === 'ascending' ? 'descending' : 'ascending',
+                            direction:
+                              prev.direction === "ascending"
+                                ? "descending"
+                                : "ascending",
                           }))
                         }
                       >
-                        <ArrowsVIcon className={`size-4 text-text ${sortDescriptor.direction === 'ascending' ? 'rotate-180' : ''}`} />
+                        <ArrowsVIcon
+                          className={`size-4 text-text ${sortDescriptor.direction === "ascending" ? "rotate-180" : ""}`}
+                        />
                       </Button>
                     )}
                   </div>
-                  {(!column.type || column.type === 'text') && column?.filterable && (
-                    <Input
-                      fullWidth
-                      isClearable
-                      aria-label={column.label}
-                      className="shadow-none"
-                      size="sm"
-                      value={filters[column.field]}
-                      variant="bordered"
-                      onClear={() => {
-                        handleSetFilter(column.field, '')
-                        setTimeout(() => {
-                          document.getElementById('runFilterPrivateButton')?.click()
-                        }, 50)
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+                  {(!column.type || column.type === "text") &&
+                    column?.filterable && (
+                      <Input
+                        fullWidth
+                        isClearable
+                        aria-label={column.label}
+                        className="shadow-none"
+                        size="sm"
+                        value={filters[column.field]}
+                        variant="bordered"
+                        onClear={() => {
+                          handleSetFilter(column.field, "");
                           setTimeout(() => {
-                            document.getElementById('runFilterPrivateButton')?.click()
-                          }, 50)
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            setTimeout(() => {
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
+                          }
+                        }}
+                        onValueChange={(value) =>
+                          handleSetFilter(
+                            column.field,
+                            convertPersianToEnglish(value),
+                          )
                         }
-                      }}
-                      onValueChange={(value) => handleSetFilter(column.field, convertPersianToEnglish(value))}
-                    />
-                  )}
-                  {column.type === 'number' && column?.filterable && (
+                      />
+                    )}
+                  {column.type === "number" && column?.filterable && (
                     <Input
                       fullWidth
                       isClearable
@@ -572,22 +667,31 @@ const PaginatedList = forwardRef(
                       value={filters[column.field]}
                       variant="bordered"
                       onClear={() => {
-                        handleSetFilter(column.field, '')
+                        handleSetFilter(column.field, "");
                         setTimeout(() => {
-                          document.getElementById('runFilterPrivateButton')?.click()
-                        }, 50)
+                          document
+                            .getElementById("runFilterPrivateButton")
+                            ?.click();
+                        }, 50);
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === "Enter") {
                           setTimeout(() => {
-                            document.getElementById('runFilterPrivateButton')?.click()
-                          }, 50)
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
                         }
                       }}
-                      onValueChange={(value) => handleSetFilter(column.field, Number(convertPersianToEnglish(value)))}
+                      onValueChange={(value) =>
+                        handleSetFilter(
+                          column.field,
+                          Number(convertPersianToEnglish(value)),
+                        )
+                      }
                     />
                   )}
-                  {column.type === 'inputFromTo' && column?.filterable && (
+                  {column.type === "inputFromTo" && column?.filterable && (
                     <div className="flex flex-col gap-2">
                       <Input
                         fullWidth
@@ -599,19 +703,29 @@ const PaginatedList = forwardRef(
                         value={filters[column.field]?.from}
                         variant="bordered"
                         onClear={() => {
-                          handleSetFilter(column.field, '', 'from')
+                          handleSetFilter(column.field, "", "from");
                           setTimeout(() => {
-                            document.getElementById('runFilterPrivateButton')?.click()
-                          }, 50)
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
                         }}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             setTimeout(() => {
-                              document.getElementById('runFilterPrivateButton')?.click()
-                            }, 50)
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
                           }
                         }}
-                        onValueChange={(value) => handleSetFilter(column.field, convertPersianToEnglish(value), 'from')}
+                        onValueChange={(value) =>
+                          handleSetFilter(
+                            column.field,
+                            convertPersianToEnglish(value),
+                            "from",
+                          )
+                        }
                       />
                       <Input
                         fullWidth
@@ -623,47 +737,61 @@ const PaginatedList = forwardRef(
                         value={filters[column.field]?.to}
                         variant="bordered"
                         onClear={() => {
-                          handleSetFilter(column.field, '', 'to')
+                          handleSetFilter(column.field, "", "to");
                           setTimeout(() => {
-                            document.getElementById('runFilterPrivateButton')?.click()
-                          }, 50)
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
                         }}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             setTimeout(() => {
-                              document.getElementById('runFilterPrivateButton')?.click()
-                            }, 50)
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
                           }
                         }}
-                        onValueChange={(value) => handleSetFilter(column.field, convertPersianToEnglish(value), 'to')}
+                        onValueChange={(value) =>
+                          handleSetFilter(
+                            column.field,
+                            convertPersianToEnglish(value),
+                            "to",
+                          )
+                        }
                       />
                     </div>
                   )}
-                  {column.type === 'select' && column?.filterItems?.length && column?.filterable && (
-                    <Select
-                      fullWidth
-                      aria-label={column.label}
-                      size="sm"
-                      variant="bordered"
-                      onChange={(event) => {
-                        handleSetFilter(column.field, event.target.value)
-                        setTimeout(() => {
-                          document.getElementById('runFilterPrivateButton')?.click()
-                        }, 50)
-                      }}
-                    >
-                      {column.filterItems.map((item: any) => (
-                        <SelectItem key={item.code}>{item.name}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                  {column.type === 'date' && column?.filterable && (
+                  {column.type === "select" &&
+                    column?.filterItems?.length &&
+                    column?.filterable && (
+                      <Select
+                        fullWidth
+                        aria-label={column.label}
+                        size="sm"
+                        variant="bordered"
+                        onChange={(event) => {
+                          handleSetFilter(column.field, event.target.value);
+                          setTimeout(() => {
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
+                        }}
+                      >
+                        {column.filterItems.map((item: any) => (
+                          <SelectItem key={item.code}>{item.name}</SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                  {column.type === "date" && column?.filterable && (
                     <div className="flex items-center gap-1">
                       <DatePicker
                         calendar={persian}
                         calendarPosition="bottom-right"
                         containerStyle={{
-                          width: '100%',
+                          width: "100%",
                         }}
                         format="YYYY/MM/DD"
                         locale={persian_fa}
@@ -671,28 +799,33 @@ const PaginatedList = forwardRef(
                         minDate="1300/1/1"
                         placeholder={`انتخاب ${column.label}`}
                         style={{
-                          width: '100%',
-                          boxSizing: 'border-box',
-                          height: '32px',
-                          borderRadius: '8px',
-                          background: '#f4f4f5',
-                          borderColor: '#e4e4e7',
-                          borderWidth: '2px',
-                          color: 'black',
-                          padding: '0 12px',
+                          width: "100%",
+                          boxSizing: "border-box",
+                          height: "32px",
+                          borderRadius: "8px",
+                          background: "#f4f4f5",
+                          borderColor: "#e4e4e7",
+                          borderWidth: "2px",
+                          color: "black",
+                          padding: "0 12px",
                         }}
                         value={new Date(filters[column.field])}
                         onChange={(date) => {
                           if (!date) {
                             // مقدار رو خالی کن
-                            handleSetFilter(column.field, '')
+                            handleSetFilter(column.field, "");
                           } else {
-                            handleSetFilter(column.field, convertToISOFormat(date)!.split('T')[0])
+                            handleSetFilter(
+                              column.field,
+                              convertToISOFormat(date)!.split("T")[0],
+                            );
                           }
 
                           setTimeout(() => {
-                            document.getElementById('runFilterPrivateButton')?.click()
-                          }, 50)
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
                         }}
                       />
                       <Button
@@ -700,24 +833,26 @@ const PaginatedList = forwardRef(
                         color="default"
                         size="sm"
                         onClick={() => {
-                          handleSetFilter(column.field, '')
+                          handleSetFilter(column.field, "");
                           setTimeout(() => {
-                            document.getElementById('runFilterPrivateButton')?.click()
-                          }, 50)
+                            document
+                              .getElementById("runFilterPrivateButton")
+                              ?.click();
+                          }, 50);
                         }}
                       >
                         <TrashIcon className="size-4" />
                       </Button>
                     </div>
                   )}
-                  {column.type === 'dateFromTo' && column?.filterable && (
+                  {column.type === "dateFromTo" && column?.filterable && (
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1">
                         <DatePicker
                           calendar={persian}
                           calendarPosition="bottom-right"
                           containerStyle={{
-                            width: '100%',
+                            width: "100%",
                           }}
                           format="YYYY/MM/DD"
                           locale={persian_fa}
@@ -725,28 +860,34 @@ const PaginatedList = forwardRef(
                           minDate="1300/1/1"
                           placeholder={`از ${column.label}`}
                           style={{
-                            width: '100%',
-                            boxSizing: 'border-box',
-                            height: '32px',
-                            borderRadius: '8px',
-                            background: '#f4f4f5',
-                            borderColor: '#e4e4e7',
-                            borderWidth: '2px',
-                            color: 'black',
-                            padding: '0 12px',
+                            width: "100%",
+                            boxSizing: "border-box",
+                            height: "32px",
+                            borderRadius: "8px",
+                            background: "#f4f4f5",
+                            borderColor: "#e4e4e7",
+                            borderWidth: "2px",
+                            color: "black",
+                            padding: "0 12px",
                           }}
                           value={new Date(filters[column.field]?.from)}
                           onChange={(date) => {
                             if (!date) {
                               // مقدار رو خالی کن
-                              handleSetFilter(column.field, '', 'from')
+                              handleSetFilter(column.field, "", "from");
                             } else {
-                              handleSetFilter(column.field, convertToISOFormat(date)!.split('T')[0], 'from')
+                              handleSetFilter(
+                                column.field,
+                                convertToISOFormat(date)!.split("T")[0],
+                                "from",
+                              );
                             }
 
                             setTimeout(() => {
-                              document.getElementById('runFilterPrivateButton')?.click()
-                            }, 50)
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
                           }}
                         />
                         <Button
@@ -754,10 +895,12 @@ const PaginatedList = forwardRef(
                           color="default"
                           size="sm"
                           onClick={() => {
-                            handleSetFilter(column.field, '', 'from')
+                            handleSetFilter(column.field, "", "from");
                             setTimeout(() => {
-                              document.getElementById('runFilterPrivateButton')?.click()
-                            }, 50)
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
                           }}
                         >
                           <TrashIcon className="size-4" />
@@ -769,7 +912,7 @@ const PaginatedList = forwardRef(
                           calendar={persian}
                           calendarPosition="bottom-right"
                           containerStyle={{
-                            width: '100%',
+                            width: "100%",
                           }}
                           format="YYYY/MM/DD"
                           locale={persian_fa}
@@ -777,28 +920,34 @@ const PaginatedList = forwardRef(
                           minDate="1300/1/1"
                           placeholder={`تا ${column.label}`}
                           style={{
-                            width: '100%',
-                            boxSizing: 'border-box',
-                            height: '32px',
-                            borderRadius: '8px',
-                            background: '#f4f4f5',
-                            borderColor: '#e4e4e7',
-                            borderWidth: '2px',
-                            color: 'black',
-                            padding: '0 12px',
+                            width: "100%",
+                            boxSizing: "border-box",
+                            height: "32px",
+                            borderRadius: "8px",
+                            background: "#f4f4f5",
+                            borderColor: "#e4e4e7",
+                            borderWidth: "2px",
+                            color: "black",
+                            padding: "0 12px",
                           }}
                           value={new Date(filters[column.field]?.to)}
                           onChange={(date) => {
                             if (!date) {
                               // مقدار رو خالی کن
-                              handleSetFilter(column.field, '', 'to')
+                              handleSetFilter(column.field, "", "to");
                             } else {
-                              handleSetFilter(column.field, convertToISOFormat(date)!.split('T')[0], 'to')
+                              handleSetFilter(
+                                column.field,
+                                convertToISOFormat(date)!.split("T")[0],
+                                "to",
+                              );
                             }
 
                             setTimeout(() => {
-                              document.getElementById('runFilterPrivateButton')?.click()
-                            }, 50)
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
                           }}
                         />
                         <Button
@@ -806,10 +955,12 @@ const PaginatedList = forwardRef(
                           color="default"
                           size="sm"
                           onClick={() => {
-                            handleSetFilter(column.field, '', 'to')
+                            handleSetFilter(column.field, "", "to");
                             setTimeout(() => {
-                              document.getElementById('runFilterPrivateButton')?.click()
-                            }, 50)
+                              document
+                                .getElementById("runFilterPrivateButton")
+                                ?.click();
+                            }, 50);
                           }}
                         >
                           <TrashIcon className="size-4" />
@@ -835,9 +986,15 @@ const PaginatedList = forwardRef(
                 </div>
               )
             }
-            loadingState={isLoading ? 'loading' : 'idle'}
+            loadingState={isLoading ? "loading" : "idle"}
           >
-            {(item) => <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>}
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
           </TableBody>
         </Table>
         <Modal
@@ -866,7 +1023,12 @@ const PaginatedList = forwardRef(
                 className="cursor-pointer"
                 color="danger"
                 variant="solid"
-                onClick={() => showAlert('برای حذف همه فیلتر ها مطمعن هستید؟', handleClearFilter)}
+                onClick={() =>
+                  showAlert(
+                    "برای حذف همه فیلتر ها مطمعن هستید؟",
+                    handleClearFilter,
+                  )
+                }
               >
                 حذف همه
               </Chip>
@@ -875,9 +1037,9 @@ const PaginatedList = forwardRef(
           <div className="py-4">
             <Accordion
               itemClasses={{
-                base: 'shadow-none bg-background-10',
-                content: 'pb-4',
-                title: 'text-sm font-normal',
+                base: "shadow-none bg-background-10",
+                content: "pb-4",
+                title: "text-sm font-normal",
               }}
               variant="splitted"
             >
@@ -889,7 +1051,7 @@ const PaginatedList = forwardRef(
                     aria-label={column.label}
                     title={column.label}
                   >
-                    {(!column.type || column.type === 'text') && (
+                    {(!column.type || column.type === "text") && (
                       <Input
                         fullWidth
                         isClearable
@@ -900,11 +1062,16 @@ const PaginatedList = forwardRef(
                         startContent={<SearchAltIcon />}
                         value={filters[column.field]}
                         variant="underlined"
-                        onClear={() => handleSetFilter(column.field, '')}
-                        onValueChange={(value) => handleSetFilter(column.field, convertPersianToEnglish(value))}
+                        onClear={() => handleSetFilter(column.field, "")}
+                        onValueChange={(value) =>
+                          handleSetFilter(
+                            column.field,
+                            convertPersianToEnglish(value),
+                          )
+                        }
                       />
                     )}
-                    {column.type === 'number' && (
+                    {column.type === "number" && (
                       <Input
                         fullWidth
                         isClearable
@@ -916,11 +1083,16 @@ const PaginatedList = forwardRef(
                         type="number"
                         value={filters[column.field]}
                         variant="underlined"
-                        onClear={() => handleSetFilter(column.field, '')}
-                        onValueChange={(value) => handleSetFilter(column.field, Number(convertPersianToEnglish(value)))}
+                        onClear={() => handleSetFilter(column.field, "")}
+                        onValueChange={(value) =>
+                          handleSetFilter(
+                            column.field,
+                            Number(convertPersianToEnglish(value)),
+                          )
+                        }
                       />
                     )}
-                    {column.type === 'inputFromTo' && (
+                    {column.type === "inputFromTo" && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input
                           fullWidth
@@ -932,8 +1104,16 @@ const PaginatedList = forwardRef(
                           startContent={<SearchAltIcon />}
                           value={filters[column.field]?.from}
                           variant="underlined"
-                          onClear={() => handleSetFilter(column.field, '', 'from')}
-                          onValueChange={(value) => handleSetFilter(column.field, convertPersianToEnglish(value), 'from')}
+                          onClear={() =>
+                            handleSetFilter(column.field, "", "from")
+                          }
+                          onValueChange={(value) =>
+                            handleSetFilter(
+                              column.field,
+                              convertPersianToEnglish(value),
+                              "from",
+                            )
+                          }
                         />
                         <Input
                           fullWidth
@@ -945,32 +1125,43 @@ const PaginatedList = forwardRef(
                           startContent={<SearchAltIcon />}
                           value={filters[column.field]?.to}
                           variant="underlined"
-                          onClear={() => handleSetFilter(column.field, '', 'to')}
-                          onValueChange={(value) => handleSetFilter(column.field, convertPersianToEnglish(value), 'to')}
+                          onClear={() =>
+                            handleSetFilter(column.field, "", "to")
+                          }
+                          onValueChange={(value) =>
+                            handleSetFilter(
+                              column.field,
+                              convertPersianToEnglish(value),
+                              "to",
+                            )
+                          }
                         />
                       </div>
                     )}
-                    {column.type === 'select' && column?.filterItems?.length && (
-                      <Select
-                        fullWidth
-                        aria-label={column.label}
-                        placeholder={`انتخاب ${column.label}`}
-                        size="md"
-                        startContent={<SearchAltIcon />}
-                        variant="underlined"
-                        onChange={(event) => handleSetFilter(column.field, event.target.value)}
-                      >
-                        {column.filterItems.map((item: any) => (
-                          <SelectItem key={item.code}>{item.name}</SelectItem>
-                        ))}
-                      </Select>
-                    )}
-                    {column.type === 'date' && (
+                    {column.type === "select" &&
+                      column?.filterItems?.length && (
+                        <Select
+                          fullWidth
+                          aria-label={column.label}
+                          placeholder={`انتخاب ${column.label}`}
+                          size="md"
+                          startContent={<SearchAltIcon />}
+                          variant="underlined"
+                          onChange={(event) =>
+                            handleSetFilter(column.field, event.target.value)
+                          }
+                        >
+                          {column.filterItems.map((item: any) => (
+                            <SelectItem key={item.code}>{item.name}</SelectItem>
+                          ))}
+                        </Select>
+                      )}
+                    {column.type === "date" && (
                       <DatePicker
                         calendar={persian}
                         calendarPosition="bottom-right"
                         containerStyle={{
-                          width: '100%',
+                          width: "100%",
                         }}
                         format="YYYY/MM/DD"
                         locale={persian_fa}
@@ -978,37 +1169,39 @@ const PaginatedList = forwardRef(
                         minDate="1300/1/1"
                         placeholder={`انتخاب ${column.label}`}
                         style={{
-                          width: '100%',
-                          boxSizing: 'border-box',
-                          height: '48px',
-                          borderRadius: '0px',
-                          background: '#f8f8f8',
-                          borderColor: '#e4e4e7',
-                          borderWidth: '2px',
-                          borderTop: 'none',
-                          borderLeft: 'none',
-                          borderRight: 'none',
-                          color: 'black',
-                          padding: '0 12px',
+                          width: "100%",
+                          boxSizing: "border-box",
+                          height: "48px",
+                          borderRadius: "0px",
+                          background: "#f8f8f8",
+                          borderColor: "#e4e4e7",
+                          borderWidth: "2px",
+                          borderTop: "none",
+                          borderLeft: "none",
+                          borderRight: "none",
+                          color: "black",
+                          padding: "0 12px",
                         }}
                         value={new Date(filters[column.field])}
-                        onChange={(date) => handleSetFilter(column.field, convertToISOFormat(date)!.split('T')[0])}
+                        onChange={(date) =>
+                          handleSetFilter(
+                            column.field,
+                            convertToISOFormat(date)!.split("T")[0],
+                          )
+                        }
                       />
                     )}
-                    {column.type === 'dateFromTo' && (
+                    {column.type === "dateFromTo" && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex flex-col">
-                          <label
-                            className="text-xs"
-                            htmlFor=""
-                          >
+                          <label className="text-xs" htmlFor="">
                             {`از ${column.label}`}
                           </label>
                           <DatePicker
                             calendar={persian}
                             calendarPosition="bottom-right"
                             containerStyle={{
-                              width: '100%',
+                              width: "100%",
                             }}
                             format="YYYY/MM/DD"
                             locale={persian_fa}
@@ -1016,36 +1209,39 @@ const PaginatedList = forwardRef(
                             minDate="1300/1/1"
                             placeholder={`از ${column.label}`}
                             style={{
-                              width: '100%',
-                              boxSizing: 'border-box',
-                              height: '48px',
-                              borderRadius: '0px',
-                              background: '#f8f8f8',
-                              borderColor: '#e4e4e7',
-                              borderWidth: '2px',
-                              borderTop: 'none',
-                              borderLeft: 'none',
-                              borderRight: 'none',
-                              color: 'black',
-                              padding: '0 12px',
+                              width: "100%",
+                              boxSizing: "border-box",
+                              height: "48px",
+                              borderRadius: "0px",
+                              background: "#f8f8f8",
+                              borderColor: "#e4e4e7",
+                              borderWidth: "2px",
+                              borderTop: "none",
+                              borderLeft: "none",
+                              borderRight: "none",
+                              color: "black",
+                              padding: "0 12px",
                             }}
                             value={new Date(filters[column.field]?.from)}
-                            onChange={(date) => handleSetFilter(column.field, convertToISOFormat(date)!.split('T')[0], 'from')}
+                            onChange={(date) =>
+                              handleSetFilter(
+                                column.field,
+                                convertToISOFormat(date)!.split("T")[0],
+                                "from",
+                              )
+                            }
                           />
                         </div>
 
                         <div className="flex flex-col">
-                          <label
-                            className="text-xs"
-                            htmlFor=""
-                          >
+                          <label className="text-xs" htmlFor="">
                             {`تا ${column.label}`}
                           </label>
                           <DatePicker
                             calendar={persian}
                             calendarPosition="bottom-right"
                             containerStyle={{
-                              width: '100%',
+                              width: "100%",
                             }}
                             format="YYYY/MM/DD"
                             locale={persian_fa}
@@ -1053,21 +1249,27 @@ const PaginatedList = forwardRef(
                             minDate="1300/1/1"
                             placeholder={`تا ${column.label}`}
                             style={{
-                              width: '100%',
-                              boxSizing: 'border-box',
-                              height: '48px',
-                              borderRadius: '0px',
-                              background: '#f8f8f8',
-                              borderColor: '#e4e4e7',
-                              borderWidth: '2px',
-                              borderTop: 'none',
-                              borderLeft: 'none',
-                              borderRight: 'none',
-                              color: 'black',
-                              padding: '0 12px',
+                              width: "100%",
+                              boxSizing: "border-box",
+                              height: "48px",
+                              borderRadius: "0px",
+                              background: "#f8f8f8",
+                              borderColor: "#e4e4e7",
+                              borderWidth: "2px",
+                              borderTop: "none",
+                              borderLeft: "none",
+                              borderRight: "none",
+                              color: "black",
+                              padding: "0 12px",
                             }}
                             value={new Date(filters[column.field]?.to)}
-                            onChange={(date) => handleSetFilter(column.field, convertToISOFormat(date)!.split('T')[0], 'to')}
+                            onChange={(date) =>
+                              handleSetFilter(
+                                column.field,
+                                convertToISOFormat(date)!.split("T")[0],
+                                "to",
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -1078,10 +1280,10 @@ const PaginatedList = forwardRef(
           </div>
         </Modal>
       </>
-    )
-  }
-)
+    );
+  },
+);
 
-PaginatedList.displayName = 'PaginatedList'
+PaginatedList.displayName = "PaginatedList";
 
-export default PaginatedList
+export default PaginatedList;

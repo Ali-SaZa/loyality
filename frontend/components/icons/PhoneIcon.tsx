@@ -1,4 +1,4 @@
-export default function PhoneIcon({ className = 'size-6', color = 'white' }) {
+export default function PhoneIcon({ className = "size-6", color = "white" }) {
   return (
     <svg
       className={className}
@@ -23,5 +23,5 @@ export default function PhoneIcon({ className = 'size-6', color = 'white' }) {
         </clipPath>
       </defs>
     </svg>
-  )
+  );
 }

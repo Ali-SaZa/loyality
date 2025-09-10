@@ -1,9 +1,17 @@
-import { Doughnut } from 'react-chartjs-2'
-import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
+import { Doughnut } from "react-chartjs-2";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-const Chart = ({ chartData, colors, labels }: { chartData: number[]; colors: string[]; labels: string[] }) => {
+const Chart = ({
+  chartData,
+  colors,
+  labels,
+}: {
+  chartData: number[];
+  colors: string[];
+  labels: string[];
+}) => {
   const data = {
     labels,
     datasets: [
@@ -13,11 +21,11 @@ const Chart = ({ chartData, colors, labels }: { chartData: number[]; colors: str
         borderWidth: 10, // ضخامت اولین لایه
       },
     ],
-  }
+  };
 
   const options = {
     responsive: true,
-    cutout: '70%', // اندازه سوراخ داخلی نمودار
+    cutout: "70%", // اندازه سوراخ داخلی نمودار
     plugins: {
       legend: {
         display: false, // غیرفعال کردن لیبل‌ها
@@ -25,19 +33,14 @@ const Chart = ({ chartData, colors, labels }: { chartData: number[]; colors: str
       tooltip: {
         callbacks: {
           label: function () {
-            return ''
+            return "";
           },
         },
       },
     },
-  }
+  };
 
-  return (
-    <Doughnut
-      data={data}
-      options={options}
-    />
-  )
-}
+  return <Doughnut data={data} options={options} />;
+};
 
-export default Chart
+export default Chart;

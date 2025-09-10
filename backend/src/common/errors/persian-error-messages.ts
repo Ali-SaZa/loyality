@@ -67,9 +67,12 @@ export const PERSIAN_ERROR_MESSAGES = {
 
   // SMS related messages
   SMS_INSUFFICIENT_BALANCE: "موجودی پیامک کافی نیست", // translated to Persian
-  SMS_INSUFFICIENT_BALANCE_WITH_COUNT: "موجودی پیامک کافی نیست. این پیام به {count} واحد پیامک نیاز دارد. لطفاً با مدیر تماس بگیرید تا اعتبار پیامک اضافه شود", // translated to Persian
-  SMS_CUSTOMER_RESTRICTION: "شما فقط می‌توانید پیامک به مشتریان فروشگاه خود ارسال کنید", // translated to Persian
-  SMS_HISTORY_ACCESS_DENIED: "شما فقط می‌توانید تاریخچه پیامک فروشگاه خود را مشاهده کنید", // translated to Persian
+  SMS_INSUFFICIENT_BALANCE_WITH_COUNT:
+    "موجودی پیامک کافی نیست. این پیام به {count} واحد پیامک نیاز دارد. لطفاً با مدیر تماس بگیرید تا اعتبار پیامک اضافه شود", // translated to Persian
+  SMS_CUSTOMER_RESTRICTION:
+    "شما فقط می‌توانید پیامک به مشتریان فروشگاه خود ارسال کنید", // translated to Persian
+  SMS_HISTORY_ACCESS_DENIED:
+    "شما فقط می‌توانید تاریخچه پیامک فروشگاه خود را مشاهده کنید", // translated to Persian
 
   // Success messages
   CUSTOMER_ADDED_SUCCESSFULLY: "مشتری با موفقیت به فروشگاه اضافه شد", // translated to Persian

@@ -1,53 +1,62 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User, UserDocument } from '../schemas/user.schema';
-import { CreateUserDto, UpdateUserDto, CreateCustomerDto } from '../dto';
-import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
-import { 
-  UserNotFoundException, 
-  CustomConflictException 
-} from '../common/errors';
+import { Injectable, ForbiddenException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { User, UserDocument } from "../schemas/user.schema";
+import { CreateUserDto, UpdateUserDto, CreateCustomerDto } from "../dto";
+import { ListRequestDto, ListResponseDto } from "../common/dto/list.dto";
+import {
+  UserNotFoundException,
+  CustomConflictException,
+} from "../common/errors";
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  private async validateUserAccess(userDoc: UserDocument, requestingUser: any): Promise<void> {
+  private async validateUserAccess(
+    userDoc: UserDocument,
+    requestingUser: any,
+  ): Promise<void> {
     // Admin can access everything
-    if (requestingUser.role === 'admin') {
+    if (requestingUser.role === "admin") {
       return;
     }
 
     // Users can only access their own profile information
-    if (requestingUser.role === 'customer' && requestingUser.userId === userDoc._id.toString()) {
+    if (
+      requestingUser.role === "customer" &&
+      requestingUser.userId === userDoc._id.toString()
+    ) {
       return;
     }
 
     // Store users can access their own user account
-    if (requestingUser.role === 'store' && requestingUser.userId === userDoc._id.toString()) {
+    if (
+      requestingUser.role === "store" &&
+      requestingUser.userId === userDoc._id.toString()
+    ) {
       return;
     }
 
     // Store users can view customer data related to their store
     // This will be validated by checking if the customer is related to their store
-    if (requestingUser.role === 'store') {
+    if (requestingUser.role === "store") {
       return;
     }
 
-    throw new ForbiddenException('دسترسی ممنوع. شما مجوز دسترسی به اطلاعات این کاربر را ندارید.'); // translated to Persian
+    throw new ForbiddenException(
+      "دسترسی ممنوع. شما مجوز دسترسی به اطلاعات این کاربر را ندارید.",
+    ); // translated to Persian
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     // Check if user already exists
-    const existingUser = await this.userModel.findOne({ 
-      phoneNumber: createUserDto.phoneNumber 
+    const existingUser = await this.userModel.findOne({
+      phoneNumber: createUserDto.phoneNumber,
     });
-    
+
     if (existingUser) {
-      throw new CustomConflictException('User', 'USER_ALREADY_EXISTS');
+      throw new CustomConflictException("User", "USER_ALREADY_EXISTS");
     }
 
     const user = new this.userModel({
@@ -59,16 +68,18 @@ export class UsersService {
     return user.save();
   }
 
-  async createCustomer(createCustomerDto: CreateCustomerDto): Promise<{ customer: UserDocument; isExisting: boolean }> {
+  async createCustomer(
+    createCustomerDto: CreateCustomerDto,
+  ): Promise<{ customer: UserDocument; isExisting: boolean }> {
     // Check if user already exists
-    const existingUser = await this.userModel.findOne({ 
-      phoneNumber: createCustomerDto.phoneNumber 
+    const existingUser = await this.userModel.findOne({
+      phoneNumber: createCustomerDto.phoneNumber,
     });
-    
+
     if (existingUser) {
       return {
         customer: existingUser,
-        isExisting: true
+        isExisting: true,
       };
     }
 
@@ -76,20 +87,23 @@ export class UsersService {
       phoneNumber: createCustomerDto.phoneNumber,
       firstName: createCustomerDto.firstName,
       lastName: createCustomerDto.lastName,
-      role: 'customer',
-      status: 'active',
+      role: "customer",
+      status: "active",
       lastActivity: new Date(),
     });
 
     const savedCustomer = await customer.save();
     return {
       customer: savedCustomer,
-      isExisting: false
+      isExisting: false,
     };
   }
 
   // Implement findAll method without generic service
-  async findAll(request: ListRequestDto, additionalFilters: any = {}): Promise<ListResponseDto<UserDocument>> {
+  async findAll(
+    request: ListRequestDto,
+    additionalFilters: any = {},
+  ): Promise<ListResponseDto<UserDocument>> {
     const page = request.page || 1;
     const limit = request.limit || 20;
     const skip = (page - 1) * limit;
@@ -97,8 +111,11 @@ export class UsersService {
     // Add role-based access control without leaking non-schema fields into the Mongo filter
     // Build a safe filters object and NEVER include arbitrary objects like `requestingUser`
     const safeAdditionalFilters: any = {};
-    if (additionalFilters && typeof additionalFilters === 'object') {
-      if (additionalFilters.requestingUser?.role === 'store' && additionalFilters.requestingUser?.storeId) {
+    if (additionalFilters && typeof additionalFilters === "object") {
+      if (
+        additionalFilters.requestingUser?.role === "store" &&
+        additionalFilters.requestingUser?.storeId
+      ) {
         // Store users can only see customers related to their store
         // This is a simplified example - you might want to implement more sophisticated logic
       }
@@ -107,11 +124,15 @@ export class UsersService {
 
     // Build filter query
     let filterQuery: any = {};
-    
+
     // Add search functionality
-    if (request.search && request.searchFields && request.searchFields.length > 0) {
-      const searchQueries = request.searchFields.map(field => ({
-        [field]: { $regex: request.search, $options: 'i' }
+    if (
+      request.search &&
+      request.searchFields &&
+      request.searchFields.length > 0
+    ) {
+      const searchQueries = request.searchFields.map((field) => ({
+        [field]: { $regex: request.search, $options: "i" },
       }));
       filterQuery.$or = searchQueries;
     }
@@ -127,11 +148,11 @@ export class UsersService {
         .skip(skip)
         .limit(limit)
         .exec(),
-      this.userModel.countDocuments(filterQuery).exec()
+      this.userModel.countDocuments(filterQuery).exec(),
     ]);
 
     // Convert Mongoose documents to plain objects with transforms applied
-    const plainData = data.map(doc => doc.toJSON());
+    const plainData = data.map((doc) => doc.toJSON());
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(total / limit);
@@ -150,8 +171,8 @@ export class UsersService {
         search: request.search,
         searchFields: request.searchFields,
         sort: request.sort,
-        filters: request.filters
-      }
+        filters: request.filters,
+      },
     };
   }
 
@@ -171,7 +192,11 @@ export class UsersService {
     return this.userModel.findOne({ phoneNumber }).exec();
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, requestingUser: any): Promise<User> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    requestingUser: any,
+  ): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
@@ -180,15 +205,17 @@ export class UsersService {
     // Validate access permissions
     await this.validateUserAccess(user, requestingUser);
 
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      id,
-      {
-        ...updateUserDto,
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(
+        id,
+        {
+          ...updateUserDto,
 
-        lastActivity: new Date(),
-      },
-      { new: true }
-    ).exec();
+          lastActivity: new Date(),
+        },
+        { new: true },
+      )
+      .exec();
 
     if (!updatedUser) {
       throw new UserNotFoundException();
@@ -211,9 +238,11 @@ export class UsersService {
     }
   }
 
-
-
-  async updateStatus(id: string, status: 'active' | 'blocked' | 'deleted', requestingUser: any): Promise<User> {
+  async updateStatus(
+    id: string,
+    status: "active" | "blocked" | "deleted",
+    requestingUser: any,
+  ): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new UserNotFoundException();
@@ -222,14 +251,16 @@ export class UsersService {
     // Validate access permissions
     await this.validateUserAccess(user, requestingUser);
 
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      id,
-      {
-        status,
-        lastActivity: new Date(),
-      },
-      { new: true }
-    ).exec();
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(
+        id,
+        {
+          status,
+          lastActivity: new Date(),
+        },
+        { new: true },
+      )
+      .exec();
 
     if (!updatedUser) {
       throw new UserNotFoundException();
@@ -243,13 +274,13 @@ export class UsersService {
     roles: string[];
   }> {
     const [statuses, roles] = await Promise.all([
-      this.getDistinctValues('status'),
-      this.getDistinctValues('role')
+      this.getDistinctValues("status"),
+      this.getDistinctValues("role"),
     ]);
 
     return {
       statuses: statuses.filter(Boolean),
-      roles: roles.filter(Boolean)
+      roles: roles.filter(Boolean),
     };
   }
 
@@ -271,7 +302,7 @@ export class UsersService {
 
     const sortQuery: any = {};
     sort.forEach((item: any) => {
-      sortQuery[item.field] = item.direction === 'asc' ? 1 : -1;
+      sortQuery[item.field] = item.direction === "asc" ? 1 : -1;
     });
     return sortQuery;
   }
