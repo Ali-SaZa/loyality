@@ -18,15 +18,15 @@ This module provides comprehensive database seeding functionality for the Loyalt
 
 ### Users (10 users)
 - **Admin User** (09121111111) - System administrator with full permissions
-- **Store Admin** (09122222222) - Store administrator with store management permissions  
+- **Store Admin** (09122222222) - Store administrator for Doris Accessories
 - **Customer User** (09123333333) - Regular customer for testing
 - **Ali Ahmadi** (09111111111) - Premium customer with multiple purchases
 - **Reza Mohammadi** (09133333333) - VIP customer with high spending
 - **Narges Hashemi** (09144444444) - New customer with limited activity
 - **Amir Hosseini** (09155555555) - Premium customer with loyalty history
-- **Store One** (09166666666) - Store owner for Tehran Mall
-- **Store Two** (09177777777) - Store owner for Isfahan Bazaar
-- **Store Manager** (09221234567) - Store owner for Shiraz Market
+- **Tehran Mall** (09166666666) - Store owner for Tehran Mall
+- **Isfahan Bazaar** (09177777777) - Store owner for Isfahan Bazaar
+- **Shiraz Market** (09221234567) - Store owner for Shiraz Market
 
 ### Stores (4 stores)
 - **Doris Accessories** - Premium accessories store in Tehran with comprehensive loyalty program (SMS Balance: 100)

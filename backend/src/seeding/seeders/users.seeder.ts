@@ -36,6 +36,50 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
         firstName: 'Customer',
         lastName: 'User',
         role: 'customer'
+      },
+      // Additional store users for the 4 stores
+      {
+        phoneNumber: '09166666666',
+        firstName: 'Tehran',
+        lastName: 'Mall',
+        role: 'store'
+      },
+      {
+        phoneNumber: '09177777777',
+        firstName: 'Isfahan',
+        lastName: 'Bazaar',
+        role: 'store'
+      },
+      {
+        phoneNumber: '09221234567',
+        firstName: 'Shiraz',
+        lastName: 'Market',
+        role: 'store'
+      },
+      // Additional customer users for testing
+      {
+        phoneNumber: '09111111111',
+        firstName: 'Ali',
+        lastName: 'Ahmadi',
+        role: 'customer'
+      },
+      {
+        phoneNumber: '09133333333',
+        firstName: 'Reza',
+        lastName: 'Mohammadi',
+        role: 'customer'
+      },
+      {
+        phoneNumber: '09144444444',
+        firstName: 'Narges',
+        lastName: 'Hashemi',
+        role: 'customer'
+      },
+      {
+        phoneNumber: '09155555555',
+        firstName: 'Amir',
+        lastName: 'Hosseini',
+        role: 'customer'
       }
     ];
   }
