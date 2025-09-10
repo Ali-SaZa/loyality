@@ -9,6 +9,7 @@ import { AuthProvider } from '@/context/AuthContext'
 import { LoadingProvider } from '@/context/LoadingContext'
 import { GlobalProvider } from '@/context/GlobalContext'
 import { AlertModalProvider } from '@/context/AlertModalContext'
+import { SmsBalanceProvider } from '@/context/SmsBalanceContext'
 
 export interface ProvidersProps {
   children: React.ReactNode
@@ -29,9 +30,11 @@ export function Providers({ children, themeProps }: ProvidersProps) {
       <NextThemesProvider {...themeProps}>
         <LoadingProvider>
           <AuthProvider>
-            <GlobalProvider>
-              <AlertModalProvider>{children}</AlertModalProvider>
-            </GlobalProvider>
+            <SmsBalanceProvider>
+              <GlobalProvider>
+                <AlertModalProvider>{children}</AlertModalProvider>
+              </GlobalProvider>
+            </SmsBalanceProvider>
           </AuthProvider>
         </LoadingProvider>
       </NextThemesProvider>

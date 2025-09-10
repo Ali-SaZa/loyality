@@ -21,6 +21,7 @@ import {
   CustomerTransaction,
 } from "@/services/transactions";
 import useLoading from "@/hooks/useLoading";
+import { useSmsBalanceContext } from "@/context/SmsBalanceContext";
 import { getStatusConfig } from "@/types/enums";
 import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
 import CustomerViewModal from "@/components/modals/CustomerViewModal";
@@ -29,6 +30,7 @@ import SendMessageModal from "@/components/modals/SendMessageModal";
 
 const StoreUsers = () => {
   const { setLoading } = useLoading();
+  const { refetch: refetchSmsBalance } = useSmsBalanceContext();
 
   const [customers, setCustomers] = useState<CustomerTransaction[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +102,10 @@ const StoreUsers = () => {
 
   const handleAddCustomerSuccess = () => {
     fetchCustomers(); // Refresh the customers list
+  };
+
+  const handleSendMessageSuccess = () => {
+    refetchSmsBalance(); // Refresh SMS balance
   };
 
   const handleSendMessage = (customerId: string, customerName: string) => {
@@ -351,7 +357,7 @@ const StoreUsers = () => {
         }
         customerId={sendMessageModal.customerId || ''}
         customerName={sendMessageModal.customerName || ''}
-        onSuccess={handleAddCustomerSuccess}
+        onSuccess={handleSendMessageSuccess}
       />
     </div>
   );

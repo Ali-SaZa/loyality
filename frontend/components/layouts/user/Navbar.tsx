@@ -5,8 +5,6 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import { getMenuByRole } from '@/helpers/menuUtils'
 import Button from '@/components/formElements/Button'
-import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
-import CloseIcon from '@/components/icons/CloseIcon'
 import UserDropdown from '@/components/ui/UserDropdown'
 import SmsBalanceDisplay from '@/components/ui/SmsBalanceDisplay'
 import useGlobal from '@/hooks/useGlobal'
@@ -14,7 +12,7 @@ import LogoContainer from '@/components/ui/ObsLogo'
 import { truncateText } from '@/helpers'
 import useAlertModal from '@/hooks/useAlertModal'
 import useAuth from '@/hooks/useAuth'
-import useSmsBalance from '@/hooks/useSmsBalance'
+import { useSmsBalanceContext } from '@/context/SmsBalanceContext'
 import { getRoleConfig } from '@/types/enums'
 
 interface NavbarProps {
@@ -29,7 +27,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
   const { data } = useGlobal()
   const { showAlert } = useAlertModal()
   const { logout, user } = useAuth()
-  const { smsBalance, loading: smsLoading } = useSmsBalance()
+  const { smsBalance, loading: smsLoading } = useSmsBalanceContext()
 
   const router = useRouter()
 
