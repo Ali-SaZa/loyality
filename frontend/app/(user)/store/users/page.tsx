@@ -103,6 +103,7 @@ const StoreUsers = () => {
   };
 
   const handleSendMessage = (customerId: string, customerName: string) => {
+    console.log(customerId, customerName);
     setSendMessageModal({
       isOpen: true,
       customerId,

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 
@@ -90,16 +90,18 @@ const SendMessageModal = ({
           </p>
         </div>
 
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-          <Input
-            generalType="textarea"
-            name="text"
-            label="متن پیام"
-            placeholder="متن پیام خود را وارد کنید..."
-            required
-            description={`${methods.watch("text")?.length || 0}/160 کاراکتر`}
-          />
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+            <Input
+              generalType="textarea"
+              name="text"
+              label="متن پیام"
+              placeholder="متن پیام خود را وارد کنید..."
+              required
+              description={`${methods.watch("text")?.length || 0}/160 کاراکتر`}
+            />
+          </form>
+        </FormProvider>
       </div>
     </Modal>
   );
