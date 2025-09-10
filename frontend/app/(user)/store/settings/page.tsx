@@ -14,6 +14,7 @@ import { getCurrentStore, updateCurrentStore, Store } from "@/services/stores";
 import useAlertModal from "@/hooks/useAlertModal";
 import useLoading from "@/hooks/useLoading";
 import SecurityIcon from "@/components/icons/SecurityIcon";
+import SettingIcon from "@/components/icons/SettingIcon";
 
 const StoreInformationPage = () => {
   const router = useRouter();
@@ -111,7 +112,7 @@ const StoreInformationPage = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <SecurityIcon className="w-8 h-8 text-primary" />
+          <SettingIcon className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold text-gray-900">اطلاعات فروشگاه</h1>
           </div>

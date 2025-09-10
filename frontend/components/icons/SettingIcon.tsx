@@ -1,6 +1,6 @@
 export default function SettingIcon({
   className = "size-6",
-  color = "black",
+  color = "currentColor",
 }) {
   return (
     <svg

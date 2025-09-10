@@ -89,7 +89,7 @@ export const siteConfig = {
       {
         title: "کدهای تخفیف",
         icon: (className: string = "size-6") => (
-          <PromoCodeIcon className={className} color="currentColor" />
+          <PromoCodeIcon className={className} />
         ),
         link: "/store/promo-codes",
         isShortAccess: true,
@@ -107,7 +107,7 @@ export const siteConfig = {
       {
         title: "اعمال کد تخفیف",
         icon: (className: string = "size-6") => (
-          <PromoCodeIcon className={className} color="currentColor" />
+          <PromoCodeIcon className={className} />
         ),
         link: "/store/apply-promo-code",
         isShortAccess: true,
