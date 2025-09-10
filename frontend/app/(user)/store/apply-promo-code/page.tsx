@@ -164,22 +164,21 @@ const ApplyPromoCodePage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <PromoCodeIcon className="size-8 text-primary" />
-        <div>
-          <h1 className="text-2xl font-bold text-text-dark">اعمال کد تخفیف</h1>
-          <p className="text-text-light">
-            جستجو و استفاده از کدهای تخفیف مشتریان
-          </p>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <PromoCodeIcon className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">اعمال کد تخفیف</h1>
+          </div>
         </div>
       </div>
 
       {/* Phone Number Input Form */}
-      <Card className="border-1">
-        <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">جستجوی مشتری</h3>
+      <Card>
+        <CardHeader>
+          <h3 className="text-lg font-semibold">جستجوی مشتری</h3>
         </CardHeader>
         <CardBody>
           <FormProvider {...form}>
@@ -217,10 +216,10 @@ const ApplyPromoCodePage = () => {
 
       {/* Customer Promo Codes List */}
       {customerPromoCodes.length > 0 && (
-        <Card className="border-1">
-          <CardHeader className="pb-3">
+        <Card>
+          <CardHeader>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-text-dark">
+              <h3 className="text-lg font-semibold">
                 کدهای تخفیف استفاده نشده مشتری
               </h3>
               <Chip color="success" variant="flat" size="sm">
@@ -240,11 +239,11 @@ const ApplyPromoCodePage = () => {
                       <Chip color="primary" variant="flat" size="sm">
                         {promoCode.code}
                       </Chip>
-                      <span className="text-sm text-text-light">
+                      <span className="text-sm text-gray-600">
                         {promoCode.promotion?.title}
                       </span>
                     </div>
-                    <div className="text-sm text-text-light">
+                    <div className="text-sm text-gray-600">
                       <p>
                         مبلغ: {promoCode.promotion?.price?.toLocaleString()}{" "}
                         تومان
@@ -297,11 +296,11 @@ const ApplyPromoCodePage = () => {
               <Chip color="primary" variant="flat" size="sm">
                 {selectedPromoCode.code}
               </Chip>
-              <span className="font-medium text-text-dark">
+              <span className="font-medium text-gray-900">
                 {selectedPromoCode.promotion?.title}
               </span>
             </div>
-            <div className="text-sm text-text-light space-y-1">
+            <div className="text-sm text-gray-600 space-y-1">
               <p>
                 مبلغ: {selectedPromoCode.promotion?.price?.toLocaleString()}{" "}
                 تومان

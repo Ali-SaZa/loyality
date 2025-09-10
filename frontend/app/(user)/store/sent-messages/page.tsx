@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 import {
   Table,
   TableHeader,
@@ -10,6 +12,7 @@ import {
 } from "@heroui/table";
 import { Pagination } from "@heroui/pagination";
 import { Spinner } from "@heroui/spinner";
+import MailIcon from "@/components/icons/MailIcon";
 import {
   getSmsHistory,
   SmsHistoryItem,
@@ -56,37 +59,102 @@ const SentMessagesPage = () => {
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500 text-lg">{error}</p>
-        <button
-          onClick={() => fetchSmsHistory(currentPage)}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
-        >
-          تلاش مجدد
-        </button>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <MailIcon className="w-8 h-8 text-primary" />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
+            </div>
+          </div>
+        </div>
+        <Card>
+          <CardBody className="text-center py-8">
+            <div className="text-red-500 text-lg mb-4">{error}</div>
+            <button
+              onClick={() => fetchSmsHistory(currentPage)}
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              تلاش مجدد
+            </button>
+          </CardBody>
+        </Card>
       </div>
     );
   }
 
   if (!smsHistory || smsHistory.data.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 text-lg">هنوز هیچ پیامکی ارسال نکرده‌اید</p>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <MailIcon className="w-8 h-8 text-primary" />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
+            </div>
+          </div>
+        </div>
+        <Card>
+          <CardBody className="text-center py-12">
+            <MailIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg mb-2">هنوز هیچ پیامکی ارسال نکرده‌اید</p>
+            <p className="text-gray-400 text-sm">پیامک‌های ارسالی شما در اینجا نمایش داده خواهد شد</p>
+          </CardBody>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
-        <div className="text-sm text-gray-500">
-          مجموع: {smsHistory.total} پیامک
+        <div className="flex items-center gap-3">
+          <MailIcon className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
+          </div>
         </div>
+        <Chip color="primary" variant="flat" size="sm">
+          مجموع: {smsHistory.total} پیامک
+        </Chip>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border">
-        <Table aria-label="SMS History Table">
+      {/* Stats Card */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-gray-900">
+              {smsHistory.total}
+            </div>
+            <div className="text-sm text-gray-600">کل پیامک‌ها</div>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {smsHistory.data.length}
+            </div>
+            <div className="text-sm text-gray-600">در این صفحه</div>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              {smsHistory.totalPages}
+            </div>
+            <div className="text-sm text-gray-600">تعداد صفحات</div>
+          </CardBody>
+        </Card>
+      </div>
+
+      {/* Messages Table */}
+      <Card>
+        <CardHeader>
+          <h3 className="text-lg font-semibold">لیست پیامک‌های ارسالی</h3>
+        </CardHeader>
+        <CardBody>
+          <Table aria-label="SMS History Table">
           <TableHeader>
             <TableColumn>تاریخ ارسال</TableColumn>
             <TableColumn>نام مشتری</TableColumn>
@@ -97,30 +165,45 @@ const SentMessagesPage = () => {
             {smsHistory.data.map((sms: SmsHistoryItem) => (
               <TableRow key={sms.id}>
                 <TableCell>
-                  <div className="text-sm">
+                  <div className="text-sm text-gray-600">
                     {formatDateToPersianJalali(new Date(sms.sentDate))}
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="font-medium">
-                    {sms.customerName || "نامشخص"}
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs font-semibold">
+                        {(sms.customerName || sms.customerPhone).charAt(0)}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {sms.customerName || "نامشخص"}
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 font-mono">
                     {sms.customerPhone}
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="text-sm max-w-xs">
-                    <span title={sms.messageText}>{sms.messagePreview}</span>
+                  <div className="max-w-xs">
+                    <div className="text-sm text-gray-600 mb-1">
+                      <span title={sms.messageText}>{sms.messagePreview}</span>
+                    </div>
+                    {sms.messageText !== sms.messagePreview && (
+                      <div className="text-xs text-gray-500">
+                        متن کامل در tooltip
+                      </div>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+        </CardBody>
+      </Card>
 
       {smsHistory.totalPages > 1 && (
         <div className="flex justify-center">

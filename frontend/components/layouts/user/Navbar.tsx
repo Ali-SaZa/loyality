@@ -4,8 +4,7 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
+  NavbarMenuItem
 } from "@heroui/navbar";
 import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,7 +14,6 @@ import Button from "@/components/formElements/Button";
 import UserDropdown from "@/components/ui/UserDropdown";
 import SmsBalanceDisplay from "@/components/ui/SmsBalanceDisplay";
 import useGlobal from "@/hooks/useGlobal";
-import LogoContainer from "@/components/ui/ObsLogo";
 import { truncateText } from "@/helpers";
 import useAlertModal from "@/hooks/useAlertModal";
 import useAuth from "@/hooks/useAuth";
@@ -23,13 +21,11 @@ import { useSmsBalanceContext } from "@/context/SmsBalanceContext";
 import { getRoleConfig } from "@/types/enums";
 
 interface NavbarProps {
-  showBrand?: boolean;
   title?: string;
   menuChildren?: React.ReactNode;
 }
 
 const UserNavbar = ({
-  showBrand = false,
   title,
   menuChildren,
 }: NavbarProps) => {
@@ -39,8 +35,6 @@ const UserNavbar = ({
   const { showAlert } = useAlertModal();
   const { logout, user } = useAuth();
   const { smsBalance, loading: smsLoading } = useSmsBalanceContext();
-
-  const router = useRouter();
 
   // Get menu items based on user role
   const menuItems = getMenuByRole(user?.role || "customer");
@@ -63,27 +57,6 @@ const UserNavbar = ({
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
-        <NavbarContent>
-          <NavbarBrand>
-            {showBrand ? (
-              <div className="border border-white bg-white/50 w-fit rounded-xl p-1">
-                <LogoContainer iconSize={140} />
-              </div>
-            ) : (
-              <div className="text-right">
-                <p className="font-bold text-lg leading-8 text-white hidden md:block">
-                  {title ||
-                    data.navbar.title ||
-                    getRoleTitle(user?.role || "customer")}
-                </p>
-                <p className="text-sm text-white/80 hidden md:block">
-                  {user?.firstName || user?.phoneNumber || "کاربر"}
-                </p>
-              </div>
-            )}
-          </NavbarBrand>
-        </NavbarContent>
-
         <NavbarContent className="md:hidden" justify="center">
           <div className="text-right">
             <p className="font-bold text-xs text-white">

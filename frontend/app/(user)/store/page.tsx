@@ -78,53 +78,47 @@ const StoreDashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <DashboardIcon className="size-8 text-success" />
-        <div>
-          <h1 className="text-2xl font-bold text-text-dark">داشبورد فروشگاه</h1>
-          <p className="text-text-light">مدیریت تبلیغات و کدهای تخفیف</p>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <DashboardIcon className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">داشبورد فروشگاه</h1>
+          </div>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
-          <Card key={index} className="border-1">
-            <CardBody className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-text-light mb-1">{stat.title}</p>
-                  <p className="text-2xl font-bold text-text-dark">
-                    {stat.value}
-                  </p>
-                  <Chip
-                    color={
-                      stat.changeType === "positive" ? "success" : "danger"
-                    }
-                    size="sm"
-                    variant="flat"
-                    className="mt-2"
-                  >
-                    {stat.change}
-                  </Chip>
-                </div>
-                {stat.icon}
+          <Card key={index}>
+            <CardBody className="text-center">
+              <div className="text-2xl font-bold text-gray-900">
+                {stat.value}
               </div>
+              <div className="text-sm text-gray-600">{stat.title}</div>
+              <Chip
+                color={
+                  stat.changeType === "positive" ? "success" : "danger"
+                }
+                size="sm"
+                variant="flat"
+                className="mt-2"
+              >
+                {stat.change}
+              </Chip>
             </CardBody>
           </Card>
         ))}
       </div>
 
       {/* Recent Activities */}
-      <Card className="border-1">
-        <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">
-            فعالیت‌های اخیر
-          </h3>
+      <Card>
+        <CardHeader>
+          <h3 className="text-lg font-semibold">فعالیت‌های اخیر</h3>
         </CardHeader>
-        <CardBody className="p-0">
+        <CardBody>
           <div className="divide-y divide-divider">
             {recentActivities.map((activity, index) => (
               <div
@@ -136,14 +130,14 @@ const StoreDashboard = () => {
                     {getActivityIcon(activity.type)}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-text-dark font-medium">
+                    <p className="text-sm text-gray-600 font-medium">
                       {activity.action}
                     </p>
-                    <p className="text-xs text-text-light">
+                    <p className="text-xs text-gray-500">
                       {activity.details}
                     </p>
                   </div>
-                  <span className="text-xs text-text-light">
+                  <span className="text-xs text-gray-500">
                     {activity.time}
                   </span>
                 </div>
@@ -154,9 +148,9 @@ const StoreDashboard = () => {
       </Card>
 
       {/* Quick Actions */}
-      <Card className="border-1">
-        <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">عملیات سریع</h3>
+      <Card>
+        <CardHeader>
+          <h3 className="text-lg font-semibold">عملیات سریع</h3>
         </CardHeader>
         <CardBody>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

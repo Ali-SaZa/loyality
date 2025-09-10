@@ -107,29 +107,30 @@ const StoreInformationPage = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <SecurityIcon className="size-8 text-primary" />
-        <div>
-          <h1 className="text-2xl font-bold text-text-dark">اطلاعات فروشگاه</h1>
-          <p className="text-text-light">ویرایش اطلاعات فروشگاه</p>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <SecurityIcon className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">اطلاعات فروشگاه</h1>
+          </div>
         </div>
       </div>
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Store Basic Information */}
-        <Card className="border-1">
-          <CardHeader className="pb-3">
-            <h3 className="text-lg font-semibold text-text-dark">
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold">
               اطلاعات اصلی فروشگاه
             </h3>
           </CardHeader>
           <CardBody className="space-y-4">
             {/* Store Name (Read-only) */}
             <div>
-              <label className="block text-sm font-medium text-text-dark mb-2">
+              <label className="block text-sm font-medium text-gray-600 mb-2">
                 نام فروشگاه
               </label>
               <NextUIInput
@@ -138,14 +139,14 @@ const StoreInformationPage = () => {
                 className="bg-background-100"
                 placeholder="نام فروشگاه"
               />
-              <p className="text-xs text-text-light mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 نام فروشگاه توسط مدیر سیستم قابل تغییر است
               </p>
             </div>
 
             {/* Phone Number (Read-only) */}
             <div>
-              <label className="block text-sm font-medium text-text-dark mb-2">
+              <label className="block text-sm font-medium text-gray-600 mb-2">
                 شماره تلفن
               </label>
               <NextUIInput
@@ -154,7 +155,7 @@ const StoreInformationPage = () => {
                 className="bg-background-100"
                 placeholder="شماره تلفن"
               />
-              <p className="text-xs text-text-light mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 شماره تلفن توسط مدیر سیستم قابل تغییر است
               </p>
             </div>
@@ -178,9 +179,9 @@ const StoreInformationPage = () => {
         </Card>
 
         {/* Address Information */}
-        <Card className="border-1">
-          <CardHeader className="pb-3">
-            <h3 className="text-lg font-semibold text-text-dark">
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold">
               اطلاعات آدرس
             </h3>
           </CardHeader>
@@ -214,9 +215,9 @@ const StoreInformationPage = () => {
         </Card>
 
         {/* Social Links */}
-        <Card className="border-1">
-          <CardHeader className="pb-3">
-            <h3 className="text-lg font-semibold text-text-dark">
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold">
               لینک‌های شبکه‌های اجتماعی
             </h3>
           </CardHeader>
@@ -250,9 +251,9 @@ const StoreInformationPage = () => {
         </Card>
 
         {/* Working Hours */}
-        <Card className="border-1">
-          <CardHeader className="pb-3">
-            <h3 className="text-lg font-semibold text-text-dark">
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold">
               ساعات کاری
             </h3>
           </CardHeader>

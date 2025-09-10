@@ -262,18 +262,15 @@ const StorePromotions = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <PromotionIcon className="size-8 text-primary" />
+          <PromotionIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-text-dark">
+            <h1 className="text-2xl font-bold text-gray-900">
               مدیریت تبلیغات
             </h1>
-            <p className="text-text-light">
-              مشاهده و مدیریت تمام تبلیغات سیستم
-            </p>
           </div>
         </div>
         <Button
@@ -286,85 +283,56 @@ const StorePromotions = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">کل تبلیغات</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {stats.total}
-                </p>
-              </div>
-              <PromotionIcon className="size-8 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.total}
             </div>
+            <div className="text-sm text-gray-600">کل تبلیغات</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات فعال</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {stats.active}
-                </p>
-              </div>
-              <PromotionIcon className="size-8 text-success" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {stats.active}
             </div>
+            <div className="text-sm text-gray-600">تبلیغات فعال</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات غیرفعال</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {stats.inactive}
-                </p>
-              </div>
-              <PromotionIcon className="size-8 text-default" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              {stats.inactive}
             </div>
+            <div className="text-sm text-gray-600">تبلیغات غیرفعال</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات منقضی</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {stats.expired}
-                </p>
-              </div>
-              <PromotionIcon className="size-8 text-warning" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-orange-600">
+              {stats.expired}
             </div>
+            <div className="text-sm text-gray-600">تبلیغات منقضی</div>
           </CardBody>
         </Card>
-
-        <Card className="border-1">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات حذف شده</p>
-                <p className="text-2xl font-bold text-text-dark">
-                  {stats.deleted}
-                </p>
-              </div>
-              <PromotionIcon className="size-8 text-danger" />
+        <Card>
+          <CardBody className="text-center">
+            <div className="text-2xl font-bold text-red-600">
+              {stats.deleted}
             </div>
+            <div className="text-sm text-gray-600">تبلیغات حذف شده</div>
           </CardBody>
         </Card>
       </div>
 
       {/* Promotions Table */}
-      <Card className="border-1">
-        <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست تبلیغات</h3>
+      <Card>
+        <CardHeader>
+          <h3 className="text-lg font-semibold">لیست تبلیغات</h3>
         </CardHeader>
-        <CardBody className="p-0">
-          <Table aria-label="لیست تبلیغات">
+        <CardBody>
+          <Table aria-label="Promotions table">
             <TableHeader>
               <TableColumn>عنوان تبلیغ</TableColumn>
               <TableColumn>مقدار</TableColumn>
@@ -392,23 +360,23 @@ const StorePromotions = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{promotion.title}</span>
+                          <span className="text-sm text-gray-600">{promotion.title}</span>
                         </div>
                         {promotion.description && (
-                          <p className="text-xs text-text-light">
+                          <p className="text-xs text-gray-500">
                             {promotion.description}
                           </p>
                         )}
-                        <p className="text-xs text-text-light">
+                        <p className="text-xs text-gray-500">
                           ID: {promotion.id}
                         </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">
+                    <div className="text-sm text-gray-600">
                       {formatValue(promotion)}
-                    </span>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Chip
@@ -420,11 +388,15 @@ const StorePromotions = () => {
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">
+                    <div className="text-sm text-gray-600">
                       {promotion.promoCodeCount || 0} کد
-                    </span>
+                    </div>
                   </TableCell>
-                  <TableCell>{formatDate(promotion.createdAt)}</TableCell>
+                  <TableCell>
+                    <div className="text-sm text-gray-600">
+                      {formatDate(promotion.createdAt)}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
