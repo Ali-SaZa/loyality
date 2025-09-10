@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { globalTransformPlugin } from './global-transform.plugin';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
+import { globalTransformPlugin } from "./global-transform.plugin";
 
 export interface OtpDocument extends Otp, Document {
   _id: Types.ObjectId;
@@ -17,30 +17,30 @@ export class Otp {
   })
   phoneNumber: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+  @Prop({ type: Types.ObjectId, ref: "User", required: false })
   userId?: Types.ObjectId;
 
   @Prop({
     required: true,
-    match: /^[0-9]{6}$/
+    match: /^[0-9]{6}$/,
   })
   code: string;
 
   @Prop({
-    enum: ['login', 'scratch', 'promo-registration'],
-    required: true
+    enum: ["login", "scratch", "promo-registration"],
+    required: true,
   })
-  context: 'login' | 'scratch' | 'promo-registration';
+  context: "login" | "scratch" | "promo-registration";
 
   @Prop({ required: false })
   scratchCode?: string;
 
   @Prop({
-    enum: ['sent', 'verified', 'expired'],
-    default: 'sent',
-    required: true
+    enum: ["sent", "verified", "expired"],
+    default: "sent",
+    required: true,
   })
-  status: 'sent' | 'verified' | 'expired';
+  status: "sent" | "verified" | "expired";
 
   @Prop({ required: true })
   expiresAt: Date;
