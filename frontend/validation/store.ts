@@ -92,7 +92,20 @@ export const StoreWithUserValidation = z.object({
   store: StoreBaseValidation,
 });
 
+// Store self-update validation (restricted fields only)
+export const StoreSelfUpdateValidation = z.object({
+  address: StoreAddressValidation.optional(),
+  logoUrl: z.string().url("آدرس لوگو معتبر نیست").optional().or(z.literal("")),
+  description: z
+    .string()
+    .max(500, "توضیحات حداکثر ۵۰۰ کاراکتر باشد.")
+    .optional(),
+  socialLinks: SocialLinksValidation,
+  workingHours: WorkingHoursValidation,
+});
+
 // Type definitions
 export type StoreFormData = z.infer<typeof StoreFormValidation>;
 export type StoreUpdateData = z.infer<typeof StoreUpdateValidation>;
 export type StoreWithUserData = z.infer<typeof StoreWithUserValidation>;
+export type StoreSelfUpdateData = z.infer<typeof StoreSelfUpdateValidation>;

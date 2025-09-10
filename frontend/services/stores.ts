@@ -66,6 +66,14 @@ export interface UpdateStoreRequest {
   workingHours?: WorkingHours;
 }
 
+export interface UpdateStoreSelfRequest {
+  address?: StoreAddress;
+  logoUrl?: string;
+  description?: string;
+  socialLinks?: SocialLinks;
+  workingHours?: WorkingHours;
+}
+
 // New interfaces for store with user
 export interface CreateStoreUserRequest {
   firstName: string;
@@ -269,6 +277,17 @@ export const storesService = {
     }
   },
 
+  // Update current user's store (restricted fields only)
+  async updateCurrentStore(data: UpdateStoreSelfRequest): Promise<Store> {
+    try {
+      const response = await axiosInstance.patch<Store>("/stores/me", data);
+      return response.data;
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      throw new Error(errorMessage);
+    }
+  },
+
   // Get store filter options
   async getStoreFilterOptions(): Promise<{
     statuses: string[];
@@ -337,6 +356,7 @@ export const deleteStore = storesService.deleteStore;
 export const updateStoreStatus = storesService.updateStoreStatus;
 export const getStoreStats = storesService.getStoreStats;
 export const getCurrentStore = storesService.getCurrentStore;
+export const updateCurrentStore = storesService.updateCurrentStore;
 export const getStoreFilterOptions = storesService.getStoreFilterOptions;
 export const getSmsHistory = storesService.getSmsHistory;
 export const sendSmsToCustomer = storesService.sendSmsToCustomer;

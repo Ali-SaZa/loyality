@@ -5,7 +5,6 @@ import {
   IsOptional,
   IsArray,
   IsEnum,
-  IsBoolean,
   Min,
   MaxLength,
   Matches,

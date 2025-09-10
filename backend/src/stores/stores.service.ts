@@ -50,7 +50,7 @@ export class StoresService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Sms.name) private smsModel: Model<SmsDocument>,
     private smsService: SmsService,
-    private transactionsService: TransactionsService,
+    private transactionsService: TransactionsService
   ) {}
 
   /**
@@ -91,7 +91,7 @@ export class StoresService {
    */
   private async validateStoreCreation(
     phoneNumber: string,
-    userId?: string,
+    userId?: string
   ): Promise<void> {
     const [existingStore, user] = await Promise.all([
       this.storeModel.findOne({ phoneNumber }).exec(),
@@ -114,7 +114,7 @@ export class StoresService {
     const existingUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (existingUser) {
       throw new BadRequestException(
-        "User with this phone number already exists",
+        "User with this phone number already exists"
       );
     }
   }
@@ -135,7 +135,7 @@ export class StoresService {
 
   private handleAccessDenied(): never {
     throw new ForbiddenException(
-      "Access denied. You do not have permission to access this store.",
+      "Access denied. You do not have permission to access this store."
     );
   }
 
@@ -145,7 +145,7 @@ export class StoresService {
   async create(createStoreDto: CreateStoreDto): Promise<StoreResponseDto> {
     await this.validateStoreCreation(
       createStoreDto.phoneNumber,
-      createStoreDto.userId,
+      createStoreDto.userId
     );
 
     // Convert string IDs to ObjectIds
@@ -166,7 +166,7 @@ export class StoresService {
    * Create a new store with user
    */
   async createStoreWithUser(
-    createStoreWithUserDto: CreateStoreWithUserDto,
+    createStoreWithUserDto: CreateStoreWithUserDto
   ): Promise<StoreWithUserResponseDto> {
     // Validate both user and store creation
     await Promise.all([
@@ -214,7 +214,7 @@ export class StoresService {
    */
   async findAll(
     request: ListRequestDto,
-    additionalFilters: Record<string, any> = {},
+    additionalFilters: Record<string, any> = {}
   ): Promise<ListResponseDto<StoreResponseDto>> {
     const page = request.page || 1;
     const limit = Math.min(request.limit || 20, 100); // Cap at 100 for performance
@@ -294,7 +294,7 @@ export class StoresService {
   async update(
     id: string,
     updateStoreDto: UpdateStoreDto,
-    user: UserContext,
+    user: UserContext
   ): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
@@ -321,11 +321,11 @@ export class StoresService {
    */
   async updateSelf(
     updateStoreSelfDto: UpdateStoreSelfDto,
-    user: UserContext,
+    user: UserContext
   ): Promise<StoreResponseDto> {
     if (user.role !== "store") {
       throw new ForbiddenException(
-        "Only store users can update their own store information",
+        "Only store users can update their own store information"
       );
     }
 
@@ -375,7 +375,7 @@ export class StoresService {
    * Find store by phone number
    */
   async findByPhoneNumber(
-    phoneNumber: string,
+    phoneNumber: string
   ): Promise<StoreResponseDto | null> {
     const store = await this.storeModel
       .findOne({ phoneNumber })
@@ -442,7 +442,7 @@ export class StoresService {
   async updateSmsBalance(
     storeId: string,
     amount: number,
-    user: UserContext,
+    user: UserContext
   ): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
@@ -482,7 +482,7 @@ export class StoresService {
    */
   async hasSmsBalance(
     storeId: string,
-    requiredAmount: number = 1,
+    requiredAmount: number = 1
   ): Promise<boolean> {
     const store = await this.storeModel
       .findById(storeId)
@@ -542,7 +542,7 @@ export class StoresService {
     storeId: string,
     userId: string,
     text: string,
-    requestingUser: UserContext,
+    requestingUser: UserContext
   ): Promise<any> {
     // Validate store access
     const store = await this.storeModel.findById(storeId).exec();
@@ -573,7 +573,7 @@ export class StoresService {
       const storeCustomers =
         await this.transactionsService.getMyStoreCustomers(requestingUser);
       const isCustomer = storeCustomers.some(
-        (customer) => customer.id === userId,
+        (customer) => customer.id === userId
       );
 
       if (!isCustomer) {
@@ -604,7 +604,7 @@ export class StoresService {
     storeId: string,
     user: UserContext,
     page: number = 1,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<any> {
     // Verify store access
     const store = await this.storeModel.findById(storeId).exec();

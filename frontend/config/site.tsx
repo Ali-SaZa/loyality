@@ -13,6 +13,7 @@ import WalletIcon from "@/components/icons/WalletIcon";
 import PromotionIcon from "@/components/icons/PromotionIcon";
 import PromoCodeIcon from "@/components/icons/PromoCodeIcon";
 import MailIcon from "@/components/icons/MailIcon";
+import SecurityIcon from "@/components/icons/SecurityIcon";
 
 export const siteConfig = {
   name: "OBS",
@@ -120,6 +121,15 @@ export const siteConfig = {
           <MailIcon className={className} />
         ),
         link: "/store/sent-messages",
+        isShortAccess: true,
+        children: [],
+      },
+      {
+        title: "اطلاعات فروشگاه",
+        icon: (className: string = "size-6") => (
+          <SecurityIcon className={className} />
+        ),
+        link: "/store/information",
         isShortAccess: true,
         children: [],
       },
