@@ -12,6 +12,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from "@nestjs/common";
+import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 import {
   ApiTags,
   ApiOperation,
@@ -159,11 +160,11 @@ export class StoresController {
   @ApiResponse({ status: 403, description: "Forbidden - Not a store user" })
   async getCurrentStore(@CurrentUser() user: any): Promise<StoreResponseDto> {
     if (user.role !== "store") {
-      throw new ForbiddenException("Only store users can access this endpoint");
+      throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.STORE_ONLY_USERS_ACCESS);
     }
 
     if (!user.storeId) {
-      throw new NotFoundException("Store not found for this user");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND_FOR_USER);
     }
 
     return this.storesService.findOne(user.storeId, user);
@@ -403,7 +404,7 @@ export class StoresController {
         user,
       );
     }
-    throw new ForbiddenException("Only store users can use this endpoint");
+    throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.STORE_ONLY_USERS_ACCESS);
   }
 
   @Post(":id/sms/send-to-customer")
@@ -508,7 +509,7 @@ export class StoresController {
     if (user.role === "store") {
       return this.storesService.getSmsHistory(user.storeId, user, page, limit);
     }
-    throw new ForbiddenException("Only store users can access SMS history");
+    throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.STORE_SMS_HISTORY_ACCESS);
   }
 
   @Get(":id/sms/history")

@@ -106,13 +106,13 @@ export class PromoCodesService {
       .findById(createPromoCodeDto.promotionId)
       .exec();
     if (!promotion) {
-      throw new NotFoundException("Promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Check if user has access to this promotion's store
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Admin users can create promo codes for any promotion
@@ -130,7 +130,7 @@ export class PromoCodesService {
       .findOne({ code: createPromoCodeDto.code })
       .exec();
     if (existingCode) {
-      throw new CustomConflictException("Promo code already exists");
+      throw new CustomConflictException("PromoCode", "PROMO_CODE_ALREADY_EXISTS");
     }
 
     const promoCode = new this.promoCodeModel({
@@ -232,7 +232,7 @@ export class PromoCodesService {
       .exec();
 
     if (!promoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     // Verify user has access to this promo code's promotion
@@ -240,12 +240,12 @@ export class PromoCodesService {
       .findById(promoCode.promotionId)
       .exec();
     if (!promotion) {
-      throw new NotFoundException("Associated promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Admin users can access any promo code
@@ -268,7 +268,7 @@ export class PromoCodesService {
   ): Promise<PromoCodeResponseDto> {
     const promoCode = await this.promoCodeModel.findById(id).exec();
     if (!promoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     // Verify user has access to this promo code's promotion
@@ -276,12 +276,12 @@ export class PromoCodesService {
       .findById(promoCode.promotionId)
       .exec();
     if (!promotion) {
-      throw new NotFoundException("Associated promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Admin users can update any promo code
@@ -296,7 +296,7 @@ export class PromoCodesService {
 
     // Prevent updating used codes
     if (promoCode.status === "used") {
-      throw new BadRequestException("Cannot update used promo codes");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_UPDATE_USED);
     }
 
     const updatedPromoCode = await this.promoCodeModel
@@ -306,7 +306,7 @@ export class PromoCodesService {
       .exec();
 
     if (!updatedPromoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     return this.transformPromoCodeToResponse(updatedPromoCode);
@@ -319,7 +319,7 @@ export class PromoCodesService {
   ): Promise<PromoCodeResponseDto> {
     const promoCode = await this.promoCodeModel.findById(id).exec();
     if (!promoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     // Verify user has access to this promo code's promotion
@@ -327,12 +327,12 @@ export class PromoCodesService {
       .findById(promoCode.promotionId)
       .exec();
     if (!promotion) {
-      throw new NotFoundException("Associated promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Admin users can update status of any promo code
@@ -380,7 +380,7 @@ export class PromoCodesService {
 
       if (existingTransaction) {
         throw new BadRequestException(
-          "Transaction already exists for this promo code",
+          PERSIAN_ERROR_MESSAGES.TRANSACTION_ALREADY_EXISTS,
         );
       }
 
@@ -408,7 +408,7 @@ export class PromoCodesService {
       .exec();
 
     if (!updatedPromoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     return this.transformPromoCodeToResponse(updatedPromoCode);
@@ -543,12 +543,12 @@ export class PromoCodesService {
     // Verify promotion exists and belongs to user's store
     const promotion = await this.promotionModel.findById(promotionId).exec();
     if (!promotion) {
-      throw new NotFoundException("Promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Admin users can create promo codes for any promotion
@@ -563,7 +563,7 @@ export class PromoCodesService {
 
     // Validate count
     if (count < 1 || count > 1000) {
-      throw new BadRequestException("Count must be between 1 and 1000");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_COUNT_INVALID);
     }
 
     // Calculate suffix length based on prefix and total code length
@@ -624,7 +624,7 @@ export class PromoCodesService {
   async remove(id: string, user: any): Promise<void> {
     const promoCode = await this.promoCodeModel.findById(id).exec();
     if (!promoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     // Verify user has access to this promo code's promotion
@@ -632,12 +632,12 @@ export class PromoCodesService {
       .findById(promoCode.promotionId)
       .exec();
     if (!promotion) {
-      throw new NotFoundException("Associated promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Admin users can delete promo codes for any promotion
@@ -652,7 +652,7 @@ export class PromoCodesService {
 
     // Prevent deletion of used codes
     if (promoCode.status === "used") {
-      throw new BadRequestException("Cannot delete used promo codes");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_DELETE_USED);
     }
 
     await this.promoCodeModel.findByIdAndDelete(id).exec();
@@ -690,17 +690,17 @@ export class PromoCodesService {
     // Find the promo code
     const promoCode = await this.promoCodeModel.findOne({ code }).exec();
     if (!promoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     // Check if code is deleted
     if (promoCode.status === "deleted") {
-      throw new BadRequestException("Promo code has been deleted");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_DELETED);
     }
 
     // Check if code is already used
     if (promoCode.status === "used") {
-      throw new BadRequestException("Promo code has already been used");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_ALREADY_USED);
     }
 
     // Check if code is already registered to a user
@@ -713,7 +713,7 @@ export class PromoCodesService {
     // Find the user by phone number
     const user = await this.userModel.findOne({ phoneNumber }).exec();
     if (!user) {
-      throw new NotFoundException("User not found with this phone number");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND);
     }
 
     // Find the associated promotion to validate it's still active
@@ -721,7 +721,7 @@ export class PromoCodesService {
       .findById(promoCode.promotionId)
       .exec();
     if (!promotion) {
-      throw new NotFoundException("Associated promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Check promotion status with specific error messages
@@ -767,7 +767,7 @@ export class PromoCodesService {
       .exec();
 
     if (!populatedPromoCode) {
-      throw new NotFoundException("Promo code not found after registration");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND_AFTER_REGISTRATION);
     }
 
     return this.transformPromoCodeToResponse(populatedPromoCode);
@@ -781,7 +781,7 @@ export class PromoCodesService {
     // Find the user by phone number
     const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (!targetUser) {
-      throw new NotFoundException("User not found with this phone number");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND);
     }
 
     // For store users, ensure they can only access promo codes from their own store
@@ -792,7 +792,7 @@ export class PromoCodesService {
         .exec();
 
       if (!userStore) {
-        throw new ForbiddenException("Store not found for this user");
+        throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_STORE_NOT_FOUND_FOR_USER);
       }
 
       // Compare store IDs using string comparison
@@ -920,13 +920,13 @@ export class PromoCodesService {
       .exec();
 
     if (!promoCode) {
-      throw new NotFoundException("کد تخفیف یافت نشد یا قبلاً استفاده شده است");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     // Check if promotion is active
     const promotion = promoCode.promotionId as any;
     if (promotion.status !== "active") {
-      throw new BadRequestException("این پیشنهاد فعال نیست");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_PROMOTION_INACTIVE);
     }
 
     // Check if there's already an active OTP for this phone number
@@ -969,7 +969,7 @@ export class PromoCodesService {
         "promo-registration",
       );
     } catch (error) {
-      throw new BadRequestException("کد تأیید نامعتبر یا منقضی شده است");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_INVALID_OTP);
     }
 
     // Find promo code and validate
@@ -982,18 +982,18 @@ export class PromoCodesService {
       .exec();
 
     if (!promoCode) {
-      throw new NotFoundException("کد تخفیف یافت نشد یا قبلاً استفاده شده است");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND);
     }
 
     const promotion = promoCode.promotionId as any;
     if (promotion.status !== "active") {
-      throw new BadRequestException("این پیشنهاد فعال نیست");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_PROMOTION_INACTIVE);
     }
 
     // Get store information
     const store = await this.storeModel.findById(promotion.storeId).exec();
     if (!store) {
-      throw new NotFoundException("فروشگاه یافت نشد");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Check if user exists

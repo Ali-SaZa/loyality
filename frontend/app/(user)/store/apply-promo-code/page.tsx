@@ -87,15 +87,9 @@ const ApplyPromoCodePage = () => {
     } catch (error) {
       console.error("❌ Get Customer Promo Codes - Error:", error);
 
-      // Handle specific error cases
+      // Handle error cases - backend now returns Persian errors directly
       if (error instanceof Error) {
-        if (error.message.includes("User not found")) {
-          toast.error("مشتری با این شماره تلفن یافت نشد");
-        } else if (error.message.includes("Forbidden")) {
-          toast.error("شما مجوز دسترسی به این اطلاعات را ندارید");
-        } else {
-          toast.error(error.message);
-        }
+        toast.error(error.message);
       } else {
         toast.error("خطا در دریافت کدهای تخفیف مشتری");
       }
@@ -138,17 +132,9 @@ const ApplyPromoCodePage = () => {
     } catch (error) {
       console.error("❌ Use Promo Code - Error:", error);
 
-      // Handle specific error cases
+      // Handle error cases - backend now returns Persian errors directly
       if (error instanceof Error) {
-        if (error.message.includes("already been used")) {
-          toast.error("این کد تخفیف قبلاً استفاده شده است");
-        } else if (error.message.includes("not registered")) {
-          toast.error("این کد تخفیف به مشتری اختصاص نیافته است");
-        } else if (error.message.includes("Transaction already exists")) {
-          toast.error("تراکنش برای این کد تخفیف قبلاً ثبت شده است");
-        } else {
-          toast.error(error.message);
-        }
+        toast.error(error.message);
       } else {
         toast.error("خطا در استفاده از کد تخفیف");
       }

@@ -8,6 +8,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { Store, StoreDocument } from "../schemas/store.schema";
 import { User, UserDocument } from "../schemas/user.schema";
+import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 import { Sms, SmsDocument } from "../schemas/sms.schema";
 import { Promotion, PromotionDocument } from "../schemas/promotion.schema";
 import { PromoCode, PromoCodeDocument } from "../schemas/promoCode.schema";
@@ -118,7 +119,7 @@ export class StoresService {
     }
 
     if (userId && !user) {
-      throw new BadRequestException("User not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND);
     }
   }
 
@@ -345,7 +346,7 @@ export class StoresService {
     }
 
     if (!user.storeId) {
-      throw new NotFoundException("Store not found for this user");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND_FOR_USER);
     }
 
     const store = await this.storeModel.findById(user.storeId).exec();
@@ -428,7 +429,7 @@ export class StoresService {
 
     // Security: User must have a storeId
     if (!user.storeId) {
-      throw new NotFoundException("Store not found for this user");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND_FOR_USER);
     }
 
     const storeObjectId = new Types.ObjectId(user.storeId);
@@ -672,7 +673,7 @@ export class StoresService {
     // Validate store access
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     this.validateStoreAccess(store, requestingUser);
@@ -680,7 +681,7 @@ export class StoresService {
     // Validate user exists
     const recipientUser = await this.userModel.findById(userId).exec();
     if (!recipientUser) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
     // For store users, perform additional validations
@@ -734,7 +735,7 @@ export class StoresService {
     // Verify store access
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
     }
 
     // Check access permissions

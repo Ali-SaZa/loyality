@@ -8,6 +8,7 @@ import { Model, Types } from "mongoose";
 import { Promotion, PromotionDocument } from "../schemas/promotion.schema";
 import { Store, StoreDocument } from "../schemas/store.schema";
 import { PromoCode, PromoCodeDocument } from "../schemas/promoCode.schema";
+import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 import {
   CreatePromotionDto,
   UpdatePromotionDto,
@@ -53,11 +54,11 @@ export class PromotionsService {
 
     // Validate price and points are positive
     if (dto.price <= 0) {
-      throw new BadRequestException("Price must be greater than 0");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_PRICE_INVALID);
     }
 
     if (dto.points <= 0) {
-      throw new BadRequestException("Points must be greater than 0");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_POINTS_INVALID);
     }
   }
 
@@ -183,7 +184,7 @@ export class PromotionsService {
   async findOne(id: string, user: any): Promise<PromotionResponseDto> {
     const promotion = await this.promotionModel.findById(id).exec();
     if (!promotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Validate access permissions
@@ -199,7 +200,7 @@ export class PromotionsService {
   ): Promise<PromotionResponseDto> {
     const promotion = await this.promotionModel.findById(id).exec();
     if (!promotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Validate access permissions
@@ -210,14 +211,14 @@ export class PromotionsService {
       updatePromotionDto.price !== undefined &&
       updatePromotionDto.price <= 0
     ) {
-      throw new BadRequestException("Price must be greater than 0");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_PRICE_INVALID);
     }
 
     if (
       updatePromotionDto.points !== undefined &&
       updatePromotionDto.points <= 0
     ) {
-      throw new BadRequestException("Points must be greater than 0");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_POINTS_INVALID);
     }
 
     // Handle status change if included
@@ -244,7 +245,7 @@ export class PromotionsService {
       .exec();
 
     if (!updatedPromotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     return this.transformPromotionToResponse(updatedPromotion);
@@ -257,7 +258,7 @@ export class PromotionsService {
   ): Promise<PromotionResponseDto> {
     const promotion = await this.promotionModel.findById(id).exec();
     if (!promotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Validate access permissions
@@ -281,7 +282,7 @@ export class PromotionsService {
       .exec();
 
     if (!updatedPromotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     return this.transformPromotionToResponse(updatedPromotion);
@@ -290,7 +291,7 @@ export class PromotionsService {
   async remove(id: string, user: any): Promise<void> {
     const promotion = await this.promotionModel.findById(id).exec();
     if (!promotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Validate access permissions
@@ -327,7 +328,7 @@ export class PromotionsService {
       return;
     }
 
-    throw new ForbiddenException("Insufficient permissions");
+    throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.INSUFFICIENT_PERMISSIONS);
   }
 
   private validateStatusTransition(
@@ -399,7 +400,7 @@ export class PromotionsService {
   ): Promise<PromotionResponseDto & { promoCodeCount: number }> {
     const promotion = await this.promotionModel.findById(id).exec();
     if (!promotion) {
-      throw new BadRequestException("Promotion not found");
+      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
     }
 
     // Validate access permissions

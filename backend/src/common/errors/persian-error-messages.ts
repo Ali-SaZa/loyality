@@ -22,10 +22,26 @@ export const PERSIAN_ERROR_MESSAGES = {
   STORE_NOT_FOUND: "فروشگاه یافت نشد", // translated to Persian
   STORE_ALREADY_EXISTS: "فروشگاه قبلاً وجود دارد", // translated to Persian
   STORE_PHONE_EXISTS: "فروشگاه با این شماره موبایل قبلاً وجود دارد", // translated to Persian
+  STORE_NOT_FOUND_FOR_USER: "فروشگاه برای این کاربر یافت نشد", // translated to Persian
+  STORE_ONLY_USERS_ACCESS: "فقط کاربران فروشگاه می‌توانند به این نقطه دسترسی داشته باشند", // translated to Persian
+  STORE_SMS_HISTORY_ACCESS: "فقط کاربران فروشگاه می‌توانند به تاریخچه پیامک دسترسی داشته باشند", // translated to Persian
+
+  // Promotion related messages
+  PROMOTION_NOT_FOUND: "تبلیغ یافت نشد", // translated to Persian
+  PROMOTION_PRICE_INVALID: "قیمت باید بیشتر از 0 باشد", // translated to Persian
+  PROMOTION_POINTS_INVALID: "امتیاز باید بیشتر از 0 باشد", // translated to Persian
 
   // Transaction related messages
   TRANSACTION_NOT_FOUND: "تراکنش یافت نشد", // translated to Persian
   TRANSACTION_ALREADY_EXISTS: "تراکنش قبلاً وجود دارد", // translated to Persian
+  TRANSACTION_CUSTOMER_NOT_FOUND: "مشتری یافت نشد", // translated to Persian
+  TRANSACTION_STORE_NOT_FOUND: "فروشگاه یافت نشد", // translated to Persian
+  TRANSACTION_PROMO_CODE_NOT_FOUND: "کد تخفیف یافت نشد", // translated to Persian
+  TRANSACTION_PROMOTION_NOT_FOUND: "تبلیغ یافت نشد", // translated to Persian
+  TRANSACTION_CUSTOMER_ALREADY_EXISTS: "مشتری قبلاً وجود دارد", // translated to Persian
+  TRANSACTION_STORE_NOT_FOUND_FOR_USER: "فروشگاه برای این کاربر یافت نشد", // translated to Persian
+  TRANSACTION_ONLY_STORE_USERS_ACCESS: "فقط کاربران فروشگاه می‌توانند به این نقطه دسترسی داشته باشند", // translated to Persian
+  TRANSACTION_OWN_ACCESS_ONLY: "شما فقط می‌توانید به تراکنش‌های خود دسترسی داشته باشید", // translated to Persian
 
   // Admin related messages
   ADMIN_NOT_FOUND: "مدیر یافت نشد", // translated to Persian
@@ -98,6 +114,15 @@ export const PERSIAN_ERROR_MESSAGES = {
   PROMO_CODE_INVALID_STORE: "کد تخفیف برای این فروشگاه معتبر نیست", // translated to Persian
   PROMO_CODE_FORBIDDEN_STORE:
     "شما فقط می‌توانید کدهای تخفیف فروشگاه خود را اعتبارسنجی کنید", // translated to Persian
+  PROMO_CODE_ALREADY_EXISTS: "کد تخفیف قبلاً وجود دارد", // translated to Persian
+  PROMO_CODE_CANNOT_UPDATE_USED: "نمی‌توان کدهای تخفیف استفاده شده را به‌روزرسانی کرد", // translated to Persian
+  PROMO_CODE_CANNOT_DELETE_USED: "نمی‌توان کدهای تخفیف استفاده شده را حذف کرد", // translated to Persian
+  PROMO_CODE_COUNT_INVALID: "تعداد باید بین 1 تا 1000 باشد", // translated to Persian
+  PROMO_CODE_USER_NOT_FOUND: "کاربر با این شماره تلفن یافت نشد", // translated to Persian
+  PROMO_CODE_NOT_FOUND_AFTER_REGISTRATION: "کد تخفیف پس از ثبت‌نام یافت نشد", // translated to Persian
+  PROMO_CODE_STORE_NOT_FOUND_FOR_USER: "فروشگاه برای این کاربر یافت نشد", // translated to Persian
+  PROMO_CODE_PROMOTION_INACTIVE: "این پیشنهاد فعال نیست", // translated to Persian
+  PROMO_CODE_INVALID_OTP: "کد تأیید نامعتبر یا منقضی شده است", // translated to Persian
 
   // Seeding related messages
   PROMOTIONS_SEEDING_REQUIRES_STORES:

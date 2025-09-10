@@ -24,8 +24,8 @@ import { ListRequestDto, ListResponseDto } from "../common/dto/list.dto";
 import {
   TransactionNotFoundException,
   CustomConflictException,
+  PERSIAN_ERROR_MESSAGES,
 } from "../common/errors";
-import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 
 @Injectable()
 export class TransactionsService {
@@ -119,16 +119,16 @@ export class TransactionsService {
     ]);
 
     if (!customer) {
-      throw new NotFoundException("Customer not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_CUSTOMER_NOT_FOUND);
     }
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_STORE_NOT_FOUND);
     }
     if (!promoCode) {
-      throw new NotFoundException("Promo code not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_PROMO_CODE_NOT_FOUND);
     }
     if (!promotion) {
-      throw new NotFoundException("Promotion not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_PROMOTION_NOT_FOUND);
     }
 
     // Security: Verify that the requesting user has access to this store
@@ -204,13 +204,13 @@ export class TransactionsService {
     // Verify customer exists
     const customer = await this.userModel.findById(customerId).exec();
     if (!customer) {
-      throw new NotFoundException("Customer not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_CUSTOMER_NOT_FOUND);
     }
 
     // Verify store exists
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_STORE_NOT_FOUND);
     }
 
     // Check if customer already has transaction with this store
@@ -222,7 +222,7 @@ export class TransactionsService {
       .exec();
 
     if (existingTransaction) {
-      throw new CustomConflictException("Customer", "ALREADY_EXISTS");
+      throw new CustomConflictException("Customer", "TRANSACTION_CUSTOMER_ALREADY_EXISTS");
     }
 
     // Create direct transaction
@@ -356,7 +356,7 @@ export class TransactionsService {
     // Verify store exists
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_STORE_NOT_FOUND);
     }
 
     // Get unique customers who have transactions with this store
@@ -494,19 +494,19 @@ export class TransactionsService {
   ): Promise<CustomerTransactionDto[]> {
     // Security: Only store users can access this endpoint
     if (requestingUser.role !== "store") {
-      throw new ForbiddenException("Only store users can access this endpoint");
+      throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.TRANSACTION_ONLY_STORE_USERS_ACCESS);
     }
 
     // Get storeId from user context (set by GlobalAuthGuard)
     const storeId = requestingUser.storeId;
     if (!storeId) {
-      throw new NotFoundException("Store not found for this user");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_STORE_NOT_FOUND_FOR_USER);
     }
 
     // Verify store exists
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
-      throw new NotFoundException("Store not found");
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.TRANSACTION_STORE_NOT_FOUND);
     }
 
     // Use the same aggregation logic as getStoreCustomers
@@ -669,7 +669,7 @@ export class TransactionsService {
       requestingUser.role === "customer" &&
       requestingUser._id.toString() !== customerId
     ) {
-      throw new ForbiddenException("You can only access your own transactions");
+      throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.TRANSACTION_OWN_ACCESS_ONLY);
     }
 
     const query: any = { customerId: new Types.ObjectId(customerId) };
