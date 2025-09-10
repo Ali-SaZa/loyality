@@ -8,11 +8,13 @@ import Button from '@/components/formElements/Button'
 import MenuBurgerIcon from '@/components/icons/MenuBurgerIcon'
 import CloseIcon from '@/components/icons/CloseIcon'
 import UserDropdown from '@/components/ui/UserDropdown'
+import SmsBalanceDisplay from '@/components/ui/SmsBalanceDisplay'
 import useGlobal from '@/hooks/useGlobal'
 import LogoContainer from '@/components/ui/ObsLogo'
 import { truncateText } from '@/helpers'
 import useAlertModal from '@/hooks/useAlertModal'
 import useAuth from '@/hooks/useAuth'
+import useSmsBalance from '@/hooks/useSmsBalance'
 import { getRoleConfig } from '@/types/enums'
 
 interface NavbarProps {
@@ -27,6 +29,7 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
   const { data } = useGlobal()
   const { showAlert } = useAlertModal()
   const { logout, user } = useAuth()
+  const { smsBalance, loading: smsLoading } = useSmsBalance()
 
   const router = useRouter()
 
@@ -80,11 +83,25 @@ const UserNavbar = ({ showBrand = false, title, menuChildren }: NavbarProps) => 
           className="hidden md:flex"
           justify="end"
         >
+          {/* SMS Balance Display for Store Users */}
+          {user?.role === 'store' && smsBalance !== null && !smsLoading && (
+            <div className="mr-4">
+              <SmsBalanceDisplay balance={smsBalance} />
+            </div>
+          )}
+          
           <UserDropdown isOnDarkBackground={true} />
         </NavbarContent>
 
         {/* Mobile Menu */}
         <NavbarMenu className="bg-white pb-2">
+          {/* SMS Balance Display for Store Users - Mobile */}
+          {user?.role === 'store' && smsBalance !== null && !smsLoading && (
+            <div className="px-4 py-2">
+              <SmsBalanceDisplay balance={smsBalance} />
+            </div>
+          )}
+          
           {menuChildren
             ? menuChildren
             : menuItems.map((item, index) => (

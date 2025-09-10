@@ -1,7 +1,7 @@
 // API Configuration for Loyalty Program Frontend
 export const API_CONFIG = {
   // Backend API base URL
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5555',
   
   // API endpoints
   ENDPOINTS: {

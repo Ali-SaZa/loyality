@@ -31,6 +31,9 @@ export interface Store {
   description?: string
   socialLinks?: SocialLinks
   workingHours?: WorkingHours
+  smsBalance: number
+  lastSmsSentAt?: Date
+  totalSmsSent: number
   createdAt: Date
   updatedAt: Date
 }
