@@ -52,7 +52,45 @@ export default function RootLayout({
         <meta content="fa" httpEquiv="Content-Language" />
 
         {/*viewport برای نمایش در دستگاه‌های موبایل*/}
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+        
+        {/* Additional zoom prevention */}
+        <meta content="no" name="format-detection" />
+        
+        {/* JavaScript zoom prevention */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Prevent zoom gestures
+              document.addEventListener('gesturestart', function (e) {
+                e.preventDefault();
+              });
+              
+              document.addEventListener('gesturechange', function (e) {
+                e.preventDefault();
+              });
+              
+              document.addEventListener('gestureend', function (e) {
+                e.preventDefault();
+              });
+              
+              // Prevent double-tap zoom
+              let lastTouchEnd = 0;
+              document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                  event.preventDefault();
+                }
+                lastTouchEnd = now;
+              }, false);
+              
+              // Prevent pinch zoom
+              document.addEventListener('touchmove', function (event) {
+                if (event.scale !== 1) { event.preventDefault(); }
+              }, { passive: false });
+            `,
+          }}
+        />
 
         {/*عنوان برای شبکه‌های اجتماعی*/}
         <meta content="باشگاه وفاداری مشتریان مانا" property="og:title" />
