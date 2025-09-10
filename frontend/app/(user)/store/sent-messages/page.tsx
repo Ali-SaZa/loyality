@@ -45,9 +45,6 @@ const SentMessagesPage = () => {
     fetchSmsHistory(currentPage);
   }, [currentPage]);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
   if (loading) {
     return (
@@ -130,10 +127,11 @@ const SentMessagesPage = () => {
           <Pagination
             total={smsHistory.totalPages}
             page={currentPage}
-            onChange={handlePageChange}
+            onChange={setCurrentPage}
             showControls
             showShadow
             color="primary"
+            className="rtl-pagination"
           />
         </div>
       )}

@@ -3,16 +3,16 @@
 import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
-import { Input } from "@/components/formElements/Input";
-import { Textarea } from "@/components/formElements/Textarea";
-import { useForm } from "react-hook-form";
+import { Input as NextUIInput } from "@heroui/input";
+import Input from "@/components/formElements/Input";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
-import { StoreSelfUpdateValidation, StoreSelfUpdateData } from "@/validation/store";
+import { StoreSelfUpdateValidation, StoreSelfUpdateData } from "@/validation/storeSelfUpdate";
 import { getCurrentStore, updateCurrentStore, Store } from "@/services/stores";
-import { useAlertModal } from "@/hooks/useAlertModal";
-import { useLoading } from "@/hooks/useLoading";
+import useAlertModal from "@/hooks/useAlertModal";
+import useLoading from "@/hooks/useLoading";
 import SecurityIcon from "@/components/icons/SecurityIcon";
 
 const StoreInformationPage = () => {
@@ -21,15 +21,17 @@ const StoreInformationPage = () => {
   const { setLoading } = useLoading();
   const [store, setStore] = useState<Store | null>(null);
 
+  const methods = useForm<StoreSelfUpdateData>({
+    resolver: zodResolver(StoreSelfUpdateValidation),
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
-  } = useForm<StoreSelfUpdateData>({
-    resolver: zodResolver(StoreSelfUpdateValidation),
-  });
+  } = methods;
 
   // Load store information
   useEffect(() => {
@@ -55,11 +57,7 @@ const StoreInformationPage = () => {
           },
         });
       } catch (error) {
-        showAlert({
-          title: "خطا",
-          message: "خطا در بارگذاری اطلاعات فروشگاه",
-          type: "error",
-        });
+        showAlert("خطا در بارگذاری اطلاعات فروشگاه");
       } finally {
         setLoading(false);
       }
@@ -87,17 +85,9 @@ const StoreInformationPage = () => {
       const updatedStore = await updateCurrentStore(cleanedData);
       setStore(updatedStore);
       
-      showAlert({
-        title: "موفق",
-        message: "اطلاعات فروشگاه با موفقیت به‌روزرسانی شد",
-        type: "success",
-      });
+      showAlert("اطلاعات فروشگاه با موفقیت به‌روزرسانی شد");
     } catch (error) {
-      showAlert({
-        title: "خطا",
-        message: "خطا در به‌روزرسانی اطلاعات فروشگاه",
-        type: "error",
-      });
+      showAlert("خطا در به‌روزرسانی اطلاعات فروشگاه");
     } finally {
       setLoading(false);
     }
@@ -127,7 +117,8 @@ const StoreInformationPage = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Store Basic Information */}
         <Card className="border-1">
           <CardHeader className="pb-3">
@@ -141,7 +132,7 @@ const StoreInformationPage = () => {
               <label className="block text-sm font-medium text-text-dark mb-2">
                 نام فروشگاه
               </label>
-              <Input
+              <NextUIInput
                 value={store.name}
                 disabled
                 className="bg-background-100"
@@ -157,7 +148,7 @@ const StoreInformationPage = () => {
               <label className="block text-sm font-medium text-text-dark mb-2">
                 شماره تلفن
               </label>
-              <Input
+              <NextUIInput
                 value={store.phoneNumber}
                 disabled
                 className="bg-background-100"
@@ -169,34 +160,20 @@ const StoreInformationPage = () => {
             </div>
 
             {/* Logo URL */}
-            <div>
-              <label className="block text-sm font-medium text-text-dark mb-2">
-                آدرس لوگو
-              </label>
-              <Input
-                {...register("logoUrl")}
-                placeholder="https://example.com/logo.jpg"
-                errorMessage={errors.logoUrl?.message}
-                isInvalid={!!errors.logoUrl}
-              />
-            </div>
+            <Input
+              generalType="input"
+              name="logoUrl"
+              label="آدرس لوگو"
+              placeholder="https://example.com/logo.jpg"
+            />
 
             {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-text-dark mb-2">
-                توضیحات فروشگاه
-              </label>
-              <Textarea
-                {...register("description")}
-                placeholder="توضیحات فروشگاه..."
-                maxLength={500}
-                errorMessage={errors.description?.message}
-                isInvalid={!!errors.description}
-              />
-              <p className="text-xs text-text-light mt-1">
-                حداکثر ۵۰۰ کاراکتر
-              </p>
-            </div>
+            <Input
+              generalType="textarea"
+              name="description"
+              label="توضیحات فروشگاه"
+              placeholder="توضیحات فروشگاه..."
+            />
           </CardBody>
         </Card>
 
@@ -210,44 +187,29 @@ const StoreInformationPage = () => {
           <CardBody className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Province */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  استان
-                </label>
-                <Input
-                  {...register("address.province")}
-                  placeholder="تهران"
-                  errorMessage={errors.address?.province?.message}
-                  isInvalid={!!errors.address?.province}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="address.province"
+                label="استان"
+                placeholder="تهران"
+              />
 
               {/* City */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  شهر
-                </label>
-                <Input
-                  {...register("address.city")}
-                  placeholder="تهران"
-                  errorMessage={errors.address?.city?.message}
-                  isInvalid={!!errors.address?.city}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="address.city"
+                label="شهر"
+                placeholder="تهران"
+              />
             </div>
 
             {/* Full Address */}
-            <div>
-              <label className="block text-sm font-medium text-text-dark mb-2">
-                آدرس کامل
-              </label>
-              <Textarea
-                {...register("address.fullAddress")}
-                placeholder="آدرس کامل فروشگاه..."
-                errorMessage={errors.address?.fullAddress?.message}
-                isInvalid={!!errors.address?.fullAddress}
-              />
-            </div>
+            <Input
+              generalType="textarea"
+              name="address.fullAddress"
+              label="آدرس کامل"
+              placeholder="آدرس کامل فروشگاه..."
+            />
           </CardBody>
         </Card>
 
@@ -261,43 +223,28 @@ const StoreInformationPage = () => {
           <CardBody className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Website */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  وب‌سایت
-                </label>
-                <Input
-                  {...register("socialLinks.website")}
-                  placeholder="https://example.com"
-                  errorMessage={errors.socialLinks?.website?.message}
-                  isInvalid={!!errors.socialLinks?.website}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="socialLinks.website"
+                label="وب‌سایت"
+                placeholder="https://example.com"
+              />
 
               {/* Instagram */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  اینستاگرام
-                </label>
-                <Input
-                  {...register("socialLinks.instagram")}
-                  placeholder="@username"
-                  errorMessage={errors.socialLinks?.instagram?.message}
-                  isInvalid={!!errors.socialLinks?.instagram}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="socialLinks.instagram"
+                label="اینستاگرام"
+                placeholder="@username"
+              />
 
               {/* Telegram */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  تلگرام
-                </label>
-                <Input
-                  {...register("socialLinks.telegram")}
-                  placeholder="@username"
-                  errorMessage={errors.socialLinks?.telegram?.message}
-                  isInvalid={!!errors.socialLinks?.telegram}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="socialLinks.telegram"
+                label="تلگرام"
+                placeholder="@username"
+              />
             </div>
           </CardBody>
         </Card>
@@ -312,30 +259,20 @@ const StoreInformationPage = () => {
           <CardBody className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Opening Time */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  ساعت بازگشایی
-                </label>
-                <Input
-                  {...register("workingHours.open")}
-                  placeholder="09:00"
-                  errorMessage={errors.workingHours?.open?.message}
-                  isInvalid={!!errors.workingHours?.open}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="workingHours.open"
+                label="ساعت بازگشایی"
+                placeholder="09:00"
+              />
 
               {/* Closing Time */}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-2">
-                  ساعت بسته شدن
-                </label>
-                <Input
-                  {...register("workingHours.close")}
-                  placeholder="21:00"
-                  errorMessage={errors.workingHours?.close?.message}
-                  isInvalid={!!errors.workingHours?.close}
-                />
-              </div>
+              <Input
+                generalType="input"
+                name="workingHours.close"
+                label="ساعت بسته شدن"
+                placeholder="21:00"
+              />
             </div>
           </CardBody>
         </Card>
@@ -357,7 +294,8 @@ const StoreInformationPage = () => {
             ذخیره تغییرات
           </Button>
         </div>
-      </form>
+        </form>
+      </FormProvider>
     </div>
   );
 };

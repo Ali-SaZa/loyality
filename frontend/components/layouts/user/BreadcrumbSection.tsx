@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import AngleLeftIcon from "@/components/icons/AngleLeftIcon";
-import { siteConfig } from "@/config/site";
 import { getMenuByRole } from "@/helpers/menuUtils";
 import { isValidMongoId } from "@/helpers";
 import useAuth from "@/hooks/useAuth";
@@ -27,10 +26,10 @@ const BreadcrumbSection = () => {
 
   useEffect(() => {
     const activeParentRoute = menuItems.find((item) =>
-      item.link.includes(pathname.split("/")[2]),
+      item.link.includes(pathname.split("/")[2])
     );
     setBreadcrumbs(
-      getTitles(activeParentRoute ? activeParentRoute : activeRoute),
+      getTitles(activeParentRoute ? activeParentRoute : activeRoute)
     );
   }, [pathname, menuItems, activeRoute]);
 
