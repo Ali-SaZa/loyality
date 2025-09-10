@@ -49,7 +49,7 @@ const UsePromotion = () => {
     } catch (error) {
       console.error("❌ Use Promotion - Error:", error);
       toast.error(
-        error instanceof Error ? error.message : "خطا در ثبت کد تخفیف",
+        error instanceof Error ? error.message : "خطا در ثبت کد تخفیف"
       );
     } finally {
       setLoading(false);
@@ -87,19 +87,6 @@ const UsePromotion = () => {
           </Button>
         </form>
       </FormProvider>
-
-      <div className="mt-8 text-center">
-        <p className="text-sm text-text-light-25 mb-4">
-          کد تخفیف خود را ندارید؟
-        </p>
-        <Button
-          variant="light"
-          color="primary"
-          onClick={() => router.push("/auth/promo-registration")}
-        >
-          ثبت نام با کد تخفیف
-        </Button>
-      </div>
     </div>
   );
 };

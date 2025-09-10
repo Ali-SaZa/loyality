@@ -209,7 +209,7 @@ const ApplyPromoCodePage = () => {
       {customerPromoCodes.length > 0 && (
         <Card>
           <CardHeader className="w-full">
-            <div className="flex items-center justify-between w-full">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 items-center justify-between w-full">
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-semibold">
                   کدهای تخفیف استفاده نشده مشتری
@@ -221,11 +221,9 @@ const ApplyPromoCodePage = () => {
 
               {/* Reset Button */}
               {customerPromoCodes.length > 0 && (
-                <div className="flex justify-center">
-                  <Button color="default" variant="light" onClick={resetForm}>
-                    جستجوی مشتری جدید
-                  </Button>
-                </div>
+                <Button color="default" onClick={resetForm} className="w-full w-[max-content] justify-self-end">
+                  جستجوی مشتری جدید
+                </Button>
               )}
             </div>
           </CardHeader>
@@ -291,7 +289,7 @@ const ApplyPromoCodePage = () => {
         message="آیا مطمئن هستید که می‌خواهید وضعیت این کد تخفیف را تغییر دهید؟"
         acceptBtnText="تأیید استفاده"
         rejectBtnText="انصراف"
-        acceptBtnColor="success"
+        acceptBtnColor="primary"
         icon={<CheckIcon />}
         iconBgColor="bg-success-50"
         iconTextColor="text-success"

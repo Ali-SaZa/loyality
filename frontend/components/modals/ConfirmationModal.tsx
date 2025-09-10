@@ -70,14 +70,13 @@ const ConfirmationModal = ({
         <div className="flex items-center gap-3">
           {icon && (
             <div
-              className={`w-12 h-12 ${iconBgColor} rounded-full flex items-center justify-center`}
+              className={`w-8 min-w-8 h-8 ${iconBgColor} rounded-full flex items-center justify-center`}
             >
               <div className={`size-6 ${iconTextColor}`}>{icon}</div>
             </div>
           )}
           <div>
-            <h3 className="text-lg font-semibold text-text-dark">{title}</h3>
-            <p className="text-text-light">{message}</p>
+            <p className="text-gray-900">{message}</p>
           </div>
         </div>
 
