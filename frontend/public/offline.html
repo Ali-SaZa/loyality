@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fa-IR" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0066cc">
+    <title>آفلاین - برنامه وفاداری</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .icon {
+            width: 80px;
+            height: 80px;
+            background: #dc3545;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .feature-box {
+            padding: 16px;
+            border-radius: 8px;
+            text-align: right;
+        }
+        
+        .offline-features {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+        }
+        
+        .online-features {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .offline-features .feature-title {
+            color: #155724;
+        }
+        
+        .online-features .feature-title {
+            color: #856404;
+        }
+        
+        .feature-list {
+            list-style: none;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .offline-features .feature-list {
+            color: #155724;
+        }
+        
+        .online-features .feature-list {
+            color: #856404;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #0066cc;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #dee2e6;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        .tip {
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .status-offline {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .status-online {
+            background: #28a745;
+            color: white;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="status-indicator" class="status-indicator status-offline">
+        🔴 آفلاین
+    </div>
+    
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>اتصال اینترنت قطع است</h1>
+        <p>متأسفانه در حال حاضر به اینترنت متصل نیستید. برخی از قابلیت‌ها ممکن است در دسترس نباشند.</p>
+        
+        <div class="features">
+            <div class="feature-box offline-features">
+                <div class="feature-title">قابلیت‌های آفلاین موجود:</div>
+                <ul class="feature-list">
+                    <li>✅ مشاهده اطلاعات پروفایل</li>
+                    <li>✅ مشاهده امتیازات و پاداش‌ها</li>
+                    <li>✅ تاریخچه تراکنش‌ها</li>
+                    <li>✅ تنظیمات برنامه</li>
+                </ul>
+            </div>
+            
+            <div class="feature-box online-features">
+                <div class="feature-title">قابلیت‌های آنلاین:</div>
+                <ul class="feature-list">
+                    <li>❌ استفاده از کدهای تخفیف</li>
+                    <li>❌ ثبت تراکنش جدید</li>
+                    <li>❌ دریافت اعلان‌ها</li>
+                    <li>❌ همگام‌سازی داده‌ها</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="retryConnection()">
+                تلاش مجدد
+            </button>
+            <button class="btn btn-secondary" onclick="goHome()">
+                بازگشت به صفحه اصلی
+            </button>
+        </div>
+        
+        <div class="tip">
+            💡 نکته: برنامه وفاداری شما برخی از اطلاعات را به صورت آفلاین ذخیره می‌کند
+        </div>
+    </div>
+
+    <script>
+        // Network status monitoring
+        function updateNetworkStatus() {
+            const indicator = document.getElementById('status-indicator');
+            if (navigator.onLine) {
+                indicator.textContent = '🟢 آنلاین';
+                indicator.className = 'status-indicator status-online';
+            } else {
+                indicator.textContent = '🔴 آفلاین';
+                indicator.className = 'status-indicator status-offline';
+            }
+        }
+
+        // Retry connection
+        function retryConnection() {
+            if (navigator.onLine) {
+                // If online, reload the page
+                window.location.reload();
+            } else {
+                // Show alert if still offline
+                alert('هنوز آفلاین هستید. لطفاً اتصال اینترنت خود را بررسی کنید.');
+            }
+        }
+
+        // Go to home page
+        function goHome() {
+            window.location.href = '/';
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', function() {
+            updateNetworkStatus();
+            // Auto-reload after 2 seconds when back online
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        });
+
+        window.addEventListener('offline', function() {
+            updateNetworkStatus();
+        });
+
+        // Initialize network status
+        updateNetworkStatus();
+
+        // Check connection periodically
+        setInterval(() => {
+            updateNetworkStatus();
+        }, 5000);
+
+        // Service Worker registration check
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(function(registration) {
+                console.log('Service Worker is ready for offline functionality');
+            });
+        }
+    </script>
+</body>
+</html>

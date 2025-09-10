@@ -8,9 +8,13 @@
     "dev": "next dev -p 4444",
     "build": "next build",
     "start": "next start -p 4444",
+    "start:prod": "node .next/standalone/server.js",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
     "prepare": "husky install",
-    "tree": "node generateTree.js"
+    "tree": "node generateTree.js",
+    "pwa:audit": "node scripts/pwa-audit.js",
+    "pwa:icons": "node scripts/generate-icons.js",
+    "pwa:test": "npm run pwa:audit && echo 'PWA testing complete!'"
   },
   "dependencies": {
     "@heroui/accordion": "^2.2.21",
