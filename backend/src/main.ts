@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import { GlobalExceptionFilter } from "./common/filters/global-exception.filter";
+import * as os from "os";
 
 async function bootstrap() {
   // Validate required environment variables
@@ -100,14 +101,34 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT || 5555;
-  const host = process.env.HOST || '0.0.0.0';
+  const host = process.env.HOST || "0.0.0.0";
   await app.listen(port, host);
 
+  // Get the actual network IP address
+  const networkInterfaces = os.networkInterfaces();
+  let networkIP = "localhost";
+
+  for (const interfaceName in networkInterfaces) {
+    const interfaces = networkInterfaces[interfaceName];
+    if (interfaces) {
+      for (const iface of interfaces) {
+        if (iface.family === "IPv4" && !iface.internal) {
+          networkIP = iface.address;
+          break;
+        }
+      }
+    }
+    if (networkIP !== "localhost") break;
+  }
+
   console.log(`🚀 Application is running on: http://${host}:${port}`);
-  console.log(`🌐 Network accessible at: http://192.168.100.195:${port}`);
+  console.log(`🌐 Network accessible at: http://${networkIP}:${port}`);
   console.log(
     `📚 Swagger documentation is available at: http://${host}:${port}/api`,
   );
   console.log(`🔒 Environment: ${process.env.NODE_ENV || "development"}`);
 }
-bootstrap();
+bootstrap().catch((error) => {
+  console.error("Failed to start application:", error);
+  process.exit(1);
+});
