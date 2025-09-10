@@ -109,9 +109,9 @@ export class AuthService {
 
     if (!user) {
       // Create new user with minimal information
-      user = (await this.usersService.create({
+      user = await this.usersService.create({
         phoneNumber,
-      })) as UserDocument;
+      });
       isNewUser = true;
     }
 

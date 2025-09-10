@@ -257,7 +257,7 @@ export class TransactionsService {
     const skip = (page - 1) * limit;
 
     // Build filter query with role-based access control
-    let filterQuery: any = {};
+    const filterQuery: any = {};
 
     // Store users can only see transactions for their stores
     if (requestingUser.role === "store") {
@@ -672,7 +672,7 @@ export class TransactionsService {
       throw new ForbiddenException("You can only access your own transactions");
     }
 
-    let query: any = { customerId: new Types.ObjectId(customerId) };
+    const query: any = { customerId: new Types.ObjectId(customerId) };
 
     // For store users, ensure they can only access customers related to their stores
     if (requestingUser.role === "store") {

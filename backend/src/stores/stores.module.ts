@@ -5,6 +5,8 @@ import { StoresService } from "./stores.service";
 import { Store, StoreSchema } from "../schemas/store.schema";
 import { User, UserSchema } from "../schemas/user.schema";
 import { Sms, SmsSchema } from "../schemas/sms.schema";
+import { Promotion, PromotionSchema } from "../schemas/promotion.schema";
+import { PromoCode, PromoCodeSchema } from "../schemas/promoCode.schema";
 import { SmsModule } from "../sms/sms.module";
 import { TransactionsModule } from "../transactions/transactions.module";
 
@@ -14,6 +16,8 @@ import { TransactionsModule } from "../transactions/transactions.module";
       { name: Store.name, schema: StoreSchema },
       { name: User.name, schema: UserSchema },
       { name: Sms.name, schema: SmsSchema },
+      { name: Promotion.name, schema: PromotionSchema },
+      { name: PromoCode.name, schema: PromoCodeSchema },
     ]),
     SmsModule,
     TransactionsModule,

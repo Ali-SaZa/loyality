@@ -157,7 +157,7 @@ export class PromoCodesService {
 
     // Build query - admin users can see all promo codes, store users only see their own
     // Exclude deleted promo codes from all queries
-    let query: any = { status: { $ne: "deleted" } };
+    const query: any = { status: { $ne: "deleted" } };
 
     // Apply additional filters first (like promotionId)
     if (additionalFilters.promotionId) {
@@ -805,7 +805,7 @@ export class PromoCodesService {
     }
 
     // Build query for user's promo codes
-    let query: any = { userId: targetUser._id, status: { $ne: "deleted" } };
+    const query: any = { userId: targetUser._id, status: { $ne: "deleted" } };
 
     // If storeId is provided, filter by promotions belonging to that store
     if (storeId) {
@@ -855,7 +855,7 @@ export class PromoCodesService {
     registered: number;
     deleted: number;
   }> {
-    let query: any = { status: { $ne: "deleted" } };
+    const query: any = { status: { $ne: "deleted" } };
 
     // For store users, filter by their stores only
     if (user && user.role === "store") {

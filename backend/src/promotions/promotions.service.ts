@@ -106,7 +106,7 @@ export class PromotionsService {
     }
 
     // Build filter query - include all promotions including deleted ones
-    let filterQuery: any = {};
+    const filterQuery: any = {};
 
     // Add store filter if provided
     if (additionalFilters.storeId) {

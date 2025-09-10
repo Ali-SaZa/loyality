@@ -123,7 +123,7 @@ export class UsersService {
     }
 
     // Build filter query
-    let filterQuery: any = {};
+    const filterQuery: any = {};
 
     // Add search functionality
     if (

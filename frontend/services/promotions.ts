@@ -49,7 +49,6 @@ export interface PromotionListResponse {
 }
 
 export interface PromotionStats {
-  total: number;
   active: number;
   inactive: number;
   expired: number;

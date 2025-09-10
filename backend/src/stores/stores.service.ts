@@ -9,6 +9,8 @@ import { Model, Types } from "mongoose";
 import { Store, StoreDocument } from "../schemas/store.schema";
 import { User, UserDocument } from "../schemas/user.schema";
 import { Sms, SmsDocument } from "../schemas/sms.schema";
+import { Promotion, PromotionDocument } from "../schemas/promotion.schema";
+import { PromoCode, PromoCodeDocument } from "../schemas/promoCode.schema";
 import {
   CreateStoreDto,
   UpdateStoreDto,
@@ -43,14 +45,27 @@ export interface StoreStats {
   suspended: number;
 }
 
+export interface StoreStatistics {
+  activeCampaigns: number;
+  totalPromoCodes: number;
+  customersRegisteredToday: number;
+  customersRegisteredThisMonth: number;
+  totalCustomers: number;
+  totalMessagesSent: number;
+}
+
 @Injectable()
 export class StoresService {
   constructor(
     @InjectModel(Store.name) private storeModel: Model<StoreDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Sms.name) private smsModel: Model<SmsDocument>,
+    @InjectModel(Promotion.name)
+    private promotionModel: Model<PromotionDocument>,
+    @InjectModel(PromoCode.name)
+    private promoCodeModel: Model<PromoCodeDocument>,
     private smsService: SmsService,
-    private transactionsService: TransactionsService
+    private transactionsService: TransactionsService,
   ) {}
 
   /**
@@ -91,7 +106,7 @@ export class StoresService {
    */
   private async validateStoreCreation(
     phoneNumber: string,
-    userId?: string
+    userId?: string,
   ): Promise<void> {
     const [existingStore, user] = await Promise.all([
       this.storeModel.findOne({ phoneNumber }).exec(),
@@ -114,7 +129,7 @@ export class StoresService {
     const existingUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (existingUser) {
       throw new BadRequestException(
-        "User with this phone number already exists"
+        "User with this phone number already exists",
       );
     }
   }
@@ -135,7 +150,7 @@ export class StoresService {
 
   private handleAccessDenied(): never {
     throw new ForbiddenException(
-      "Access denied. You do not have permission to access this store."
+      "Access denied. You do not have permission to access this store.",
     );
   }
 
@@ -145,7 +160,7 @@ export class StoresService {
   async create(createStoreDto: CreateStoreDto): Promise<StoreResponseDto> {
     await this.validateStoreCreation(
       createStoreDto.phoneNumber,
-      createStoreDto.userId
+      createStoreDto.userId,
     );
 
     // Convert string IDs to ObjectIds
@@ -166,7 +181,7 @@ export class StoresService {
    * Create a new store with user
    */
   async createStoreWithUser(
-    createStoreWithUserDto: CreateStoreWithUserDto
+    createStoreWithUserDto: CreateStoreWithUserDto,
   ): Promise<StoreWithUserResponseDto> {
     // Validate both user and store creation
     await Promise.all([
@@ -214,7 +229,7 @@ export class StoresService {
    */
   async findAll(
     request: ListRequestDto,
-    additionalFilters: Record<string, any> = {}
+    additionalFilters: Record<string, any> = {},
   ): Promise<ListResponseDto<StoreResponseDto>> {
     const page = request.page || 1;
     const limit = Math.min(request.limit || 20, 100); // Cap at 100 for performance
@@ -230,7 +245,7 @@ export class StoresService {
     }
 
     // Build filter query with sanitized search
-    let filterQuery: Record<string, any> = {};
+    const filterQuery: Record<string, any> = {};
 
     // Add additional filters - properly apply role-based filtering
     Object.assign(filterQuery, additionalFilters);
@@ -294,7 +309,7 @@ export class StoresService {
   async update(
     id: string,
     updateStoreDto: UpdateStoreDto,
-    user: UserContext
+    user: UserContext,
   ): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(id).exec();
     if (!store) {
@@ -321,11 +336,11 @@ export class StoresService {
    */
   async updateSelf(
     updateStoreSelfDto: UpdateStoreSelfDto,
-    user: UserContext
+    user: UserContext,
   ): Promise<StoreResponseDto> {
     if (user.role !== "store") {
       throw new ForbiddenException(
-        "Only store users can update their own store information"
+        "Only store users can update their own store information",
       );
     }
 
@@ -375,7 +390,7 @@ export class StoresService {
    * Find store by phone number
    */
   async findByPhoneNumber(
-    phoneNumber: string
+    phoneNumber: string,
   ): Promise<StoreResponseDto | null> {
     const store = await this.storeModel
       .findOne({ phoneNumber })
@@ -398,6 +413,116 @@ export class StoresService {
     ]);
 
     return { total, active, pending, deleted, suspended };
+  }
+
+  /**
+   * Get detailed store statistics for authenticated store user
+   */
+  async getStoreStatistics(user: UserContext): Promise<StoreStatistics> {
+    // Security: Only store users can access this endpoint
+    if (user.role !== "store") {
+      throw new ForbiddenException(
+        "Only store users can access store statistics",
+      );
+    }
+
+    // Security: User must have a storeId
+    if (!user.storeId) {
+      throw new NotFoundException("Store not found for this user");
+    }
+
+    const storeObjectId = new Types.ObjectId(user.storeId);
+
+    // Get today's date range (Iran timezone)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Get this month's date range
+    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const nextMonthStart = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      1,
+    );
+
+    // Execute all queries in parallel for better performance
+    const [
+      activeCampaigns,
+      totalPromoCodes,
+      customersRegisteredToday,
+      customersRegisteredThisMonth,
+      totalCustomers,
+      totalMessagesSent,
+    ] = await Promise.all([
+      // 1. Active campaigns count for this store
+      this.promotionModel
+        .countDocuments({
+          storeId: storeObjectId,
+          status: "active",
+        })
+        .exec(),
+
+      // 2. Total promotion codes count for this store
+      this.promoCodeModel
+        .aggregate([
+          {
+            $lookup: {
+              from: "promotions",
+              localField: "promotionId",
+              foreignField: "_id",
+              as: "promotion",
+            },
+          },
+          { $unwind: "$promotion" },
+          { $match: { "promotion.storeId": storeObjectId } },
+          { $count: "total" },
+        ])
+        .exec(),
+
+      // 3. Customers registered today (all customers, not store-specific)
+      this.userModel
+        .countDocuments({
+          role: "customer",
+          status: "active",
+          createdAt: { $gte: today, $lt: tomorrow },
+        })
+        .exec(),
+
+      // 4. Customers registered this month (all customers, not store-specific)
+      this.userModel
+        .countDocuments({
+          role: "customer",
+          status: "active",
+          createdAt: { $gte: thisMonthStart, $lt: nextMonthStart },
+        })
+        .exec(),
+
+      // 5. Total customers (all time, all customers, not store-specific)
+      this.userModel
+        .countDocuments({
+          role: "customer",
+          status: "active",
+        })
+        .exec(),
+
+      // 6. Total messages sent by this store (using store user's ID)
+      this.smsModel
+        .countDocuments({
+          createdBy: user._id,
+        })
+        .exec(),
+    ]);
+
+    return {
+      activeCampaigns,
+      totalPromoCodes: totalPromoCodes[0]?.total || 0,
+      customersRegisteredToday,
+      customersRegisteredThisMonth,
+      totalCustomers,
+      totalMessagesSent,
+    };
   }
 
   /**
@@ -442,7 +567,7 @@ export class StoresService {
   async updateSmsBalance(
     storeId: string,
     amount: number,
-    user: UserContext
+    user: UserContext,
   ): Promise<StoreResponseDto> {
     const store = await this.storeModel.findById(storeId).exec();
     if (!store) {
@@ -482,7 +607,7 @@ export class StoresService {
    */
   async hasSmsBalance(
     storeId: string,
-    requiredAmount: number = 1
+    requiredAmount: number = 1,
   ): Promise<boolean> {
     const store = await this.storeModel
       .findById(storeId)
@@ -542,7 +667,7 @@ export class StoresService {
     storeId: string,
     userId: string,
     text: string,
-    requestingUser: UserContext
+    requestingUser: UserContext,
   ): Promise<any> {
     // Validate store access
     const store = await this.storeModel.findById(storeId).exec();
@@ -573,7 +698,7 @@ export class StoresService {
       const storeCustomers =
         await this.transactionsService.getMyStoreCustomers(requestingUser);
       const isCustomer = storeCustomers.some(
-        (customer) => customer.id === userId
+        (customer) => customer.id === userId,
       );
 
       if (!isCustomer) {
@@ -604,7 +729,7 @@ export class StoresService {
     storeId: string,
     user: UserContext,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<any> {
     // Verify store access
     const store = await this.storeModel.findById(storeId).exec();

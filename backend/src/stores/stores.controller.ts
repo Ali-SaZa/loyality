@@ -20,7 +20,7 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from "@nestjs/swagger";
-import { StoresService, StoreStats } from "./stores.service";
+import { StoresService, StoreStats, StoreStatistics } from "./stores.service";
 import {
   CreateStoreDto,
   UpdateStoreDto,
@@ -167,6 +167,52 @@ export class StoresController {
     }
 
     return this.storesService.findOne(user.storeId, user);
+  }
+
+  @Get("me/statistics")
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get detailed store statistics (Store Owner only)" })
+  @ApiResponse({
+    status: 200,
+    description: "Store statistics retrieved successfully",
+    schema: {
+      type: "object",
+      properties: {
+        activeCampaigns: {
+          type: "number",
+          description: "Number of active campaigns",
+        },
+        totalPromoCodes: {
+          type: "number",
+          description: "Total number of promotion codes",
+        },
+        customersRegisteredToday: {
+          type: "number",
+          description: "Customers registered today",
+        },
+        customersRegisteredThisMonth: {
+          type: "number",
+          description: "Customers registered this month",
+        },
+        totalCustomers: {
+          type: "number",
+          description: "Total customers overall",
+        },
+        totalMessagesSent: {
+          type: "number",
+          description: "Total messages sent by this store",
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Only store users can access this endpoint",
+  })
+  @ApiResponse({ status: 404, description: "Store not found for this user" })
+  async getStoreStatistics(@CurrentUser() user: any): Promise<StoreStatistics> {
+    return this.storesService.getStoreStatistics(user);
   }
 
   @Patch("me")

@@ -22,7 +22,6 @@ import {
   deletePromotion,
   Promotion,
   PromotionStats,
-  getPromotionByIdWithCodeCount,
   PromotionWithCodeCount,
 } from "@/services/promotions";
 import { getCurrentStore, Store } from "@/services/stores";
@@ -43,7 +42,6 @@ const StorePromotions = () => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [currentStore, setCurrentStore] = useState<Store | null>(null);
   const [stats, setStats] = useState<PromotionStats>({
-    total: 0,
     active: 0,
     inactive: 0,
     expired: 0,
@@ -283,15 +281,7 @@ const StorePromotions = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardBody className="text-center">
-            <div className="text-2xl font-bold text-gray-900">
-              {stats.total}
-            </div>
-            <div className="text-sm text-gray-600">کل تبلیغات</div>
-          </CardBody>
-        </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardBody className="text-center">
             <div className="text-2xl font-bold text-green-600">
