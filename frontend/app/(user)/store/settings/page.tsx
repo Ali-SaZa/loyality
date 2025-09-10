@@ -3,17 +3,18 @@
 import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
-import { Input as NextUIInput } from "@heroui/input";
 import Input from "@/components/formElements/Input";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
-import { StoreSelfUpdateValidation, StoreSelfUpdateData } from "@/validation/storeSelfUpdate";
+import {
+  StoreSelfUpdateValidation,
+  StoreSelfUpdateData,
+} from "@/validation/storeSelfUpdate";
 import { getCurrentStore, updateCurrentStore, Store } from "@/services/stores";
 import useAlertModal from "@/hooks/useAlertModal";
 import useLoading from "@/hooks/useLoading";
-import SecurityIcon from "@/components/icons/SecurityIcon";
 import SettingIcon from "@/components/icons/SettingIcon";
 
 const StoreInformationPage = () => {
@@ -41,9 +42,11 @@ const StoreInformationPage = () => {
         setLoading(true);
         const storeData = await getCurrentStore();
         setStore(storeData);
-        
+
         // Set form values
         reset({
+          storeNameDisplay: storeData.name,
+          phoneNumberDisplay: storeData.phoneNumber,
           address: storeData.address,
           logoUrl: storeData.logoUrl || "",
           description: storeData.description || "",
@@ -70,22 +73,24 @@ const StoreInformationPage = () => {
   const onSubmit = async (data: StoreSelfUpdateData) => {
     try {
       setLoading(true);
-      
+
       // Clean up empty strings
       const cleanedData = {
         ...data,
         logoUrl: data.logoUrl || undefined,
         description: data.description || undefined,
-        socialLinks: data.socialLinks ? {
-          website: data.socialLinks.website || undefined,
-          instagram: data.socialLinks.instagram || undefined,
-          telegram: data.socialLinks.telegram || undefined,
-        } : undefined,
+        socialLinks: data.socialLinks
+          ? {
+              website: data.socialLinks.website || undefined,
+              instagram: data.socialLinks.instagram || undefined,
+              telegram: data.socialLinks.telegram || undefined,
+            }
+          : undefined,
       };
 
       const updatedStore = await updateCurrentStore(cleanedData);
       setStore(updatedStore);
-      
+
       showAlert("اطلاعات فروشگاه با موفقیت به‌روزرسانی شد");
     } catch (error) {
       showAlert("خطا در به‌روزرسانی اطلاعات فروشگاه");
@@ -114,188 +119,139 @@ const StoreInformationPage = () => {
         <div className="flex items-center gap-3">
           <SettingIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">اطلاعات فروشگاه</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              اطلاعات فروشگاه
+            </h1>
           </div>
         </div>
       </div>
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Store Basic Information */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-semibold">
-              اطلاعات اصلی فروشگاه
-            </h3>
-          </CardHeader>
-          <CardBody className="space-y-4">
-            {/* Store Name (Read-only) */}
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                نام فروشگاه
-              </label>
-              <NextUIInput
-                value={store.name}
-                disabled
-                className="bg-background-100"
-                placeholder="نام فروشگاه"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                نام فروشگاه توسط مدیر سیستم قابل تغییر است
-              </p>
-            </div>
+          {/* Store Basic Information */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold">اطلاعات اصلی فروشگاه</h3>
+            </CardHeader>
+            <CardBody className="grid grid-cols-1 md:grid-cols-3 gap-4">
+               {/* Store Name (Read-only) */}
+               <Input
+                 generalType="input"
+                 name="storeNameDisplay"
+                 label="نام فروشگاه"
+                 placeholder="برادران حسن زاده"
+                 disabled={true}
+               />
 
-            {/* Phone Number (Read-only) */}
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                شماره تلفن
-              </label>
-              <NextUIInput
-                value={store.phoneNumber}
-                disabled
-                className="bg-background-100"
-                placeholder="شماره تلفن"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                شماره تلفن توسط مدیر سیستم قابل تغییر است
-              </p>
-            </div>
+               {/* Phone Number (Read-only) */}
+               <Input
+                 generalType="input"
+                 name="phoneNumberDisplay"
+                 label="شماره تلفن"
+                 placeholder="شماره تلفن"
+                 disabled={true}
+               />
 
-            {/* Logo URL */}
-            <Input
-              generalType="input"
-              name="logoUrl"
-              label="آدرس لوگو"
-              placeholder="https://example.com/logo.jpg"
-            />
-
-            {/* Description */}
-            <Input
-              generalType="textarea"
-              name="description"
-              label="توضیحات فروشگاه"
-              placeholder="توضیحات فروشگاه..."
-            />
-          </CardBody>
-        </Card>
-
-        {/* Address Information */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-semibold">
-              اطلاعات آدرس
-            </h3>
-          </CardHeader>
-          <CardBody className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Province */}
+              {/* Logo URL */}
               <Input
                 generalType="input"
-                name="address.province"
-                label="استان"
-                placeholder="تهران"
+                name="logoUrl"
+                label="آدرس لوگو"
+                placeholder="https://example.com/logo.jpg"
               />
+            </CardBody>
+          </Card>
 
-              {/* City */}
+          {/* Address Information */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold">اطلاعات آدرس و ساعتکاری</h3>
+            </CardHeader>
+            <CardBody className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Province */}
+                <Input
+                  generalType="input"
+                  name="address.province"
+                  label="استان"
+                  placeholder="تهران"
+                />
+
+                {/* City */}
+                <Input
+                  generalType="input"
+                  name="address.city"
+                  label="شهر"
+                  placeholder="تهران"
+                />
+
+                <Input
+                  generalType="input"
+                  name="workingHours.open"
+                  label="ساعت بازگشایی"
+                  placeholder="09:00"
+                />
+
+                {/* Closing Time */}
+                <Input
+                  generalType="input"
+                  name="workingHours.close"
+                  label="ساعت بسته شدن"
+                  placeholder="21:00"
+                />
+              </div>
+
+              {/* Full Address */}
               <Input
-                generalType="input"
-                name="address.city"
-                label="شهر"
-                placeholder="تهران"
+                generalType="textarea"
+                name="address.fullAddress"
+                label="آدرس کامل"
+                placeholder="آدرس کامل فروشگاه..."
               />
-            </div>
+            </CardBody>
+          </Card>
 
-            {/* Full Address */}
-            <Input
-              generalType="textarea"
-              name="address.fullAddress"
-              label="آدرس کامل"
-              placeholder="آدرس کامل فروشگاه..."
-            />
-          </CardBody>
-        </Card>
+          {/* Social Links */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold">
+                لینک‌های شبکه‌های اجتماعی
+              </h3>
+            </CardHeader>
+            <CardBody className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Website */}
+                <Input
+                  generalType="input"
+                  name="socialLinks.website"
+                  label="وب‌سایت"
+                  placeholder="https://example.com"
+                />
 
-        {/* Social Links */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-semibold">
-              لینک‌های شبکه‌های اجتماعی
-            </h3>
-          </CardHeader>
-          <CardBody className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Website */}
-              <Input
-                generalType="input"
-                name="socialLinks.website"
-                label="وب‌سایت"
-                placeholder="https://example.com"
-              />
+                {/* Instagram */}
+                <Input
+                  generalType="input"
+                  name="socialLinks.instagram"
+                  label="اینستاگرام"
+                  placeholder="@username"
+                />
 
-              {/* Instagram */}
-              <Input
-                generalType="input"
-                name="socialLinks.instagram"
-                label="اینستاگرام"
-                placeholder="@username"
-              />
-
-              {/* Telegram */}
-              <Input
-                generalType="input"
-                name="socialLinks.telegram"
-                label="تلگرام"
-                placeholder="@username"
-              />
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Working Hours */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-semibold">
-              ساعات کاری
-            </h3>
-          </CardHeader>
-          <CardBody className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Opening Time */}
-              <Input
-                generalType="input"
-                name="workingHours.open"
-                label="ساعت بازگشایی"
-                placeholder="09:00"
-              />
-
-              {/* Closing Time */}
-              <Input
-                generalType="input"
-                name="workingHours.close"
-                label="ساعت بسته شدن"
-                placeholder="21:00"
-              />
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-4">
-          <Button
-            variant="light"
-            onPress={() => router.back()}
-            className="px-6"
-          >
-            انصراف
-          </Button>
-          <Button
-            type="submit"
-            color="primary"
-            className="px-6"
-          >
-            ذخیره تغییرات
-          </Button>
-        </div>
+                {/* Telegram */}
+                <Input
+                  generalType="input"
+                  name="socialLinks.telegram"
+                  label="تلگرام"
+                  placeholder="@username"
+                />
+              </div>
+            </CardBody>
+          </Card>
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-4">
+            <Button type="submit" color="primary" className="px-6">
+              ذخیره تغییرات
+            </Button>
+          </div>
         </form>
       </FormProvider>
     </div>

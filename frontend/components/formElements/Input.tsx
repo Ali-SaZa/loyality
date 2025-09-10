@@ -385,27 +385,33 @@ const Input = ({
           control={control}
           name={name}
           render={({ field, fieldState: { error } }) => (
-            <Textarea
-              {...field}
-              isClearable
-              autoFocus={autoFocus}
-              className={className}
-              classNames={{
-                label: "font-semibold text-sm",
-              }}
-              description={description}
-              errorMessage={error?.message}
-              isDisabled={disabled}
-              isInvalid={!!error}
-              isRequired={required}
-              label={label}
-              labelPlacement="outside"
-              placeholder={placeholder}
-              radius="sm"
-              size={size}
-              validationBehavior="aria"
-              onClear={() => field.onChange("")}
-            />
+            <div className="flex flex-col">
+              {label && (
+                <label className="font-semibold pb-[6px] text-sm text-text-dark text-right">
+                  {label}
+                  {required && <span className="text-error">*</span>}
+                </label>
+              )}
+              <Textarea
+                {...field}
+                isClearable
+                autoFocus={autoFocus}
+                className={className}
+                classNames={{
+                  label: "font-semibold text-sm",
+                }}
+                description={description}
+                errorMessage={error?.message}
+                isDisabled={disabled}
+                isInvalid={!!error}
+                isRequired={required}
+                placeholder={placeholder}
+                radius="sm"
+                size={size}
+                validationBehavior="aria"
+                onClear={() => field.onChange("")}
+              />
+            </div>
           )}
         />
       );
