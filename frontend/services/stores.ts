@@ -135,6 +135,21 @@ export interface SmsHistoryResponse {
   hasPrevPage: boolean
 }
 
+export interface SendSmsRequest {
+  userId: string
+  text: string
+}
+
+export interface SendSmsResponse {
+  id: string
+  userId: string
+  providerResponse: string
+  text: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Stores service functions
 export const storesService = {
   // Get all stores with pagination and filtering
@@ -283,6 +298,17 @@ export const storesService = {
       const errorMessage = handleApiError(error)
       throw new Error(errorMessage)
     }
+  },
+
+  // Send SMS to a customer
+  async sendSmsToCustomer(data: SendSmsRequest): Promise<SendSmsResponse> {
+    try {
+      const response = await axiosInstance.post<SendSmsResponse>('/stores/me/sms/send-to-customer', data)
+      return response.data
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      throw new Error(errorMessage)
+    }
   }
 }
 
@@ -297,3 +323,4 @@ export const getStoreStats = storesService.getStoreStats
 export const getCurrentStore = storesService.getCurrentStore
 export const getStoreFilterOptions = storesService.getStoreFilterOptions
 export const getSmsHistory = storesService.getSmsHistory
+export const sendSmsToCustomer = storesService.sendSmsToCustomer

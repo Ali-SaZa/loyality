@@ -15,6 +15,7 @@ import {
 import UserIcon from "@/components/icons/UserIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
+import ChatArrowGrowIcon from "@/components/icons/ChatArrowGrowIcon";
 import {
   transactionsService,
   CustomerTransaction,
@@ -24,6 +25,7 @@ import { getStatusConfig } from "@/types/enums";
 import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
 import CustomerViewModal from "@/components/modals/CustomerViewModal";
 import AddCustomerModal from "@/components/modals/AddCustomerModal";
+import SendMessageModal from "@/components/modals/SendMessageModal";
 
 const StoreUsers = () => {
   const { setLoading } = useLoading();
@@ -40,6 +42,13 @@ const StoreUsers = () => {
   // Add customer modal state
   const [addCustomerModal, setAddCustomerModal] = useState({
     isOpen: false,
+  });
+
+  // Send message modal state
+  const [sendMessageModal, setSendMessageModal] = useState({
+    isOpen: false,
+    customerId: undefined as string | undefined,
+    customerName: undefined as string | undefined,
   });
 
   useEffect(() => {
@@ -91,6 +100,14 @@ const StoreUsers = () => {
 
   const handleAddCustomerSuccess = () => {
     fetchCustomers(); // Refresh the customers list
+  };
+
+  const handleSendMessage = (customerId: string, customerName: string) => {
+    setSendMessageModal({
+      isOpen: true,
+      customerId,
+      customerName,
+    });
   };
 
   if (error) {
@@ -289,6 +306,15 @@ const StoreUsers = () => {
                       >
                         <EyeIcon className="size-4" />
                       </Button>
+                      <Button
+                        iconOnly
+                        size="sm"
+                        variant="light"
+                        color="success"
+                        onClick={() => handleSendMessage(customer.id, `${customer.firstName} ${customer.lastName}`)}
+                      >
+                        <ChatArrowGrowIcon className="size-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -313,6 +339,17 @@ const StoreUsers = () => {
         onOpenChange={(isOpen) =>
           setAddCustomerModal((prev) => ({ ...prev, isOpen }))
         }
+        onSuccess={handleAddCustomerSuccess}
+      />
+
+      {/* Send Message Modal */}
+      <SendMessageModal
+        isOpen={sendMessageModal.isOpen}
+        onOpenChange={(isOpen) =>
+          setSendMessageModal((prev) => ({ ...prev, isOpen }))
+        }
+        customerId={sendMessageModal.customerId || ''}
+        customerName={sendMessageModal.customerName || ''}
         onSuccess={handleAddCustomerSuccess}
       />
     </div>
