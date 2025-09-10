@@ -8,7 +8,10 @@ import { CreateStoreDto, UpdateStoreDto, UpdateStoreSelfDto, StoreResponseDto, C
 import { ListRequestDto, ListResponseDto } from '../common/dto/list.dto';
 import { 
   StoreNotFoundException, 
-  StorePhoneExistsException
+  StorePhoneExistsException,
+  SmsInsufficientBalanceException,
+  SmsCustomerRestrictionException,
+  SmsHistoryAccessDeniedException
 } from '../common/errors';
 import { SmsService } from '../sms/sms.service';
 import { TransactionsService } from '../transactions/transactions.service';
@@ -492,9 +495,7 @@ export class StoresService {
       // Check if store has sufficient SMS balance
       const hasBalance = await this.hasSmsBalance(storeId, smsCount);
       if (!hasBalance) {
-        throw new BadRequestException(
-          `Insufficient SMS balance. This message requires ${smsCount} SMS unit(s). Please contact admin to add SMS credits.`
-        );
+        throw new SmsInsufficientBalanceException(smsCount);
       }
 
       // Verify that the user is a customer of this store
@@ -502,9 +503,7 @@ export class StoresService {
       const isCustomer = storeCustomers.some((customer) => customer.id === userId);
       
       if (!isCustomer) {
-        throw new ForbiddenException(
-          "You can only send SMS to your store customers"
-        );
+        throw new SmsCustomerRestrictionException();
       }
 
       // Deduct SMS balance based on actual SMS count
@@ -541,7 +540,7 @@ export class StoresService {
 
     // Check access permissions
     if (user.role === 'store' && store.userId.toString() !== user._id.toString()) {
-      throw new ForbiddenException('You can only view SMS history for your own store');
+      throw new SmsHistoryAccessDeniedException();
     }
 
     // Calculate pagination

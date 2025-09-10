@@ -4,7 +4,7 @@
 
 /**
  * Calculate the number of SMS units needed for Persian text
- * Persian SMS: 70 characters = 1 SMS unit
+ * Persian SMS: 70 characters = 1 SMS unit (max 280 characters = 4 SMS)
  * @param text The text message to calculate SMS count for
  * @returns Number of SMS units needed
  */
@@ -14,6 +14,7 @@ export function calculateSmsCount(text: string): number {
   }
   
   // For Persian text, every 70 characters equals 1 SMS
+  // Maximum 280 characters = 4 SMS units
   const characterCount = text.length;
   return Math.ceil(characterCount / 70);
 }
@@ -30,7 +31,7 @@ export function getSmsInfo(text: string): {
 } {
   const characterCount = text?.length || 0;
   const smsCount = calculateSmsCount(text);
-  const maxCharacters = 70; // Characters per SMS for Persian
+  const maxCharacters = 280; // Maximum characters allowed for SMS
   
   return {
     characterCount,

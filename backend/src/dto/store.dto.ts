@@ -272,9 +272,9 @@ export class SendSmsToCustomerDto {
   @IsMongoId()
   userId: string;
 
-  @ApiProperty({ description: 'SMS message content', example: 'Your promo code is ready!', maxLength: 160 })
+  @ApiProperty({ description: 'SMS message content', example: 'Your promo code is ready!', maxLength: 280 })
   @IsString()
-  @MaxLength(160)
+  @MaxLength(280)
   text: string;
 }
 
