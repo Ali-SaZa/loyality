@@ -16,7 +16,7 @@ import SettingIcon from "@/components/icons/SettingIcon";
 export const siteConfig = {
   name: "OBS",
   description: "شبیه ساز شغلی آنلاین",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  viewport: "width=device-width, initial-scale=1, user-scalable=yes",
 
   // Role-based menu configurations
   roleMenus: {
@@ -358,5 +358,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  userScalable: true,
   themeColor: [{ media: "(prefers-color-scheme: light)", color: "white" }],
 };

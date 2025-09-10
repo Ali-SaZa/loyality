@@ -43,6 +43,12 @@ export const SECURITY_CONFIG = {
   CORS: {
     ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(",") || [
       "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:4444",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001",
+      "http://127.0.0.1:4444",
+      "http://192.168.100.195:4444",
     ],
     ALLOWED_METHODS: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     ALLOWED_HEADERS: ["Content-Type", "Authorization"],

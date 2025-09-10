@@ -63,8 +63,8 @@ echo ""
 echo "🚀 Starting Frontend and Backend locally..."
 echo "   🗄️  MongoDB: localhost:$MONGODB_PORT (Docker)"
 echo "   🔌 Backend: Will start on port $BACKEND_PORT (Local)"
-echo "   🌐 Frontend: Will start on port $FRONTEND_PORT (Local)"
+echo "   🌐 Frontend: Will start on port 4444 (Local)"
 echo ""
 
 # Start frontend and backend locally
-npm run dev
+cd frontend && npm run dev

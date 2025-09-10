@@ -41,7 +41,6 @@ const AdminPromotions = () => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [stats, setStats] = useState<PromotionStats>({
-    total: 0,
     active: 0,
     inactive: 0,
     expired: 0,
@@ -290,7 +289,7 @@ const AdminPromotions = () => {
               <div>
                 <p className="text-sm text-text-light mb-1">کل تبلیغات</p>
                 <p className="text-2xl font-bold text-text-dark">
-                  {stats.total}
+                  {stats.active + stats.inactive + stats.expired + stats.deleted}
                 </p>
               </div>
               <PromotionIcon className="size-8 text-primary" />

@@ -91,25 +91,22 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
 
-  // CORS configuration with security
+  // CORS configuration - TEMPORARILY DISABLED FOR TESTING
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://127.0.0.1:3000",
-      "http://127.0.0.1:3001",
-    ],
+    origin: true, // Allow all origins
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   });
 
   const port = process.env.PORT || 5555;
-  await app.listen(port);
+  const host = process.env.HOST || '0.0.0.0';
+  await app.listen(port, host);
 
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
+  console.log(`🚀 Application is running on: http://${host}:${port}`);
+  console.log(`🌐 Network accessible at: http://192.168.100.195:${port}`);
   console.log(
-    `📚 Swagger documentation is available at: http://localhost:${port}/api`,
+    `📚 Swagger documentation is available at: http://${host}:${port}/api`,
   );
   console.log(`🔒 Environment: ${process.env.NODE_ENV || "development"}`);
 }

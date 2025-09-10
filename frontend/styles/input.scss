@@ -17,6 +17,27 @@ input::placeholder {
   direction: rtl;
 }
 
+/* iOS Safari touch handling fixes */
+input,
+textarea,
+[data-slot="input-field"] {
+  /* Prevent iOS from highlighting taps */
+  -webkit-tap-highlight-color: transparent;
+  /* Ensure proper touch handling */
+  touch-action: manipulation;
+  /* Prevent text selection on tap */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection when input is focused */
+input:focus,
+textarea:focus,
+[data-slot="input-field"]:focus {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 @media screen and (max-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
   input,
   textarea {
