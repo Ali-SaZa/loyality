@@ -51,4 +51,3 @@ TransactionSchema.index({ customerId: 1, storeId: 1 });
 TransactionSchema.index({ storeId: 1, createdAt: -1 });
 TransactionSchema.index({ customerId: 1, createdAt: -1 });
 TransactionSchema.index({ promoCodeId: 1 });
-TransactionSchema.index({ promotionId: 1 });
