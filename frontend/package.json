@@ -8,7 +8,7 @@
     "dev": "next dev -p 4444",
     "build": "next build",
     "start": "next start -p 4444",
-    "start:prod": "node .next/standalone/server.js",
+    "start:prod": "PORT=4444 node .next/standalone/server.js",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
     "prepare": "husky install",
     "tree": "node generateTree.js",
