@@ -57,6 +57,30 @@ export default function RootLayout({
         {/* Additional zoom prevention */}
         <meta content="no" name="format-detection" />
         
+        {/* iOS Keyboard handling */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Handle iOS keyboard for modals
+              document.addEventListener('DOMContentLoaded', function() {
+                const inputs = document.querySelectorAll('input, textarea');
+                inputs.forEach(function(input) {
+                  input.addEventListener('focus', function() {
+                    // Small delay to ensure keyboard is open
+                    setTimeout(function() {
+                      input.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'nearest'
+                      });
+                    }, 300);
+                  });
+                });
+              });
+            `,
+          }}
+        />
+        
 
         {/*عنوان برای شبکه‌های اجتماعی*/}
         <meta content="باشگاه وفاداری مشتریان مانا" property="og:title" />

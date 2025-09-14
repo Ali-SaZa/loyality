@@ -125,4 +125,27 @@ select,
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
   }
+  
+  /* iOS Keyboard handling for modals */
+  .heroui-modal {
+    max-height: 100vh;
+    max-height: 100dvh; /* Dynamic viewport height */
+  }
+  
+  .heroui-modal-content {
+    max-height: 90vh;
+    max-height: 90dvh; /* Dynamic viewport height */
+    overflow-y: auto;
+  }
+  
+  /* Ensure modal stays above keyboard */
+  @supports (height: 100dvh) {
+    .heroui-modal {
+      height: 100dvh;
+    }
+    
+    .heroui-modal-content {
+      height: 90dvh;
+    }
+  }
 }

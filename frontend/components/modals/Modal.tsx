@@ -91,6 +91,8 @@ const Modal = ({
       className={`p-6 ${className}`}
       classNames={{
         closeButton: "absolute !top-4 !left-6",
+        base: "max-h-[90vh] max-h-[90dvh] overflow-y-auto",
+        body: "max-h-[60vh] max-h-[60dvh] overflow-y-auto",
       }}
       hideCloseButton={hideCloseButton || isLoading}
       isDismissable={!isLoading}
