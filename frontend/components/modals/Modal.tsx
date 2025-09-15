@@ -50,7 +50,7 @@ interface ModalProps {
     | "full";
   radius?: "none" | "sm" | "md" | "lg";
   shadow?: undefined | "sm" | "md" | "lg";
-  placement?: "auto" | "top" | "center" | "bottom";
+  placement?: "auto" | "top" | "center" | "bottom" | "top-center";
   scrollBehavior?: "normal" | "inside" | "outside";
   backdrop?: "transparent" | "opaque" | "blur";
 }

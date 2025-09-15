@@ -75,6 +75,7 @@ const SendMessageModal = ({
       title={`ارسال پیام به ${customerName}`}
       size="md"
       acceptBtnText="ارسال پیام"
+      placement="top-center"
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
       acceptBtnDisabled={isSubmitting}
