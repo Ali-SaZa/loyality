@@ -1,30 +1,30 @@
-/* HeroUI Input Zoom Prevention for iOS Safari */
+/* Comprehensive Input Styles - All Input Types */
 
-/* Target HeroUI input components specifically */
+/* Basic input zoom prevention for non-HeroUI inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+textarea,
+select {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+/* HeroUI Input Zoom Prevention for iOS Safari - Comprehensive */
+
+/* Target all HeroUI input components */
 [data-slot="input"] input,
 [data-slot="input"] textarea,
 .heroui-input input,
 .heroui-textarea textarea,
 .heroui-select select,
-.heroui-autocomplete input {
-  font-size: 16px !important;
-  -webkit-text-size-adjust: 100% !important;
-  text-size-adjust: 100% !important;
-}
-
-/* Focus state prevention */
-[data-slot="input"] input:focus,
-[data-slot="input"] textarea:focus,
-.heroui-input input:focus,
-.heroui-textarea textarea:focus,
-.heroui-select select:focus,
-.heroui-autocomplete input:focus {
-  font-size: 16px !important;
-  -webkit-text-size-adjust: 100% !important;
-  text-size-adjust: 100% !important;
-}
-
-/* OTP Input specific fixes */
+.heroui-autocomplete input,
+.heroui-date-picker input,
 .heroui-input-otp input,
 [data-slot="input-otp"] input {
   font-size: 16px !important;
@@ -32,6 +32,14 @@
   text-size-adjust: 100% !important;
 }
 
+/* Focus state prevention for all HeroUI inputs */
+[data-slot="input"] input:focus,
+[data-slot="input"] textarea:focus,
+.heroui-input input:focus,
+.heroui-textarea textarea:focus,
+.heroui-select select:focus,
+.heroui-autocomplete input:focus,
+.heroui-date-picker input:focus,
 .heroui-input-otp input:focus,
 [data-slot="input-otp"] input:focus {
   font-size: 16px !important;
@@ -39,37 +47,38 @@
   text-size-adjust: 100% !important;
 }
 
-/* Mobile specific fixes */
+/* Mobile-specific enhancements */
 @media screen and (max-width: 768px) {
-  /* All HeroUI input types */
+  /* Basic mobile text size adjustments */
+  html,
+  body {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  /* Basic input zoom prevention for non-HeroUI inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  /* All HeroUI input types with mobile optimizations */
   [data-slot="input"] input,
   [data-slot="input"] textarea,
   .heroui-input input,
   .heroui-textarea textarea,
   .heroui-select select,
   .heroui-autocomplete input,
-  .heroui-date-picker input {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-  }
-  
-  /* Focus states */
-  [data-slot="input"] input:focus,
-  [data-slot="input"] textarea:focus,
-  .heroui-input input:focus,
-  .heroui-textarea textarea:focus,
-  .heroui-select select:focus,
-  .heroui-autocomplete input:focus,
-  .heroui-date-picker input:focus {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-  }
-  
-  /* OTP inputs on mobile */
+  .heroui-date-picker input,
   .heroui-input-otp input,
   [data-slot="input-otp"] input {
     font-size: 16px !important;
@@ -78,11 +87,38 @@
     -webkit-appearance: none !important;
     appearance: none !important;
   }
-  
+
+  /* Focus states on mobile */
+  [data-slot="input"] input:focus,
+  [data-slot="input"] textarea:focus,
+  .heroui-input input:focus,
+  .heroui-textarea textarea:focus,
+  .heroui-select select:focus,
+  .heroui-autocomplete input:focus,
+  .heroui-date-picker input:focus,
   .heroui-input-otp input:focus,
   [data-slot="input-otp"] input:focus {
     font-size: 16px !important;
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
+  }
+
+  /* Focus state fixes for basic inputs */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  /* Prevent double-tap zoom and improve touch handling */
+  html {
+    touch-action: manipulation;
+  }
+
+  body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 }

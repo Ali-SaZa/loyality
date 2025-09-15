@@ -1,14 +1,7 @@
 @use "sass:meta";
-@import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 @include meta.load-css("input");
 
-/* برای مرورگرهای WebKit (Chrome, Safari) */
-// ::-webkit-scrollbar {
-//   display: none; /* مخفی کردن اسکرول‌بار */
-// }
-
-/* برای مرورگرهای WebKit مانند Chrome و Safari */
 ::-webkit-scrollbar {
   width: 8px; /* عرض اسکرول‌بار */
   height: 8px;
@@ -31,121 +24,51 @@
   all: revert; /* بازگشت به استایل‌های پیش‌فرض مرورگر */
 }
 
-.center-with-absolute {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Global input zoom prevention - Enhanced for iOS Safari */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="tel"],
-input[type="number"],
-input[type="search"],
-input[type="url"],
-textarea,
-select,
-[data-slot="input"] {
-  font-size: 16px !important;
-  -webkit-text-size-adjust: 100% !important;
-  text-size-adjust: 100% !important;
-}
-
-/* Mobile-specific zoom prevention - Enhanced */
+/* Mobile-specific optimizations */
 @media screen and (max-width: 768px) {
-  /* Prevent zoom on all elements */
-  * {
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  
-  /* Allow text selection in inputs and textareas */
-  input,
-  textarea,
-  [contenteditable="true"],
-  [data-slot="input"] {
-    -webkit-user-select: text !important;
-    -khtml-user-select: text !important;
-    -moz-user-select: text !important;
-    -ms-user-select: text !important;
-    user-select: text !important;
-  }
-  
-  /* Enhanced input zoom prevention for all input types */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="tel"],
-  input[type="number"],
-  input[type="search"],
-  input[type="url"],
-  textarea,
-  select,
-  [data-slot="input"],
-  .heroui-input input,
-  .heroui-textarea textarea,
-  .heroui-select select {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    border-radius: 0 !important;
-  }
-  
-  /* Prevent double-tap zoom */
-  html {
-    touch-action: manipulation;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-  }
-  
-  body {
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-  }
-  
-  /* Additional iOS Safari fixes */
-  input:focus,
-  textarea:focus,
-  select:focus {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-  }
-  
   /* iOS Keyboard handling for modals */
   .heroui-modal {
     max-height: 100vh;
     max-height: 100dvh; /* Dynamic viewport height */
   }
-  
+
   .heroui-modal-content {
     max-height: 90vh;
     max-height: 90dvh; /* Dynamic viewport height */
     overflow-y: auto;
   }
-  
+
   /* Ensure modal stays above keyboard */
   @supports (height: 100dvh) {
     .heroui-modal {
       height: 100dvh;
     }
-    
+
     .heroui-modal-content {
       height: 90dvh;
     }
+  }
+}
+
+/* iOS Keyboard handling for modals */
+.heroui-modal {
+  max-height: 100vh;
+  max-height: 100dvh; /* Dynamic viewport height */
+}
+
+.heroui-modal-content {
+  max-height: 90vh;
+  max-height: 90dvh; /* Dynamic viewport height */
+  overflow-y: auto;
+}
+
+/* Ensure modal stays above keyboard */
+@supports (height: 100dvh) {
+  .heroui-modal {
+    height: 100dvh;
+  }
+
+  .heroui-modal-content {
+    height: 90dvh;
   }
 }
