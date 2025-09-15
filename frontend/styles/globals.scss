@@ -2,6 +2,84 @@
 @import "leaflet/dist/leaflet.css";
 @include meta.load-css("input");
 
+/* Remove all outlines globally */
+* {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+}
+
+*:focus-visible {
+  outline: none !important;
+}
+
+/* Specific focus removal for all interactive elements */
+input,
+textarea,
+select,
+button,
+[role="button"],
+[tabindex],
+a {
+  outline: none !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus,
+[role="button"]:focus,
+[tabindex]:focus,
+a:focus {
+  outline: none !important;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible,
+a:focus-visible {
+  outline: none !important;
+}
+
+/* HeroUI specific focus removal */
+.heroui-input input,
+.heroui-textarea textarea,
+.heroui-select select,
+.heroui-button,
+.heroui-modal-close-button,
+[data-slot="input"] input,
+[data-slot="input"] textarea,
+[data-slot="button"] {
+  outline: none !important;
+}
+
+.heroui-input input:focus,
+.heroui-textarea textarea:focus,
+.heroui-select select:focus,
+.heroui-button:focus,
+.heroui-modal-close-button:focus,
+[data-slot="input"] input:focus,
+[data-slot="input"] textarea:focus,
+[data-slot="button"]:focus {
+  outline: none !important;
+}
+
+.heroui-input input:focus-visible,
+.heroui-textarea textarea:focus-visible,
+.heroui-select select:focus-visible,
+.heroui-button:focus-visible,
+.heroui-modal-close-button:focus-visible,
+[data-slot="input"] input:focus-visible,
+[data-slot="input"] textarea:focus-visible,
+[data-slot="button"]:focus-visible {
+  outline: none !important;
+}
+
 ::-webkit-scrollbar {
   width: 8px; /* عرض اسکرول‌بار */
   height: 8px;

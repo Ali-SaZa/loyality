@@ -94,6 +94,18 @@ export default {
     function ({ addBase, theme }) {
       addBase({
         body: { color: theme("colors.text.DEFAULT") },
+        "*": { outline: "none !important" },
+        "*:focus": { outline: "none !important" },
+        "*:focus-visible": { outline: "none !important" },
+        "input, textarea, select, button, [role='button'], [tabindex], a": { 
+          outline: "none !important" 
+        },
+        "input:focus, textarea:focus, select:focus, button:focus, [role='button']:focus, [tabindex]:focus, a:focus": { 
+          outline: "none !important" 
+        },
+        "input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, [role='button']:focus-visible, [tabindex]:focus-visible, a:focus-visible": { 
+          outline: "none !important" 
+        },
       });
     },
   ],
