@@ -266,9 +266,7 @@ const StorePromotions = () => {
         <div className="flex items-center gap-3">
           <PromotionIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              مدیریت تبلیغات
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">مدیریت تبلیغات</h1>
           </div>
         </div>
         <Button
@@ -322,141 +320,287 @@ const StorePromotions = () => {
           <h3 className="text-lg font-semibold">لیست تبلیغات</h3>
         </CardHeader>
         <CardBody>
-          <Table aria-label="Promotions table">
-            <TableHeader>
-              <TableColumn>عنوان تبلیغ</TableColumn>
-              <TableColumn>مقدار</TableColumn>
-              <TableColumn>وضعیت</TableColumn>
-              <TableColumn>تعداد کدها</TableColumn>
-              <TableColumn>تاریخ ایجاد</TableColumn>
-              <TableColumn>عملیات</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {promotions.map((promotion) => (
-                <TableRow
-                  key={promotion.id}
-                  className={
-                    promotion.status === "deleted"
-                      ? "opacity-60 bg-gray-50"
-                      : ""
-                  }
-                >
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-semibold">
-                          {promotion.title.charAt(0)}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-600">{promotion.title}</span>
+          {/* Desktop Table View */}
+          <div className="hidden md:block">
+            <Table aria-label="Promotions table">
+              <TableHeader>
+                <TableColumn>عنوان تبلیغ</TableColumn>
+                <TableColumn>مقدار</TableColumn>
+                <TableColumn>وضعیت</TableColumn>
+                <TableColumn>تعداد کدها</TableColumn>
+                <TableColumn>تاریخ ایجاد</TableColumn>
+                <TableColumn>عملیات</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {promotions.map((promotion) => (
+                  <TableRow
+                    key={promotion.id}
+                    className={
+                      promotion.status === "deleted"
+                        ? "opacity-60 bg-gray-50"
+                        : ""
+                    }
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-600">
+                              {promotion.title}
+                            </span>
+                          </div>
+                          {promotion.description && (
+                            <p className="text-xs text-gray-500">
+                              {promotion.description}
+                            </p>
+                          )}
                         </div>
-                        {promotion.description && (
-                          <p className="text-xs text-gray-500">
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-600">
+                        {formatValue(promotion)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        color={getStatusColor(promotion.status)}
+                        size="sm"
+                        variant="flat"
+                      >
+                        {getStatusText(promotion.status)}
+                      </Chip>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-600">
+                        {promotion.promoCodeCount || 0} کد
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-600">
+                        {formatDate(promotion.createdAt)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          color="primary"
+                          aria-label="مشاهده"
+                          onClick={() =>
+                            handleViewPromotion(
+                              promotion as PromotionWithCodeCount
+                            )
+                          }
+                        >
+                          <EyeIcon className="size-4" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          color="primary"
+                          aria-label="ویرایش"
+                          disabled={promotion.status === "deleted"}
+                          onClick={() =>
+                            handleEditPromotion(
+                              promotion as PromotionWithCodeCount
+                            )
+                          }
+                        >
+                          <EditIcon className="size-4" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          color="success"
+                          aria-label="ایجاد کدهای تخفیف"
+                          disabled={promotion.status === "deleted"}
+                          onClick={() => {
+                            const storeName = getStoreName(promotion.storeId);
+                            setAutomaticPromoCodeModal({
+                              isOpen: true,
+                              promotionId: promotion.id,
+                              storeName,
+                            });
+                          }}
+                        >
+                          <PromotionIcon className="size-4" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          color="warning"
+                          aria-label="تغییر وضعیت"
+                          disabled={promotion.status === "deleted"}
+                          onClick={() =>
+                            handleStatusChange(
+                              promotion as PromotionWithCodeCount
+                            )
+                          }
+                        >
+                          <ClockIcon className="size-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden">
+            <div className="space-y-4">
+              {promotions.map((promotion) => (
+                <Card
+                  key={promotion.id}
+                  className={`border border-gray-200 ${promotion.status === "deleted" ? "opacity-60 bg-gray-50" : ""}`}
+                >
+                  <CardBody className="p-4">
+                    <div className="space-y-3">
+                      {/* Title */}
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+                          عنوان تبلیغ:
+                        </span>
+                        <div className="text-sm text-gray-900 text-right flex-1 mr-2">  
+                              {promotion.title}
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+                          توضیحات تبلیغ:
+                        </span>
+                        <div className="text-sm text-gray-900 text-right flex-1 mr-2">
                             {promotion.description}
-                          </p>
-                        )}
-                        <p className="text-xs text-gray-500">
-                          ID: {promotion.id}
-                        </p>
+                        </div>
+                      </div>
+
+                      {/* Value */}
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+                          مقدار:
+                        </span>
+                        <div className="text-sm text-gray-900 text-right flex-1 mr-2">
+                          {formatValue(promotion)}
+                        </div>
+                      </div>
+
+                      {/* Status */}
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+                          وضعیت:
+                        </span>
+                        <div className="text-sm text-gray-900 text-right flex-1 mr-2">
+                          <Chip
+                            color={getStatusColor(promotion.status)}
+                            size="sm"
+                            variant="flat"
+                          >
+                            {getStatusText(promotion.status)}
+                          </Chip>
+                        </div>
+                      </div>
+
+                      {/* Code Count */}
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+                          تعداد کدها:
+                        </span>
+                        <div className="text-sm text-gray-900 text-right flex-1 mr-2">
+                          {promotion.promoCodeCount || 0} کد
+                        </div>
+                      </div>
+
+                      {/* Creation Date */}
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-600 min-w-0 flex-shrink-0">
+                          تاریخ ایجاد:
+                        </span>
+                        <div className="text-sm text-gray-900 text-right flex-1 mr-2">
+                          {formatDate(promotion.createdAt)}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex justify-end pt-3 border-t border-gray-200">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            color="primary"
+                            aria-label="مشاهده"
+                            onClick={() =>
+                              handleViewPromotion(
+                                promotion as PromotionWithCodeCount
+                              )
+                            }
+                          >
+                            <EyeIcon className="size-4" />
+                          </Button>
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            color="primary"
+                            aria-label="ویرایش"
+                            disabled={promotion.status === "deleted"}
+                            onClick={() =>
+                              handleEditPromotion(
+                                promotion as PromotionWithCodeCount
+                              )
+                            }
+                          >
+                            <EditIcon className="size-4" />
+                          </Button>
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            color="success"
+                            aria-label="ایجاد کدهای تخفیف"
+                            disabled={promotion.status === "deleted"}
+                            onClick={() => {
+                              const storeName = getStoreName(promotion.storeId);
+                              setAutomaticPromoCodeModal({
+                                isOpen: true,
+                                promotionId: promotion.id,
+                                storeName,
+                              });
+                            }}
+                          >
+                            <PromotionIcon className="size-4" />
+                          </Button>
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            color="warning"
+                            aria-label="تغییر وضعیت"
+                            disabled={promotion.status === "deleted"}
+                            onClick={() =>
+                              handleStatusChange(
+                                promotion as PromotionWithCodeCount
+                              )
+                            }
+                          >
+                            <ClockIcon className="size-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-gray-600">
-                      {formatValue(promotion)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      color={getStatusColor(promotion.status)}
-                      size="sm"
-                      variant="flat"
-                    >
-                      {getStatusText(promotion.status)}
-                    </Chip>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-gray-600">
-                      {promotion.promoCodeCount || 0} کد
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-gray-600">
-                      {formatDate(promotion.createdAt)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="primary"
-                        aria-label="مشاهده"
-                        onClick={() =>
-                          handleViewPromotion(
-                            promotion as PromotionWithCodeCount,
-                          )
-                        }
-                      >
-                        <EyeIcon className="size-4" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="primary"
-                        aria-label="ویرایش"
-                        disabled={promotion.status === "deleted"}
-                        onClick={() =>
-                          handleEditPromotion(
-                            promotion as PromotionWithCodeCount,
-                          )
-                        }
-                      >
-                        <EditIcon className="size-4" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="success"
-                        aria-label="ایجاد کدهای تخفیف"
-                        disabled={promotion.status === "deleted"}
-                        onClick={() => {
-                          const storeName = getStoreName(promotion.storeId);
-                          setAutomaticPromoCodeModal({
-                            isOpen: true,
-                            promotionId: promotion.id,
-                            storeName,
-                          });
-                        }}
-                      >
-                        <PromotionIcon className="size-4" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="warning"
-                        aria-label="تغییر وضعیت"
-                        disabled={promotion.status === "deleted"}
-                        onClick={() =>
-                          handleStatusChange(
-                            promotion as PromotionWithCodeCount,
-                          )
-                        }
-                      >
-                        <ClockIcon className="size-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                  </CardBody>
+                </Card>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          </div>
         </CardBody>
       </Card>
 

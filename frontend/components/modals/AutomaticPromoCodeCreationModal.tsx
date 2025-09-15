@@ -108,14 +108,6 @@ const AutomaticPromoCodeCreationModal = ({
       acceptBtnDisabled={isSubmitting}
     >
       <div className="space-y-6">
-        <div className="text-sm text-gray-600 mb-4">
-          <p>
-            کدهای تخفیف برای تبلیغ <strong>{promotionId}</strong> ایجاد خواهند
-            شد.
-          </p>
-          <p>پیشوند پیش‌فرض از نام فروشگاه استخراج شده است.</p>
-        </div>
-
         <FormProvider {...methods}>
           <div className="space-y-4">
             <Input
@@ -123,6 +115,7 @@ const AutomaticPromoCodeCreationModal = ({
               name="prefix"
               label="پیشوند کدها"
               placeholder="مثال: WELCOME2024"
+              required={true}
               description="پیشوند برای همه کدهای تخفیف استفاده می‌شود (فقط حروف انگلیسی و اعداد، بدون فاصله)"
             />
 
@@ -133,6 +126,7 @@ const AutomaticPromoCodeCreationModal = ({
               label="تعداد کدها"
               placeholder="10"
               description="تعداد کدهای تخفیف که ایجاد می‌شوند (حداکثر ۱۰۰۰)"
+              required={true}
             />
           </div>
         </FormProvider>

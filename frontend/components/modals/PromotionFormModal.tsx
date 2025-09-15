@@ -180,6 +180,7 @@ const PromotionFormModal = ({
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
       size="2xl"
+      placement="top-center"
     >
       <div className="space-y-6">
         <FormProvider {...methods}>
