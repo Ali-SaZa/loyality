@@ -37,7 +37,7 @@ const AuthContent = () => {
   const [loading, setLoading] = useState(false);
   const [loginOtpStep, setLoginOtpStep] = useState(0);
   const [isTimerComplete, setIsTimerComplete] = useState(false);
-
+  const [timerKey, setTimerKey] = useState(0);
   const [isAutoVerifying, setIsAutoVerifying] = useState(false);
 
   const sendOtpForm = useForm<z.infer<typeof SendOtpFormValidation>>({
@@ -159,6 +159,7 @@ const AuthContent = () => {
   };
 
   const resetTimer = () => {
+    setTimerKey((prevKey) => prevKey + 1);
     setIsTimerComplete(false);
   };
 
