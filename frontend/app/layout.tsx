@@ -63,7 +63,7 @@ export default function RootLayout({
 
         {/*تصویر پیش‌نمایش*/}
         {/* <meta
-          content="https://obs.ir/images/OBS.webp"
+          content="https://gardou.ir/images/mana.webp"
           property="og:image"
         /> */}
 

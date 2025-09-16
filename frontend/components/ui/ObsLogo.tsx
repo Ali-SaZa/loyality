@@ -15,7 +15,7 @@ const LogoContainer = ({
       href={disableClick ? "#" : `/`}
       style={{ width: iconSize + "px" }}
     >
-      <img alt="obs logo" src="/images/logo.png" />
+      <img alt="مانا لوگو" src="/images/logo.png" />
     </Link>
   );
 };

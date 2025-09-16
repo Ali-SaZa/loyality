@@ -289,7 +289,7 @@
     📄 EvaluationQuestionsHeader.webp
     📄 Frame2.svg
     📄 Frame2.webp
-    📄 OBS.webp
+    📄 مانا.webp
     📄 about-jobChoice.webp
     📄 about-standard.webp
     📄 about-us-header.webp

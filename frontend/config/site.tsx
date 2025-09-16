@@ -14,8 +14,8 @@ import MailIcon from "@/components/icons/MailIcon";
 import SettingIcon from "@/components/icons/SettingIcon";
 
 export const siteConfig = {
-  name: "OBS",
-  description: "شبیه ساز شغلی آنلاین",
+  name: "مانا",
+  description: "سیستم مدیریت وفاداری مشتریان",
   viewport: "width=device-width, initial-scale=1, user-scalable=yes",
 
   // Role-based menu configurations
@@ -327,7 +327,7 @@ export const siteConfig = {
     // },
     {
       type: "select",
-      title: "آشنایی با OBS",
+      title: "آشنایی با مانا",
       items: [
         {
           title: "درباره ما",
