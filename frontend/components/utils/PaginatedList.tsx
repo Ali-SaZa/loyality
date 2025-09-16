@@ -50,7 +50,6 @@ import {
   downloadExcel,
   isEmptyObject,
 } from "@/helpers";
-import Button from "@/components/formElements/Button";
 import useAlertModal from "@/hooks/useAlertModal";
 import TrashIcon from "@/components/icons/TrashIcon";
 import ArrowsVIcon from "@/components/icons/ArrowsVIcon";
@@ -442,7 +441,7 @@ const PaginatedList = forwardRef(
               <Dropdown>
                 <DropdownTrigger>
                   <Button
-                    endContent={<AngleDownIcon className="size-5 text-text" />}
+                    iconEnd={<AngleDownIcon className="size-5 text-text" />}
                     variant="flat"
                   >
                     فیلتر عناوین

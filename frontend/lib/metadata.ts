@@ -75,7 +75,7 @@ export function generateMetadata({
       }, {} as Record<string, string>)
     },
     openGraph: {
-      type: type,
+      type: type === 'product' ? 'website' : type,
       title: seoTitle,
       description: seoDescription,
       url: seoCanonical,
