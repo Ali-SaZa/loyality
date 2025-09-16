@@ -1,5 +1,6 @@
 import axiosInstance, { handleApiError } from "@/config/axios";
 import { API_CONFIG } from "@/config/api";
+import { trackLogin, trackRegistration } from "@/lib/gtag";
 
 // Types for authentication
 export interface RequestOtpRequest {
@@ -62,6 +63,14 @@ export const authService = {
         API_CONFIG.ENDPOINTS.AUTH.VERIFY_OTP,
         data,
       );
+      
+      // Track authentication events
+      if (response.data.isNewUser) {
+        trackRegistration(response.data.user.role);
+      } else {
+        trackLogin('otp', response.data.user.role);
+      }
+      
       return response.data;
     } catch (error) {
       const errorMessage = handleApiError(error);

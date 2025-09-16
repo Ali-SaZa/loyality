@@ -5,6 +5,7 @@ import UserSidebar from "@/components/layouts/user/Sidebar";
 import UserNavbar from "@/components/layouts/user/Navbar";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole } from "@/types/enums";
+import useGoogleAnalytics from "@/hooks/useGoogleAnalytics";
 
 interface UserLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,9 @@ interface UserLayoutProps {
 
 const UserLayout = ({ children }: UserLayoutProps) => {
   const pathname = usePathname();
+  
+  // Initialize Google Analytics tracking
+  useGoogleAnalytics();
 
   // Determine required role based on current path
   const getRequiredRole = (path: string): UserRole | undefined => {

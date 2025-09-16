@@ -63,6 +63,7 @@
     "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.23.12",
+    "gtag": "^1.0.1",
     "html2canvas": "^1.4.1",
     "intl-messageformat": "^10.7.14",
     "jalaali-js": "^1.2.7",

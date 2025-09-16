@@ -8,6 +8,7 @@ import { Providers } from "./providers";
 import { danaFont } from "@/config/fonts";
 import Loading from "@/components/layouts/Loading";
 import PWAInstallPrompt, { OfflineIndicator } from "@/components/pwa/PWAInstallPrompt";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export default function RootLayout({
   children,
@@ -22,29 +23,15 @@ export default function RootLayout({
       lang="fa-IR"
     >
       <head>
-        <title>باشگاه وفاداری مشتریان مانا</title>
+        <title>مانا - باشگاه وفاداری مشتریان</title>
 
-        {/* Google tag (gtag.js) */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-2B7YC68RS6"
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-2B7YC68RS6');
-          `,
-          }}
-        />
+        {/* Google Analytics - Now handled by GoogleAnalytics component */}
 
         {/*توضیحات کوتاه (SEO Meta Description)*/}
-        <meta content="باشگاه وفاداری مشتریان مانا - سیستم مدیریت وفاداری مشتریان" name="description" />
+        <meta content="مانا - باشگاه وفاداری مشتریان - سیستم مدیریت وفاداری مشتریان" name="description" />
 
         {/*کلمات کلیدی (اکنون کاربرد کمتری دارد)*/}
-        <meta content="مانا, باشگاه وفاداری, مشتریان, وفاداری, پاداش" name="keywords" />
+        <meta content="مانا, باشگاه وفاداری, مشتریان, وفاداری, پاداش, gardou" name="keywords" />
 
         {/*نویسنده محتوا*/}
         <meta content="نیتک" name="author" />
@@ -84,10 +71,10 @@ export default function RootLayout({
         
 
         {/*عنوان برای شبکه‌های اجتماعی*/}
-        <meta content="باشگاه وفاداری مشتریان مانا" property="og:title" />
+        <meta content="مانا - باشگاه وفاداری مشتریان" property="og:title" />
 
         {/*توضیحات کوتاه برای اشتراک‌گذاری*/}
-        <meta content="باشگاه وفاداری مشتریان مانا - سیستم مدیریت وفاداری مشتریان" property="og:description" />
+        <meta content="مانا - باشگاه وفاداری مشتریان - سیستم مدیریت وفاداری مشتریان" property="og:description" />
 
         {/*تصویر پیش‌نمایش*/}
         {/* <meta
@@ -105,13 +92,13 @@ export default function RootLayout({
         <meta content="website" property="og:type" />
 
         {/*نام سایت*/}
-        <meta content="باشگاه وفاداری مشتریان مانا" property="og:site_name" />
+        <meta content="مانا - باشگاه وفاداری مشتریان" property="og:site_name" />
 
         {/*زبان صفحه*/}
         <meta content="fa_IR" property="og:locale" />
 
         {/*URL اصلی صفحه*/}
-        <link href="https://customer-loyalty.ir" rel="canonical" />
+        <link href="https://www.gardou.ir" rel="canonical" />
 
         {/*جلوگیری از Sniff کردن MIME Types*/}
         <meta content="IE=edge" httpEquiv="X-UA-Compatible" />
@@ -175,6 +162,9 @@ export default function RootLayout({
           {/* PWA Components */}
           <PWAInstallPrompt />
           <OfflineIndicator />
+          
+          {/* Google Analytics */}
+          <GoogleAnalytics />
         </Providers>
       </body>
     </html>
