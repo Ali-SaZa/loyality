@@ -50,7 +50,7 @@ const Navbar = () => {
           <NavbarBrand>
             {isMenuOpen ? (
               <div className="-mr-10">
-                <LogoContainer disableClick iconSize={150} />
+                <LogoContainer disableClick iconSize={110} />
               </div>
             ) : width < 1024 ? (
               <LogoContainer iconSize={100} />
@@ -93,7 +93,7 @@ const Navbar = () => {
           {siteConfig.landingNavbar.map((item: any, index) => (
             <NavbarMenuItem
               key={index}
-              className="border-b py-3"
+              className="border-b border-gray-200 py-3"
               isActive={isActiveNavbarLink(item.link)}
             >
               <Link
