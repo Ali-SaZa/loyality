@@ -7,6 +7,7 @@ import InstagramIcon from "../icons/InstagramIcon";
 import LinkedInIcon from "../icons/LinkedInIcon";
 import TelegramIcon from "../icons/TelegramIcon";
 import { BLOG_CATEGORIES, BLOG_POSTS } from "@/lib/blog";
+import companyInfo from "@/data/company-info.json";
 
 import Button from "@/components/formElements/Button";
 
@@ -42,7 +43,15 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/about" className="hover:text-blue-200 transition-colors">درباره ما</Link>
+                  <Link href="/about-us" className="hover:text-blue-200 transition-colors">درباره ما</Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link href="/contact-us" className="hover:text-blue-200 transition-colors">تماس با ما</Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link href="/questions" className="hover:text-blue-200 transition-colors">سوالات متداول</Link>
                 </div>
               </div>
             </div>
@@ -70,19 +79,19 @@ const Footer = () => {
                 تهران، ایران
               </p>
               <div className="flex items-center justify-between">
-                <a href="tel:+982112345678">
+                <a href={`tel:${companyInfo.contactUs.phone.primary.replace(/-/g, '')}`}>
                   <Button
                     fullWidth
                     className="border-white text-white px-0"
                     iconStart={<PhoneIcon />}
                     variant="light"
                   >
-                    +98-21-12345678
+                    {companyInfo.contactUs.phone.primary}
                   </Button>
                 </a>
                 <div className="w-[1px] bg-white h-6" />
-                <a className="text-end" href="mailto:info@gardou.ir">
-                  info@gardou.ir
+                <a className="text-end" href={`mailto:${companyInfo.contactUs.email.info}`}>
+                  {companyInfo.contactUs.email.info}
                 </a>
               </div>
             </div>
@@ -93,7 +102,7 @@ const Footer = () => {
             <Button
               iconOnly
               target="_blank"
-              to="https://www.instagram.com/gardou_ir"
+              to={companyInfo.contactUs.socialMedia.instagram}
               variant="light"
             >
               <InstagramIcon className="size-6 text-error" />
@@ -101,7 +110,7 @@ const Footer = () => {
             <Button
               iconOnly
               target="_blank"
-              to="https://www.linkedin.com/company/gardou"
+              to={companyInfo.contactUs.socialMedia.linkedin}
               variant="light"
             >
               <LinkedInIcon />
@@ -109,7 +118,7 @@ const Footer = () => {
             <Button
               iconOnly
               target="_blank"
-              to="https://t.me/gardou_ir"
+              to={companyInfo.contactUs.socialMedia.telegram}
               variant="light"
             >
               <TelegramIcon />

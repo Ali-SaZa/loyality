@@ -25,6 +25,24 @@ export const generateSitemap = () => {
       priority: '0.7'
     },
     {
+      url: '/about-us',
+      lastmod: currentDate,
+      changefreq: 'monthly',
+      priority: '0.8'
+    },
+    {
+      url: '/contact-us',
+      lastmod: currentDate,
+      changefreq: 'monthly',
+      priority: '0.8'
+    },
+    {
+      url: '/questions',
+      lastmod: currentDate,
+      changefreq: 'monthly',
+      priority: '0.8'
+    },
+    {
       url: '/blog',
       lastmod: currentDate,
       changefreq: 'weekly',

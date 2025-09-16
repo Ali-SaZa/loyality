@@ -8,26 +8,17 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@heroui/navbar";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@heroui/dropdown";
 import { Button as NextUiButton } from "@heroui/button";
 import React, { useState } from "react";
-import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Link } from "@heroui/link";
 import { usePathname } from "next/navigation";
 
 import UserDropdown from "../ui/UserDropdown";
 import CloseIcon from "../icons/CloseIcon";
 import MenuBurgerIcon from "../icons/MenuBurgerIcon";
-import AngleDownIcon from "../icons/AngleDownIcon";
 import LogoContainer from "../ui/ObsLogo";
 
 import { siteConfig } from "@/config/site";
-import { BLOG_CATEGORIES, BLOG_POSTS } from "@/lib/blog";
 import useAuth from "@/hooks/useAuth";
 import useWindowSize from "@/hooks/useWindowSize";
 import Button from "@/components/formElements/Button";
@@ -40,25 +31,9 @@ const Navbar = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const accordionItemClasses = {
-    base: "border-b",
-    title: "text-medium text-text-default",
-    content: "pr-4 pt-0 text-sm bg-background-50 rounded-lg",
-  };
-
   const isActiveNavbarLink = (link: string) => {
     return pathname === link;
   };
-
-  // Create blog dropdown items
-  const blogDropdownItems = [
-    { key: "all-posts", href: "/blog", title: "همه مقالات" },
-    ...BLOG_CATEGORIES.slice(0, 4).map((category) => ({
-      key: category.id,
-      href: `/blog/category/${category.slug}`,
-      title: category.name
-    }))
-  ];
 
   return (
     <>
@@ -86,98 +61,21 @@ const Navbar = () => {
           </NavbarBrand>
         </NavbarContent>
         <NavbarContent className="hidden lg:flex gap-4" justify="center">
-          {/* Blog Dropdown */}
-          <Dropdown>
-            <NavbarItem>
-              <DropdownTrigger>
-                <NextUiButton
-                  disableRipple
-                  color="primary"
-                  endContent={<AngleDownIcon />}
-                  radius="sm"
-                  variant="flat"
-                >
-                  وبلاگ
-                </NextUiButton>
-              </DropdownTrigger>
-            </NavbarItem>
-            <DropdownMenu
-              aria-label="Blog Menu"
-              className="w-full"
-              color="primary"
-              itemClasses={{
-                base: "gap-4",
-              }}
-              variant="flat"
+          {siteConfig.landingNavbar.map((item: any, index) => (
+            <NavbarItem
+              key={index}
+              isActive={isActiveNavbarLink(item.link)}
             >
-              {blogDropdownItems.map((item) => (
-                <DropdownItem key={item.key} href={item.href}>
-                  {item.title}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-          
-          {siteConfig.landingNavbar.map((item: any, index) => {
-            switch (item.type) {
-              case "select":
-                return (
-                  <Dropdown key={index}>
-                    <NavbarItem>
-                      <DropdownTrigger>
-                        <NextUiButton
-                          disableRipple
-                          color="primary"
-                          endContent={<AngleDownIcon />}
-                          radius="sm"
-                          variant="flat"
-                        >
-                          {item.title}
-                        </NextUiButton>
-                      </DropdownTrigger>
-                    </NavbarItem>
-                    <DropdownMenu
-                      aria-label="Dropdown Variants"
-                      className="w-full"
-                      color="primary"
-                      itemClasses={{
-                        base: "gap-4",
-                      }}
-                      variant="flat"
-                    >
-                      {item?.items!.map((selectItem: any, i: number) => (
-                        <DropdownItem
-                          key={i}
-                          href={selectItem.link}
-                          target={
-                            selectItem?.target ? selectItem?.target : "_self"
-                          }
-                        >
-                          {selectItem.title}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                );
-
-              default:
-                return (
-                  <NavbarItem
-                    key={index}
-                    isActive={isActiveNavbarLink(item.link)}
-                  >
-                    <Button
-                      className="font-normal"
-                      target={item?.target ? item?.target : "_self"}
-                      to={item.link}
-                      variant={isActiveNavbarLink(item.link) ? "solid" : "flat"}
-                    >
-                      {item.title}
-                    </Button>
-                  </NavbarItem>
-                );
-            }
-          })}
+              <Button
+                className="font-normal"
+                target={item?.target ? item?.target : "_self"}
+                to={item.link}
+                variant={isActiveNavbarLink(item.link) ? "solid" : "flat"}
+              >
+                {item.title}
+              </Button>
+            </NavbarItem>
+          ))}
         </NavbarContent>
         {!isMenuOpen ? (
           <NavbarContent justify="end">
@@ -193,91 +91,22 @@ const Navbar = () => {
           </Button>
         )}
         <NavbarMenu className="gap-0 bg-white">
-          {/* Blog Mobile Menu */}
-          <NavbarMenuItem>
-            <Accordion
-              className="!px-0"
-              itemClasses={accordionItemClasses}
-              showDivider={false}
+          {siteConfig.landingNavbar.map((item: any, index) => (
+            <NavbarMenuItem
+              key={index}
+              className="border-b py-3"
+              isActive={isActiveNavbarLink(item.link)}
             >
-              <AccordionItem
-                key="blog"
-                aria-label="Blog Menu"
-                title="وبلاگ"
+              <Link
+                className={`text-medium font-light ${isActiveNavbarLink(item.link) ? "text-primary font-semibold" : "text-text-dark"} `}
+                href={item.link}
+                target={item?.target ? item?.target : "_self"}
+                onPress={() => setIsMenuOpen(false)}
               >
-                <Link
-                  className="py-3 text-text-dark block text-sm font-light border-b"
-                  href="/blog"
-                  onPress={() => setIsMenuOpen(false)}
-                >
-                  همه مقالات
-                </Link>
-                {BLOG_CATEGORIES.slice(0, 4).map((category) => (
-                  <Link
-                    key={category.id}
-                    className="py-3 text-text-dark block text-sm font-light border-b"
-                    href={`/blog/category/${category.slug}`}
-                    onPress={() => setIsMenuOpen(false)}
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-              </AccordionItem>
-            </Accordion>
-          </NavbarMenuItem>
-          
-          {siteConfig.landingNavbar.map((item: any, index) => {
-            switch (item.type) {
-              case "select":
-                return (
-                  <NavbarMenuItem key={index}>
-                    <Accordion
-                      className="!px-0"
-                      itemClasses={accordionItemClasses}
-                      showDivider={false}
-                    >
-                      <AccordionItem
-                        key="1"
-                        aria-label="Accordion 1"
-                        title={item.title}
-                      >
-                        {item.items.map((selectItem: any, i: number) => (
-                          <Link
-                            key={i}
-                            className={`${i !== item.items!.length - 1 && "border-b "} py-3 text-text-dark block text-sm font-light`}
-                            href={selectItem.link}
-                            target={
-                              selectItem?.target ? selectItem?.target : "_self"
-                            }
-                            onPress={() => setIsMenuOpen(false)}
-                          >
-                            {selectItem.title}
-                          </Link>
-                        ))}
-                      </AccordionItem>
-                    </Accordion>
-                  </NavbarMenuItem>
-                );
-
-              default:
-                return (
-                  <NavbarMenuItem
-                    key={index}
-                    className="border-b py-3"
-                    isActive={isActiveNavbarLink(item.link)}
-                  >
-                    <Link
-                      className={`text-medium font-light ${isActiveNavbarLink(item.link) ? "text-primary font-semibold" : "text-text-dark"} `}
-                      href={item.link}
-                      target={item?.target ? item?.target : "_self"}
-                      onPress={() => setIsMenuOpen(false)}
-                    >
-                      {item.title}
-                    </Link>
-                  </NavbarMenuItem>
-                );
-            }
-          })}
+                {item.title}
+              </Link>
+            </NavbarMenuItem>
+          ))}
 
           <NavbarMenuItem key="item6" className="mt-6">
             {!user ? (

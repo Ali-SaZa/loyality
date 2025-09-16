@@ -9,6 +9,7 @@ import { PAGE_SEO_CONFIG } from "@/config/seo";
 import Footer from "@/components/layouts/Footer";
 import Navbar from "@/components/layouts/Navbar";
 import { siteConfig } from "@/config/site";
+import companyInfo from "@/data/company-info.json";
 
 export default function LandingPage() {
   const { user, isLoading } = useAuth();
@@ -186,35 +187,28 @@ export default function LandingPage() {
         {/* FAQ Section */}
         <section className="container mx-auto px-4 py-16">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            سوالات متداول
+            {companyInfo.faq.title}
           </h2>
           
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-2">
-                سیستم وفاداری مشتریان چیست؟
-              </h3>
-              <p className="text-gray-600">
-                سیستم وفاداری مشتریان مجموعه‌ای از ابزارها و استراتژی‌هاست که برای حفظ و تشویق مشتریان به خریدهای مکرر طراحی شده است.
-              </p>
-            </div>
+            {companyInfo.faq.categories[0].questions.slice(0, 3).map((item, index) => (
+              <div key={index} className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-2">
+                  {item.question}
+                </h3>
+                <p className="text-gray-600">
+                  {item.answer}
+                </p>
+              </div>
+            ))}
             
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-2">
-                چگونه کوپن تخفیف ایجاد کنم؟
-              </h3>
-              <p className="text-gray-600">
-                در پنل مدیریت مانا، بخش کوپن‌های تخفیف را انتخاب کرده و با چند کلیک ساده کوپن مورد نظر خود را ایجاد کنید.
-              </p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-2">
-                آیا سیستم امن است؟
-              </h3>
-              <p className="text-gray-600">
-                بله، مانا از بالاترین استانداردهای امنیتی استفاده می‌کند و تمام داده‌های شما محافظت می‌شود.
-              </p>
+            <div className="text-center mt-8">
+              <a
+                href="/questions"
+                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+              >
+                مشاهده همه سوالات
+              </a>
             </div>
           </div>
         </section>

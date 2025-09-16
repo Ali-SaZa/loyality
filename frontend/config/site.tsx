@@ -147,41 +147,6 @@ export const siteConfig = {
 
   // Legacy userSidebar (keeping for backward compatibility)
   userSidebar: [
-    // {
-    //   title: 'داشبورد',
-    //   icon: (className: string = 'size-6') => <DashboardIcon className={className} />,
-    //   link: '/user',
-    //   isShortAccess: true,
-    //   children: [],
-    // },
-    // {
-    //   title: 'شبیه ساز ها',
-    //   icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-    //   link: '/user/simulators',
-    //   isShortAccess: true,
-    //   children: [
-    //     {
-    //       title: 'اطلاعات شبیه ساز',
-    //       icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-    //       link: '/user/simulators/:id',
-    //       isShortAccess: false,
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: 'تراکنش ها',
-    //   icon: (className: string = 'size-6') => <LayersIcon className={className} />,
-    //   link: '/user/transactions',
-    //   isShortAccess: true,
-    //   children: [],
-    // },
-    // {
-    //   title: 'نشان شده ها',
-    //   icon: (className: string = 'size-6') => <BookmarkIcon className={className} />,
-    //   link: '/user/bookmarks',
-    //   isShortAccess: true,
-    //   children: [],
-    // },
     {
       title: "بلاگ ها",
       icon: (className: string = "size-6") => (
@@ -192,35 +157,7 @@ export const siteConfig = {
       target: "_blank",
       children: [],
     },
-    // {
-    //   title: 'ارزیاب ها',
-    //   icon: (className: string = 'size-6') => <Headphone2Icon className={className} />,
-    //   link: '/user/evaluators',
-    //   isShortAccess: false,
-    //   children: [
-    //     {
-    //       title: 'اطلاعات ارزیابی',
-    //       icon: (className: string = 'size-6') => <Headphone2Icon className={className} />,
-    //       link: '/user/evaluators/:id',
-    //       isShortAccess: false,
-    //       children: [
-    //         {
-    //           title: 'گفتگو با ارزیاب',
-    //           icon: (className: string = 'size-6') => <Headphone2Icon className={className} />,
-    //           link: '/user/evaluators/:id/talk',
-    //           isShortAccess: false,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: 'فراگیران',
-    //   icon: (className: string = 'size-6') => <UserIcon className={className} />,
-    //   link: '/user/Learners',
-    //   isShortAccess: false,
-    //   children: [],
-    // },
+
     {
       title: "کسب و کار ها",
       icon: (className: string = "size-6") => (
@@ -261,87 +198,30 @@ export const siteConfig = {
     },
   ],
   landingNavbar: [
-    // {
-    //   type: 'button',
-    //   title: 'شبیه ساز ها',
-    //   link: '/simulators',
-    // },
-    // {
-    //   type: 'select',
-    //   title: 'کسب و کار ها',
-    //   items: [
-    //     {
-    //       title: 'تمامی کسب و کار ها',
-    //       link: '/organizations',
-    //     },
-    //     {
-    //       title: 'درخواست شبیه ساز',
-    //       link: '/organizations/request',
-    //     },
-    //   ],
-    // },
     {
       type: "button",
-      title: "مسیر مهارت آموزی",
-      link: "https://lms.obs.ir",
-      target: "_blank",
+      title: "خانه",
+      link: "/",
     },
-    // {
-    //   type: 'select',
-    //   title: 'مسیر مهارت آموزی',
-    //   items: [
-    //     {
-    //       title: 'رغبت سنجی',
-    //       link: '/',
-    //     },
-    //     {
-    //       title: 'شبیه ساز ها',
-    //       link: '/simulators',
-    //     },
-    //     {
-    //       title: 'معرفی ارزیاب',
-    //       link: '/evaluators',
-    //     },
-    //   ],
-    // },
+    {
+      type: "button",
+      title: "سوالات متداول",
+      link: "/questions",
+    },
     {
       type: "button",
       title: "بلاگ",
-      link: "https://lms.obs.ir/blog-list",
-      target: "_blank",
+      link: "/blog",
     },
-    // {
-    //   type: 'button',
-    //   title: 'سوالات متداول',
-    //   link: '/questions',
-    // },
-    // {
-    //   type: 'button',
-    //   title: 'درباره ما',
-    //   link: '/about-us',
-    // },
-    // {
-    //   type: 'button',
-    //   title: 'ارتباط با ما',
-    //   link: '/contact-us',
-    // },
     {
-      type: "select",
-      title: "آشنایی با مانا",
-      items: [
-        {
-          title: "درباره ما",
-          link: "/about-us",
-        },
-        {
-          title: "ارتباط با ما",
-          link: "/contact-us",
-        },
-        {
-          title: "سوالات متدوال",
-          link: "/questions",
-        },
-      ],
+      type: "button",
+      title: "درباره ما",
+      link: "/about-us",
+    },
+    {
+      type: "button",
+      title: "ارتباط با ما",
+      link: "/contact-us",
     },
   ],
 };
