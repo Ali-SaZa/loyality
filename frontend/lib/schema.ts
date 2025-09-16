@@ -225,12 +225,12 @@ export const ADVANCED_SCHEMA_MARKUP = {
   article: (post: any) => ({
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": post.title,
-    "description": post.excerpt,
-    "image": post.featuredImage,
+    "headline": post.title || "",
+    "description": post.excerpt || post.description || "",
+    "image": post.featuredImage || post.image || "",
     "author": {
       "@type": "Organization",
-      "name": post.author
+      "name": post.author || "تیم مانا"
     },
     "publisher": {
       "@type": "Organization",
@@ -240,16 +240,16 @@ export const ADVANCED_SCHEMA_MARKUP = {
         "url": "https://www.gardou.ir/images/logo.png"
       }
     },
-    "datePublished": post.publishedAt,
-    "dateModified": post.updatedAt,
+    "datePublished": post.publishedAt || post.publishedTime || new Date().toISOString(),
+    "dateModified": post.updatedAt || post.modifiedTime || new Date().toISOString(),
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://www.gardou.ir/blog/${post.slug}`
+      "@id": post.url || `https://www.gardou.ir/blog/${post.slug || 'article'}`
     },
-    "articleSection": post.category,
-    "keywords": post.tags.join(", "),
-    "wordCount": post.wordCount,
-    "timeRequired": `PT${post.readingTime}M`
+    "articleSection": post.category || "عمومی",
+    "keywords": post.tags ? post.tags.join(", ") : "",
+    "wordCount": post.wordCount || 0,
+    "timeRequired": `PT${post.readingTime || 5}M`
   }),
 
   // WebSite Schema
@@ -278,9 +278,9 @@ export const ADVANCED_SCHEMA_MARKUP = {
   webpage: (page: any) => ({
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": page.title,
-    "description": page.description,
-    "url": page.url,
+    "name": page.title || "",
+    "description": page.description || "",
+    "url": page.url || "",
     "isPartOf": {
       "@type": "WebSite",
       "name": "مانا - باشگاه وفاداری مشتریان",
@@ -317,7 +317,9 @@ export const generateComprehensiveSchema = (pageType: string, data?: any) => {
       }
       break;
     case 'auth':
-      schemas.push(ADVANCED_SCHEMA_MARKUP.webpage(data));
+      if (data) {
+        schemas.push(ADVANCED_SCHEMA_MARKUP.webpage(data));
+      }
       break;
   }
   

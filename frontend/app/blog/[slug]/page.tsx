@@ -69,7 +69,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {/* Category */}
               {category && (
                 <div className="mb-4">
-                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm text-primary">
                     {category.name}
                   </span>
                 </div>

@@ -144,12 +144,12 @@ export default function BlogIndexPage() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="bg-primary text-white py-16">
+        <section className="bg-primary/10 text-white py-16">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 text-gray-900">
               عضو خبرنامه شوید
             </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-900">
               آخرین مقالات و نکات مفید در زمینه برنامه وفاداری مشتریان را دریافت کنید
             </p>
             <div className="max-w-md mx-auto flex gap-4">
