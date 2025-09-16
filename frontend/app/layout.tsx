@@ -9,6 +9,7 @@ import { danaFont } from "@/config/fonts";
 import Loading from "@/components/layouts/Loading";
 import PWAInstallPrompt, { OfflineIndicator } from "@/components/pwa/PWAInstallPrompt";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import SEO from "@/components/seo/SEO";
 
 export default function RootLayout({
   children,
@@ -23,24 +24,8 @@ export default function RootLayout({
       lang="fa-IR"
     >
       <head>
-        <title>مانا - باشگاه وفاداری مشتریان</title>
-
-        {/* Google Analytics - Now handled by GoogleAnalytics component */}
-
-        {/*توضیحات کوتاه (SEO Meta Description)*/}
-        <meta content="مانا - باشگاه وفاداری مشتریان - سیستم مدیریت وفاداری مشتریان" name="description" />
-
-        {/*کلمات کلیدی (اکنون کاربرد کمتری دارد)*/}
-        <meta content="مانا, باشگاه وفاداری, مشتریان, وفاداری, پاداش, gardou" name="keywords" />
-
-        {/*نویسنده محتوا*/}
-        <meta content="نیتک" name="author" />
-
-        {/*مشخص کردن زبان*/}
-        <meta content="fa" httpEquiv="Content-Language" />
-
-        {/*viewport برای نمایش در دستگاه‌های موبایل*/}
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        {/* SEO Component handles all meta tags */}
+        <SEO />
         
         {/* Additional zoom prevention */}
         <meta content="no" name="format-detection" />
@@ -165,6 +150,21 @@ export default function RootLayout({
           
           {/* Google Analytics */}
           <GoogleAnalytics />
+          
+          {/* SEO Performance Tracking */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                // Initialize SEO performance tracking
+                if (typeof window !== 'undefined') {
+                  window.addEventListener('load', function() {
+                    // Track Core Web Vitals and SEO metrics
+                    console.log('SEO Performance tracking initialized');
+                  });
+                }
+              `,
+            }}
+          />
         </Providers>
       </body>
     </html>

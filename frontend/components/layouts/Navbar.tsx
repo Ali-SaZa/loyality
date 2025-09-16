@@ -27,6 +27,7 @@ import AngleDownIcon from "../icons/AngleDownIcon";
 import LogoContainer from "../ui/ObsLogo";
 
 import { siteConfig } from "@/config/site";
+import { BLOG_CATEGORIES, BLOG_POSTS } from "@/lib/blog";
 import useAuth from "@/hooks/useAuth";
 import useWindowSize from "@/hooks/useWindowSize";
 import Button from "@/components/formElements/Button";
@@ -48,6 +49,16 @@ const Navbar = () => {
   const isActiveNavbarLink = (link: string) => {
     return pathname === link;
   };
+
+  // Create blog dropdown items
+  const blogDropdownItems = [
+    { key: "all-posts", href: "/blog", title: "همه مقالات" },
+    ...BLOG_CATEGORIES.slice(0, 4).map((category) => ({
+      key: category.id,
+      href: `/blog/category/${category.slug}`,
+      title: category.name
+    }))
+  ];
 
   return (
     <>
@@ -75,6 +86,38 @@ const Navbar = () => {
           </NavbarBrand>
         </NavbarContent>
         <NavbarContent className="hidden lg:flex gap-4" justify="center">
+          {/* Blog Dropdown */}
+          <Dropdown>
+            <NavbarItem>
+              <DropdownTrigger>
+                <NextUiButton
+                  disableRipple
+                  color="primary"
+                  endContent={<AngleDownIcon />}
+                  radius="sm"
+                  variant="flat"
+                >
+                  وبلاگ
+                </NextUiButton>
+              </DropdownTrigger>
+            </NavbarItem>
+            <DropdownMenu
+              aria-label="Blog Menu"
+              className="w-full"
+              color="primary"
+              itemClasses={{
+                base: "gap-4",
+              }}
+              variant="flat"
+            >
+              {blogDropdownItems.map((item) => (
+                <DropdownItem key={item.key} href={item.href}>
+                  {item.title}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+          
           {siteConfig.landingNavbar.map((item: any, index) => {
             switch (item.type) {
               case "select":
@@ -150,6 +193,39 @@ const Navbar = () => {
           </Button>
         )}
         <NavbarMenu className="gap-0 bg-white">
+          {/* Blog Mobile Menu */}
+          <NavbarMenuItem>
+            <Accordion
+              className="!px-0"
+              itemClasses={accordionItemClasses}
+              showDivider={false}
+            >
+              <AccordionItem
+                key="blog"
+                aria-label="Blog Menu"
+                title="وبلاگ"
+              >
+                <Link
+                  className="py-3 text-text-dark block text-sm font-light border-b"
+                  href="/blog"
+                  onPress={() => setIsMenuOpen(false)}
+                >
+                  همه مقالات
+                </Link>
+                {BLOG_CATEGORIES.slice(0, 4).map((category) => (
+                  <Link
+                    key={category.id}
+                    className="py-3 text-text-dark block text-sm font-light border-b"
+                    href={`/blog/category/${category.slug}`}
+                    onPress={() => setIsMenuOpen(false)}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </AccordionItem>
+            </Accordion>
+          </NavbarMenuItem>
+          
           {siteConfig.landingNavbar.map((item: any, index) => {
             switch (item.type) {
               case "select":

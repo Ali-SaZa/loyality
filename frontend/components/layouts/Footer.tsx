@@ -1,10 +1,12 @@
 import React from "react";
+import Link from "next/link";
 
 import LogoContainer from "../ui/ObsLogo";
 import PhoneIcon from "../icons/PhoneIcon";
 import InstagramIcon from "../icons/InstagramIcon";
 import LinkedInIcon from "../icons/LinkedInIcon";
 import TelegramIcon from "../icons/TelegramIcon";
+import { BLOG_CATEGORIES, BLOG_POSTS } from "@/lib/blog";
 
 import Button from "@/components/formElements/Button";
 
@@ -18,69 +20,69 @@ const Footer = () => {
               <LogoContainer />
             </div>
             <p className="text-justify">
-              OBS پلتفرم توسعه منابع انسانی است که از طریق استانداردسازی، سیستم
-              سازی و فرآیندسازی تخصصی مشاغل جاری در هر کسب و کار، ظرفیت جذابی
-              جهت بهبود عملکرد نیروی انسانی فعلی سازمان ها و آموزش هدفمند
-              نیروهای مشتاق به کار در کسب و کارهای بزرگ فراهم می سازد
+              مانا - سیستم مدیریت وفاداری مشتریان برای فروشگاه‌ها و کسب و کارهای ایرانی. 
+              ایجاد کوپن تخفیف، مدیریت مشتریان و افزایش فروش با تکنولوژی پیشرفته.
             </p>
           </div>
-          {/* <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-2 gap-10">
             <div className="flex flex-col gap-6">
-              <p className="font-bold text-lg">مسیر شغلی</p>
+              <p className="font-bold text-lg">لینک‌های سریع</p>
               <div className="flex flex-col gap-[7px]">
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-white rounded-full"></div>
-                  <p>رغبت سنجی</p>
+                  <Link href="/" className="hover:text-blue-200 transition-colors">خانه</Link>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-white rounded-full"></div>
-                  <p>شبیه ساز ها</p>
+                  <Link href="/blog" className="hover:text-blue-200 transition-colors">وبلاگ</Link>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-white rounded-full"></div>
-                  <p>معرفی مشاغل</p>
+                  <Link href="/auth" className="hover:text-blue-200 transition-colors">ورود</Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link href="/about" className="hover:text-blue-200 transition-colors">درباره ما</Link>
                 </div>
               </div>
             </div>
             <div className="flex flex-col gap-6">
-              <p className="font-bold text-lg">مسیر مهارت آموزی</p>
+              <p className="font-bold text-lg">مقالات برتر</p>
               <div className="flex flex-col gap-[7px]">
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <p>مهارت های شغلی</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <p>مهارت های توسعه فردی</p>
-                </div>
+                {BLOG_POSTS.slice(0, 3).map((post) => (
+                  <div key={post.id} className="flex items-center gap-2">
+                    <div className="size-2 bg-white rounded-full"></div>
+                    <Link 
+                      href={`/blog/${post.slug}`} 
+                      className="hover:text-blue-200 transition-colors text-sm truncate"
+                    >
+                      {post.title}
+                    </Link>
+                  </div>
+                ))}
               </div>
             </div>
-          </div> */}
+          </div>
           <div className="flex flex-col gap-3 lg:gap-6">
             <p className="font-bold text-lg">ارتباط با ما</p>
             <div className="flex flex-col gap-4">
               <p>
-                شاهرود، بلوار دانشگاه، پارک علم و فناوری استان سمنان.مدیا پارک
-                نیتک
-              </p>
-              <p>
-                مشهد،خیابان امام خمینی،خیابان شهید تولایی،پارک فاوا، طبقه چهارم،
-                مدیا پارک نیتک
+                تهران، ایران
               </p>
               <div className="flex items-center justify-between">
-                <a href="tel:09422010070,907">
+                <a href="tel:+982112345678">
                   <Button
                     fullWidth
                     className="border-white text-white px-0"
                     iconStart={<PhoneIcon />}
                     variant="light"
                   >
-                    09422010070 - داخلی ۹۰۷
+                    +98-21-12345678
                   </Button>
                 </a>
                 <div className="w-[1px] bg-white h-6" />
-                <a className="text-end" href="mailto:info@obs.ir">
-                  info@obs.ir
+                <a className="text-end" href="mailto:info@gardou.ir">
+                  info@gardou.ir
                 </a>
               </div>
             </div>
@@ -91,7 +93,7 @@ const Footer = () => {
             <Button
               iconOnly
               target="_blank"
-              to="https://www.instagram.com/obsservice/"
+              to="https://www.instagram.com/gardou_ir"
               variant="light"
             >
               <InstagramIcon className="size-6 text-error" />
@@ -99,7 +101,7 @@ const Footer = () => {
             <Button
               iconOnly
               target="_blank"
-              to="https://www.linkedin.com/in/onlinebusinesssimulation"
+              to="https://www.linkedin.com/company/gardou"
               variant="light"
             >
               <LinkedInIcon />
@@ -107,14 +109,14 @@ const Footer = () => {
             <Button
               iconOnly
               target="_blank"
-              to="https://t.me/obs_hr"
+              to="https://t.me/gardou_ir"
               variant="light"
             >
               <TelegramIcon />
             </Button>
           </div>
           <p className="text-text-dark">
-            &copy; {new Date().getFullYear()} تمامی حقوق متعلق به نیتک می باشد.
+            &copy; {new Date().getFullYear()} تمامی حقوق متعلق به مانا می باشد.
           </p>
         </div>
       </div>

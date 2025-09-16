@@ -9,8 +9,10 @@ import { z } from "zod";
 import Button from "@/components/formElements/Button";
 import Input from "@/components/formElements/Input";
 import CountdownTimer from "@/components/utils/CountdownTimer";
+import SEO from "@/components/seo/SEO";
 import useAuth from "@/hooks/useAuth";
 import { authService } from "@/services/auth";
+import { PAGE_SEO_CONFIG } from "@/config/seo";
 import {
   CheckOtpFormValidation,
   SendOtpFormValidation,
@@ -37,7 +39,7 @@ const AuthContent = () => {
   const [loading, setLoading] = useState(false);
   const [loginOtpStep, setLoginOtpStep] = useState(0);
   const [isTimerComplete, setIsTimerComplete] = useState(false);
-  const [timerKey, setTimerKey] = useState(0);
+
   const [isAutoVerifying, setIsAutoVerifying] = useState(false);
 
   const sendOtpForm = useForm<z.infer<typeof SendOtpFormValidation>>({
@@ -159,7 +161,6 @@ const AuthContent = () => {
   };
 
   const resetTimer = () => {
-    setTimerKey((prevKey) => prevKey + 1);
     setIsTimerComplete(false);
   };
 
@@ -266,9 +267,18 @@ const AuthContent = () => {
 
 const Auth = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AuthContent />
-    </Suspense>
+    <>
+      <SEO
+        title={PAGE_SEO_CONFIG.auth.title}
+        description={PAGE_SEO_CONFIG.auth.description}
+        keywords={PAGE_SEO_CONFIG.auth.keywords}
+        canonical={PAGE_SEO_CONFIG.auth.canonical}
+        type="website"
+      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <AuthContent />
+      </Suspense>
+    </>
   );
 };
 

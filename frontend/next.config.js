@@ -22,9 +22,34 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   
-  // Headers for PWA
+  // SEO Configuration
+  trailingSlash: false,
+  generateEtags: true,
+  
+  // Image optimization for SEO
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "file-dev.ramooz.org",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.gardou.ir",
+        pathname: "/**",
+      },
+    ],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 31536000, // 1 year
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+  
+  // Headers for PWA and SEO
   async headers() {
     return [
+      // PWA Headers
       {
         source: '/sw.js',
         headers: [
@@ -65,21 +90,45 @@ const nextConfig = {
           },
         ],
       },
+      // SEO Headers
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'geolocation=(), microphone=(), camera=()',
+          },
+        ],
+      },
+      // Security Headers
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload',
+          },
+        ],
+      },
     ];
   },
   
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https", // یا 'http' بسته به پروتکل استفاده شده
-        hostname: "file-dev.ramooz.org", // نام دامنه
-        pathname: "/**", // این الگو برای انتخاب تمامی مسیرها استفاده می‌شود
-      },
-    ],
-    // Optimize images for PWA
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 31536000, // 1 year
-  },
   
   // Webpack configuration for PWA
   webpack: (config, { dev, isServer }) => {
