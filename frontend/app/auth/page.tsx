@@ -9,10 +9,8 @@ import { z } from "zod";
 import Button from "@/components/formElements/Button";
 import Input from "@/components/formElements/Input";
 import CountdownTimer from "@/components/utils/CountdownTimer";
-import SEO from "@/components/seo/SEO";
 import useAuth from "@/hooks/useAuth";
 import { authService } from "@/services/auth";
-import { PAGE_SEO_CONFIG } from "@/config/seo";
 import {
   CheckOtpFormValidation,
   SendOtpFormValidation,
@@ -267,18 +265,9 @@ const AuthContent = () => {
 
 const Auth = () => {
   return (
-    <>
-      <SEO
-        title={PAGE_SEO_CONFIG.auth.title}
-        description={PAGE_SEO_CONFIG.auth.description}
-        keywords={PAGE_SEO_CONFIG.auth.keywords}
-        canonical={PAGE_SEO_CONFIG.auth.canonical}
-        type="website"
-      />
-      <Suspense fallback={<div>Loading...</div>}>
-        <AuthContent />
-      </Suspense>
-    </>
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthContent />
+    </Suspense>
   );
 };
 
