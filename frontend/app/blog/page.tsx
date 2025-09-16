@@ -25,7 +25,7 @@ export default function BlogIndexPage() {
         <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              وبلاگ مانا
+              بلاگ مانا
             </h1>
             <p className="text-xl mb-8 max-w-3xl mx-auto">
               راهنمای کامل برنامه وفاداری مشتریان، مدیریت فروشگاه و افزایش فروش

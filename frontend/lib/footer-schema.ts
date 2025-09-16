@@ -86,7 +86,7 @@ export const FOOTER_SCHEMA_MARKUP = {
       },
       {
         "@type": "WebPage",
-        "name": "وبلاگ",
+        "name": "بلاگ",
         "url": "https://www.gardou.ir/blog"
       },
       {
@@ -106,7 +106,7 @@ export const FOOTER_SCHEMA_MARKUP = {
   blog: {
     "@context": "https://schema.org",
     "@type": "Blog",
-    "name": "وبلاگ مانا",
+    "name": "بلاگ مانا",
     "description": "مقالات تخصصی در زمینه برنامه وفاداری مشتریان، مدیریت فروشگاه و افزایش فروش",
     "url": "https://www.gardou.ir/blog",
     "publisher": {
@@ -170,7 +170,7 @@ export const generateFooterSchema = (latestPosts: any[] = []) => {
     const blogSchema = {
       "@context": "https://schema.org",
       "@type": "Blog",
-      "name": "وبلاگ مانا",
+      "name": "بلاگ مانا",
       "description": "مقالات تخصصی در زمینه برنامه وفاداری مشتریان، مدیریت فروشگاه و افزایش فروش",
       "url": "https://www.gardou.ir/blog",
       "publisher": {

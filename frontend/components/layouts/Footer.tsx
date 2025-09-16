@@ -35,7 +35,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/blog" className="hover:text-blue-200 transition-colors">وبلاگ</Link>
+                  <Link href="/blog" className="hover:text-blue-200 transition-colors">بلاگ</Link>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-white rounded-full"></div>

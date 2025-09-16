@@ -3,7 +3,7 @@ export const INTERNAL_LINKING_STRATEGY = {
   // Main navigation links
   mainNavigation: [
     { text: 'خانه', url: '/', priority: 'high' },
-    { text: 'وبلاگ', url: '/blog', priority: 'high' },
+    { text: 'بلاگ', url: '/blog', priority: 'high' },
     { text: 'ورود', url: '/auth', priority: 'medium' },
     { text: 'درباره ما', url: '/about', priority: 'low' },
     { text: 'تماس با ما', url: '/contact', priority: 'low' }
@@ -171,25 +171,4 @@ const getTargetUrl = (keyword: string): string | null => {
   };
   
   return urlMap[keyword] || null;
-};
-
-// SEO-optimized internal linking component
-export const InternalLink = ({ 
-  href, 
-  children, 
-  className = "text-blue-600 hover:underline" 
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <a 
-      href={href} 
-      className={className}
-      rel="noopener noreferrer"
-    >
-      {children}
-    </a>
-  );
 };

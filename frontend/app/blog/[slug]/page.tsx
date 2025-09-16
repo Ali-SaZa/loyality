@@ -25,7 +25,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">مقاله یافت نشد</h1>
-          <Button color="primary" href="/blog">بازگشت به وبلاگ</Button>
+          <Button color="primary" href="/blog">بازگشت به بلاگ</Button>
         </div>
       </div>
     );
@@ -47,7 +47,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         author={post.author}
         breadcrumbs={[
           { name: 'خانه', url: '/' },
-          { name: 'وبلاگ', url: '/blog' },
+          { name: 'بلاگ', url: '/blog' },
           { name: post.title, url: `/blog/${post.slug}` }
         ]}
       />
@@ -61,7 +61,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <nav className="text-sm mb-6">
                 <a href="/" className="hover:text-blue-200">خانه</a>
                 <span className="mx-2">/</span>
-                <a href="/blog" className="hover:text-blue-200">وبلاگ</a>
+                <a href="/blog" className="hover:text-blue-200">بلاگ</a>
                 <span className="mx-2">/</span>
                 <span className="text-blue-200">{post.title}</span>
               </nav>

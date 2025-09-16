@@ -52,33 +52,33 @@ export const BLOG_SEO_CONFIG = {
   
   // Blog index page
   index: {
-    title: 'وبلاگ مانا | راهنمای کامل برنامه وفاداری مشتریان',
+    title: 'بلاگ مانا | راهنمای کامل برنامه وفاداری مشتریان',
     description: 'مقالات تخصصی در زمینه برنامه وفاداری مشتریان، مدیریت فروشگاه و افزایش فروش. راهنمای کامل برای کسب و کارهای ایرانی.',
-    keywords: 'وبلاگ مانا, برنامه وفاداری, مدیریت فروشگاه, مقالات کسب و کار, راهنمای وفاداری مشتریان',
+    keywords: 'بلاگ مانا, برنامه وفاداری, مدیریت فروشگاه, مقالات کسب و کار, راهنمای وفاداری مشتریان',
     canonical: 'https://www.gardou.ir/blog'
   },
   
   // Category pages
   category: {
-    title: (categoryName: string) => `${categoryName} | وبلاگ مانا`,
+    title: (categoryName: string) => `${categoryName} | بلاگ مانا`,
     description: (categoryName: string) => `مقالات تخصصی در زمینه ${categoryName} برای کسب و کارهای ایرانی. راهنمای کامل برنامه وفاداری مشتریان.`,
-    keywords: (categoryName: string) => `${categoryName}, وبلاگ مانا, برنامه وفاداری, مدیریت کسب و کار`,
+    keywords: (categoryName: string) => `${categoryName}, بلاگ مانا, برنامه وفاداری, مدیریت کسب و کار`,
     canonical: (categorySlug: string) => `https://www.gardou.ir/blog/category/${categorySlug}`
   },
   
   // Tag pages
   tag: {
-    title: (tagName: string) => `#${tagName} | وبلاگ مانا`,
-    description: (tagName: string) => `مقالات مرتبط با ${tagName} در وبلاگ مانا. راهنمای برنامه وفاداری مشتریان.`,
-    keywords: (tagName: string) => `${tagName}, وبلاگ مانا, برنامه وفاداری`,
+    title: (tagName: string) => `#${tagName} | بلاگ مانا`,
+    description: (tagName: string) => `مقالات مرتبط با ${tagName} در بلاگ مانا. راهنمای برنامه وفاداری مشتریان.`,
+    keywords: (tagName: string) => `${tagName}, بلاگ مانا, برنامه وفاداری`,
     canonical: (tagSlug: string) => `https://www.gardou.ir/blog/tag/${tagSlug}`
   },
   
   // Individual blog posts
   post: {
-    title: (postTitle: string) => `${postTitle} | وبلاگ مانا`,
+    title: (postTitle: string) => `${postTitle} | بلاگ مانا`,
     description: (excerpt: string) => `${excerpt.substring(0, 150)}...`,
-    keywords: (tags: string[]) => [...tags, 'وبلاگ مانا', 'برنامه وفاداری'],
+    keywords: (tags: string[]) => [...tags, 'بلاگ مانا', 'برنامه وفاداری'],
     canonical: (slug: string) => `https://www.gardou.ir/blog/${slug}`
   }
 };
