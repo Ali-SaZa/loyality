@@ -1,16 +1,17 @@
-import React from 'react';
-import { Metadata } from 'next';
-import Navbar from '@/components/layouts/Navbar';
-import Footer from '@/components/layouts/Footer';
-import { generateMetadata } from '@/lib/metadata';
-import companyInfo from '@/data/company-info.json';
+import React from "react";
+import { Metadata } from "next";
+import Navbar from "@/components/layouts/Navbar";
+import Footer from "@/components/layouts/Footer";
+import { generateMetadata } from "@/lib/metadata";
+import companyInfo from "@/data/company-info.json";
 
 export const metadata: Metadata = generateMetadata({
-  title: 'سوالات متداول | مانا - باشگاه وفاداری مشتریان',
-  description: 'پاسخ سوالات رایج شما درباره سیستم وفاداری مشتریان مانا. سوالات فنی، کسب و کار و عمومی.',
-  keywords: 'سوالات متداول مانا, FAQ مانا, راهنمای مانا, پشتیبانی مانا',
-  canonical: 'https://www.gardou.ir/questions',
-  type: 'website'
+  title: "سوالات متداول | مانا - باشگاه وفاداری مشتریان",
+  description:
+    "پاسخ سوالات رایج شما درباره سیستم وفاداری مشتریان مانا. سوالات فنی، کسب و کار و عمومی.",
+  keywords: "سوالات متداول مانا, FAQ مانا, راهنمای مانا, پشتیبانی مانا",
+  canonical: "https://www.gardou.ir/questions",
+  type: "website",
 });
 
 export default function QuestionsPage() {
@@ -20,16 +21,12 @@ export default function QuestionsPage() {
     <>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        
+
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              {faq.title}
-            </h1>
-            <p className="text-xl mb-8 max-w-3xl mx-auto">
-              {faq.description}
-            </p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{faq.title}</h1>
+            <p className="text-xl mb-8 max-w-3xl mx-auto">{faq.description}</p>
           </div>
         </section>
 
@@ -43,7 +40,10 @@ export default function QuestionsPage() {
                 </h2>
                 <div className="space-y-6">
                   {category.questions.map((item, questionIndex) => (
-                    <div key={item.id} className="bg-white p-6 rounded-lg shadow-lg">
+                    <div
+                      key={item.id}
+                      className="bg-white p-6 rounded-lg shadow-lg"
+                    >
                       <h3 className="text-lg font-semibold mb-4 text-blue-600">
                         {item.question}
                       </h3>
@@ -55,30 +55,6 @@ export default function QuestionsPage() {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Contact CTA */}
-          <div className="mt-16 bg-white p-8 rounded-lg shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900">
-              سوال شما را پیدا نکردید؟
-            </h2>
-            <p className="text-gray-700 mb-6">
-              تیم پشتیبانی ما آماده پاسخگویی به سوالات شما است
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="/contact-us"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-200"
-              >
-                تماس با ما
-              </a>
-              <a
-                href="tel:+98-21-12345678"
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-200"
-              >
-                تماس تلفنی
-              </a>
-            </div>
           </div>
         </div>
 

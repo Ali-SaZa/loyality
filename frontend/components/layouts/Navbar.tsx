@@ -8,7 +8,6 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@heroui/navbar";
-import { Button as NextUiButton } from "@heroui/button";
 import React, { useState } from "react";
 import { Link } from "@heroui/link";
 import { usePathname } from "next/navigation";

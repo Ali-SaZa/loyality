@@ -26,7 +26,7 @@ import {
 } from "@heroui/dropdown";
 import { Input } from "@heroui/input";
 import { Pagination } from "@heroui/pagination";
-import { Button as NextUiButton } from "@heroui/button";
+import Button from "@/components/formElements/Button";
 import qs from "qs";
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
@@ -441,12 +441,12 @@ const PaginatedList = forwardRef(
               {/*</Button>*/}
               <Dropdown>
                 <DropdownTrigger>
-                  <NextUiButton
+                  <Button
                     endContent={<AngleDownIcon className="size-5 text-text" />}
                     variant="flat"
                   >
                     فیلتر عناوین
-                  </NextUiButton>
+                  </Button>
                 </DropdownTrigger>
                 <DropdownMenu
                   disallowEmptySelection

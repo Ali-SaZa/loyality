@@ -128,7 +128,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full hover:bg-blue-200 transition-colors"
+                    className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full hover:bg-primary/20 transition-colors"
                   >
                     #{tag}
                   </span>

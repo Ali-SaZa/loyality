@@ -85,8 +85,8 @@ const SendMessageModal = ({
       onReject={handleClose}
     >
       <div className="space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-          <p className="text-sm text-blue-700">
+        <div className="bg-primary/10 border border-primary/20 rounded-md p-3">
+          <p className="text-sm text-primary/80">
             پیام شما به شماره تلفن مشتری ارسال خواهد شد. هر ۷۰ کاراکتر معادل یک
             پیامک محاسبه می‌شود. حداکثر ۲۸۰ کاراکتر مجاز است.
           </p>

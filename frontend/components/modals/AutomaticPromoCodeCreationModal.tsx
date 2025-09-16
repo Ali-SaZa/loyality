@@ -131,15 +131,15 @@ const AutomaticPromoCodeCreationModal = ({
           </div>
         </FormProvider>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-800 mb-2">
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+          <h4 className="font-medium text-primary mb-2">
             نمونه کدهای ایجاد شده:
           </h4>
-          <div className="text-sm text-blue-700 space-y-1">
+          <div className="text-sm text-primary/80 space-y-1">
             <p>• {methods.watch("prefix") || defaultPrefix}1A2B3</p>
             <p>• {methods.watch("prefix") || defaultPrefix}4C5D6</p>
             <p>• {methods.watch("prefix") || defaultPrefix}7E8F9</p>
-            <p className="text-xs text-blue-600 mt-2">
+            <p className="text-xs text-primary/70 mt-2">
               کدها به صورت خودکار منحصر به فرد خواهند بود.
             </p>
           </div>

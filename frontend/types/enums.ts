@@ -84,9 +84,9 @@ export const ROLE_CONFIG = {
     title: "پنل مشتری",
     description: "خوش آمدید به پنل مشتری",
     color: "primary" as const,
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-200",
-    textColor: "text-blue-800",
+    bgColor: "bg-primary/10",
+    borderColor: "border-primary/20",
+    textColor: "text-primary",
   },
   [UserRole.STORE]: {
     text: "فروشگاه",

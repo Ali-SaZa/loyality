@@ -205,7 +205,7 @@ export default function LandingPage() {
             <div className="text-center mt-8">
               <a
                 href="/questions"
-                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+                className="inline-block bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition duration-200"
               >
                 مشاهده همه سوالات
               </a>
@@ -214,12 +214,12 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-blue-600 text-white py-16">
+        <section className="bg-primary/20 text-white py-16">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 text-gray-900">
               همین امروز شروع کنید
             </h2>
-            <p className="text-xl mb-8">
+            <p className="text-xl mb-8 text-gray-900">
               سیستم وفاداری مشتریان خود را راه‌اندازی کنید و فروش خود را افزایش دهید
             </p>
             <Button

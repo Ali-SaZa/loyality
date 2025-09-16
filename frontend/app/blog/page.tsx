@@ -78,7 +78,7 @@ export default function BlogIndexPage() {
                     {post.tags.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                        className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
                       >
                         {tag}
                       </span>
@@ -134,7 +134,7 @@ export default function BlogIndexPage() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="bg-blue-600 text-white py-16">
+        <section className="bg-primary text-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6">
               عضو خبرنامه شوید
