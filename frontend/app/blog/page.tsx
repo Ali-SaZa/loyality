@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@heroui/button';
+import { Link } from '@heroui/link';
 import SEO from '@/components/seo/SEO';
 import Footer from '@/components/layouts/Footer';
 import Navbar from '@/components/layouts/Navbar';
@@ -31,15 +32,20 @@ export default function BlogIndexPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {BLOG_CATEGORIES.slice(0, 4).map((category) => (
-                <Button
+                <Link
                   key={category.id}
-                  variant="bordered"
-                  color="secondary"
-                  size="sm"
-                  className="text-white border-white hover:bg-white hover:text-blue-600"
+                  href={`/blog/category/${category.slug}`}
+                  className="inline-block"
                 >
-                  {category.name}
-                </Button>
+                  <Button
+                    variant="bordered"
+                    color="secondary"
+                    size="sm"
+                    className="text-white border-white hover:bg-white hover:text-blue-600"
+                  >
+                    {category.name}
+                  </Button>
+                </Link>
               ))}
             </div>
           </div>
@@ -85,14 +91,16 @@ export default function BlogIndexPage() {
                     ))}
                   </div>
                   
-                  <Button
-                    color="primary"
-                    variant="light"
-                    size="sm"
-                    className="w-full"
-                  >
-                    مطالعه مقاله
-                  </Button>
+                  <Link href={`/blog/${post.slug}`} className="block">
+                    <Button
+                      color="primary"
+                      variant="light"
+                      size="sm"
+                      className="w-full"
+                    >
+                      مطالعه مقاله
+                    </Button>
+                  </Link>
                 </div>
               </article>
             ))}
@@ -119,13 +127,15 @@ export default function BlogIndexPage() {
                     <span className="text-sm text-gray-500">
                       {category.postCount} مقاله
                     </span>
-                    <Button
-                      color="primary"
-                      variant="light"
-                      size="sm"
-                    >
-                      مشاهده همه
-                    </Button>
+                    <Link href={`/blog/category/${category.slug}`}>
+                      <Button
+                        color="primary"
+                        variant="light"
+                        size="sm"
+                      >
+                        مشاهده همه
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               ))}
