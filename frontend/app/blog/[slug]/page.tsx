@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@heroui/button';
-import SEO from '@/components/seo/SEO';
+import { Metadata } from 'next';
 import { 
   BLOG_SEO_CONFIG, 
   getBlogPostBySlug, 
@@ -9,11 +9,43 @@ import {
   formatReadingTime,
   BLOG_CATEGORIES 
 } from '@/lib/blog';
+import { generateMetadata as generatePageMetadata } from '@/lib/metadata';
 
 interface BlogPostPageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getBlogPostBySlug(slug);
+  
+  if (!post) {
+    return generatePageMetadata({
+      title: "مقاله یافت نشد | بلاگ مانا",
+      description: "مقاله مورد نظر یافت نشد.",
+      canonical: `https://www.gardou.ir/blog/${slug}`,
+      type: "website",
+    });
+  }
+
+  return generatePageMetadata({
+    title: BLOG_SEO_CONFIG.post.title(post.title),
+    description: BLOG_SEO_CONFIG.post.description(post.excerpt),
+    keywords: BLOG_SEO_CONFIG.post.keywords(post.tags).join(', '),
+    canonical: BLOG_SEO_CONFIG.post.canonical(post.slug),
+    image: post.featuredImage,
+    type: "article",
+    publishedTime: post.publishedAt,
+    modifiedTime: post.updatedAt,
+    author: post.author,
+    breadcrumbs: [
+      { name: 'خانه', url: '/' },
+      { name: 'بلاگ', url: '/blog' },
+      { name: post.title, url: `/blog/${post.slug}` }
+    ],
+  });
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -36,22 +68,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      <SEO
-        title={post.seoTitle || BLOG_SEO_CONFIG.post.title(post.title)}
-        description={post.seoDescription || BLOG_SEO_CONFIG.post.description(post.excerpt)}
-        keywords={post.seoKeywords?.join(', ') || BLOG_SEO_CONFIG.post.keywords(post.tags).join(', ')}
-        canonical={BLOG_SEO_CONFIG.post.canonical(post.slug)}
-        type="article"
-        publishedTime={post.publishedAt}
-        modifiedTime={post.updatedAt}
-        author={post.author}
-        breadcrumbs={[
-          { name: 'خانه', url: '/' },
-          { name: 'بلاگ', url: '/blog' },
-          { name: post.title, url: `/blog/${post.slug}` }
-        ]}
-      />
-      
       <div className="min-h-screen bg-white">
         {/* Article Header */}
         <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">

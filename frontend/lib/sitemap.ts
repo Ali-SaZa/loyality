@@ -56,25 +56,25 @@ export const generateSitemap = () => {
   const blogPosts = [
     {
       url: '/blog/complete-guide-customer-loyalty-program',
-      lastmod: '2024-01-15T10:00:00Z',
+      lastmod: '2024-12-15T10:00:00Z',
       changefreq: 'monthly',
       priority: '0.8'
     },
     {
       url: '/blog/10-effective-techniques-increase-sales',
-      lastmod: '2024-01-10T14:30:00Z',
+      lastmod: '2024-12-10T14:30:00Z',
       changefreq: 'monthly',
       priority: '0.8'
     },
     {
       url: '/blog/role-coupon-discount-attract-new-customers',
-      lastmod: '2024-01-05T09:15:00Z',
+      lastmod: '2024-12-05T09:15:00Z',
       changefreq: 'monthly',
       priority: '0.8'
     },
     {
       url: '/blog/how-to-implement-customer-loyalty-program',
-      lastmod: '2024-01-01T12:00:00Z',
+      lastmod: '2024-11-28T12:00:00Z',
       changefreq: 'monthly',
       priority: '0.8'
     },

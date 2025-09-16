@@ -1,22 +1,23 @@
 import React from 'react';
 import { Button } from '@heroui/button';
 import { Link } from '@heroui/link';
-import SEO from '@/components/seo/SEO';
+import { Metadata } from 'next';
 import Footer from '@/components/layouts/Footer';
 import Navbar from '@/components/layouts/Navbar';
 import { BLOG_SEO_CONFIG, BLOG_POSTS, BLOG_CATEGORIES, formatDate, formatReadingTime } from '@/lib/blog';
+import { generateMetadata } from '@/lib/metadata';
+
+export const metadata: Metadata = generateMetadata({
+  title: BLOG_SEO_CONFIG.index.title,
+  description: BLOG_SEO_CONFIG.index.description,
+  keywords: BLOG_SEO_CONFIG.index.keywords,
+  canonical: BLOG_SEO_CONFIG.index.canonical,
+  type: "website",
+});
 
 export default function BlogIndexPage() {
   return (
     <>
-      <SEO
-        title={BLOG_SEO_CONFIG.index.title}
-        description={BLOG_SEO_CONFIG.index.description}
-        keywords={BLOG_SEO_CONFIG.index.keywords}
-        canonical={BLOG_SEO_CONFIG.index.canonical}
-        type="website"
-      />
-      
       <div className="min-h-screen bg-gray-50">
         {/* Navigation */}
         <Navbar />

@@ -4,12 +4,19 @@ import { Button } from "@heroui/button";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import SEO from "@/components/seo/SEO";
-import { PAGE_SEO_CONFIG } from "@/config/seo";
 import Footer from "@/components/layouts/Footer";
 import Navbar from "@/components/layouts/Navbar";
 import { siteConfig } from "@/config/site";
 import companyInfo from "@/data/company-info.json";
+import { generateMetadata } from "@/lib/metadata";
+
+export const metadata = generateMetadata({
+  title: "مانا - باشگاه وفاداری مشتریان | سیستم مدیریت وفاداری",
+  description: "سیستم مدیریت وفاداری مشتریان برای فروشگاه‌ها و کسب و کارهای ایرانی. ایجاد کوپن تخفیف، مدیریت مشتریان و افزایش فروش.",
+  keywords: "برنامه وفاداری مشتریان, سیستم وفاداری, مدیریت فروشگاه, کوپن تخفیف, باشگاه مشتریان",
+  canonical: "https://www.gardou.ir",
+  type: "website",
+});
 
 export default function LandingPage() {
   const { user, isLoading } = useAuth();
@@ -41,14 +48,6 @@ export default function LandingPage() {
 
   return (
     <>
-      <SEO
-        title={PAGE_SEO_CONFIG.home.title}
-        description={PAGE_SEO_CONFIG.home.description}
-        keywords={PAGE_SEO_CONFIG.home.keywords}
-        canonical={PAGE_SEO_CONFIG.home.canonical}
-        type="website"
-      />
-      
       {/* Additional JSON-LD for Homepage */}
       <script
         type="application/ld+json"
