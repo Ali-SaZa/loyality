@@ -6,7 +6,7 @@ import PhoneIcon from "../icons/PhoneIcon";
 import InstagramIcon from "../icons/InstagramIcon";
 import LinkedInIcon from "../icons/LinkedInIcon";
 import TelegramIcon from "../icons/TelegramIcon";
-import { BLOG_CATEGORIES, BLOG_POSTS } from "@/lib/blog";
+import { BLOG_POSTS } from "@/lib/blog";
 import companyInfo from "@/data/company-info.json";
 
 import Button from "@/components/formElements/Button";
@@ -15,54 +15,46 @@ const Footer = () => {
   return (
     <footer className="bg-primary py-5">
       <div className="container text-white">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-16 gap-y-8">
-          <div className="flex flex-col gap-3 lg:gap-6 lg:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="col-span-1">
             <div className="border border-white bg-white/50 w-fit rounded-xl p-1">
               <LogoContainer />
             </div>
-            <p className="text-justify">
-              مانا - سیستم مدیریت وفاداری مشتریان برای فروشگاه‌ها و کسب و کارهای ایرانی. 
-              ایجاد کوپن تخفیف، مدیریت مشتریان و افزایش فروش با تکنولوژی پیشرفته.
+            <p className="text-justify mt-4">
+              مانا - سیستم مدیریت وفاداری مشتریان برای فروشگاه‌ها و کسب و کارهای
+              ایرانی. ایجاد کوپن تخفیف، مدیریت مشتریان و افزایش فروش با تکنولوژی
+              پیشرفته.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-10">
-            <div className="flex flex-col gap-6">
-              <p className="font-bold text-lg">لینک‌های سریع</p>
-              <div className="flex flex-col gap-[7px]">
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/" className="hover:text-blue-200 transition-colors">خانه</Link>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/blog" className="hover:text-blue-200 transition-colors">بلاگ</Link>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/auth" className="hover:text-blue-200 transition-colors">ورود</Link>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/about-us" className="hover:text-blue-200 transition-colors">درباره ما</Link>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/contact-us" className="hover:text-blue-200 transition-colors">تماس با ما</Link>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-2 bg-white rounded-full"></div>
-                  <Link href="/questions" className="hover:text-blue-200 transition-colors">سوالات متداول</Link>
+          <div className="col-span-1 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="col-span-1 flex flex-col gap-6">
+              <h6 className="font-bold text-lg">ارتباط با ما</h6>
+              <div className="flex flex-col gap-4">
+                <p>تهران، ایران</p>
+                <div className="flex items-center justify-between">
+                  <a
+                    href={`tel:${companyInfo.contactUs.phone.primary.replace(/-/g, "")}`}
+                  >
+                    <Button
+                      fullWidth
+                      className="border-white text-white px-0"
+                      iconStart={<PhoneIcon />}
+                      variant="light"
+                    >
+                      {companyInfo.contactUs.phone.primary}
+                    </Button>
+                  </a>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-6">
-              <p className="font-bold text-lg">مقالات برتر</p>
-              <div className="flex flex-col gap-[7px]">
+            <div className="col-span-1 flex flex-col gap-6">
+              <h6 className="font-bold text-lg">مقالات برتر</h6>
+              <div className="flex flex-col gap-2">
                 {BLOG_POSTS.slice(0, 3).map((post) => (
                   <div key={post.id} className="flex items-center gap-2">
                     <div className="size-2 bg-white rounded-full"></div>
-                    <Link 
-                      href={`/blog/${post.slug}`} 
+                    <Link
+                      href={`/blog/${post.slug}`}
                       className="hover:text-blue-200 transition-colors text-sm truncate"
                     >
                       {post.title}
@@ -71,28 +63,63 @@ const Footer = () => {
                 ))}
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-3 lg:gap-6">
-            <p className="font-bold text-lg">ارتباط با ما</p>
-            <div className="flex flex-col gap-4">
-              <p>
-                تهران، ایران
-              </p>
-              <div className="flex items-center justify-between">
-                <a href={`tel:${companyInfo.contactUs.phone.primary.replace(/-/g, '')}`}>
-                  <Button
-                    fullWidth
-                    className="border-white text-white px-0"
-                    iconStart={<PhoneIcon />}
-                    variant="light"
+            <div className="col-span-1 flex flex-col gap-6">
+              <h6 className="font-bold text-lg">لینک‌های سریع</h6>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link
+                    href="/"
+                    className="hover:text-blue-200 transition-colors"
                   >
-                    {companyInfo.contactUs.phone.primary}
-                  </Button>
-                </a>
-                <div className="w-[1px] bg-white h-6" />
-                <a className="text-end" href={`mailto:${companyInfo.contactUs.email.info}`}>
-                  {companyInfo.contactUs.email.info}
-                </a>
+                    خانه
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link
+                    href="/blog"
+                    className="hover:text-blue-200 transition-colors"
+                  >
+                    بلاگ
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link
+                    href="/auth"
+                    className="hover:text-blue-200 transition-colors"
+                  >
+                    ورود
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link
+                    href="/about-us"
+                    className="hover:text-blue-200 transition-colors"
+                  >
+                    درباره ما
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-blue-200 transition-colors"
+                  >
+                    تماس با ما
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-2 bg-white rounded-full"></div>
+                  <Link
+                    href="/questions"
+                    className="hover:text-blue-200 transition-colors"
+                  >
+                    سوالات متداول
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
