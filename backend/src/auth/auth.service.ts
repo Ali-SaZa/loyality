@@ -225,7 +225,7 @@ export class AuthService {
         }),
       );
 
-      const result: KavehNegarResponse = response.data as KavehNegarResponse;
+      const result: KavehNegarResponse = (response as any).data as KavehNegarResponse;
 
       if (result.return.status === 200) {
         console.log(`✅ OTP SMS sent successfully to ${phoneNumber}`);
