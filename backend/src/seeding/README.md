@@ -16,28 +16,19 @@ This module provides comprehensive database seeding functionality for the Loyalt
 
 ## 📊 What Gets Seeded
 
-### Users (10 users)
-- **Admin User** (09121111111) - System administrator with full permissions
-- **Store Admin** (09122222222) - Store administrator for Doris Accessories
-- **Customer User** (09123333333) - Regular customer for testing
-- **Ali Ahmadi** (09111111111) - Premium customer with multiple purchases
-- **Reza Mohammadi** (09133333333) - VIP customer with high spending
-- **Narges Hashemi** (09144444444) - New customer with limited activity
-- **Amir Hosseini** (09155555555) - Premium customer with loyalty history
-- **Tehran Mall** (09166666666) - Store owner for Tehran Mall
-- **Isfahan Bazaar** (09177777777) - Store owner for Isfahan Bazaar
-- **Shiraz Market** (09221234567) - Store owner for Shiraz Market
+### Users (4 users)
+- **Ali Sagheb** (09368024951) - System administrator with full permissions
+- **Saeid Kargaran** (09387114120) - Store administrator for Doris Accessories
+- **Saza Miri** (09215501953) - Store administrator for Tehran Mall
+- **مشتری تستی** (09051455365) - Regular customer for testing
 
-### Stores (4 stores)
+### Stores (2 stores)
 - **Doris Accessories** - Premium accessories store in Tehran with comprehensive loyalty program (SMS Balance: 100)
 - **Tehran Mall** - Premium shopping mall in Tehran with comprehensive features (SMS Balance: 200)
-- **Isfahan Bazaar** - Traditional bazaar in Isfahan with basic loyalty features (SMS Balance: 50)
-- **Shiraz Market** - Modern market in Shiraz with premium features and lottery system (SMS Balance: 150)
 
-### Promotions (12 promotions)
-- **Tehran Mall**: 4 promotions (percentage, cashback, loyalty points, coupon)
-- **Isfahan Bazaar**: 3 promotions (fixed discount, referral, conditional)
-- **Shiraz Market**: 5 promotions (flash sale, behavioral, free shipping, stackable)
+### Promotions (8 promotions)
+- **Doris Accessories**: 4 promotions (percentage, cashback, loyalty points, coupon)
+- **Tehran Mall**: 4 promotions (fixed discount, referral, conditional, flash sale)
 
 ### Promo Codes (Multiple codes)
 - Generated promo codes for coupon-type promotions

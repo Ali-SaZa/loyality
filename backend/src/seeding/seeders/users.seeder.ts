@@ -18,65 +18,27 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
     return [
       // Required users with specific phone numbers for testing
       {
-        phoneNumber: "09121111111",
-        firstName: "Admin",
-        lastName: "User",
+        phoneNumber: "09368024951",
+        firstName: "Ali",
+        lastName: "Sagheb",
         role: "admin",
       },
       {
-        phoneNumber: "09122222222",
-        firstName: "Store",
-        lastName: "Admin",
+        phoneNumber: "09387114120",
+        firstName: "Saeid",
+        lastName: "Kargaran",
         role: "store",
       },
       {
-        phoneNumber: "09123333333",
-        firstName: "Customer",
-        lastName: "User",
-        role: "customer",
-      },
-      // Additional store users for the 4 stores
-      {
-        phoneNumber: "09166666666",
-        firstName: "Tehran",
-        lastName: "Mall",
+        phoneNumber: "09215501953",
+        firstName: "Saza",
+        lastName: "Miri",
         role: "store",
       },
       {
-        phoneNumber: "09177777777",
-        firstName: "Isfahan",
-        lastName: "Bazaar",
-        role: "store",
-      },
-      {
-        phoneNumber: "09221234567",
-        firstName: "Shiraz",
-        lastName: "Market",
-        role: "store",
-      },
-      // Additional customer users for testing
-      {
-        phoneNumber: "09111111111",
-        firstName: "Ali",
-        lastName: "Ahmadi",
-        role: "customer",
-      },
-      {
-        phoneNumber: "09133333333",
-        firstName: "Reza",
-        lastName: "Mohammadi",
-        role: "customer",
-      },
-      {
-        phoneNumber: "09144444444",
-        firstName: "Narges",
-        lastName: "Hashemi",
-        role: "customer",
-      },
-      {
-        phoneNumber: "09155555555",
-        firstName: "Amir",
-        lastName: "Hosseini",
+        phoneNumber: "09051455365",
+        firstName: "مشتری",
+        lastName: "تستی",
         role: "customer",
       },
     ];

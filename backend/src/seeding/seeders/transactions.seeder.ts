@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { Model } from "mongoose";
 import {
   Transaction,
   TransactionDocument,
@@ -26,7 +26,7 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
     @InjectModel(PromoCode.name)
     private promoCodeModel: Model<PromoCodeDocument>,
     @InjectModel(Promotion.name)
-    private promotionModel: Model<PromotionDocument>,
+    private promotionModel: Model<PromotionDocument>
   ) {
     super();
   }
@@ -48,22 +48,18 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
     if (this.promotions.length === 0) {
       throw new Error("Promotions must be set before seeding transactions");
     }
-
-    const now = new Date();
-    const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-    // Get the customer user (09123333333)
+    // Get the customer user (09051455365)
     const customerUser = this.users.find(
-      (user) => user.phoneNumber === "09123333333",
+      (user) => user.phoneNumber === "09051455365"
     );
 
     if (!customerUser) {
-      throw new Error("Customer user (09123333333) not found");
+      throw new Error("Customer user (09051455365) not found");
     }
 
     // Get Doris Accessories store
     const dorisStore = this.stores.find(
-      (store) => store.name === "Doris Accessories",
+      (store) => store.name === "Doris Accessories"
     );
 
     if (!dorisStore) {
@@ -75,16 +71,16 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
       (promoCode) =>
         promoCode.status === "used" &&
         promoCode.userId &&
-        promoCode.userId.toString() === customerUser._id.toString(),
+        promoCode.userId.toString() === customerUser._id.toString()
     );
 
     const transactions: any[] = [];
 
     // Create transactions for the 15 used promo codes
-    usedPromoCodes.forEach((promoCode, index) => {
+    usedPromoCodes.forEach((promoCode) => {
       const promotion = this.promotions.find(
         (promotion) =>
-          promotion._id.toString() === promoCode.promotionId.toString(),
+          promotion._id.toString() === promoCode.promotionId.toString()
       );
 
       if (promotion && promoCode.usedAt) {

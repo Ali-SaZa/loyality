@@ -42,13 +42,13 @@ export class PromoCodesSeeder extends BaseSeeder<PromoCodeDocument> {
     const now = new Date();
     const oneMonthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    // Get the customer user (09123333333)
+    // Get the customer user (09051455365)
     const customerUser = this.users.find(
-      (user) => user.phoneNumber === "09123333333",
+      (user) => user.phoneNumber === "09051455365",
     );
 
     if (!customerUser) {
-      throw new Error("Customer user (09123333333) not found");
+      throw new Error("Customer user (09051455365) not found");
     }
 
     const promoCodes: any[] = [];
