@@ -3,6 +3,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
+import { HttpModule } from "@nestjs/axios";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
@@ -47,6 +48,7 @@ import { Store, StoreSchema } from "../schemas/store.schema";
       inject: [ConfigService],
     }),
     MongooseModule.forFeature([{ name: Store.name, schema: StoreSchema }]),
+    HttpModule,
     OtpModule,
     forwardRef(() => UsersModule),
   ],

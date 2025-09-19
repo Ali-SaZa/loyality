@@ -1,14 +1,34 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { HttpService } from "@nestjs/axios";
+import { ConfigService } from "@nestjs/config";
+import { firstValueFrom } from "rxjs";
 import { OtpService } from "../otp/otp.service";
 import { UsersService } from "../users/users.service";
 import { RequestOtpDto, VerifyOtpDto, AuthResponseDto } from "./dto/auth.dto";
-import { User, UserDocument } from "../schemas/user.schema";
+import { UserDocument } from "../schemas/user.schema";
 import {
   CustomBadRequestException,
   CustomUnauthorizedException,
 } from "../common/errors";
 import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
+
+interface KavehNegarResponse {
+  return: {
+    status: number;
+    message: string;
+  };
+  entries: Array<{
+    messageid: number;
+    message: string;
+    status: number;
+    statustext: string;
+    sender: string;
+    receptor: string;
+    date: number;
+    cost: number;
+  }>;
+}
 
 @Injectable()
 export class AuthService {
@@ -16,6 +36,8 @@ export class AuthService {
     private jwtService: JwtService,
     private otpService: OtpService,
     private usersService: UsersService,
+    private httpService: HttpService,
+    private configService: ConfigService,
   ) {}
 
   async requestOtp(
@@ -51,23 +73,33 @@ export class AuthService {
       }
 
       // Generate a 6-digit OTP code
-      // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-      // For testing purposes, use fixed OTP code
-      const otpCode = "123456";
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
       // Create OTP record with shorter expiration for security
       await this.otpService.create({
         phoneNumber,
         code: otpCode,
         context: "login",
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes (reduced from 10)
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
       });
 
-      // In a real application, you would send SMS here
-      // For now, we'll just log it (in development)
-      if (process.env.NODE_ENV === "development") {
-        console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
+      // Send SMS using Kaveh Negar API directly
+      try {
+        const kavehNegarResponse = await this.sendOtpViaKavehNegar(
+          phoneNumber,
+          otpCode,
+        );
+        console.log(
+          "✅ OTP SMS sent successfully via Kaveh Negar:",
+          kavehNegarResponse,
+        );
+      } catch (smsError) {
+        console.error("❌ Failed to send OTP SMS:", smsError);
+        // Don't throw error here - OTP is still created and can be used
+        // In development, log the OTP for testing
+        if (process.env.NODE_ENV === "development") {
+          console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
+        }
       }
 
       return {
@@ -146,22 +178,71 @@ export class AuthService {
     };
   }
 
-  async validateToken(token: string): Promise<any> {
+  validateToken(token: string): Record<string, any> {
     try {
-      const payload = this.jwtService.verify(token, {
+      const payload: Record<string, any> = this.jwtService.verify(token, {
         issuer: "loyalty-api",
         audience: "loyalty-users",
       });
       return payload;
     } catch (error) {
-      if (error.name === "TokenExpiredError") {
+      if ((error as Error).name === "TokenExpiredError") {
         throw new CustomUnauthorizedException("TOKEN_EXPIRED");
-      } else if (error.name === "JsonWebTokenError") {
+      } else if ((error as Error).name === "JsonWebTokenError") {
         throw new CustomUnauthorizedException("TOKEN_INVALID");
-      } else if (error.name === "NotBeforeError") {
+      } else if ((error as Error).name === "NotBeforeError") {
         throw new CustomUnauthorizedException("UNAUTHORIZED");
       }
       throw new CustomUnauthorizedException("TOKEN_INVALID");
+    }
+  }
+
+  /**
+   * Send OTP via Kaveh Negar verify/lookup API
+   */
+  private async sendOtpViaKavehNegar(
+    phoneNumber: string,
+    otpCode: string,
+  ): Promise<KavehNegarResponse> {
+    const apiKey = this.configService.get<string>("KAVEH_NEGAR_API_KEY");
+    if (!apiKey) {
+      throw new Error("KAVEH_NEGAR_API_KEY is not configured");
+    }
+
+    const baseUrl = "https://api.kavenegar.com/v1";
+    const endpoint = `${baseUrl}/${apiKey}/verify/lookup.json`;
+
+    console.log(`📱 Sending OTP to ${phoneNumber} via Kaveh Negar`);
+
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(endpoint, {
+          params: {
+            receptor: phoneNumber,
+            token: otpCode,
+            template: "verify",
+          },
+        }),
+      );
+
+      const result: KavehNegarResponse = response.data as KavehNegarResponse;
+
+      if (result.return.status === 200) {
+        console.log(`✅ OTP SMS sent successfully to ${phoneNumber}`);
+
+        // Log the actual message that was sent
+        if (result.entries && result.entries.length > 0) {
+          console.log(`📱 SMS Message: ${result.entries[0].message}`);
+        }
+
+        return result;
+      } else {
+        console.error(`❌ Failed to send OTP SMS: ${result.return.message}`);
+        throw new Error(`SMS sending failed: ${result.return.message}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error sending OTP SMS to ${phoneNumber}:`, error);
+      throw new Error(`Failed to send SMS: ${(error as Error).message}`);
     }
   }
 }
