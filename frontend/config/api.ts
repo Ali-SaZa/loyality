@@ -1,7 +1,8 @@
 // API Configuration for Loyalty Program Frontend
 export const API_CONFIG = {
   // Backend API base URL
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "https://api.gardou.ir",
+  // BASE_URL: process.env.NEXT_PUBLIC_API_URL || "https://api.gardou.ir",
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://192.168.100.239:5555",
 
   // API endpoints
   ENDPOINTS: {

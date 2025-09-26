@@ -31,11 +31,8 @@ import {
   VerifyPromoRegistrationDto,
   PromoRegistrationResponseDto,
 } from "../dto";
-import { ListRequestDto, ListResponseDto } from "../common/dto/list.dto";
-import {
-  StoreNotFoundException,
-  CustomConflictException,
-} from "../common/errors";
+import { ListRequestDto } from "../common/dto/list.dto";
+import { CustomConflictException } from "../common/errors";
 import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 import { OtpService } from "../otp/otp.service";
 
@@ -152,7 +149,10 @@ export class PromoCodesService {
       .findOne({ code: createPromoCodeDto.code })
       .exec();
     if (existingCode) {
-      throw new CustomConflictException("PromoCode", "PROMO_CODE_ALREADY_EXISTS");
+      throw new CustomConflictException(
+        "PromoCode",
+        "PROMO_CODE_ALREADY_EXISTS",
+      );
     }
 
     const promoCode = new this.promoCodeModel({
@@ -318,7 +318,9 @@ export class PromoCodesService {
 
     // Prevent updating used codes
     if (promoCode.status === "used") {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_UPDATE_USED);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_UPDATE_USED,
+      );
     }
 
     const updatedPromoCode = await this.promoCodeModel
@@ -389,7 +391,7 @@ export class PromoCodesService {
         promoCode.userId.toString() !== changeStatusDto.userId
       ) {
         throw new BadRequestException(
-          "User ID does not match the registered user for this code",
+            "User ID does not match the registered user for this code",
         );
       }
 
@@ -585,7 +587,9 @@ export class PromoCodesService {
 
     // Validate count
     if (count < 1 || count > 1000) {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_COUNT_INVALID);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_COUNT_INVALID,
+      );
     }
 
     // Calculate suffix length based on prefix and total code length
@@ -598,7 +602,7 @@ export class PromoCodesService {
       const availableSpace = maxTotalLength - prefix.length;
       if (availableSpace < minSuffixLength) {
         throw new BadRequestException(
-          `Prefix is too long. Maximum prefix length is ${maxTotalLength - minSuffixLength} characters to allow for unique suffix`,
+            `Prefix is too long. Maximum prefix length is ${maxTotalLength - minSuffixLength} characters to allow for unique suffix`,
         );
       }
       suffixLength = availableSpace;
@@ -623,7 +627,7 @@ export class PromoCodesService {
 
       if (!isUnique || !code) {
         throw new BadRequestException(
-          "Unable to generate unique promo codes. Please try again.",
+            "Unable to generate unique promo codes. Please try again.",
         );
       }
 
@@ -674,7 +678,9 @@ export class PromoCodesService {
 
     // Prevent deletion of used codes
     if (promoCode.status === "used") {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_DELETE_USED);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_DELETE_USED,
+      );
     }
 
     await this.promoCodeModel.findByIdAndDelete(id).exec();
@@ -722,20 +728,24 @@ export class PromoCodesService {
 
     // Check if code is already used
     if (promoCode.status === "used") {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_ALREADY_USED);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_ALREADY_USED,
+      );
     }
 
     // Check if code is already registered to a user
     if (promoCode.userId) {
       throw new BadRequestException(
-        "Promo code has already been registered to a user",
+          "Promo code has already been registered to a user",
       );
     }
 
     // Find the user by phone number
     const user = await this.userModel.findOne({ phoneNumber }).exec();
     if (!user) {
-      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND);
+      throw new NotFoundException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND,
+      );
     }
 
     // Find the associated promotion to validate it's still active
@@ -789,7 +799,9 @@ export class PromoCodesService {
       .exec();
 
     if (!populatedPromoCode) {
-      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND_AFTER_REGISTRATION);
+      throw new NotFoundException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_NOT_FOUND_AFTER_REGISTRATION,
+      );
     }
 
     return this.transformPromoCodeToResponse(populatedPromoCode);
@@ -803,7 +815,9 @@ export class PromoCodesService {
     // Find the user by phone number
     const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (!targetUser) {
-      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND);
+      throw new NotFoundException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND,
+      );
     }
 
     // For store users, ensure they can only access promo codes from their own store
@@ -814,14 +828,16 @@ export class PromoCodesService {
         .exec();
 
       if (!userStore) {
-        throw new ForbiddenException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_STORE_NOT_FOUND_FOR_USER);
+        throw new ForbiddenException(
+          PERSIAN_ERROR_MESSAGES.PROMO_CODE_STORE_NOT_FOUND_FOR_USER,
+        );
       }
 
       // Compare store IDs using string comparison
       const userStoreId = userStore._id.toString();
       if (userStoreId !== storeId) {
         throw new ForbiddenException(
-          "You can only access promo codes from your own store",
+            "You can only access promo codes from your own store",
         );
       }
     }
@@ -874,7 +890,9 @@ export class PromoCodesService {
     // Find the user by phone number
     const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
     if (!targetUser) {
-      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND);
+      throw new NotFoundException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND,
+      );
     }
 
     // Build query for user's promo codes
@@ -1025,17 +1043,19 @@ export class PromoCodesService {
     // Check if promotion is active
     const promotion = promoCode.promotionId as any;
     if (promotion.status !== "active") {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_PROMOTION_INACTIVE);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_PROMOTION_INACTIVE,
+      );
     }
 
     // Check if there's already an active OTP for this phone number
     const existingOtp = await this.otpService.findActiveByPhoneNumber(
       registerDto.phoneNumber,
-      "promo-registration",
+          "promo-registration",
     );
     if (existingOtp) {
       throw new BadRequestException(
-        "کد تأیید قبلاً ارسال شده است. لطفاً منتظر بمانید",
+          "کد تأیید قبلاً ارسال شده است. لطفاً منتظر بمانید",
       );
     }
 
@@ -1053,10 +1073,10 @@ export class PromoCodesService {
 
     // Send SMS using Kaveh Negar API directly
     try {
-      const kavehNegarResponse = await this.sendOtpViaKavehNegar(
-        registerDto.phoneNumber,
-        otpCode,
-      );
+        const kavehNegarResponse = await this.sendOtpViaKavehNegar(
+          registerDto.phoneNumber,
+          otpCode,
+        );
       console.log(
         "✅ Promo Registration OTP SMS sent successfully via Kaveh Negar:",
         kavehNegarResponse,
@@ -1066,7 +1086,9 @@ export class PromoCodesService {
       // Don't throw error here - OTP is still created and can be used
       // In development, log the OTP for testing
       if (process.env.NODE_ENV === "development") {
-        console.log(`📱 Promo Registration OTP for ${registerDto.phoneNumber}: ${otpCode}`);
+        console.log(
+          `📱 Promo Registration OTP for ${registerDto.phoneNumber}: ${otpCode}`,
+        );
       }
     }
 
@@ -1087,10 +1109,12 @@ export class PromoCodesService {
       await this.otpService.verifyOtp(
         verifyDto.phoneNumber,
         verifyDto.otpCode,
-        "promo-registration",
+          "promo-registration",
       );
     } catch (error) {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_INVALID_OTP);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_INVALID_OTP,
+      );
     }
 
     // Find promo code and validate
@@ -1108,7 +1132,9 @@ export class PromoCodesService {
 
     const promotion = promoCode.promotionId as any;
     if (promotion.status !== "active") {
-      throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_PROMOTION_INACTIVE);
+      throw new BadRequestException(
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_PROMOTION_INACTIVE,
+      );
     }
 
     // Get store information
@@ -1204,7 +1230,9 @@ export class PromoCodesService {
     const baseUrl = "https://api.kavenegar.com/v1";
     const endpoint = `${baseUrl}/${apiKey}/verify/lookup.json`;
 
-    console.log(`📱 Sending Promo Registration OTP to ${phoneNumber} via Kaveh Negar`);
+    console.log(
+      `📱 Sending Promo Registration OTP to ${phoneNumber} via Kaveh Negar`,
+    );
 
     try {
       const response = await firstValueFrom(
@@ -1213,14 +1241,17 @@ export class PromoCodesService {
             receptor: phoneNumber,
             token: otpCode,
             template: "verify",
-          },
-        }),
-      );
+            },
+          }),
+        );
 
-      const result: KavehNegarResponse = (response as any).data as KavehNegarResponse;
+      const result: KavehNegarResponse = (response as any)
+        .data as KavehNegarResponse;
 
       if (result.return.status === 200) {
-        console.log(`✅ Promo Registration OTP SMS sent successfully to ${phoneNumber}`);
+        console.log(
+          `✅ Promo Registration OTP SMS sent successfully to ${phoneNumber}`,
+        );
 
         // Log the actual message that was sent
         if (result.entries && result.entries.length > 0) {
@@ -1229,11 +1260,16 @@ export class PromoCodesService {
 
         return result;
       } else {
-        console.error(`❌ Failed to send Promo Registration OTP SMS: ${result.return.message}`);
+        console.error(
+          `❌ Failed to send Promo Registration OTP SMS: ${result.return.message}`,
+        );
         throw new Error(`SMS sending failed: ${result.return.message}`);
       }
     } catch (error) {
-      console.error(`❌ Error sending Promo Registration OTP SMS to ${phoneNumber}:`, error);
+      console.error(
+        `❌ Error sending Promo Registration OTP SMS to ${phoneNumber}:`,
+        error,
+      );
       throw new Error(`Failed to send SMS: ${(error as Error).message}`);
     }
   }
