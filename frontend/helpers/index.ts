@@ -89,12 +89,32 @@ export const debounce = (func: Function, delay: number) => {
 
 export const isEmptyObject = (obj: object) => Object.keys(obj).length === 0;
 
-export const copyToClipboard = async (textToCopy: string) => {
+export const copyToClipboard = async (
+  textToCopy: string,
+  successMessage: string = "کپی شد",
+  errorMessage: string = "خطا در کپی کردن"
+): Promise<boolean> => {
   try {
-    await navigator.clipboard.writeText(textToCopy);
-    toast.success("کپی شد!"); // پیام موفقیت (اختیاری)
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy);
+    } else {
+      // Fallback for older browsers or non-secure contexts
+      const textArea = document.createElement("textarea");
+      textArea.value = textToCopy;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand("copy");
+      textArea.remove();
+    }
+    toast.success(successMessage);
+    return true;
   } catch (err) {
-    toast.error("خطا در کپی کردن!"); // پیام خطا (اختیاری)
+    toast.error(errorMessage);
+    return false;
   }
 };
 

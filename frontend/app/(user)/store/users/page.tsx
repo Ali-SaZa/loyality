@@ -23,10 +23,12 @@ import {
 import useLoading from "@/hooks/useLoading";
 import { useSmsBalanceContext } from "@/context/SmsBalanceContext";
 import { getStatusConfig } from "@/types/enums";
-import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
+import { formatDateToPersianJalali, formatPhoneNumber, copyToClipboard } from "@/helpers";
 import CustomerViewModal from "@/components/modals/CustomerViewModal";
 import AddCustomerModal from "@/components/modals/AddCustomerModal";
 import SendMessageModal from "@/components/modals/SendMessageModal";
+import CopyIcon from "@/components/icons/CopyIcon";
+
 
 const StoreUsers = () => {
   const { setLoading } = useLoading();
@@ -115,6 +117,10 @@ const StoreUsers = () => {
       customerId,
       customerName,
     });
+  };
+
+  const handleCopyPhoneNumber = (phoneNumber: string) => {
+    copyToClipboard(phoneNumber, "شماره تلفن کپی شد", "خطا در کپی کردن شماره تلفن");
   };
 
   if (error) {
@@ -245,6 +251,15 @@ const StoreUsers = () => {
                   <TableCell>
                     <div className="text-sm text-gray-600">
                       {formatPhoneNumber(customer.phoneNumber)}
+                      <Button
+                        iconOnly
+                        size="sm"
+                        variant="light"
+                        color="default"
+                        onClick={() => handleCopyPhoneNumber(customer.phoneNumber)}
+                      >
+                        <CopyIcon className="size-4" />
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -287,7 +302,7 @@ const StoreUsers = () => {
                       >
                         <EyeIcon className="size-4" />
                       </Button>
-                      <Button
+                      {/* <Button
                         iconOnly
                         size="sm"
                         variant="light"
@@ -300,7 +315,7 @@ const StoreUsers = () => {
                         }
                       >
                         <ChatArrowGrowIcon className="size-4" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>

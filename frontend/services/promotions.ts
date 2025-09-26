@@ -1,4 +1,5 @@
 import axiosInstance, { handleApiError } from "@/config/axios";
+import { PromoCode } from "./promo-codes";
 
 // Types for promotions
 export interface Promotion {
@@ -16,6 +17,7 @@ export interface Promotion {
 
 export interface PromotionWithCodeCount extends Promotion {
   promoCodeCount: number;
+  promoCodes: PromoCode[];
 }
 
 export interface CreatePromotionRequest {

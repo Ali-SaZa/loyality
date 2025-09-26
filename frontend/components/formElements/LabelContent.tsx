@@ -5,9 +5,9 @@ interface LabelContentProps {
 
 const LabelContent = ({ label, value }: LabelContentProps) => {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm text-text-light">{label}:</span>
-      <p className="font-medium">{value}</p>
+    <div className="flex items-center gap-1">
+      <label className="text-sm text-text-light">{label}:</label>
+      <div className="font-medium">{value}</div>
     </div>
   );
 };

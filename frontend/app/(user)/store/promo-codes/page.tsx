@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { Pagination } from "@heroui/pagination";
+import { Button } from "@heroui/button";
 import {
   Table,
   TableHeader,
@@ -22,7 +24,8 @@ import {
 import { getAllPromotions, Promotion } from "@/services/promotions";
 import useLoading from "@/hooks/useLoading";
 import { getPromoCodeStatusConfig } from "@/types/enums";
-import { formatDateToPersianJalali } from "@/helpers";
+import { formatDateToPersianJalali, copyToClipboard } from "@/helpers";
+import CopyIcon from "@/components/icons/CopyIcon";
 
 const StorePromoCodes = () => {
   const { setLoading } = useLoading();
@@ -37,17 +40,32 @@ const StorePromoCodes = () => {
     deleted: 0,
   });
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPrevPage, setHasPrevPage] = useState(false);
+
   useEffect(() => {
     fetchPromoCodes();
     fetchStats();
     fetchPromotions();
   }, []);
 
+  useEffect(() => {
+    fetchPromoCodes();
+  }, [currentPage]);
+
   const fetchPromoCodes = async () => {
     try {
       setLoading(true);
-      const response = await getAllPromoCodes({ page: 1, limit: 50 });
+      const response = await getAllPromoCodes({ page: currentPage, limit: 50 });
       setPromoCodes(response.data);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.total);
+      setHasNextPage(response.hasNextPage);
+      setHasPrevPage(response.hasPrevPage);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف";
@@ -108,6 +126,14 @@ const StorePromoCodes = () => {
     };
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleCopyCode = (code: string) => {
+    copyToClipboard(code, "کد تخفیف کپی شد", "خطا در کپی کردن کد");
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -158,8 +184,12 @@ const StorePromoCodes = () => {
 
       {/* Promo Codes Table */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <h3 className="text-lg font-semibold">لیست کدهای تخفیف</h3>
+          <div className="text-sm text-gray-500">
+            نمایش {(currentPage - 1) * 50 + 1} تا{" "}
+            {Math.min(currentPage * 50, totalItems)} از {totalItems} کد
+          </div>
         </CardHeader>
         <CardBody>
           <Table aria-label="Promo codes table">
@@ -178,6 +208,17 @@ const StorePromoCodes = () => {
                   <TableCell>
                     <div className="font-mono font-bold text-lg text-primary">
                       {promoCode.code}
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        className="p-2"
+                        variant="light"
+                        color="default"
+                        aria-label="Copy code"
+                        onClick={() => handleCopyCode(promoCode.code)}
+                      >
+                        <CopyIcon />
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -233,6 +274,26 @@ const StorePromoCodes = () => {
               ))}
             </TableBody>
           </Table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-6">
+              <Pagination
+                total={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                showControls
+                color="primary"
+                variant="flat"
+                size="md"
+                classNames={{
+                  item: "w-8 h-8 text-small rounded-none bg-transparent",
+                  cursor:
+                    "bg-gradient-to-b shadow-lg from-default-500 to-default-800 dark:from-default-500 dark:to-default-600 text-white font-bold",
+                }}
+              />
+            </div>
+          )}
         </CardBody>
       </Card>
     </div>

@@ -22,6 +22,7 @@ import useAuth from "@/hooks/useAuth";
 import useLoading from "@/hooks/useLoading";
 import toast from "react-hot-toast";
 import SearchIcon from "@/components/icons/SearchIcon";
+import LabelContent from "@/components/formElements/LabelContent";
 
 const ApplyPromoCodePage = () => {
   const { user } = useAuth();
@@ -221,7 +222,11 @@ const ApplyPromoCodePage = () => {
 
               {/* Reset Button */}
               {customerPromoCodes.length > 0 && (
-                <Button color="default" onClick={resetForm} className="w-full w-[max-content] justify-self-end">
+                <Button
+                  color="default"
+                  onClick={resetForm}
+                  className="w-full w-[max-content] justify-self-end"
+                >
                   جستجوی مشتری جدید
                 </Button>
               )}
@@ -253,26 +258,27 @@ const ApplyPromoCodePage = () => {
                         استفاده از کد
                       </Button>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-sm text-gray-600">مبلغ:</div>
-                      <div className="text-sm font-medium">
-                        {promoCode.promotion?.price?.toLocaleString()} تومان
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                      <div className="text-sm text-gray-600">امتیاز:</div>
-                      <div className="text-sm font-medium">
-                        {promoCode.promotion?.points} امتیاز
-                      </div>
-                    </div>
+                    <LabelContent
+                      label="مبلغ"
+                      value={
+                        promoCode.promotion?.price?.toLocaleString() +
+                          " تومان" || ""
+                      }
+                    />
 
-                    <div className="flex items-center gap-2">
-                      <div className="text-sm text-gray-600">یادداشت:</div>
-                      <div className="text-sm font-medium">
-                        {promoCode.notes}
-                      </div>
-                    </div>
+                    <LabelContent
+                      label="امتیاز"
+                      value={
+                        promoCode.promotion?.points?.toString() + " امتیاز" ||
+                        ""
+                      }
+                    />
+
+                    <LabelContent
+                      label="یادداشت"
+                      value={promoCode.notes || ""}
+                    />
                   </div>
                 </div>
               ))}

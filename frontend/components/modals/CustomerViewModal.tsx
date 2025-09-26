@@ -22,6 +22,7 @@ import {
 import { getUserById, User } from "@/services/users";
 import { getStatusConfig } from "@/types/enums";
 import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
+import LabelContent from "../formElements/LabelContent";
 
 interface CustomerViewModalProps {
   isOpen: boolean;
@@ -70,20 +71,20 @@ const CustomerViewModal = ({
         totalTransactions: transactionsData.length,
         totalSpent: transactionsData.reduce(
           (sum, t) => sum + (t.promotion?.price || 0),
-          0,
+          0
         ),
         totalPointsEarned: transactionsData.reduce(
           (sum, t) => sum + (t.promotion?.points || 0),
-          0,
+          0
         ),
         firstTransactionDate:
           transactionsData.length > 0
             ? new Date(
                 Math.min(
                   ...transactionsData.map((t) =>
-                    new Date(t.createdAt).getTime(),
-                  ),
-                ),
+                    new Date(t.createdAt).getTime()
+                  )
+                )
               )
             : new Date(),
         lastTransactionDate:
@@ -91,9 +92,9 @@ const CustomerViewModal = ({
             ? new Date(
                 Math.max(
                   ...transactionsData.map((t) =>
-                    new Date(t.createdAt).getTime(),
-                  ),
-                ),
+                    new Date(t.createdAt).getTime()
+                  )
+                )
               )
             : new Date(),
         lastActivity: new Date(userData.lastActivity),
@@ -155,20 +156,17 @@ const CustomerViewModal = ({
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                   <UserIcon className="size-6 text-white" />
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold text-text-dark">
-                    {customer.firstName && customer.lastName
-                      ? `${customer.firstName} ${customer.lastName}`
-                      : customer.phoneNumber}
-                  </h2>
-                  <p className="text-text-light">مشاهده اطلاعات مشتری</p>
-                </div>
+                <h2 className="text-xl font-bold text-text-dark">
+                  {customer.firstName && customer.lastName
+                    ? `${customer.firstName} ${customer.lastName}`
+                    : customer.phoneNumber}
+                </h2>
               </div>
             </div>
 
             {/* Customer Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="border-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-2">
+              <Card>
                 <CardBody className="p-4">
                   <div className="text-center">
                     <p className="text-sm text-text-light mb-1">کل تراکنش‌ها</p>
@@ -179,7 +177,7 @@ const CustomerViewModal = ({
                 </CardBody>
               </Card>
 
-              <Card className="border-1">
+              <Card>
                 <CardBody className="p-4">
                   <div className="text-center">
                     <p className="text-sm text-text-light mb-1">کل خرید</p>
@@ -190,7 +188,7 @@ const CustomerViewModal = ({
                 </CardBody>
               </Card>
 
-              <Card className="border-1">
+              <Card>
                 <CardBody className="p-4">
                   <div className="text-center">
                     <p className="text-sm text-text-light mb-1">امتیازات</p>
@@ -200,113 +198,38 @@ const CustomerViewModal = ({
                   </div>
                 </CardBody>
               </Card>
-
-              <Card className="border-1">
-                <CardBody className="p-4">
-                  <div className="text-center">
-                    <p className="text-sm text-text-light mb-1">وضعیت</p>
-                    <Chip
-                      color={getStatusColor(customer.status)}
-                      size="sm"
-                      variant="flat"
-                    >
-                      {getStatusText(customer.status)}
-                    </Chip>
-                  </div>
-                </CardBody>
-              </Card>
             </div>
 
             {/* Customer Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-1">
-                <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">
-                    اطلاعات شخصی
-                  </h3>
-                </CardHeader>
-                <CardBody className="space-y-4">
-                  <div>
-                    <label className="text-sm text-text-light">نام</label>
-                    <p className="font-medium">
-                      {customer.firstName || "ثبت نشده"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      نام خانوادگی
-                    </label>
-                    <p className="font-medium">
-                      {customer.lastName || "ثبت نشده"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      شماره تلفن
-                    </label>
-                    <p className="font-medium">
-                      {formatPhoneNumber(customer.phoneNumber)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">وضعیت</label>
-                    <div className="mt-1">
-                      <Chip
-                        color={getStatusColor(customer.status)}
-                        size="sm"
-                        variant="flat"
-                      >
-                        {getStatusText(customer.status)}
-                      </Chip>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
 
-              <Card className="border-1">
-                <CardHeader className="pb-3">
-                  <h3 className="text-lg font-semibold text-text-dark">
-                    اطلاعات فعالیت
-                  </h3>
-                </CardHeader>
-                <CardBody className="space-y-4">
-                  <div>
-                    <label className="text-sm text-text-light">
-                      اولین خرید
-                    </label>
-                    <p className="font-medium">
-                      {formatDate(customer.firstTransactionDate.toString())}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      آخرین خرید
-                    </label>
-                    <p className="font-medium">
-                      {formatDate(customer.lastTransactionDate.toString())}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      آخرین فعالیت
-                    </label>
-                    <p className="font-medium">
-                      {formatDate(customer.lastActivity.toString())}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      تاریخ عضویت
-                    </label>
-                    <p className="font-medium">{formatDate(user.createdAt)}</p>
-                  </div>
-                </CardBody>
-              </Card>
-            </div>
+            <Card className="mx-2">
+              <CardBody className="space-y-4">
+                <LabelContent
+                  label="شماره تلفن"
+                  value={formatPhoneNumber(customer.phoneNumber)}
+                />
+                <LabelContent
+                  label="اولین خرید"
+                  value={formatDate(customer.firstTransactionDate.toString())}
+                />
+                <LabelContent
+                  label="آخرین خرید"
+                  value={formatDate(customer.lastTransactionDate.toString())}
+                />
+                <LabelContent
+                  label="آخرین فعالیت"
+                  value={formatDate(customer.lastActivity.toString())}
+                />
+                <LabelContent
+                  label="تاریخ عضویت"
+                  value={formatDate(user.createdAt)}
+                />
+              </CardBody>
+            </Card>
 
             {/* Transactions History */}
             {transactions.length > 0 && (
-              <Card className="border-1">
+              <Card className="mx-2 mb-2">
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     تاریخچه تراکنش‌ها
@@ -340,7 +263,7 @@ const CustomerViewModal = ({
                           <TableCell>
                             <span className="font-medium">
                               {formatCurrency(
-                                transaction.promotion?.price || 0,
+                                transaction.promotion?.price || 0
                               )}{" "}
                               تومان
                             </span>
