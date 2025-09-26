@@ -142,6 +142,15 @@ export const siteConfig = {
         isShortAccess: true,
         children: [],
       },
+      {
+        title: "کدهای پروموشن من",
+        icon: (className: string = "size-6") => (
+          <PromoCodeIcon className={className} />
+        ),
+        link: "/customer/promo-codes",
+        isShortAccess: true,
+        children: [],
+      },
     ],
   },
 

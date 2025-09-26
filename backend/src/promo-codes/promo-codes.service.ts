@@ -922,14 +922,20 @@ export class PromoCodesService {
       const transformed = this.transformPromoCodeToResponse(promoCode);
 
       // Add store information to the promotion object
-      if (promoCode.promotionId && (promoCode.promotionId as any).storeId) {
+      if (
+        promoCode.promotionId &&
+        (promoCode.promotionId as any).storeId &&
+        transformed.promotion
+      ) {
         const store = (promoCode.promotionId as any).storeId;
-        (transformed.promotion as any).store = {
-          id: store._id.toString(),
-          name: store.name,
-          phoneNumber: store.phoneNumber,
-          address: store.address,
-        };
+        if (store && store._id) {
+          (transformed.promotion as any).store = {
+            id: store._id.toString(),
+            name: store.name || "نام نامشخص",
+            phoneNumber: store.phoneNumber || "شماره نامشخص",
+            address: store.address || "آدرس نامشخص",
+          };
+        }
       }
 
       return transformed;

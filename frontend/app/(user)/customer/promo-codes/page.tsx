@@ -73,61 +73,39 @@ const CustomerPromoCodes = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">کدهای پروموشن من</h1>
-          <p className="text-gray-600 mt-1">
-            مشاهده و مدیریت کدهای پروموشن شما
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-900">کدهای پروموشن من</h1>
       </div>
 
       {/* Filter Buttons */}
-      <Card className="border-1">
-        <CardBody>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              color={filterStatus === "unused" ? "primary" : "default"}
-              variant={filterStatus === "unused" ? "solid" : "bordered"}
-              onClick={() => handleFilterChange("unused")}
-              className="min-w-[100px]"
-            >
-              استفاده نشده
-            </Button>
-            <Button
-              color={filterStatus === "used" ? "primary" : "default"}
-              variant={filterStatus === "used" ? "solid" : "bordered"}
-              onClick={() => handleFilterChange("used")}
-              className="min-w-[100px]"
-            >
-              استفاده شده
-            </Button>
-            <Button
-              color={filterStatus === "all" ? "primary" : "default"}
-              variant={filterStatus === "all" ? "solid" : "bordered"}
-              onClick={() => handleFilterChange("all")}
-              className="min-w-[100px]"
-            >
-              همه
-            </Button>
-          </div>
-        </CardBody>
-      </Card>
-
-      {/* Message */}
-      {message && (
-        <Card className="border-1">
-          <CardBody>
-            <p className="text-center text-gray-600">{message}</p>
-          </CardBody>
-        </Card>
-      )}
-
+      <div className="flex flex-wrap gap-3">
+        <Button
+          color={filterStatus === "unused" ? "primary" : "default"}
+          variant={filterStatus === "unused" ? "solid" : "bordered"}
+          onClick={() => handleFilterChange("unused")}
+          className="min-w-[100px]"
+        >
+          استفاده نشده
+        </Button>
+        <Button
+          color={filterStatus === "used" ? "primary" : "default"}
+          variant={filterStatus === "used" ? "solid" : "bordered"}
+          onClick={() => handleFilterChange("used")}
+          className="min-w-[100px]"
+        >
+          استفاده شده
+        </Button>
+        <Button
+          color={filterStatus === "all" ? "primary" : "default"}
+          variant={filterStatus === "all" ? "solid" : "bordered"}
+          onClick={() => handleFilterChange("all")}
+          className="min-w-[100px]"
+        >
+          همه
+        </Button>
+      </div>
       {/* Promo Codes Table */}
       {promoCodes.length > 0 && (
-        <Card className="border-1">
-          <CardHeader>
-            <h2 className="text-lg font-semibold">لیست کدهای پروموشن</h2>
-          </CardHeader>
+        <Card>
           <CardBody>
             <div className="overflow-x-auto">
               <Table aria-label="Promo codes table">

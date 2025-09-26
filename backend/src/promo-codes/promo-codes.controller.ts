@@ -158,28 +158,6 @@ export class PromoCodesController {
     return this.promoCodesService.getStats(promotionId, user);
   }
 
-  @Get(":id")
-  @PromoCodeAuth()
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: "Get a specific promo code by ID (Store/Admin only)",
-  })
-  @ApiParam({ name: "id", description: "Promo code ID" })
-  @ApiResponse({
-    status: 200,
-    description: "Promo code found",
-    type: PromoCodeResponseDto,
-  })
-  @ApiResponse({ status: 404, description: "Promo code not found" })
-  @ApiResponse({ status: 401, description: "Unauthorized" })
-  @ApiResponse({ status: 403, description: "Forbidden" })
-  async findOne(
-    @Param("id") id: string,
-    @CurrentUser() user: any,
-  ): Promise<PromoCodeResponseDto> {
-    return this.promoCodesService.findOne(id, user);
-  }
-
   @Patch(":id")
   @PromoCodeAuth()
   @ApiBearerAuth()
@@ -381,7 +359,10 @@ export class PromoCodesController {
   @Get("my-codes-with-store")
   @PromoCodeAuth()
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Get current user's promo codes with store information (Customer only)" })
+  @ApiOperation({
+    summary:
+      "Get current user's promo codes with store information (Customer only)",
+  })
   @ApiQuery({
     name: "status",
     required: false,
@@ -408,6 +389,28 @@ export class PromoCodesController {
       user.phoneNumber,
       status,
     );
+  }
+
+  @Get(":id")
+  @PromoCodeAuth()
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Get a specific promo code by ID (Store/Admin only)",
+  })
+  @ApiParam({ name: "id", description: "Promo code ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Promo code found",
+    type: PromoCodeResponseDto,
+  })
+  @ApiResponse({ status: 404, description: "Promo code not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  async findOne(
+    @Param("id") id: string,
+    @CurrentUser() user: any,
+  ): Promise<PromoCodeResponseDto> {
+    return this.promoCodesService.findOne(id, user);
   }
 
   @Delete(":id")
