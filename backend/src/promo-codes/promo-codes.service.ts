@@ -915,7 +915,7 @@ export class PromoCodesService {
         },
       })
       .populate("userId", "phoneNumber firstName lastName")
-      .sort({ createdAt: -1 })
+      .sort({ registeredAt: -1 })
       .exec();
 
     const transformedPromoCodes = promoCodes.map((promoCode) => {

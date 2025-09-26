@@ -341,22 +341,24 @@ export const formatDateToCustomTimezone = (
 export const formatDateToPersianJalali = (date: Date | string): string => {
   const dateObj = typeof date === "string" ? new Date(date) : date;
 
-  // Convert to Iran timezone (UTC+3:30)
-  const iranDate = new Date(dateObj.getTime() + 3.5 * 60 * 60 * 1000);
+  // تبدیل به زمان ایران با استفاده از timeZone
+  const iranDate = new Date(
+    dateObj.toLocaleString("en-US", { timeZone: "Asia/Tehran" })
+  );
 
-  // Convert to Jalali calendar
+  // تبدیل به تقویم جلالی
   const jDate = jalaali.toJalaali(
     iranDate.getFullYear(),
     iranDate.getMonth() + 1,
-    iranDate.getDate(),
+    iranDate.getDate()
   );
 
-  // Format time
+  // فرمت ساعت
   const hours = String(iranDate.getHours()).padStart(2, "0");
   const minutes = String(iranDate.getMinutes()).padStart(2, "0");
   const seconds = String(iranDate.getSeconds()).padStart(2, "0");
 
-  // Convert numbers to Persian
+  // تبدیل اعداد به فارسی
   const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
   const toPersian = (num: string) =>
     num
