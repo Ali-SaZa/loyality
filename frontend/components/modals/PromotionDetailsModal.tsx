@@ -18,13 +18,14 @@ import {
   getPromotionByIdWithCodeCount,
   PromotionWithCodeCount,
 } from "@/services/promotions";
-import { getPromoCodesByPromotion, PromoCode } from "@/services/promo-codes";
+import { PromoCode } from "@/services/promo-codes";
 import { Store } from "@/services/stores";
 import {
   getPromotionStatusConfig,
   getPromoCodeStatusConfig,
 } from "@/types/enums";
 import { formatDateToPersianJalali } from "@/helpers";
+import LabelContent from "../formElements/LabelContent";
 
 interface PromotionDetailsModalProps {
   isOpen: boolean;
@@ -39,14 +40,11 @@ interface PromotionDetailsModalProps {
 const PromotionDetailsModal = ({
   isOpen,
   onOpenChange,
-  onEdit,
-  onDelete,
-  onSuccess,
   promotionId,
   stores,
 }: PromotionDetailsModalProps) => {
   const [promotion, setPromotion] = useState<PromotionWithCodeCount | null>(
-    null,
+    null
   );
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,35 +63,17 @@ const PromotionDetailsModal = ({
       setIsLoading(true);
       setError(null);
 
-      // Fetch promotion with code count
+      // Fetch promotion with code count and promo codes list
       const promotionData = await getPromotionByIdWithCodeCount(promotionId);
       setPromotion(promotionData);
-
-      // Fetch promo codes for this promotion
-      const promoCodesResponse = await getPromoCodesByPromotion(promotionId, {
-        page: 1,
-        limit: 50,
-      });
-      setPromoCodes(promoCodesResponse.data);
+      setPromoCodes(promotionData.promoCodes || []);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ",
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ"
       );
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleEdit = () => {
-    // Handler removed as requested
-  };
-
-  const handleDelete = async () => {
-    // Handler removed as requested
-  };
-
-  const handleStatusChange = () => {
-    // Handler removed as requested
   };
 
   const handleClose = () => {
@@ -161,123 +141,52 @@ const PromotionDetailsModal = ({
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                   <PromotionIcon className="size-6 text-white" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-text-dark">
-                      {promotion.title}
-                    </h2>
-                    {promotion.status === "deleted" && (
-                      <Chip size="sm" color="danger" variant="flat">
-                        حذف شده
-                      </Chip>
-                    )}
-                  </div>
-                  <p className="text-text-light">جزئیات تبلیغ و کدهای تخفیف</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Action buttons removed as requested */}
+                <h2 className="text-xl font-bold text-text-dark">
+                  {promotion.title}
+                </h2>
               </div>
             </div>
 
             {/* Promotion Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-2 pb-2">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     اطلاعات پایه
                   </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
-                  <div>
-                    <label className="text-sm text-text-light">عنوان</label>
-                    <p className="font-medium">{promotion.title}</p>
-                  </div>
-                  {promotion.description && (
-                    <div>
-                      <label className="text-sm text-text-light">توضیحات</label>
-                      <p className="font-medium">{promotion.description}</p>
-                    </div>
-                  )}
-                  <div>
-                    <label className="text-sm text-text-light">فروشگاه</label>
-                    <p className="font-medium">
-                      {getStoreName(promotion.storeId)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">وضعیت</label>
-                    <div className="mt-1">
-                      <Chip
-                        color={getStatusColor(promotion.status)}
-                        size="sm"
-                        variant="flat"
-                      >
-                        {getStatusText(promotion.status)}
-                      </Chip>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">مقدار</label>
-                    <p className="font-medium">{formatValue(promotion)}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      تعداد کدهای تخفیف
-                    </label>
-                    <p className="font-medium">{promotion.promoCodeCount} کد</p>
-                  </div>
+                  <LabelContent label="توضیحات" value={promotion.description || ""} />
+                  <LabelContent label="وضعیت" value={getStatusText(promotion.status)} />
+                  <LabelContent label="مقدار" value={formatValue(promotion)} />
+                  <LabelContent label="تعداد کدهای تخفیف" value={promotion.promoCodeCount.toString()} />
                 </CardBody>
               </Card>
 
-              <Card className="border-1">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     جزئیات
                   </h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
-                  <div>
-                    <label className="text-sm text-text-light">مبلغ خرید</label>
-                    <p className="font-medium">
-                      {promotion.price.toLocaleString()} تومان
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      امتیاز اعطایی
-                    </label>
-                    <p className="font-medium">{promotion.points} امتیاز</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      تاریخ ایجاد
-                    </label>
-                    <p className="font-medium">
-                      {formatDateToPersianJalali(promotion.createdAt)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-light">
-                      آخرین بروزرسانی
-                    </label>
-                    <p className="font-medium">
-                      {formatDateToPersianJalali(promotion.updatedAt)}
-                    </p>
-                  </div>
+                  <LabelContent label="مبلغ خرید" value={`${promotion.price.toLocaleString()} تومان`} />
+                  <LabelContent label="امتیاز اعطایی" value={`${promotion.points.toLocaleString()} امتیاز`} />
+                  <LabelContent label="تاریخ ایجاد" value={formatDateToPersianJalali(promotion.createdAt)} />
+                  <LabelContent label="آخرین بروزرسانی" value={formatDateToPersianJalali(promotion.updatedAt)} />
                 </CardBody>
               </Card>
             </div>
 
             {/* Promo Codes Table */}
-            <Card className="border-1">
+            <Card>
               <CardHeader className="pb-3">
                 <h3 className="text-lg font-semibold text-text-dark">
                   کدهای تخفیف
                 </h3>
               </CardHeader>
               <CardBody>
-                {promoCodes.length > 0 ? (
+                {promoCodes && promoCodes.length > 0 ? (
                   <Table aria-label="Promo codes table">
                     <TableHeader>
                       <TableColumn>کد تخفیف</TableColumn>
@@ -314,7 +223,7 @@ const PromotionDetailsModal = ({
                           <TableCell>
                             {promoCode.registeredAt
                               ? formatDateToPersianJalali(
-                                  promoCode.registeredAt,
+                                  promoCode.registeredAt
                                 )
                               : "-"}
                           </TableCell>

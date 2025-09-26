@@ -161,12 +161,12 @@ export class PromotionsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary:
-      "Get promotion by ID with promo code count (Store Owner/Admin only)",
+      "Get promotion by ID with promo code count and list (Store Owner/Admin only)",
   })
   @ApiParam({ name: "id", description: "Promotion ID" })
   @ApiResponse({
     status: 200,
-    description: "Promotion found with code count",
+    description: "Promotion found with code count and list",
     type: PromotionResponseDto,
   })
   @ApiResponse({ status: 404, description: "Promotion not found" })
@@ -178,7 +178,7 @@ export class PromotionsController {
   async findOneWithCodeCount(
     @Param("id") id: string,
     @CurrentUser() user: any,
-  ): Promise<PromotionResponseDto & { promoCodeCount: number }> {
+  ): Promise<PromotionResponseDto & { promoCodeCount: number; promoCodes: any[] }> {
     return this.promotionsService.getPromotionWithCodeCount(id, user);
   }
 

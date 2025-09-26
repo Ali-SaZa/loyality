@@ -393,11 +393,11 @@ export class PromotionsService {
     return { total, active, inactive, expired, deleted };
   }
 
-  // Helper method to get promotion with promo code count
+  // Helper method to get promotion with promo code count and list
   async getPromotionWithCodeCount(
     id: string,
     user: any,
-  ): Promise<PromotionResponseDto & { promoCodeCount: number }> {
+  ): Promise<PromotionResponseDto & { promoCodeCount: number; promoCodes: any[] }> {
     const promotion = await this.promotionModel.findById(id).exec();
     if (!promotion) {
       throw new BadRequestException(PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_FOUND);
@@ -406,14 +406,33 @@ export class PromotionsService {
     // Validate access permissions
     await this.validateStoreAccess(promotion.storeId.toString(), user);
 
-    // Get promo code count for this promotion
-    const promoCodeCount = await this.promoCodeModel
-      .countDocuments({ promotionId: promotion._id })
+    // Get promo codes for this promotion
+    const promoCodes = await this.promoCodeModel
+      .find({ promotionId: promotion._id, status: { $ne: "deleted" } })
+      .populate("promotionId", "title price points status")
+      .populate("userId", "phoneNumber firstName lastName")
+      .sort({ createdAt: -1 })
       .exec();
+
+    const promoCodeCount = promoCodes.length;
 
     return {
       ...this.transformPromotionToResponse(promotion),
       promoCodeCount,
+      promoCodes: promoCodes.map((promoCode) => ({
+        id: promoCode._id.toString(),
+        code: promoCode.code,
+        promotionId: promoCode.promotionId.toString(),
+        status: promoCode.status,
+        userId: promoCode.userId?.toString(),
+        registeredAt: promoCode.registeredAt,
+        usedAt: promoCode.usedAt,
+        notes: promoCode.notes,
+        createdAt: promoCode.createdAt,
+        updatedAt: promoCode.updatedAt,
+        promotion: promoCode.promotionId,
+        user: promoCode.userId,
+      })),
     };
   }
 }
