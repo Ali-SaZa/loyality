@@ -1,4 +1,11 @@
+"use client";
+import { useEffect } from "react";
+
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  useEffect(() => {
+    document.title = "ورود به مانا | باشگاه وفاداری مشتریان";
+  }, []);
+
   return (
     <section className="h-[100dvh] md:py-10 bg-background-primary overflow-hidden relative flex items-center md:items-start justify-center">
       {/* Background Image with Blur */}
