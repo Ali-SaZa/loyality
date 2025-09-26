@@ -186,7 +186,7 @@ const AdminUsers = () => {
   if (error) {
     return (
       <div className="p-6">
-        <Card className="border-1">
+        <Card>
           <CardBody className="p-6">
             <div className="text-center">
               <p className="text-danger mb-4">{error}</p>
@@ -226,7 +226,7 @@ const AdminUsers = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-1">
+        <Card>
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -240,7 +240,7 @@ const AdminUsers = () => {
           </CardBody>
         </Card>
 
-        <Card className="border-1">
+        <Card>
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -254,7 +254,7 @@ const AdminUsers = () => {
           </CardBody>
         </Card>
 
-        <Card className="border-1">
+        <Card>
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -268,7 +268,7 @@ const AdminUsers = () => {
           </CardBody>
         </Card>
 
-        <Card className="border-1">
+        <Card>
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -284,7 +284,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Users Table */}
-      <Card className="border-1">
+      <Card>
         <CardHeader className="pb-3">
           <h3 className="text-lg font-semibold text-text-dark">لیست کاربران</h3>
         </CardHeader>

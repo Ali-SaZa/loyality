@@ -245,7 +245,7 @@ const StorePromotions = () => {
   if (error) {
     return (
       <div className="p-6">
-        <Card className="border-1">
+        <Card>
           <CardBody className="p-6">
             <div className="text-center">
               <p className="text-danger mb-4">{error}</p>

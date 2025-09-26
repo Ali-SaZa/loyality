@@ -115,7 +115,7 @@ const AdminDashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="border-1">
+          <Card key={index}>
             <CardBody className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Recent Activities */}
-      <Card className="border-1">
+      <Card>
         <CardHeader className="pb-3">
           <h3 className="text-lg font-semibold text-text-dark">
             فعالیت‌های اخیر
@@ -178,7 +178,7 @@ const AdminDashboard = () => {
       </Card>
 
       {/* Quick Actions */}
-      <Card className="border-1">
+      <Card>
         <CardHeader className="pb-3">
           <h3 className="text-lg font-semibold text-text-dark">عملیات سریع</h3>
         </CardHeader>

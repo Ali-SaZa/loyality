@@ -32,7 +32,7 @@ export default function UserIndexPage() {
       </div>
 
       {/* User Info Card */}
-      <Card className="border-1">
+      <Card>
         <CardHeader>
           <h2 className="text-xl font-semibold">اطلاعات کاربر</h2>
         </CardHeader>
@@ -64,7 +64,7 @@ export default function UserIndexPage() {
       </Card>
 
       {/* Quick Navigation */}
-      <Card className="border-1">
+      <Card>
         <CardHeader>
           <h2 className="text-xl font-semibold">دسترسی سریع</h2>
         </CardHeader>

@@ -184,7 +184,7 @@ const PromotionViewModal = ({
 
             {/* Promotion Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-1">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     اطلاعات پایه
@@ -226,7 +226,7 @@ const PromotionViewModal = ({
                 </CardBody>
               </Card>
 
-              <Card className="border-1">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     جزئیات
@@ -251,7 +251,7 @@ const PromotionViewModal = ({
 
             {/* Additional Info */}
             <div className="grid grid-cols-1 gap-6">
-              <Card className="border-1">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     زمان‌بندی

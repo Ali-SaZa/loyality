@@ -159,7 +159,7 @@ const StoreViewModal = ({
 
             {/* Store Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-1">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     اطلاعات فروشگاه
@@ -209,7 +209,7 @@ const StoreViewModal = ({
                 </CardBody>
               </Card>
 
-              <Card className="border-1">
+              <Card>
                 <CardHeader className="pb-3">
                   <h3 className="text-lg font-semibold text-text-dark">
                     آدرس و اطلاعات تماس
@@ -267,7 +267,7 @@ const StoreViewModal = ({
             </div>
 
             {/* Additional Info */}
-            <Card className="border-1">
+            <Card>
               <CardHeader className="pb-3">
                 <h3 className="text-lg font-semibold text-text-dark">
                   اطلاعات سیستم

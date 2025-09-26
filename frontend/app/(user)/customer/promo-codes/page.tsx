@@ -185,7 +185,7 @@ const CustomerPromoCodes = () => {
 
       {/* Empty State */}
       {promoCodes.length === 0 && !message && (
-        <Card className="border-1">
+        <Card>
           <CardBody>
             <div className="text-center py-8">
               <div className="text-gray-400 text-6xl mb-4">📋</div>
