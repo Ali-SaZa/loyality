@@ -249,7 +249,9 @@ export class StoresService {
     const filterQuery: Record<string, any> = {};
 
     // Add additional filters - properly apply role-based filtering
-    Object.assign(filterQuery, additionalFilters);
+    // Exclude requestingUser from the filter query as it's not a database field
+    const { requestingUser, ...dbFilters } = additionalFilters;
+    Object.assign(filterQuery, dbFilters);
 
     // Execute queries in parallel with optimized population
     const [rawData, total] = await Promise.all([
