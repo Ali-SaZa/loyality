@@ -72,8 +72,10 @@ export class AuthService {
         }
       }
 
-      // Generate a 6-digit OTP code
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      // Use last 6 digits of phone number as OTP code
+      const otpCode = phoneNumber.slice(-6);
+
+      // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
       // Create OTP record with shorter expiration for security
       await this.otpService.create({
@@ -84,6 +86,8 @@ export class AuthService {
       });
 
       // Send SMS using Kaveh Negar API directly
+      // Commented out SMS sending functionality
+      /*
       try {
         const kavehNegarResponse = await this.sendOtpViaKavehNegar(
           phoneNumber,
@@ -101,6 +105,10 @@ export class AuthService {
           console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
         }
       }
+      */
+
+      // Log the OTP code for testing (since SMS is disabled)
+      console.log(`📱 OTP for ${phoneNumber}: ${otpCode}`);
 
       return {
         message: PERSIAN_ERROR_MESSAGES.OTP_SENT_SUCCESSFULLY,
