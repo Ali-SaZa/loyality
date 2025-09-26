@@ -19,7 +19,13 @@ import {
   SmsHistoryResponse,
 } from "@/services/stores";
 import useAlertModal from "@/hooks/useAlertModal";
-import { formatDateToPersianJalali } from "@/helpers";
+import {
+  copyToClipboard,
+  formatDateToPersianJalali,
+  formatPhoneNumber,
+} from "@/helpers";
+import CopyIcon from "@/components/icons/CopyIcon";
+import Button from "@/components/formElements/Button";
 
 const SentMessagesPage = () => {
   const [smsHistory, setSmsHistory] = useState<SmsHistoryResponse | null>(null);
@@ -48,7 +54,6 @@ const SentMessagesPage = () => {
     fetchSmsHistory(currentPage);
   }, [currentPage]);
 
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -57,6 +62,14 @@ const SentMessagesPage = () => {
     );
   }
 
+  const handleCopyPhoneNumber = (phoneNumber: string) => {
+    copyToClipboard(
+      phoneNumber,
+      "شماره تلفن کپی شد",
+      "خطا در کپی کردن شماره تلفن"
+    );
+  };
+
   if (error) {
     return (
       <div className="space-y-6">
@@ -64,7 +77,9 @@ const SentMessagesPage = () => {
           <div className="flex items-center gap-3">
             <MailIcon className="w-8 h-8 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                پیامک‌های ارسالی
+              </h1>
             </div>
           </div>
         </div>
@@ -90,15 +105,21 @@ const SentMessagesPage = () => {
           <div className="flex items-center gap-3">
             <MailIcon className="w-8 h-8 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                پیامک‌های ارسالی
+              </h1>
             </div>
           </div>
         </div>
         <Card>
           <CardBody className="text-center py-12">
             <MailIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg mb-2">هنوز هیچ پیامکی ارسال نکرده‌اید</p>
-            <p className="text-gray-400 text-sm">پیامک‌های ارسالی شما در اینجا نمایش داده خواهد شد</p>
+            <p className="text-gray-500 text-lg mb-2">
+              هنوز هیچ پیامکی ارسال نکرده‌اید
+            </p>
+            <p className="text-gray-400 text-sm">
+              پیامک‌های ارسالی شما در اینجا نمایش داده خواهد شد
+            </p>
           </CardBody>
         </Card>
       </div>
@@ -112,40 +133,14 @@ const SentMessagesPage = () => {
         <div className="flex items-center gap-3">
           <MailIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">پیامک‌های ارسالی</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              پیامک‌های ارسالی
+            </h1>
           </div>
         </div>
         <Chip color="primary" variant="flat" size="sm">
           مجموع: {smsHistory.total} پیامک
         </Chip>
-      </div>
-
-      {/* Stats Card */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardBody className="text-center">
-            <div className="text-2xl font-bold text-gray-900">
-              {smsHistory.total}
-            </div>
-            <div className="text-sm text-gray-600">کل پیامک‌ها</div>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="text-center">
-            <div className="text-2xl font-bold text-green-600">
-              {smsHistory.data.length}
-            </div>
-            <div className="text-sm text-gray-600">در این صفحه</div>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {smsHistory.totalPages}
-            </div>
-            <div className="text-sm text-gray-600">تعداد صفحات</div>
-          </CardBody>
-        </Card>
       </div>
 
       {/* Messages Table */}
@@ -155,53 +150,57 @@ const SentMessagesPage = () => {
         </CardHeader>
         <CardBody>
           <Table aria-label="SMS History Table">
-          <TableHeader>
-            <TableColumn>تاریخ ارسال</TableColumn>
-            <TableColumn>نام مشتری</TableColumn>
-            <TableColumn>شماره تلفن</TableColumn>
-            <TableColumn>متن پیام</TableColumn>
-          </TableHeader>
-          <TableBody>
-            {smsHistory.data.map((sms: SmsHistoryItem) => (
-              <TableRow key={sms.id}>
-                <TableCell>
-                  <div className="text-sm text-gray-600">
-                    {formatDateToPersianJalali(new Date(sms.sentDate))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-semibold">
-                        {(sms.customerName || sms.customerPhone).charAt(0)}
-                      </span>
+            <TableHeader>
+              <TableColumn>تاریخ ارسال</TableColumn>
+              <TableColumn>نام مشتری</TableColumn>
+              <TableColumn>شماره تلفن</TableColumn>
+              <TableColumn>متن پیام</TableColumn>
+            </TableHeader>
+            <TableBody>
+              {smsHistory.data.map((sms: SmsHistoryItem) => (
+                <TableRow key={sms.id}>
+                  <TableCell>
+                    <div className="text-sm text-gray-600">
+                      {formatDateToPersianJalali(new Date(sms.sentDate))}
                     </div>
+                  </TableCell>
+                  <TableCell>
                     <div className="text-sm text-gray-600">
                       {sms.customerName || "نامشخص"}
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="text-sm text-gray-600 font-mono">
-                    {sms.customerPhone}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="max-w-xs">
-                    <div className="text-sm text-gray-600 mb-1">
-                      <span title={sms.messageText}>{sms.messagePreview}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm text-gray-600">
+                      {formatPhoneNumber(sms.customerPhone)}
+                      <Button
+                        iconOnly
+                        size="sm"
+                        variant="light"
+                        color="default"
+                        onClick={() => handleCopyPhoneNumber(sms.customerPhone)}
+                      >
+                        <CopyIcon className="size-4" />
+                      </Button>
                     </div>
-                    {sms.messageText !== sms.messagePreview && (
-                      <div className="text-xs text-gray-500">
-                        متن کامل در tooltip
+                  </TableCell>
+                  <TableCell>
+                    <div className="max-w-xs">
+                      <div className="text-sm text-gray-600 mb-1">
+                        <span title={sms.messageText}>
+                          {sms.messagePreview}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      {sms.messageText !== sms.messagePreview && (
+                        <div className="text-xs text-gray-500">
+                          متن کامل در tooltip
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardBody>
       </Card>
 
