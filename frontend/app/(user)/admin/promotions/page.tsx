@@ -98,7 +98,7 @@ const AdminPromotions = () => {
       // The backend now returns promotions with promo code counts directly
       setPromotions(response.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "خطا در بارگذاری تبلیغات");
+      setError(err instanceof Error ? err.message : "خطا در بارگذاری پروموشن‌ها");
     } finally {
       setLoading(false);
     }
@@ -234,7 +234,7 @@ const AdminPromotions = () => {
         promotionTitle: "",
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "خطا در حذف تبلیغ");
+      setError(err instanceof Error ? err.message : "خطا در حذف پروموشن");
     } finally {
       setLoading(false);
     }
@@ -265,10 +265,10 @@ const AdminPromotions = () => {
           <PromotionIcon className="size-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold text-text-dark">
-              مدیریت تبلیغات
+              مدیریت پروموشن‌ها
             </h1>
             <p className="text-text-light">
-              مشاهده و مدیریت تمام تبلیغات سیستم
+              مشاهده و مدیریت تمام پروموشن‌های سیستم
             </p>
           </div>
         </div>
@@ -277,7 +277,7 @@ const AdminPromotions = () => {
           startContent={<PromotionIcon className="size-5" />}
           onClick={handleAddPromotion}
         >
-          افزودن تبلیغ جدید
+          افزودن پروموشن جدید
         </Button>
       </div>
 
@@ -287,7 +287,7 @@ const AdminPromotions = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">کل تبلیغات</p>
+                <p className="text-sm text-text-light mb-1">کل پروموشن‌ها</p>
                 <p className="text-2xl font-bold text-text-dark">
                   {stats.active + stats.inactive + stats.expired + stats.deleted}
                 </p>
@@ -301,7 +301,7 @@ const AdminPromotions = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات فعال</p>
+                <p className="text-sm text-text-light mb-1">پروموشن‌های فعال</p>
                 <p className="text-2xl font-bold text-text-dark">
                   {stats.active}
                 </p>
@@ -315,7 +315,7 @@ const AdminPromotions = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات غیرفعال</p>
+                <p className="text-sm text-text-light mb-1">پروموشن‌های غیرفعال</p>
                 <p className="text-2xl font-bold text-text-dark">
                   {stats.inactive}
                 </p>
@@ -329,7 +329,7 @@ const AdminPromotions = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات منقضی</p>
+                <p className="text-sm text-text-light mb-1">پروموشن‌های منقضی</p>
                 <p className="text-2xl font-bold text-text-dark">
                   {stats.expired}
                 </p>
@@ -343,7 +343,7 @@ const AdminPromotions = () => {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-light mb-1">تبلیغات حذف شده</p>
+                <p className="text-sm text-text-light mb-1">پروموشن‌های حذف شده</p>
                 <p className="text-2xl font-bold text-text-dark">
                   {stats.deleted}
                 </p>
@@ -357,12 +357,12 @@ const AdminPromotions = () => {
       {/* Promotions Table */}
       <Card className="border-1">
         <CardHeader className="pb-3">
-          <h3 className="text-lg font-semibold text-text-dark">لیست تبلیغات</h3>
+          <h3 className="text-lg font-semibold text-text-dark">لیست پروموشن‌ها</h3>
         </CardHeader>
         <CardBody className="p-0">
-          <Table aria-label="لیست تبلیغات">
+          <Table aria-label="لیست پروموشن‌ها">
             <TableHeader>
-              <TableColumn>عنوان تبلیغ</TableColumn>
+              <TableColumn>عنوان پروموشن</TableColumn>
               <TableColumn>فروشگاه</TableColumn>
               <TableColumn>مقدار</TableColumn>
               <TableColumn>وضعیت</TableColumn>
@@ -463,7 +463,7 @@ const AdminPromotions = () => {
                         size="sm"
                         variant="light"
                         color="success"
-                        aria-label="ایجاد کدهای تخفیف"
+                        aria-label="ایجاد کدهای پروموشن"
                         disabled={promotion.status === "deleted"}
                         onClick={() => {
                           const storeName = getStoreName(promotion.storeId);
@@ -543,8 +543,8 @@ const AdminPromotions = () => {
           setDeleteConfirmModal((prev) => ({ ...prev, isOpen }))
         }
         onConfirm={handleDeleteConfirm}
-        title="حذف تبلیغ"
-        message="آیا از حذف این تبلیغ اطمینان دارید؟"
+        title="حذف پروموشن"
+        message="آیا از حذف این پروموشن اطمینان دارید؟"
         itemName={deleteConfirmModal.promotionTitle}
         isLoading={false}
       />

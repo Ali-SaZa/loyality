@@ -129,7 +129,7 @@ export class AuthorizationService {
     }
 
     throw new ForbiddenException(
-      "دسترسی ممنوع. شما مجوز دسترسی به این تبلیغ را ندارید.",
+      "دسترسی ممنوع. شما مجوز دسترسی به این پروموشن را ندارید.",
     ); // translated to Persian
   }
 
@@ -157,7 +157,7 @@ export class AuthorizationService {
     }
 
     throw new ForbiddenException(
-      "دسترسی ممنوع. شما مجوز دسترسی به این کد تخفیف را ندارید.",
+      "دسترسی ممنوع. شما مجوز دسترسی به این کد پروموشن را ندارید.",
     ); // translated to Persian
   }
 

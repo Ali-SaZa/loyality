@@ -194,10 +194,10 @@ const StoreViewModal = ({
                   </div>
                   <div>
                     <label className="text-sm text-text-light">
-                      تعداد تبلیغات
+                      تعداد پروموشن‌ها
                     </label>
                     <p className="font-medium">
-                      {store.promotions?.length || 0} تبلیغ فعال
+                      {store.promotions?.length || 0} پروموشن فعال
                     </p>
                   </div>
                   {store.description && (

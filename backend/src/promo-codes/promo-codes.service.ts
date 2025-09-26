@@ -854,9 +854,86 @@ export class PromoCodesService {
     // Determine message based on results
     let message: string;
     if (transformedPromoCodes.length === 0) {
-      message = "این مشتری کد تخفیف استفاده نشده‌ای ندارد";
+      message = "این مشتری کد پروموشن استفاده نشده‌ای ندارد";
     } else {
-      message = `${transformedPromoCodes.length} کد تخفیف برای این مشتری یافت شد`;
+      message = `${transformedPromoCodes.length} کد پروموشن برای این مشتری یافت شد`;
+    }
+
+    return {
+      data: transformedPromoCodes,
+      message,
+      total: transformedPromoCodes.length,
+      phoneNumber,
+    };
+  }
+
+  async getCustomerPromoCodesWithStoreInfo(
+    phoneNumber: string,
+    status?: "used" | "unused",
+  ): Promise<UserPromoCodesResponseDto> {
+    // Find the user by phone number
+    const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
+    if (!targetUser) {
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_NOT_FOUND);
+    }
+
+    // Build query for user's promo codes
+    const query: any = { userId: targetUser._id, status: { $ne: "deleted" } };
+
+    // Filter by status if provided
+    if (status) {
+      query.status = status;
+    }
+
+    // Get promo codes with promotion and store details
+    const promoCodes = await this.promoCodeModel
+      .find(query)
+      .populate({
+        path: "promotionId",
+        select: "title price points status storeId",
+        populate: {
+          path: "storeId",
+          select: "name phoneNumber address",
+        },
+      })
+      .populate("userId", "phoneNumber firstName lastName")
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const transformedPromoCodes = promoCodes.map((promoCode) => {
+      const transformed = this.transformPromoCodeToResponse(promoCode);
+
+      // Add store information to the promotion object
+      if (promoCode.promotionId && (promoCode.promotionId as any).storeId) {
+        const store = (promoCode.promotionId as any).storeId;
+        (transformed.promotion as any).store = {
+          id: store._id.toString(),
+          name: store.name,
+          phoneNumber: store.phoneNumber,
+          address: store.address,
+        };
+      }
+
+      return transformed;
+    });
+
+    // Determine message based on results
+    let message: string;
+    if (transformedPromoCodes.length === 0) {
+      message =
+        status === "used"
+          ? "کد پروموشن استفاده شده‌ای یافت نشد"
+          : status === "unused"
+            ? "کد پروموشن استفاده نشده‌ای یافت نشد"
+            : "کد پروموشنی یافت نشد";
+    } else {
+      const statusText =
+        status === "used"
+          ? "استفاده شده"
+          : status === "unused"
+            ? "استفاده نشده"
+            : "";
+      message = `${transformedPromoCodes.length} کد پروموشن ${statusText} یافت شد`;
     }
 
     return {

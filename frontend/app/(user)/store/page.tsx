@@ -37,14 +37,14 @@ const StoreDashboard = () => {
 
   const stats = statistics ? [
     {
-      title: "تبلیغات فعال",
+      title: "پروموشن‌های فعال",
       value: statistics.activeCampaigns.toString(),
       icon: <PromotionIcon className="size-8 text-primary" />,
       change: "",
       changeType: "neutral" as const,
     },
     {
-      title: "کل کدهای تخفیف",
+      title: "کل کدهای پروموشن",
       value: statistics.totalPromoCodes.toString(),
       icon: <PromoCodeIcon className="size-8 text-success" />,
       change: "",
@@ -163,7 +163,7 @@ const StoreDashboard = () => {
               className="justify-start h-12"
               onPress={() => router.push("/store/promotions")}
             >
-              مدیریت تبلیغات
+              مدیریت پروموشن‌ها
             </Button>
             <Button
               color="success"
@@ -172,7 +172,7 @@ const StoreDashboard = () => {
               className="justify-start h-12"
               onPress={() => router.push("/store/promo-codes")}
             >
-              مدیریت کدهای تخفیف
+              مدیریت کدهای پروموشن
             </Button>
           </div>
         </CardBody>

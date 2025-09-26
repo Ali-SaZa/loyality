@@ -149,6 +149,16 @@ export class PromoCodeResponseDto {
     price: number;
     points: number;
     status: string;
+    store?: {
+      id: string;
+      name: string;
+      phoneNumber: string;
+      address: {
+        province: string;
+        city: string;
+        fullAddress: string;
+      };
+    };
   };
 
   @ApiProperty({ required: false })

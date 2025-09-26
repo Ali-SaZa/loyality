@@ -50,7 +50,7 @@ const AdminPromoCodes = () => {
       setPromoCodes(response.data);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف";
+        err instanceof Error ? err.message : "خطا در بارگذاری کدهای پروموشن";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -115,7 +115,7 @@ const AdminPromoCodes = () => {
         <div className="flex items-center gap-3">
           <PromoCodeIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">کدهای تخفیف</h1>
+            <h1 className="text-2xl font-bold text-gray-900">کدهای پروموشن</h1>
           </div>
         </div>
       </div>
@@ -159,13 +159,13 @@ const AdminPromoCodes = () => {
       {/* Promo Codes Table */}
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold">لیست کدهای تخفیف</h3>
+          <h3 className="text-lg font-semibold">لیست کدهای پروموشن</h3>
         </CardHeader>
         <CardBody>
           <Table aria-label="Promo codes table">
             <TableHeader>
               <TableColumn>کد</TableColumn>
-              <TableColumn>تبلیغ</TableColumn>
+              <TableColumn>پروموشن</TableColumn>
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>کاربر</TableColumn>
               <TableColumn>تاریخ ایجاد</TableColumn>

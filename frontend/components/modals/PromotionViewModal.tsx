@@ -58,7 +58,7 @@ const PromotionViewModal = ({
       setPromotion(promotionData);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ",
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات پروموشن",
       );
     } finally {
       setIsLoading(false);
@@ -75,14 +75,14 @@ const PromotionViewModal = ({
   const handleDelete = async () => {
     if (!promotionId) return;
 
-    if (confirm("آیا از حذف این تبلیغ اطمینان دارید؟")) {
+    if (confirm("آیا از حذف این پروموشن اطمینان دارید؟")) {
       try {
         setLoading(true);
         await deletePromotion(promotionId);
         onOpenChange(false);
         onSuccess?.();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "خطا در حذف تبلیغ");
+        setError(err instanceof Error ? err.message : "خطا در حذف پروموشن");
       } finally {
         setLoading(false);
       }
@@ -122,7 +122,7 @@ const PromotionViewModal = ({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       onClose={handleClose}
-      title="مشاهده اطلاعات تبلیغ"
+      title="مشاهده اطلاعات پروموشن"
       size="2xl"
       hideFooter={true}
     >
@@ -156,7 +156,7 @@ const PromotionViewModal = ({
                       </Chip>
                     )}
                   </div>
-                  <p className="text-text-light">مشاهده اطلاعات تبلیغ</p>
+                  <p className="text-text-light">مشاهده اطلاعات پروموشن</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ const PromotionViewModal = ({
           </>
         ) : (
           <div className="text-center py-8">
-            <p className="text-text-light">تبلیغ یافت نشد</p>
+            <p className="text-text-light">پروموشن یافت نشد</p>
           </div>
         )}
       </div>

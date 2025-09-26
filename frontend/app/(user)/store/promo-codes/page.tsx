@@ -68,7 +68,7 @@ const StorePromoCodes = () => {
       setHasPrevPage(response.hasPrevPage);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "خطا در بارگذاری کدهای تخفیف";
+        err instanceof Error ? err.message : "خطا در بارگذاری کدهای پروموشن";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -131,7 +131,7 @@ const StorePromoCodes = () => {
   };
 
   const handleCopyCode = (code: string) => {
-    copyToClipboard(code, "کد تخفیف کپی شد", "خطا در کپی کردن کد");
+    copyToClipboard(code, "کد پروموشن کپی شد", "خطا در کپی کردن کد");
   };
 
   return (
@@ -141,7 +141,7 @@ const StorePromoCodes = () => {
         <div className="flex items-center gap-3">
           <PromoCodeIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">کدهای تخفیف</h1>
+            <h1 className="text-2xl font-bold text-gray-900">کدهای پروموشن</h1>
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@ const StorePromoCodes = () => {
       {/* Promo Codes Table */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <h3 className="text-lg font-semibold">لیست کدهای تخفیف</h3>
+          <h3 className="text-lg font-semibold">لیست کدهای پروموشن</h3>
           <div className="text-sm text-gray-500">
             نمایش {(currentPage - 1) * 50 + 1} تا{" "}
             {Math.min(currentPage * 50, totalItems)} از {totalItems} کد
@@ -195,7 +195,7 @@ const StorePromoCodes = () => {
           <Table aria-label="Promo codes table">
             <TableHeader>
               <TableColumn>کد</TableColumn>
-              <TableColumn>تبلیغ</TableColumn>
+              <TableColumn>پروموشن</TableColumn>
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>کاربر</TableColumn>
               <TableColumn>تاریخ ایجاد</TableColumn>

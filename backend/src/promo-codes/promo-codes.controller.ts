@@ -378,6 +378,38 @@ export class PromoCodesController {
     );
   }
 
+  @Get("my-codes-with-store")
+  @PromoCodeAuth()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get current user's promo codes with store information (Customer only)" })
+  @ApiQuery({
+    name: "status",
+    required: false,
+    description: "Filter by status: used or unused",
+    enum: ["used", "unused"],
+  })
+  @ApiResponse({
+    status: 200,
+    description: "User's promo codes with store information retrieved successfully",
+    type: UserPromoCodesResponseDto,
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  async getMyPromoCodesWithStoreInfo(
+    @CurrentUser() user: any,
+    @Query("status") status?: "used" | "unused",
+  ): Promise<UserPromoCodesResponseDto> {
+    if (user.role !== "customer") {
+      throw new ForbiddenException(
+        "Only customers can access their own promo codes",
+      );
+    }
+    return this.promoCodesService.getCustomerPromoCodesWithStoreInfo(
+      user.phoneNumber,
+      status,
+    );
+  }
+
   @Delete(":id")
   @PromoCodeAuth()
   @ApiBearerAuth()

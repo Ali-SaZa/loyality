@@ -64,7 +64,7 @@ const PromotionBasicModal = ({
       onClose={handleClose}
       onAccept={handleAccept}
       onReject={handleClose}
-      title="اطلاعات اولیه تبلیغ امتیازی"
+      title="اطلاعات اولیه پروموشن امتیازی"
       acceptBtnText="مرحله بعد"
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
@@ -90,8 +90,8 @@ const PromotionBasicModal = ({
               <Input
                 generalType="input"
                 name="title"
-                label="عنوان تبلیغ"
-                placeholder="عنوان تبلیغ را وارد کنید"
+                label="عنوان پروموشن"
+                placeholder="عنوان پروموشن را وارد کنید"
                 inputType="text"
                 required={true}
               />
@@ -100,7 +100,7 @@ const PromotionBasicModal = ({
                 generalType="input"
                 name="description"
                 label="توضیحات"
-                placeholder="توضیحات تبلیغ (اختیاری)"
+                placeholder="توضیحات پروموشن (اختیاری)"
                 inputType="text"
               />
             </div>
@@ -108,7 +108,7 @@ const PromotionBasicModal = ({
             {/* Info about points-based promotions */}
             <div className="p-4 bg-info-50 border border-info-200 rounded-lg">
               <p className="text-info text-sm">
-                <strong>تبلیغ امتیازی:</strong> در این نوع تبلیغ، مشتریان با
+                <strong>پروموشن امتیازی:</strong> در این نوع پروموشن، مشتریان با
                 خرید مبلغ مشخصی، امتیاز دریافت می‌کنند که می‌توانند در خریدهای
                 بعدی استفاده کنند.
               </p>

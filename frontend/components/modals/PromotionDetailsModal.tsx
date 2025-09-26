@@ -69,7 +69,7 @@ const PromotionDetailsModal = ({
       setPromoCodes(promotionData.promoCodes || []);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ"
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات پروموشن"
       );
     } finally {
       setIsLoading(false);
@@ -118,7 +118,7 @@ const PromotionDetailsModal = ({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       onClose={handleClose}
-      title="جزئیات تبلیغ و کدهای تخفیف"
+      title="جزئیات پروموشن و کدهای پروموشن"
       size="4xl"
       hideFooter={true}
     >
@@ -159,7 +159,7 @@ const PromotionDetailsModal = ({
                   <LabelContent label="توضیحات" value={promotion.description || ""} />
                   <LabelContent label="وضعیت" value={getStatusText(promotion.status)} />
                   <LabelContent label="مقدار" value={formatValue(promotion)} />
-                  <LabelContent label="تعداد کدهای تخفیف" value={promotion.promoCodeCount.toString()} />
+                  <LabelContent label="تعداد کدهای پروموشن" value={promotion.promoCodeCount.toString()} />
                 </CardBody>
               </Card>
 
@@ -182,14 +182,14 @@ const PromotionDetailsModal = ({
             <Card>
               <CardHeader className="pb-3">
                 <h3 className="text-lg font-semibold text-text-dark">
-                  کدهای تخفیف
+                  کدهای پروموشن
                 </h3>
               </CardHeader>
               <CardBody>
                 {promoCodes && promoCodes.length > 0 ? (
                   <Table aria-label="Promo codes table">
                     <TableHeader>
-                      <TableColumn>کد تخفیف</TableColumn>
+                      <TableColumn>کد پروموشن</TableColumn>
                       <TableColumn>وضعیت</TableColumn>
                       <TableColumn>کاربر</TableColumn>
                       <TableColumn>تاریخ ایجاد</TableColumn>
@@ -240,7 +240,7 @@ const PromotionDetailsModal = ({
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-text-light">
-                      هیچ کد تخفیفی برای این تبلیغ یافت نشد
+                      هیچ کد پروموشنی برای این پروموشن یافت نشد
                     </p>
                   </div>
                 )}
@@ -249,7 +249,7 @@ const PromotionDetailsModal = ({
           </>
         ) : (
           <div className="text-center py-8">
-            <p className="text-text-light">تبلیغ یافت نشد</p>
+            <p className="text-text-light">پروموشن یافت نشد</p>
           </div>
         )}
       </div>

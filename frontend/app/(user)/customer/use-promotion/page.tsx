@@ -42,14 +42,14 @@ const UsePromotion = () => {
       });
 
       console.log("✅ Use Promotion - Success:", res);
-      toast.success(res.message || "کد تخفیف با موفقیت ثبت شد!");
+      toast.success(res.message || "کد پروموشن با موفقیت ثبت شد!");
 
       // Reset form after success
       form.reset();
     } catch (error) {
       console.error("❌ Use Promotion - Error:", error);
       toast.error(
-        error instanceof Error ? error.message : "خطا در ثبت کد تخفیف"
+        error instanceof Error ? error.message : "خطا در ثبت کد پروموشن"
       );
     } finally {
       setLoading(false);
@@ -60,10 +60,10 @@ const UsePromotion = () => {
     <div className="flex flex-col w-full">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-text-dark mb-2">
-          استفاده از کد تخفیف 🎟️
+          استفاده از کد پروموشن 🎟️
         </h1>
         <p className="text-text-light-25">
-          کد تخفیف خود را وارد کنید تا از آن استفاده کنید
+          کد پروموشن خود را وارد کنید تا از آن استفاده کنید
         </p>
       </div>
 
@@ -77,13 +77,13 @@ const UsePromotion = () => {
             inputType="text"
             name="promoCode"
             placeholder="T123456"
-            label="کد تخفیف"
+            label="کد پروموشن"
             required
             autoFocus
           />
 
           <Button fullWidth isLoading={loading} type="submit" size="lg">
-            <p>تایید و ثبت کد تخفیف</p>
+            <p>تایید و ثبت کد پروموشن</p>
           </Button>
         </form>
       </FormProvider>

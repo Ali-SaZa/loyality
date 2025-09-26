@@ -5,8 +5,8 @@ export const BasicPromotionValidation = z.object({
   storeId: z.string().min(1, "شناسه فروشگاه الزامی است"),
   title: z
     .string()
-    .min(2, "عنوان تبلیغ حداقل باید ۲ کاراکتر باشد")
-    .max(100, "عنوان تبلیغ حداکثر ۱۰۰ کاراکتر باشد"),
+    .min(2, "عنوان پروموشن حداقل باید ۲ کاراکتر باشد")
+    .max(100, "عنوان پروموشن حداکثر ۱۰۰ کاراکتر باشد"),
   description: z
     .string()
     .max(500, "توضیحات حداکثر ۵۰۰ کاراکتر باشد")
@@ -18,8 +18,8 @@ export const CreatePromotionValidation = z.object({
   storeId: z.string().min(1, "شناسه فروشگاه الزامی است"),
   title: z
     .string()
-    .min(2, "عنوان تبلیغ حداقل باید ۲ کاراکتر باشد")
-    .max(100, "عنوان تبلیغ حداکثر ۱۰۰ کاراکتر باشد"),
+    .min(2, "عنوان پروموشن حداقل باید ۲ کاراکتر باشد")
+    .max(100, "عنوان پروموشن حداکثر ۱۰۰ کاراکتر باشد"),
   description: z
     .string()
     .max(500, "توضیحات حداکثر ۵۰۰ کاراکتر باشد")
@@ -31,8 +31,8 @@ export const CreatePromotionValidation = z.object({
 export const UpdatePromotionValidation = z.object({
   title: z
     .string()
-    .min(2, "عنوان تبلیغ حداقل باید ۲ کاراکتر باشد")
-    .max(100, "عنوان تبلیغ حداکثر ۱۰۰ کاراکتر باشد")
+    .min(2, "عنوان پروموشن حداقل باید ۲ کاراکتر باشد")
+    .max(100, "عنوان پروموشن حداکثر ۱۰۰ کاراکتر باشد")
     .optional(),
   description: z
     .string()
@@ -46,7 +46,7 @@ export const UpdatePromotionValidation = z.object({
 export const ChangePromotionStatusValidation = z.object({
   status: z
     .enum(["active", "inactive", "deleted", "expired"])
-    .refine((val) => val !== undefined, { message: "وضعیت تبلیغ الزامی است" }),
+    .refine((val) => val !== undefined, { message: "وضعیت پروموشن الزامی است" }),
 });
 
 // Type definitions

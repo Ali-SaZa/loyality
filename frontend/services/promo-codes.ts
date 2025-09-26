@@ -19,6 +19,16 @@ export interface PromoCode {
     price: number;
     points: number;
     status: string;
+    store?: {
+      id: string;
+      name: string;
+      phoneNumber: string;
+      address: {
+        province: string;
+        city: string;
+        fullAddress: string;
+      };
+    };
   };
   user?: {
     id: string;
@@ -330,6 +340,24 @@ export const promoCodesService = {
       throw new Error(errorMessage);
     }
   },
+
+  // Get current user's promo codes with store information
+  async getMyPromoCodesWithStoreInfo(
+    status?: "used" | "unused",
+  ): Promise<UserPromoCodesResponse> {
+    try {
+      const queryParams = new URLSearchParams();
+      if (status) queryParams.append("status", status);
+
+      const response = await axiosInstance.get<UserPromoCodesResponse>(
+        `/promo-codes/my-codes-with-store?${queryParams.toString()}`,
+      );
+      return response.data;
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      throw new Error(errorMessage);
+    }
+  },
 };
 
 // Export individual functions for convenience
@@ -346,3 +374,5 @@ export const getUserPromoCodes = promoCodesService.getUserPromoCodes;
 export const getPromoCodeStats = promoCodesService.getPromoCodeStats;
 export const getPromoCodesByPromotion =
   promoCodesService.getPromoCodesByPromotion;
+export const getMyPromoCodesWithStoreInfo =
+  promoCodesService.getMyPromoCodesWithStoreInfo;

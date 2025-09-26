@@ -49,7 +49,7 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: "مدیریت تبلیغات",
+        title: "مدیریت پروموشن‌ها",
         icon: (className: string = "size-6") => (
           <PromotionIcon className={className} />
         ),
@@ -58,7 +58,7 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: "مدیریت کدهای تخفیف",
+        title: "مدیریت کدهای پروموشن",
         icon: (className: string = "size-6") => (
           <PromoCodeIcon className={className} />
         ),
@@ -78,7 +78,7 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: "تبلیغات",
+        title: "پروموشن‌ها",
         icon: (className: string = "size-6") => (
           <PromotionIcon className={className} />
         ),
@@ -87,7 +87,7 @@ export const siteConfig = {
         children: [],
       },
       {
-        title: "کدهای تخفیف",
+        title: "کدهای پروموشن",
         icon: (className: string = "size-6") => (
           <PromoCodeIcon className={className} />
         ),

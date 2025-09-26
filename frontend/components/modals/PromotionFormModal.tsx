@@ -91,7 +91,7 @@ const PromotionFormModal = ({
       });
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات تبلیغ";
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات پروموشن";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -151,8 +151,8 @@ const PromotionFormModal = ({
         err instanceof Error
           ? err.message
           : isEditMode
-            ? "خطا در بروزرسانی تبلیغ"
-            : "خطا در ایجاد تبلیغ";
+            ? "خطا در بروزرسانی پروموشن"
+            : "خطا در ایجاد پروموشن";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -175,8 +175,8 @@ const PromotionFormModal = ({
       onClose={handleClose}
       onAccept={methods.handleSubmit(onSubmit)}
       onReject={handleClose}
-      title={isEditMode ? "ویرایش تبلیغ امتیازی" : "افزودن تبلیغ امتیازی جدید"}
-      acceptBtnText={isEditMode ? "بروزرسانی تبلیغ" : "ایجاد تبلیغ"}
+      title={isEditMode ? "ویرایش پروموشن امتیازی" : "افزودن پروموشن امتیازی جدید"}
+      acceptBtnText={isEditMode ? "بروزرسانی پروموشن" : "ایجاد پروموشن"}
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
       size="2xl"
@@ -204,8 +204,8 @@ const PromotionFormModal = ({
               <Input
                 generalType="input"
                 name="title"
-                label="عنوان تبلیغ"
-                placeholder="عنوان تبلیغ را وارد کنید"
+                label="عنوان پروموشن"
+                placeholder="عنوان پروموشن را وارد کنید"
                 inputType="text"
                 required={true}
               />
@@ -216,7 +216,7 @@ const PromotionFormModal = ({
                 generalType="input"
                 name="description"
                 label="توضیحات"
-                placeholder="توضیحات تبلیغ (اختیاری)"
+                placeholder="توضیحات پروموشن (اختیاری)"
                 inputType="text"
               />
             </div>

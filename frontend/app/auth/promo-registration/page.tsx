@@ -163,8 +163,8 @@ const PromoCodeRegistration = () => {
     <div className="flex flex-col w-full">
       {registrationStep === 0 && (
         <>
-          <p>ثبت نام با کد تخفیف 🎉</p>
-          <p>لطفا تلفن همراه و کد تخفیف خود را وارد کنید</p>
+          <p>ثبت نام با کد پروموشن 🎉</p>
+          <p>لطفا تلفن همراه و کد پروموشن خود را وارد کنید</p>
         </>
       )}
 
@@ -174,7 +174,7 @@ const PromoCodeRegistration = () => {
             کد تایید برای تلفن همراه {registrationData?.phoneNumber} پیامک شد.
           </p>
           <p className="text-sm text-text-light-25 mt-2">
-            کد تخفیف: {registrationData?.promoCode}
+            کد پروموشن: {registrationData?.promoCode}
           </p>
         </>
       )}
@@ -210,7 +210,7 @@ const PromoCodeRegistration = () => {
               inputType="text"
               name="promoCode"
               placeholder="T123456"
-              label="کد تخفیف"
+              label="کد پروموشن"
             />
             <Button fullWidth isLoading={loading} type="submit">
               <p>ارسال کد تایید</p>
@@ -279,7 +279,7 @@ const PromoCodeRegistration = () => {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">کد تخفیف شما</h3>
+            <h3 className="font-semibold mb-2">کد پروموشن شما</h3>
             <p className="text-sm">
               <strong>کد:</strong> {successData.promoCode.code}
             </p>

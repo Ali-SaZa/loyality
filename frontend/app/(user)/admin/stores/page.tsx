@@ -285,7 +285,7 @@ const AdminStores = () => {
               <TableColumn>نام فروشگاه</TableColumn>
               <TableColumn>وضعیت</TableColumn>
               <TableColumn>آدرس</TableColumn>
-              <TableColumn>تعداد تبلیغات</TableColumn>
+              <TableColumn>تعداد پروموشن‌ها</TableColumn>
               <TableColumn>تاریخ عضویت</TableColumn>
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
@@ -333,7 +333,7 @@ const AdminStores = () => {
                       <span className="font-medium">
                         {store.promotions?.length || 0}
                       </span>
-                      <p className="text-xs text-text-light">تبلیغ فعال</p>
+                      <p className="text-xs text-text-light">پروموشن فعال</p>
                     </div>
                   </TableCell>
                   <TableCell>{formatDate(store.createdAt)}</TableCell>

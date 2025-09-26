@@ -93,7 +93,7 @@ const ApplyPromoCodePage = () => {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("خطا در دریافت کدهای تخفیف مشتری");
+        toast.error("خطا در دریافت کدهای پروموشن مشتری");
       }
     } finally {
       setIsLoadingPromoCodes(false);
@@ -116,7 +116,7 @@ const ApplyPromoCodePage = () => {
         userId: selectedPromoCode.userId,
       });
 
-      toast.success(`کد تخفیف ${selectedPromoCode.code} با موفقیت استفاده شد`);
+      toast.success(`کد پروموشن ${selectedPromoCode.code} با موفقیت استفاده شد`);
 
       // Refresh the promo codes list
       const response = await promoCodesService.getUserPromoCodes({
@@ -138,7 +138,7 @@ const ApplyPromoCodePage = () => {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("خطا در استفاده از کد تخفیف");
+        toast.error("خطا در استفاده از کد پروموشن");
       }
     } finally {
       setLoading(false);
@@ -158,7 +158,7 @@ const ApplyPromoCodePage = () => {
         <div className="flex items-center gap-3">
           <PromoCodeIcon className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">اعمال کد تخفیف</h1>
+            <h1 className="text-2xl font-bold text-gray-900">اعمال کد پروموشن</h1>
           </div>
         </div>
       </div>
@@ -182,7 +182,7 @@ const ApplyPromoCodePage = () => {
                     iconStart={
                       <UserIcon className="size-5 text-text-light-25" />
                     }
-                    description="شماره تلفن مشتری را وارد کنید تا کدهای تخفیف استفاده نشده او نمایش داده شود"
+                    description="شماره تلفن مشتری را وارد کنید تا کدهای پروموشن استفاده نشده او نمایش داده شود"
                     required
                   />
                 </div>
@@ -213,7 +213,7 @@ const ApplyPromoCodePage = () => {
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 items-center justify-between w-full">
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-semibold">
-                  کدهای تخفیف استفاده نشده مشتری
+                  کدهای پروموشن استفاده نشده مشتری
                 </h3>
                 <Chip color="success" variant="flat" size="sm">
                   {customerPromoCodes.length} کد
@@ -291,8 +291,8 @@ const ApplyPromoCodePage = () => {
         isOpen={isConfirmModalOpen}
         onOpenChange={setIsConfirmModalOpen}
         onConfirm={confirmUsePromoCode}
-        title="تأیید استفاده از کد تخفیف"
-        message="آیا مطمئن هستید که می‌خواهید وضعیت این کد تخفیف را تغییر دهید؟"
+        title="تأیید استفاده از کد پروموشن"
+        message="آیا مطمئن هستید که می‌خواهید وضعیت این کد پروموشن را تغییر دهید؟"
         acceptBtnText="تأیید استفاده"
         rejectBtnText="انصراف"
         acceptBtnColor="primary"

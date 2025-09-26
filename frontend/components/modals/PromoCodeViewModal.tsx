@@ -58,7 +58,7 @@ const PromoCodeViewModal = ({
       setPromoCode(promoCodeData);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کد تخفیف",
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کد پروموشن",
       );
     } finally {
       setIsLoading(false);
@@ -75,14 +75,14 @@ const PromoCodeViewModal = ({
   const handleDelete = async () => {
     if (!promoCodeId) return;
 
-    if (confirm("آیا از حذف این کد تخفیف اطمینان دارید؟")) {
+    if (confirm("آیا از حذف این کد پروموشن اطمینان دارید؟")) {
       try {
         setLoading(true);
         await deletePromoCode(promoCodeId);
         onClose();
         onSuccess?.();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "خطا در حذف کد تخفیف");
+        setError(err instanceof Error ? err.message : "خطا در حذف کد پروموشن");
       } finally {
         setLoading(false);
       }
@@ -153,7 +153,7 @@ const PromoCodeViewModal = ({
     <Modal
       isOpen={isOpen}
       onOpenChange={handleClose}
-      title="جزئیات کد تخفیف"
+      title="جزئیات کد پروموشن"
       size="2xl"
     >
       <div className="space-y-6">
@@ -162,9 +162,9 @@ const PromoCodeViewModal = ({
           <PromoCodeIcon className="w-8 h-8 text-primary" />
           <div>
             <h2 className="text-xl font-bold text-gray-900">
-              کد تخفیف: {promoCode.code}
+              کد پروموشن: {promoCode.code}
             </h2>
-            <p className="text-gray-600">جزئیات کامل کد تخفیف</p>
+            <p className="text-gray-600">جزئیات کامل کد پروموشن</p>
           </div>
         </div>
 
@@ -193,7 +193,7 @@ const PromoCodeViewModal = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  کد تخفیف
+                  کد پروموشن
                 </label>
                 <div className="font-mono font-bold text-lg text-primary bg-gray-50 p-2 rounded">
                   {promoCode.code}
@@ -201,7 +201,7 @@ const PromoCodeViewModal = ({
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  تبلیغ مربوطه
+                  پروموشن مربوطه
                 </label>
                 <div className="text-gray-900">
                   {getPromotionTitle(promoCode.promotionId)}

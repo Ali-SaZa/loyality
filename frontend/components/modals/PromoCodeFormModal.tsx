@@ -84,7 +84,7 @@ const PromoCodeFormModal = ({
       });
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کد تخفیف";
+        err instanceof Error ? err.message : "خطا در بارگذاری اطلاعات کد پروموشن";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -123,7 +123,7 @@ const PromoCodeFormModal = ({
       onClose();
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "خطا در ذخیره کد تخفیف";
+        err instanceof Error ? err.message : "خطا در ذخیره کد پروموشن";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -138,7 +138,7 @@ const PromoCodeFormModal = ({
     <Modal
       isOpen={isOpen}
       onOpenChange={handleClose}
-      title={isEditMode ? "ویرایش کد تخفیف" : "افزودن کد تخفیف جدید"}
+      title={isEditMode ? "ویرایش کد پروموشن" : "افزودن کد پروموشن جدید"}
       size="2xl"
     >
       <FormProvider {...methods}>
@@ -147,7 +147,7 @@ const PromoCodeFormModal = ({
             <Input
               name="code"
               generalType="input"
-              label="کد تخفیف"
+              label="کد پروموشن"
               placeholder="مثال: WELCOME50"
               description="کد 6-12 کاراکتری شامل حروف بزرگ و اعداد"
               disabled={isEditMode} // Code cannot be changed in edit mode
@@ -156,7 +156,7 @@ const PromoCodeFormModal = ({
             <Input
               name="promotionId"
               generalType="select"
-              label="تبلیغ"
+              label="پروموشن"
               selectOptions={promotions.map((promotion) => ({
                 code: promotion.id,
                 name:
@@ -165,8 +165,8 @@ const PromoCodeFormModal = ({
                     : promotion.title,
                 disabled: promotion.status === "deleted", // Disable deleted promotions
               }))}
-              placeholder="انتخاب تبلیغ"
-              description="تبلیغی که این کد به آن تعلق دارد"
+              placeholder="انتخاب پروموشن"
+              description="پروموشنی که این کد به آن تعلق دارد"
               disabled={isEditMode} // Promotion cannot be changed in edit mode
             />
           </div>
@@ -175,7 +175,7 @@ const PromoCodeFormModal = ({
             name="notes"
             generalType="textarea"
             label="یادداشت"
-            placeholder="یادداشت اختیاری درباره این کد تخفیف"
+            placeholder="یادداشت اختیاری درباره این کد پروموشن"
             description="توضیحات اضافی (اختیاری)"
           />
 

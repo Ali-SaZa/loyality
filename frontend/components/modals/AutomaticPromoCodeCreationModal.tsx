@@ -75,7 +75,7 @@ const AutomaticPromoCodeCreationModal = ({
     } catch (err) {
       console.error("Error creating promo codes:", err);
       const errorMessage =
-        err instanceof Error ? err.message : "خطا در ایجاد کدهای تخفیف";
+        err instanceof Error ? err.message : "خطا در ایجاد کدهای پروموشن";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -99,7 +99,7 @@ const AutomaticPromoCodeCreationModal = ({
       onClose={handleClose}
       onAccept={handleSubmit}
       onReject={handleClose}
-      title="ایجاد خودکار کدهای تخفیف"
+      title="ایجاد خودکار کدهای پروموشن"
       acceptBtnText="ایجاد کدها"
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
@@ -116,7 +116,7 @@ const AutomaticPromoCodeCreationModal = ({
               label="پیشوند کدها"
               placeholder="مثال: WELCOME2024"
               required={true}
-              description="پیشوند برای همه کدهای تخفیف استفاده می‌شود (فقط حروف انگلیسی و اعداد، بدون فاصله)"
+              description="پیشوند برای همه کدهای پروموشن استفاده می‌شود (فقط حروف انگلیسی و اعداد، بدون فاصله)"
             />
 
             <Input
@@ -125,7 +125,7 @@ const AutomaticPromoCodeCreationModal = ({
               name="count"
               label="تعداد کدها"
               placeholder="10"
-              description="تعداد کدهای تخفیف که ایجاد می‌شوند (حداکثر ۱۰۰۰)"
+              description="تعداد کدهای پروموشن که ایجاد می‌شوند (حداکثر ۱۰۰۰)"
               required={true}
             />
           </div>

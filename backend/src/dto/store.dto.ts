@@ -395,13 +395,13 @@ export class SmsHistoryItemDto {
 
   @ApiProperty({
     description: "Message text preview (first 15 chars)",
-    example: "کد تخفیف شما...",
+    example: "کد پروموشن شما...",
   })
   messagePreview: string;
 
   @ApiProperty({
     description: "Full message text",
-    example: "کد تخفیف شما آماده است. از کد WELCOME10 استفاده کنید.",
+    example: "کد پروموشن شما آماده است. از کد WELCOME10 استفاده کنید.",
   })
   messageText: string;
 }

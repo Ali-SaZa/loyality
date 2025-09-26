@@ -71,7 +71,7 @@ const PromotionStatusModal = ({
       onOpenChange(false);
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "خطا در تغییر وضعیت تبلیغ");
+      setError(err instanceof Error ? err.message : "خطا در تغییر وضعیت پروموشن");
     } finally {
       setLoading(false);
     }
@@ -101,7 +101,7 @@ const PromotionStatusModal = ({
       onClose={handleClose}
       onAccept={methods.handleSubmit(onSubmit)}
       onReject={handleClose}
-      title="تغییر وضعیت تبلیغ"
+      title="تغییر وضعیت پروموشن"
       acceptBtnText="تغییر وضعیت"
       rejectBtnText="انصراف"
       acceptBtnColor="primary"
@@ -116,7 +116,7 @@ const PromotionStatusModal = ({
 
         <div className="text-center">
           <p className="text-text-dark mb-4">
-            تغییر وضعیت تبلیغ: <strong>{promotionTitle}</strong>
+            تغییر وضعیت پروموشن: <strong>{promotionTitle}</strong>
           </p>
           <p className="text-text-light text-sm mb-6">
             وضعیت فعلی:{" "}
@@ -133,15 +133,15 @@ const PromotionStatusModal = ({
             label="وضعیت جدید"
             placeholder="وضعیت جدید را انتخاب کنید"
             selectOptions={getStatusOptions()}
-            description="وضعیت جدید تبلیغ"
+            description="وضعیت جدید پروموشن"
             required={true}
           />
         </FormProvider>
 
         <div className="p-4 bg-warning-50 border border-warning-200 rounded-lg">
           <p className="text-warning text-sm">
-            <strong>توجه:</strong> تغییر وضعیت تبلیغ به "حذف شده" باعث حذف نرم
-            تمام کدهای تخفیف مرتبط خواهد شد.
+            <strong>توجه:</strong> تغییر وضعیت پروموشن به "حذف شده" باعث حذف نرم
+            تمام کدهای پروموشن مرتبط خواهد شد.
           </p>
         </div>
       </div>

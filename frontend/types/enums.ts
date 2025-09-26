@@ -162,7 +162,7 @@ export const PROMOTION_TYPE_CONFIG = {
 
 // Full promotion type options for select dropdowns
 export const PROMOTION_TYPE_OPTIONS = [
-  { code: PromotionType.POINTS_BASED, name: "تبلیغ امتیازی" },
+  { code: PromotionType.POINTS_BASED, name: "پروموشن امتیازی" },
 ];
 
 export const PROMOTION_STATUS_CONFIG = {
