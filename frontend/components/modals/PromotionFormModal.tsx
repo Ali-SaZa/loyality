@@ -231,6 +231,7 @@ const PromotionFormModal = ({
                 inputType="number"
                 description="مبلغی که مشتری باید خرید کند"
                 required={true}
+                disabled={isEditMode}
               />
 
               <Input
@@ -241,6 +242,7 @@ const PromotionFormModal = ({
                 inputType="number"
                 description="تعداد امتیازی که برای این خرید اعطا می‌شود"
                 required={true}
+                disabled={isEditMode}
               />
             </div>
 
