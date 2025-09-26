@@ -1,5 +1,7 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { HttpModule } from "@nestjs/axios";
+import { ConfigModule } from "@nestjs/config";
 import { PromoCodesController } from "./promo-codes.controller";
 import { PromoCodesService } from "./promo-codes.service";
 import { PromoCode, PromoCodeSchema } from "../schemas/promoCode.schema";
@@ -19,6 +21,8 @@ import { OtpModule } from "../otp/otp.module";
       { name: User.name, schema: UserSchema },
       { name: Transaction.name, schema: TransactionSchema },
     ]),
+    HttpModule,
+    ConfigModule,
     AuthModule,
     OtpModule,
   ],

@@ -6,6 +6,9 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { HttpService } from "@nestjs/axios";
+import { ConfigService } from "@nestjs/config";
+import { firstValueFrom } from "rxjs";
 import { PromoCode, PromoCodeDocument } from "../schemas/promoCode.schema";
 import { Promotion, PromotionDocument } from "../schemas/promotion.schema";
 import { Store, StoreDocument } from "../schemas/store.schema";
@@ -36,6 +39,23 @@ import {
 import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 import { OtpService } from "../otp/otp.service";
 
+interface KavehNegarResponse {
+  return: {
+    status: number;
+    message: string;
+  };
+  entries: Array<{
+    messageid: number;
+    message: string;
+    status: number;
+    statustext: string;
+    sender: string;
+    receptor: string;
+    date: number;
+    cost: number;
+  }>;
+}
+
 @Injectable()
 export class PromoCodesService {
   constructor(
@@ -48,6 +68,8 @@ export class PromoCodesService {
     @InjectModel(Transaction.name)
     private transactionModel: Model<TransactionDocument>,
     private otpService: OtpService,
+    private httpService: HttpService,
+    private configService: ConfigService,
   ) {}
 
   private transformPromoCodeToResponse(
@@ -940,14 +962,36 @@ export class PromoCodesService {
       );
     }
 
-    // Create OTP with fixed code 123456
+    // Generate a 6-digit OTP code
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Create OTP record with shorter expiration for security
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
     const otp = await this.otpService.create({
       phoneNumber: registerDto.phoneNumber,
-      code: "123456", // Fixed value as requested
+      code: otpCode,
       context: "promo-registration",
       expiresAt: expiresAt.toISOString(),
     });
+
+    // Send SMS using Kaveh Negar API directly
+    try {
+      const kavehNegarResponse = await this.sendOtpViaKavehNegar(
+        registerDto.phoneNumber,
+        otpCode,
+      );
+      console.log(
+        "✅ Promo Registration OTP SMS sent successfully via Kaveh Negar:",
+        kavehNegarResponse,
+      );
+    } catch (smsError) {
+      console.error("❌ Failed to send Promo Registration OTP SMS:", smsError);
+      // Don't throw error here - OTP is still created and can be used
+      // In development, log the OTP for testing
+      if (process.env.NODE_ENV === "development") {
+        console.log(`📱 Promo Registration OTP for ${registerDto.phoneNumber}: ${otpCode}`);
+      }
+    }
 
     return {
       message: PERSIAN_ERROR_MESSAGES.OTP_SENT,
@@ -1066,5 +1110,54 @@ export class PromoCodesService {
         createdAt: transaction.createdAt,
       },
     };
+  }
+
+  /**
+   * Send OTP via Kaveh Negar verify/lookup API
+   */
+  private async sendOtpViaKavehNegar(
+    phoneNumber: string,
+    otpCode: string,
+  ): Promise<KavehNegarResponse> {
+    const apiKey = this.configService.get<string>("KAVEH_NEGAR_API_KEY");
+    if (!apiKey) {
+      throw new Error("KAVEH_NEGAR_API_KEY is not configured");
+    }
+
+    const baseUrl = "https://api.kavenegar.com/v1";
+    const endpoint = `${baseUrl}/${apiKey}/verify/lookup.json`;
+
+    console.log(`📱 Sending Promo Registration OTP to ${phoneNumber} via Kaveh Negar`);
+
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(endpoint, {
+          params: {
+            receptor: phoneNumber,
+            token: otpCode,
+            template: "verify",
+          },
+        }),
+      );
+
+      const result: KavehNegarResponse = (response as any).data as KavehNegarResponse;
+
+      if (result.return.status === 200) {
+        console.log(`✅ Promo Registration OTP SMS sent successfully to ${phoneNumber}`);
+
+        // Log the actual message that was sent
+        if (result.entries && result.entries.length > 0) {
+          console.log(`📱 SMS Message: ${result.entries[0].message}`);
+        }
+
+        return result;
+      } else {
+        console.error(`❌ Failed to send Promo Registration OTP SMS: ${result.return.message}`);
+        throw new Error(`SMS sending failed: ${result.return.message}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error sending Promo Registration OTP SMS to ${phoneNumber}:`, error);
+      throw new Error(`Failed to send SMS: ${(error as Error).message}`);
+    }
   }
 }
