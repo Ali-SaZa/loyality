@@ -13,7 +13,7 @@ import Button from "@/components/formElements/Button";
 const Footer = () => {
   return (
     <footer className="bg-primary py-5">
-      <div className="container text-white">
+      <div className="container text-white mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="col-span-1">
             <div className="border border-white bg-white/50 w-fit rounded-xl p-1">
@@ -29,7 +29,7 @@ const Footer = () => {
             <div className="col-span-1 flex flex-col gap-6">
               <h6 className="font-bold text-lg">ارتباط با ما</h6>
               <div className="flex flex-col gap-4">
-                <p>تهران، ایران</p>
+                <p>مشهد، خیابان امام خمینی، پارک علم و فناوری نیتک طبقه۴</p>
                 <div className="flex items-center justify-between">
                   <a
                     href={`tel:${companyInfo.contactUs.phone.primary.replace(/-/g, "")}`}
