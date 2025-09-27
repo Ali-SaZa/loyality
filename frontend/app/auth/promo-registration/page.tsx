@@ -16,10 +16,12 @@ import {
   PromoCodeVerificationFormValidation,
 } from "@/validation/promoCodeRegistration";
 import LabelContent from "@/components/formElements/LabelContent";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Card, CardBody, } from "@heroui/card";
+import useAuth from "@/hooks/useAuth";
 
 const PromoCodeRegistration = () => {
   const router = useRouter();
+  const { saveUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [registrationStep, setRegistrationStep] = useState(0); // 0: Enter details, 1: Verify OTP, 2: Success
   const [isTimerComplete, setIsTimerComplete] = useState(false);
@@ -107,6 +109,21 @@ const PromoCodeRegistration = () => {
       console.log("✅ Promo Registration OTP Verification - Success:", res);
 
       if (res) {
+        // Auto-login user with the returned token
+        if (res.accessToken) {
+          await saveUser({
+            accessToken: res.accessToken,
+            refreshToken: res.accessToken, // Using accessToken as refreshToken for now
+            user: {
+              _id: res.user.id,
+              phoneNumber: res.user.phoneNumber,
+              firstName: res.user.firstName,
+              lastName: res.user.lastName,
+              role: res.user.role as any,
+            },
+          });
+        }
+
         setSuccessData(res);
         setRegistrationStep(2);
         toast.success(res.message || "تبریک! شما با موفقیت ثبت نام کردید");

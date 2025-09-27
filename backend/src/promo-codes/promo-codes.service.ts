@@ -8,6 +8,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import { firstValueFrom } from "rxjs";
 import { PromoCode, PromoCodeDocument } from "../schemas/promoCode.schema";
 import { Promotion, PromotionDocument } from "../schemas/promotion.schema";
@@ -67,6 +68,7 @@ export class PromoCodesService {
     private otpService: OtpService,
     private httpService: HttpService,
     private configService: ConfigService,
+    private jwtService: JwtService,
   ) {}
 
   private transformPromoCodeToResponse(
@@ -1181,8 +1183,24 @@ export class PromoCodesService {
     });
     await transaction.save();
 
+    // Generate JWT token for the user
+    const payload = {
+      phoneNumber: user.phoneNumber,
+      userId: user._id.toString(),
+      role: user.role,
+      iat: Math.floor(Date.now() / 1000),
+      type: "access",
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+      issuer: "loyalty-api",
+      audience: "loyalty-users",
+    });
+
     return {
       message: PERSIAN_ERROR_MESSAGES.LOYALTY_REGISTRATION_SUCCESS,
+      accessToken,
       user: {
         id: user._id.toString(),
         phoneNumber: user.phoneNumber,

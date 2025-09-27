@@ -79,6 +79,7 @@ export interface UserInfo {
 
 export interface PromoCodeVerificationResponse {
   message: string;
+  accessToken: string;
   user: UserInfo;
   store: StoreInfo;
   promotion: PromotionInfo;

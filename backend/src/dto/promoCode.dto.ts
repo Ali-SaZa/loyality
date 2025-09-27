@@ -396,6 +396,9 @@ export class PromoRegistrationResponseDto {
   @ApiProperty({ description: "Success message" })
   message: string;
 
+  @ApiProperty({ description: "JWT access token for authentication" })
+  accessToken: string;
+
   @ApiProperty({ description: "User information" })
   user: {
     id: string;
