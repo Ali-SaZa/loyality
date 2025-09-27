@@ -367,8 +367,8 @@ export class PromoCodesController {
   @ApiQuery({
     name: "status",
     required: false,
-    description: "Filter by status: used or unused",
-    enum: ["used", "unused"],
+    description: "Filter by status: registered, used, or unused",
+    enum: ["registered", "used", "unused"],
   })
   @ApiResponse({
     status: 200,
@@ -379,7 +379,7 @@ export class PromoCodesController {
   @ApiResponse({ status: 403, description: "Forbidden" })
   async getMyPromoCodesWithStoreInfo(
     @CurrentUser() user: any,
-    @Query("status") status?: "used" | "unused",
+    @Query("status") status?: "registered" | "used" | "unused",
   ): Promise<UserPromoCodesResponseDto> {
     if (user.role !== "customer") {
       throw new ForbiddenException(

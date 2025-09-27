@@ -910,7 +910,7 @@ export class PromoCodesService {
 
   async getCustomerPromoCodesWithStoreInfo(
     phoneNumber: string,
-    status?: "used" | "unused",
+    status?: "registered" | "used" | "unused",
   ): Promise<UserPromoCodesResponseDto> {
     // Find the user by phone number
     const targetUser = await this.userModel.findOne({ phoneNumber }).exec();
@@ -921,11 +921,14 @@ export class PromoCodesService {
     }
 
     // Build query for user's promo codes
-    const query: any = { userId: targetUser._id, status: { $ne: "deleted" } };
+    const query: any = { userId: targetUser._id };
 
     // Filter by status if provided
     if (status) {
       query.status = status;
+    } else {
+      // If no status filter, show both registered and used codes (exclude unused and deleted)
+      query.status = { $in: ["registered", "used"] };
     }
 
     // Get promo codes with promotion and store details
@@ -1194,6 +1197,7 @@ export class PromoCodesService {
 
     // Register promo code for user
     promoCode.userId = user._id;
+    promoCode.status = "registered";
     promoCode.registeredAt = new Date();
     await promoCode.save();
 
