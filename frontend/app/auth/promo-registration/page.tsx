@@ -15,6 +15,8 @@ import {
   PromoCodeRegistrationFormValidation,
   PromoCodeVerificationFormValidation,
 } from "@/validation/promoCodeRegistration";
+import LabelContent from "@/components/formElements/LabelContent";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 
 const PromoCodeRegistration = () => {
   const router = useRouter();
@@ -155,8 +157,8 @@ const PromoCodeRegistration = () => {
     verificationForm.reset();
   };
 
-  const handleGoToDashboard = () => {
-    router.push("/");
+  const handleGoToPromoCodes = () => {
+    router.push("/customer/promo-codes");
   };
 
   return (
@@ -243,56 +245,39 @@ const PromoCodeRegistration = () => {
       )}
 
       {registrationStep === 2 && successData && (
-        <div className="mt-6 space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">اطلاعات فروشگاه</h3>
-            <p className="text-sm">
-              <strong>نام:</strong> {successData.store.name}
-            </p>
-            <p className="text-sm">
-              <strong>آدرس:</strong> {successData.store.address.fullAddress}
-            </p>
-            {successData.store.description && (
-              <p className="text-sm">
-                <strong>توضیحات:</strong> {successData.store.description}
-              </p>
-            )}
-          </div>
+        <div className="mt-2 space-y-4">
+          <Card>
+            <CardBody className="text-right">
+              <h3 className="font-semibold mb-2">اطلاعات فروشگاه</h3>
+              <LabelContent label="نام" value={successData.store.name} />
+              <LabelContent
+                label="آدرس"
+                value={successData.store.address.fullAddress}
+              />
+              <LabelContent
+                label="توضیحات"
+                value={successData.store.description}
+              />
+            </CardBody>
+          </Card>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">اطلاعات پیشنهاد</h3>
-            <p className="text-sm">
-              <strong>عنوان:</strong> {successData.promotion.title}
-            </p>
-            <p className="text-sm">
-              <strong>قیمت:</strong>{" "}
-              {successData.promotion.price.toLocaleString()} تومان
-            </p>
-            <p className="text-sm">
-              <strong>امتیاز:</strong> {successData.promotion.points} امتیاز
-            </p>
-            {successData.promotion.description && (
-              <p className="text-sm">
-                <strong>توضیحات:</strong> {successData.promotion.description}
-              </p>
-            )}
-          </div>
+          <Card>
+            <CardBody className="text-right">
+              <h3 className="font-semibold mb-2">اطلاعات پروموشن</h3>
+              <LabelContent label="عنوان" value={successData.promotion.title} />
+              <LabelContent
+                label="قیمت"
+                value={successData.store.address.fullAddress}
+              />
+              <LabelContent
+                label="توضیحات"
+                value={successData.store.description}
+              />
+            </CardBody>
+          </Card>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">کد پروموشن شما</h3>
-            <p className="text-sm">
-              <strong>کد:</strong> {successData.promoCode.code}
-            </p>
-            <p className="text-sm">
-              <strong>وضعیت:</strong>{" "}
-              {successData.promoCode.status === "unused"
-                ? "آماده استفاده"
-                : successData.promoCode.status}
-            </p>
-          </div>
-
-          <Button fullWidth onClick={handleGoToDashboard}>
-            <p>برو به داشبورد</p>
+          <Button fullWidth onClick={handleGoToPromoCodes}>
+            <p>برو به کدهای پروموشن</p>
           </Button>
         </div>
       )}
@@ -322,14 +307,6 @@ const PromoCodeRegistration = () => {
               </Button>
             </div>
           )}
-        </div>
-      )}
-
-      {registrationStep === 2 && (
-        <div className="text-sm text-text-light-25 mx-auto mt-4">
-          <Button variant="light" onClick={handleBackToStart}>
-            ثبت نام جدید
-          </Button>
         </div>
       )}
     </div>

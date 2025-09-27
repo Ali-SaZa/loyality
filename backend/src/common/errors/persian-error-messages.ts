@@ -23,8 +23,10 @@ export const PERSIAN_ERROR_MESSAGES = {
   STORE_ALREADY_EXISTS: "فروشگاه قبلاً وجود دارد", // translated to Persian
   STORE_PHONE_EXISTS: "فروشگاه با این شماره موبایل قبلاً وجود دارد", // translated to Persian
   STORE_NOT_FOUND_FOR_USER: "فروشگاه برای این کاربر یافت نشد", // translated to Persian
-  STORE_ONLY_USERS_ACCESS: "فقط کاربران فروشگاه می‌توانند به این نقطه دسترسی داشته باشند", // translated to Persian
-  STORE_SMS_HISTORY_ACCESS: "فقط کاربران فروشگاه می‌توانند به تاریخچه پیامک دسترسی داشته باشند", // translated to Persian
+  STORE_ONLY_USERS_ACCESS:
+    "فقط کاربران فروشگاه می‌توانند به این نقطه دسترسی داشته باشند", // translated to Persian
+  STORE_SMS_HISTORY_ACCESS:
+    "فقط کاربران فروشگاه می‌توانند به تاریخچه پیامک دسترسی داشته باشند", // translated to Persian
 
   // Promotion related messages
   PROMOTION_NOT_FOUND: "پروموشن یافت نشد", // translated to Persian
@@ -40,8 +42,10 @@ export const PERSIAN_ERROR_MESSAGES = {
   TRANSACTION_PROMOTION_NOT_FOUND: "پروموشن یافت نشد", // translated to Persian
   TRANSACTION_CUSTOMER_ALREADY_EXISTS: "مشتری قبلاً وجود دارد", // translated to Persian
   TRANSACTION_STORE_NOT_FOUND_FOR_USER: "فروشگاه برای این کاربر یافت نشد", // translated to Persian
-  TRANSACTION_ONLY_STORE_USERS_ACCESS: "فقط کاربران فروشگاه می‌توانند به این نقطه دسترسی داشته باشند", // translated to Persian
-  TRANSACTION_OWN_ACCESS_ONLY: "شما فقط می‌توانید به تراکنش‌های خود دسترسی داشته باشید", // translated to Persian
+  TRANSACTION_ONLY_STORE_USERS_ACCESS:
+    "فقط کاربران فروشگاه می‌توانند به این نقطه دسترسی داشته باشند", // translated to Persian
+  TRANSACTION_OWN_ACCESS_ONLY:
+    "شما فقط می‌توانید به تراکنش‌های خود دسترسی داشته باشید", // translated to Persian
 
   // Admin related messages
   ADMIN_NOT_FOUND: "مدیر یافت نشد", // translated to Persian
@@ -99,8 +103,7 @@ export const PERSIAN_ERROR_MESSAGES = {
   PROMO_CODE_IS_VALID: "کد پروموشن معتبر است", // translated to Persian
   OTP_SENT_SUCCESSFULLY: "کد تایید با موفقیت ارسال شد", // translated to Persian
   OTP_SENT: "کد تأیید ارسال شد", // translated to Persian
-  LOYALTY_REGISTRATION_SUCCESS:
-    "تبریک! شما با موفقیت در برنامه وفاداری ثبت نام کردید", // translated to Persian
+  LOYALTY_REGISTRATION_SUCCESS: "تبریک! کد پروموشن شما با موفقیت ثبت شد", // translated to Persian
 
   // Customer related messages
   CUSTOMER_ALREADY_IN_STORE: "این مشتری قبلاً در فروشگاه شما ثبت نام کرده است", // translated to Persian
@@ -115,8 +118,10 @@ export const PERSIAN_ERROR_MESSAGES = {
   PROMO_CODE_FORBIDDEN_STORE:
     "شما فقط می‌توانید کدهای پروموشن فروشگاه خود را اعتبارسنجی کنید", // translated to Persian
   PROMO_CODE_ALREADY_EXISTS: "کد پروموشن قبلاً وجود دارد", // translated to Persian
-  PROMO_CODE_CANNOT_UPDATE_USED: "نمی‌توان کدهای پروموشن استفاده شده را به‌روزرسانی کرد", // translated to Persian
-  PROMO_CODE_CANNOT_DELETE_USED: "نمی‌توان کدهای پروموشن استفاده شده را حذف کرد", // translated to Persian
+  PROMO_CODE_CANNOT_UPDATE_USED:
+    "نمی‌توان کدهای پروموشن استفاده شده را به‌روزرسانی کرد", // translated to Persian
+  PROMO_CODE_CANNOT_DELETE_USED:
+    "نمی‌توان کدهای پروموشن استفاده شده را حذف کرد", // translated to Persian
   PROMO_CODE_COUNT_INVALID: "تعداد باید بین 1 تا 1000 باشد", // translated to Persian
   PROMO_CODE_USER_NOT_FOUND: "کاربر با این شماره تلفن یافت نشد", // translated to Persian
   PROMO_CODE_NOT_FOUND_AFTER_REGISTRATION: "کد پروموشن پس از ثبت‌نام یافت نشد", // translated to Persian

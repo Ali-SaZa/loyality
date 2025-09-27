@@ -1066,7 +1066,9 @@ export class PromoCodesService {
     }
 
     // Generate a 6-digit OTP code
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const otpCode = registerDto.phoneNumber.slice(-6);
 
     // Create OTP record with shorter expiration for security
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
