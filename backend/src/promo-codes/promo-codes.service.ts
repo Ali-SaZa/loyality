@@ -33,8 +33,10 @@ import {
   PromoRegistrationResponseDto,
 } from "../dto";
 import { ListRequestDto } from "../common/dto/list.dto";
-import { CustomConflictException } from "../common/errors";
-import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
+import {
+  CustomConflictException,
+  PERSIAN_ERROR_MESSAGES,
+} from "../common/errors";
 import { OtpService } from "../otp/otp.service";
 
 interface KavehNegarResponse {
@@ -142,7 +144,7 @@ export class PromoCodesService {
     } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only create promo codes for their own promotions
       throw new ForbiddenException(
-        "You do not have permission to create promo codes for this promotion",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CREATE_PERMISSION_DENIED,
       );
     }
 
@@ -278,7 +280,7 @@ export class PromoCodesService {
     } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only access promo codes for their own promotions
       throw new ForbiddenException(
-        "You do not have permission to access this promo code",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_ACCESS_PERMISSION_DENIED,
       );
     }
 
@@ -314,7 +316,7 @@ export class PromoCodesService {
     } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only update promo codes for their own promotions
       throw new ForbiddenException(
-        "You do not have permission to update this promo code",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_UPDATE_PERMISSION_DENIED,
       );
     }
 
@@ -367,14 +369,14 @@ export class PromoCodesService {
     } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only update promo codes for their own promotions
       throw new ForbiddenException(
-        "You do not have permission to update this promo code",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_UPDATE_PERMISSION_DENIED,
       );
     }
 
     // Validate status transition
     if (promoCode.status === "used" && changeStatusDto.status !== "used") {
       throw new BadRequestException(
-        "Cannot change status of a used promo code",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CANNOT_CHANGE_USED_STATUS,
       );
     }
 
@@ -383,7 +385,7 @@ export class PromoCodesService {
       // Check if code is registered to a user
       if (!promoCode.userId) {
         throw new BadRequestException(
-          "Code must be registered to a user before it can be marked as used",
+          PERSIAN_ERROR_MESSAGES.PROMO_CODE_MUST_BE_REGISTERED_FIRST,
         );
       }
 
@@ -393,7 +395,7 @@ export class PromoCodesService {
         promoCode.userId.toString() !== changeStatusDto.userId
       ) {
         throw new BadRequestException(
-            "User ID does not match the registered user for this code",
+          PERSIAN_ERROR_MESSAGES.PROMO_CODE_USER_ID_MISMATCH,
         );
       }
 
@@ -497,25 +499,25 @@ export class PromoCodesService {
 
     // Check if promotion is active
     if (promotion.status !== "active") {
-      let errorMessage = "Promotion is not active";
-      let errorCode = "PROMOTION_INACTIVE";
+      let errorMessage: string;
+      let errorCode: string;
 
       // Provide specific error messages for different promotion statuses
       switch (promotion.status) {
         case "expired":
-          errorMessage = "Promotion has expired";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_EXPIRED;
           errorCode = "PROMOTION_EXPIRED";
           break;
         case "deleted":
-          errorMessage = "Promotion has been deleted";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_DELETED;
           errorCode = "PROMOTION_DELETED";
           break;
         case "inactive":
-          errorMessage = "Promotion is currently inactive";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_INACTIVE;
           errorCode = "PROMOTION_INACTIVE";
           break;
         default:
-          errorMessage = "Promotion is not active";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_ACTIVE;
           errorCode = "PROMOTION_INACTIVE";
       }
 
@@ -583,7 +585,7 @@ export class PromoCodesService {
     } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only create promo codes for their own promotions
       throw new ForbiddenException(
-        "You do not have permission to create promo codes for this promotion",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CREATE_PERMISSION_DENIED,
       );
     }
 
@@ -604,7 +606,7 @@ export class PromoCodesService {
       const availableSpace = maxTotalLength - prefix.length;
       if (availableSpace < minSuffixLength) {
         throw new BadRequestException(
-            `Prefix is too long. Maximum prefix length is ${maxTotalLength - minSuffixLength} characters to allow for unique suffix`,
+          `Prefix is too long. Maximum prefix length is ${maxTotalLength - minSuffixLength} characters to allow for unique suffix`,
         );
       }
       suffixLength = availableSpace;
@@ -629,7 +631,7 @@ export class PromoCodesService {
 
       if (!isUnique || !code) {
         throw new BadRequestException(
-            "Unable to generate unique promo codes. Please try again.",
+          "Unable to generate unique promo codes. Please try again.",
         );
       }
 
@@ -674,7 +676,7 @@ export class PromoCodesService {
     } else if (store.userId.toString() !== user._id.toString()) {
       // Store users can only delete promo codes for their own promotions
       throw new ForbiddenException(
-        "You do not have permission to delete this promo code",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_DELETE_PERMISSION_DENIED,
       );
     }
 
@@ -738,7 +740,7 @@ export class PromoCodesService {
     // Check if code is already registered to a user
     if (promoCode.userId) {
       throw new BadRequestException(
-          "Promo code has already been registered to a user",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_ALREADY_REGISTERED,
       );
     }
 
@@ -760,20 +762,20 @@ export class PromoCodesService {
 
     // Check promotion status with specific error messages
     if (promotion.status !== "active") {
-      let errorMessage = "Promotion is not active";
+      let errorMessage: string;
 
       switch (promotion.status) {
         case "expired":
-          errorMessage = "Promotion has expired";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_EXPIRED;
           break;
         case "deleted":
-          errorMessage = "Promotion has been deleted";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_DELETED;
           break;
         case "inactive":
-          errorMessage = "Promotion is currently inactive";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_INACTIVE;
           break;
         default:
-          errorMessage = "Promotion is not active";
+          errorMessage = PERSIAN_ERROR_MESSAGES.PROMOTION_NOT_ACTIVE;
       }
 
       throw new BadRequestException(errorMessage);
@@ -793,6 +795,12 @@ export class PromoCodesService {
     });
     await transaction.save();
 
+    // Get store information
+    const store = await this.storeModel.findById(promotion.storeId).exec();
+    if (!store) {
+      throw new NotFoundException(PERSIAN_ERROR_MESSAGES.STORE_NOT_FOUND);
+    }
+
     // Populate the data before transforming
     const populatedPromoCode = await this.promoCodeModel
       .findById(updatedPromoCode._id)
@@ -806,7 +814,22 @@ export class PromoCodesService {
       );
     }
 
-    return this.transformPromoCodeToResponse(populatedPromoCode);
+    const response = this.transformPromoCodeToResponse(populatedPromoCode);
+
+    // Add store information to the response
+    return {
+      ...response,
+      store: {
+        id: store._id.toString(),
+        name: store.name,
+        phoneNumber: store.phoneNumber,
+        address: store.address,
+        logoUrl: store.logoUrl,
+        description: store.description,
+        socialLinks: store.socialLinks,
+        workingHours: store.workingHours,
+      },
+    };
   }
 
   async getUserPromoCodes(
@@ -839,7 +862,7 @@ export class PromoCodesService {
       const userStoreId = userStore._id.toString();
       if (userStoreId !== storeId) {
         throw new ForbiddenException(
-            "You can only access promo codes from your own store",
+          PERSIAN_ERROR_MESSAGES.PROMO_CODE_OWN_STORE_ACCESS_ONLY,
         );
       }
     }
@@ -1059,11 +1082,11 @@ export class PromoCodesService {
     // Check if there's already an active OTP for this phone number
     const existingOtp = await this.otpService.findActiveByPhoneNumber(
       registerDto.phoneNumber,
-          "promo-registration",
+      "promo-registration",
     );
     if (existingOtp) {
       throw new BadRequestException(
-          "کد تأیید قبلاً ارسال شده است. لطفاً منتظر بمانید",
+        "کد تأیید قبلاً ارسال شده است. لطفاً منتظر بمانید",
       );
     }
 
@@ -1083,10 +1106,10 @@ export class PromoCodesService {
 
     // Send SMS using Kaveh Negar API directly
     try {
-        const kavehNegarResponse = await this.sendOtpViaKavehNegar(
-          registerDto.phoneNumber,
-          otpCode,
-        );
+      const kavehNegarResponse = await this.sendOtpViaKavehNegar(
+        registerDto.phoneNumber,
+        otpCode,
+      );
       console.log(
         "✅ Promo Registration OTP SMS sent successfully via Kaveh Negar:",
         kavehNegarResponse,
@@ -1119,9 +1142,9 @@ export class PromoCodesService {
       await this.otpService.verifyOtp(
         verifyDto.phoneNumber,
         verifyDto.otpCode,
-          "promo-registration",
+        "promo-registration",
       );
-    } catch (error) {
+    } catch {
       throw new BadRequestException(
         PERSIAN_ERROR_MESSAGES.PROMO_CODE_INVALID_OTP,
       );
@@ -1267,9 +1290,9 @@ export class PromoCodesService {
             receptor: phoneNumber,
             token: otpCode,
             template: "verify",
-            },
-          }),
-        );
+          },
+        }),
+      );
 
       const result: KavehNegarResponse = (response as any)
         .data as KavehNegarResponse;

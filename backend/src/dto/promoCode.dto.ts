@@ -168,6 +168,22 @@ export class PromoCodeResponseDto {
     firstName?: string;
     lastName?: string;
   };
+
+  @ApiProperty({ required: false })
+  store?: {
+    id: string;
+    name: string;
+    phoneNumber: string;
+    address: {
+      province: string;
+      city: string;
+      fullAddress: string;
+    };
+    logoUrl?: string;
+    description?: string;
+    socialLinks?: any;
+    workingHours?: any;
+  };
 }
 
 // Validation Response DTO (includes promotion details)

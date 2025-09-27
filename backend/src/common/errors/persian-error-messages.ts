@@ -129,6 +129,25 @@ export const PERSIAN_ERROR_MESSAGES = {
   PROMO_CODE_PROMOTION_INACTIVE: "این پیشنهاد فعال نیست", // translated to Persian
   PROMO_CODE_INVALID_OTP: "کد تأیید نامعتبر یا منقضی شده است", // translated to Persian
 
+  // Additional promo code permission messages
+  PROMO_CODE_OWN_PHONE_ONLY: "شما فقط می‌توانید کدها را برای شماره موبایل خود ثبت کنید", // translated to Persian
+  PROMO_CODE_CREATE_PERMISSION_DENIED: "شما اجازه ایجاد کد پروموشن برای این پیشنهاد را ندارید", // translated to Persian
+  PROMO_CODE_ACCESS_PERMISSION_DENIED: "شما اجازه دسترسی به این کد پروموشن را ندارید", // translated to Persian
+  PROMO_CODE_UPDATE_PERMISSION_DENIED: "شما اجازه به‌روزرسانی این کد پروموشن را ندارید", // translated to Persian
+  PROMO_CODE_DELETE_PERMISSION_DENIED: "شما اجازه حذف این کد پروموشن را ندارید", // translated to Persian
+  PROMO_CODE_CUSTOMER_ACCESS_ONLY: "فقط مشتریان می‌توانند به کدهای پروموشن خود دسترسی داشته باشند", // translated to Persian
+  PROMO_CODE_ALREADY_REGISTERED: "کد پروموشن قبلاً به کاربری ثبت شده است", // translated to Persian
+  PROMO_CODE_CANNOT_CHANGE_USED_STATUS: "نمی‌توان وضعیت کد پروموشن استفاده شده را تغییر داد", // translated to Persian
+  PROMO_CODE_MUST_BE_REGISTERED_FIRST: "کد باید قبل از استفاده به کاربری ثبت شود", // translated to Persian
+  PROMO_CODE_USER_ID_MISMATCH: "شناسه کاربر با کاربر ثبت‌شده برای این کد مطابقت ندارد", // translated to Persian
+  PROMO_CODE_OWN_STORE_ACCESS_ONLY: "شما فقط می‌توانید به کدهای پروموشن فروشگاه خود دسترسی داشته باشید", // translated to Persian
+
+  // Promotion status messages
+  PROMOTION_NOT_ACTIVE: "پیشنهاد فعال نیست", // translated to Persian
+  PROMOTION_EXPIRED: "پیشنهاد منقضی شده است", // translated to Persian
+  PROMOTION_DELETED: "پیشنهاد حذف شده است", // translated to Persian
+  PROMOTION_INACTIVE: "پیشنهاد در حال حاضر غیرفعال است", // translated to Persian
+
   // Seeding related messages
   PROMOTIONS_SEEDING_REQUIRES_STORES:
     "برای پر کردن پروموشن‌ها، فروشگاه‌های موجود لازم است. از /seeding/seed برای پر کردن کامل استفاده کنید.", // translated to Persian

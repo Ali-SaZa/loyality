@@ -189,11 +189,8 @@ const PromoCodeRegistration = () => {
 
       {registrationStep === 1 && (
         <>
-          <p>
+          <p className="text-center text-gray-500">
             کد تایید برای تلفن همراه {registrationData?.phoneNumber} پیامک شد.
-          </p>
-          <p className="text-sm text-text-light-25 mt-2">
-            کد پروموشن: {registrationData?.promoCode}
           </p>
         </>
       )}
@@ -247,7 +244,7 @@ const PromoCodeRegistration = () => {
           >
             <Input
               autoFocus
-              className="mt-6 mb-6 items-center"
+              className="mb-6 items-center"
               generalType="otp"
               inputType="text"
               name="otpCode"
@@ -310,7 +307,7 @@ const PromoCodeRegistration = () => {
               ارسال مجدد کد
             </Button>
           ) : (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-2 mt-1">
               <div>
                 زمان باقی مانده تا دریافت مجدد کد :{" "}
                 <CountdownTimer

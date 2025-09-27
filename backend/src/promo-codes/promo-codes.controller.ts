@@ -11,6 +11,7 @@ import {
   Query,
   ForbiddenException,
 } from "@nestjs/common";
+import { PERSIAN_ERROR_MESSAGES } from "../common/errors";
 import {
   ApiTags,
   ApiOperation,
@@ -231,7 +232,7 @@ export class PromoCodesController {
   @ApiOperation({ summary: "Register a promo code to a user (Customer only)" })
   @ApiResponse({
     status: 200,
-    description: "Promo code registered successfully",
+    description: "Promo code registered successfully with store information",
     type: PromoCodeResponseDto,
   })
   @ApiResponse({ status: 400, description: "Bad request" })
@@ -248,7 +249,7 @@ export class PromoCodesController {
       user.phoneNumber !== registerDto.phoneNumber
     ) {
       throw new ForbiddenException(
-        "You can only register codes to your own phone number",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_OWN_PHONE_ONLY,
       );
     }
     return this.promoCodesService.registerCodeToUser(
@@ -346,7 +347,7 @@ export class PromoCodesController {
   ): Promise<UserPromoCodesResponseDto> {
     if (user.role !== "customer") {
       throw new ForbiddenException(
-        "Only customers can access their own promo codes",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CUSTOMER_ACCESS_ONLY,
       );
     }
     return this.promoCodesService.getUserPromoCodes(
@@ -382,7 +383,7 @@ export class PromoCodesController {
   ): Promise<UserPromoCodesResponseDto> {
     if (user.role !== "customer") {
       throw new ForbiddenException(
-        "Only customers can access their own promo codes",
+        PERSIAN_ERROR_MESSAGES.PROMO_CODE_CUSTOMER_ACCESS_ONLY,
       );
     }
     return this.promoCodesService.getCustomerPromoCodesWithStoreInfo(
