@@ -281,11 +281,15 @@ const PromoCodeRegistration = () => {
               <LabelContent label="عنوان" value={successData.promotion.title} />
               <LabelContent
                 label="قیمت"
-                value={successData.store.address.fullAddress}
+                value={successData.promotion.price.toLocaleString()}
               />
               <LabelContent
-                label="توضیحات"
-                value={successData.store.description}
+                label="امتیاز"
+                value={successData.promotion.points.toLocaleString()}
+              />
+              <LabelContent
+                label="یادداشت"
+                value={successData.notes}
               />
             </CardBody>
           </Card>

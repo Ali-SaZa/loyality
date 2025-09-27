@@ -136,7 +136,7 @@ export const PERSIAN_ERROR_MESSAGES = {
   PROMO_CODE_UPDATE_PERMISSION_DENIED: "شما اجازه به‌روزرسانی این کد پروموشن را ندارید", // translated to Persian
   PROMO_CODE_DELETE_PERMISSION_DENIED: "شما اجازه حذف این کد پروموشن را ندارید", // translated to Persian
   PROMO_CODE_CUSTOMER_ACCESS_ONLY: "فقط مشتریان می‌توانند به کدهای پروموشن خود دسترسی داشته باشند", // translated to Persian
-  PROMO_CODE_ALREADY_REGISTERED: "کد پروموشن قبلاً به کاربری ثبت شده است", // translated to Persian
+  PROMO_CODE_ALREADY_REGISTERED: "کد پروموشن قبلاً برای کاربری ثبت شده است", // translated to Persian
   PROMO_CODE_CANNOT_CHANGE_USED_STATUS: "نمی‌توان وضعیت کد پروموشن استفاده شده را تغییر داد", // translated to Persian
   PROMO_CODE_MUST_BE_REGISTERED_FIRST: "کد باید قبل از استفاده به کاربری ثبت شود", // translated to Persian
   PROMO_CODE_USER_ID_MISMATCH: "شناسه کاربر با کاربر ثبت‌شده برای این کد مطابقت ندارد", // translated to Persian

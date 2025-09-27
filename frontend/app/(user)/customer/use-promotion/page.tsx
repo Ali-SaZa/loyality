@@ -1,6 +1,5 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -11,11 +10,15 @@ import Input from "@/components/formElements/Input";
 import useAuth from "@/hooks/useAuth";
 import { promoCodeRegistrationService } from "@/services/promoCodeRegistration";
 import { UsePromotionFormValidation } from "@/validation/usePromotion";
+import { Card, CardBody } from "@heroui/card";
+import LabelContent from "@/components/formElements/LabelContent";
+import { useRouter } from "next/navigation";
 
 const UsePromotion = () => {
   const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [successData, setSuccessData] = useState<any>(null);
 
   const form = useForm<z.infer<typeof UsePromotionFormValidation>>({
     resolver: zodResolver(UsePromotionFormValidation),
@@ -43,6 +46,9 @@ const UsePromotion = () => {
 
       console.log("✅ Use Promotion - Success:", res);
       toast.success(res.message || "کد پروموشن با موفقیت ثبت شد!");
+
+      // Set success data to show promotion details
+      setSuccessData(res);
 
       // Reset form after success
       form.reset();
@@ -87,6 +93,47 @@ const UsePromotion = () => {
           </Button>
         </form>
       </FormProvider>
+
+      {successData &&  (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <Card className="col-span-1">
+            <CardBody className="text-right">
+              <h3 className="font-semibold mb-2">اطلاعات فروشگاه</h3>
+              <LabelContent label="نام" value={successData.store.name} />
+              <LabelContent
+                label="آدرس"
+                value={successData.store.address.fullAddress}
+              />
+              <LabelContent
+                label="توضیحات"
+                value={successData.store.description}
+              />
+            </CardBody>
+          </Card>
+
+          <Card className="col-span-1">
+            <CardBody className="text-right">
+              <h3 className="font-semibold mb-2">اطلاعات پروموشن</h3>
+              <LabelContent label="عنوان" value={successData.promotion.title} />
+              <LabelContent
+                label="قیمت"
+                value={successData.promotion.price.toLocaleString()}
+              />
+              <LabelContent
+                label="امتیاز"
+                value={successData.promotion.points.toLocaleString()}
+              />
+              <LabelContent
+                label="یادداشت"
+                value={successData.notes}
+              />
+            </CardBody>
+          </Card>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };
