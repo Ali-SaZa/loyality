@@ -59,11 +59,11 @@ export class TransactionsSeeder extends BaseSeeder<TransactionDocument> {
 
     // Get Doris Accessories store
     const dorisStore = this.stores.find(
-      (store) => store.name === "Doris Accessories",
+      (store) => store.phoneNumber === "09387114120",
     );
 
     if (!dorisStore) {
-      throw new Error("Doris Accessories store not found");
+      throw new Error("Doris Accessories store (09387114120) not found");
     }
 
     // Get used promo codes for the customer (first 15 codes)

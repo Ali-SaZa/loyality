@@ -31,11 +31,11 @@ export class PromotionsSeeder extends BaseSeeder<PromotionDocument> {
 
     // Find Doris Accessories store
     const dorisStore = this.stores.find(
-      (store) => store.name === "Doris Accessories",
+      (store) => store.phoneNumber === "09387114120",
     );
 
     if (!dorisStore) {
-      throw new Error("Doris Accessories store not found");
+      throw new Error("Doris Accessories store (09387114120) not found");
     }
 
     return [

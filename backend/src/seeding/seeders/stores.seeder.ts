@@ -58,7 +58,7 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         address: {
           province: "خراسان رضوی",
           city: "مشهد",
-          fullAddress: "مشهد,خراسان رضوی, احمد آباد",
+          fullAddress: "خراسان رضوی, مشهد, احمد آباد",
         },
         status: "active",
         planExpiryDate: new Date("2024-12-31"),
@@ -84,7 +84,7 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         address: {
           province: "Mashhad",
           city: "Mashhad",
-          fullAddress: "Mashhad Mall, Mashhad, Iran",
+          fullAddress: "مشهد,خراسان رضوی, احمد آباد",
         },
         status: "active",
         planExpiryDate: new Date("2025-06-30"),
@@ -111,7 +111,7 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         address: {
           province: "خراسان رضوی",
           city: "مشهد",
-          fullAddress: "مشهد,خراسان رضوی, احمد آباد",
+          fullAddress: "خراسان رضوی, مشهد, جانباز",
         },
         status: "active",
         planExpiryDate: new Date("2025-06-30"),
