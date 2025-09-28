@@ -11,11 +11,10 @@ import PromoCodeIcon from "@/components/icons/PromoCodeIcon";
 import UserIcon from "@/components/icons/UserIcon";
 import MailIcon from "@/components/icons/MailIcon";
 import { getStoreStatistics, StoreStatistics } from "@/services/stores";
-import useAlertModal from "@/hooks/useAlertModal";
+import { toast } from "react-hot-toast";
 
 const StoreDashboard = () => {
   const router = useRouter();
-  const { showAlert } = useAlertModal();
   const [statistics, setStatistics] = useState<StoreStatistics | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,14 +25,14 @@ const StoreDashboard = () => {
         const data = await getStoreStatistics();
         setStatistics(data);
       } catch (error) {
-        showAlert("خطا در بارگذاری آمار فروشگاه");
+        toast.error("خطا در بارگذاری آمار فروشگاه");
       } finally {
         setLoading(false);
       }
     };
 
     fetchStatistics();
-  }, [showAlert]);
+  }, []);
 
   const stats = statistics ? [
     {

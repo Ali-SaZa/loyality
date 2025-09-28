@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import { GlobalExceptionFilter } from "./common/filters/global-exception.filter";
+import { Request, Response, NextFunction } from "express";
 import * as os from "os";
 
 async function bootstrap() {
@@ -44,7 +45,7 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Security headers and cache control
-  app.use((req, res, next) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "DENY");
     res.setHeader("X-XSS-Protection", "1; mode=block");
@@ -98,23 +99,47 @@ async function bootstrap() {
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
+    "http://127.0.0.1:4444",
+    "http://192.168.100.195:4444",
+    "http://192.168.100.100:4444",
+    "http://0.0.0.0:5555",
     "https://gardou.ir",
     "https://www.gardou.ir",
   ];
 
   app.enableCors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+
+      // Allow requests with no origin (like mobile apps, curl requests, or server-to-server)
+      if (!origin) {
+        console.log("Allowing request with no origin");
+        return callback(null, true);
+      }
+
+      // Allow all HTTP origins in development for easier testing
+      if (
+        process.env.NODE_ENV === "development" &&
+        origin.startsWith("http://")
+      ) {
+        console.log("Allowing HTTP origin in development:", origin);
+        return callback(null, true);
+      }
 
       if (allowedOrigins.includes(origin)) {
+        console.log("Origin allowed:", origin);
         return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"), false);
       }
+
+      console.log("Origin rejected:", origin);
+      return callback(new Error("Not allowed by CORS"), false);
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Origin",
+      "X-Requested-With",
+    ],
     credentials: true,
   });
 
