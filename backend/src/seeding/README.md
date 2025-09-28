@@ -20,6 +20,7 @@ This module provides comprehensive database seeding functionality for the Loyalt
 - **Ali Sagheb** (09368024951) - System administrator with full permissions
 - **Saeid Kargaran** (09387114120) - Store administrator for Doris Accessories
 - **Saza Miri** (09215501953) - Store administrator for Mashhad Mall
+- **Mitra Zaghian** (09933503158) - Store administrator for Mashhad Mall
 - **مشتری تستی** (09051455365) - Regular customer for testing
 
 ### Stores (2 stores)

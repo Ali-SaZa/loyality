@@ -36,6 +36,12 @@ export class UsersSeeder extends BaseSeeder<UserDocument> {
         role: "store",
       },
       {
+        phoneNumber: "09933503158",
+        firstName: "Mitra",
+        lastName: "Zaghian",
+        role: "store",
+      },
+      {
         phoneNumber: "09051455365",
         firstName: "مشتری",
         lastName: "تستی",

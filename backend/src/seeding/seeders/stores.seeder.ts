@@ -36,11 +36,18 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
       (user) => user.phoneNumber === "09215501953",
     ); // Mashhad Mall
 
+    const storeUser3 = this.users.find(
+      (user) => user.phoneNumber === "09933503158",
+    ); // Mashhad Mall
+
     if (!storeUser1) {
       throw new Error("Store user (09387114120) not found");
     }
     if (!storeUser2) {
       throw new Error("Store user (09215501953) not found");
+    }
+    if (!storeUser3) {
+      throw new Error("Store user (09933503158) not found");
     }
 
     return [
@@ -89,6 +96,32 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
           website: "https://Mashhadmall.ir",
           instagram: "@Mashhadmall",
           telegram: "@Mashhadmall",
+        },
+        workingHours: {
+          open: "10:00",
+          close: "22:00",
+        },
+        smsBalance: 200,
+        lastSmsSentAt: null,
+        totalSmsSent: 0,
+      },
+      {
+        name: "Sofa Beauty",
+        phoneNumber: "09933503158",
+        userId: storeUser3._id,
+        address: {
+          province: "Mashhad",
+          city: "Mashhad",
+          fullAddress: "Mashhad Mall, Mashhad, Iran",
+        },
+        status: "active",
+        planExpiryDate: new Date("2025-06-30"),
+        logoUrl: "https://example.com/Mashhad-mall-logo.jpg",
+        description: "Sofa",
+        socialLinks: {
+          website: "https://Sofa.ir",
+          instagram: "@Sofa",
+          telegram: "@Sofa",
         },
         workingHours: {
           open: "10:00",
