@@ -15,6 +15,7 @@ import {
 import { promoCodesService, PromoCode } from "@/services/promo-codes";
 import useLoading from "@/hooks/useLoading";
 import { formatDateToPersianJalali, formatPhoneNumber } from "@/helpers";
+import { getPromoCodeStatusConfig } from "@/types/enums";
 
 const CustomerPromoCodes = () => {
   const { setLoading } = useLoading();
@@ -49,24 +50,12 @@ const CustomerPromoCodes = () => {
     setFilterStatus(status);
   };
 
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case "used":
-        return {
-          text: "استفاده شده",
-          color: "success" as const,
-        };
-      case "unused":
-        return {
-          text: "استفاده نشده",
-          color: "warning" as const,
-        };
-      default:
-        return {
-          text: "نامشخص",
-          color: "default" as const,
-        };
-    }
+  const getStatusText = (status: string) => {
+    return getPromoCodeStatusConfig(status).text;
+  };
+
+  const getStatusColor = (status: string) => {
+    return getPromoCodeStatusConfig(status).color;
   };
 
   return (
@@ -104,101 +93,89 @@ const CustomerPromoCodes = () => {
         </Button>
       </div>
       {/* Promo Codes Table */}
-      {promoCodes.length > 0 && (
-        <Card>
-          <CardBody>
-            <div className="overflow-x-auto">
-              <Table aria-label="Promo codes table">
-                <TableHeader>
-                  <TableColumn>نام فروشگاه</TableColumn>
-                  <TableColumn>امتیاز</TableColumn>
-                  <TableColumn>قیمت</TableColumn>
-                  <TableColumn>آدرس فروشگاه</TableColumn>
-                  <TableColumn>شماره تماس</TableColumn>
-                  <TableColumn>وضعیت</TableColumn>
-                  <TableColumn>تاریخ ثبت</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  {promoCodes.map((promoCode) => {
-                    const statusConfig = getStatusConfig(promoCode.status);
-                    return (
-                      <TableRow key={promoCode.id}>
-                        <TableCell>
-                          <div className="font-medium">
-                            {promoCode.promotion?.store?.name || "نامشخص"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium text-primary">
-                            {promoCode.promotion?.points || 0} امتیاز
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">
-                            {promoCode.promotion?.price
-                              ? `${promoCode.promotion.price.toLocaleString()} تومان`
-                              : "نامشخص"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm text-gray-600 max-w-[200px] truncate">
-                            {promoCode.promotion?.store?.address?.fullAddress ||
-                              "نامشخص"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">
-                            {promoCode.promotion?.store?.phoneNumber
-                              ? formatPhoneNumber(
-                                  promoCode.promotion.store.phoneNumber
-                                )
-                              : "نامشخص"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            color={statusConfig.color}
-                            variant="flat"
-                            size="sm"
-                          >
-                            {statusConfig.text}
-                          </Chip>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm text-gray-600">
-                            {promoCode.registeredAt
-                              ? formatDateToPersianJalali(
-                                  promoCode.registeredAt
-                                )
-                              : "نامشخص"}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          </CardBody>
-        </Card>
-      )}
-
-      {/* Empty State */}
-      {promoCodes.length === 0 && !message && (
-        <Card>
-          <CardBody>
-            <div className="text-center py-8">
-              <div className="text-gray-400 text-6xl mb-4">📋</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                کد پروموشنی یافت نشد
-              </h3>
-              <p className="text-gray-600">
-                در حال حاضر کد پروموشنی برای نمایش وجود ندارد.
-              </p>
-            </div>
-          </CardBody>
-        </Card>
-      )}
+      <Card>
+        <CardBody>
+          <div className="overflow-x-auto">
+            <Table aria-label="Promo codes table">
+              <TableHeader>
+                <TableColumn>نام فروشگاه</TableColumn>
+                <TableColumn>امتیاز</TableColumn>
+                <TableColumn>قیمت</TableColumn>
+                <TableColumn>آدرس فروشگاه</TableColumn>
+                <TableColumn>شماره تماس</TableColumn>
+                <TableColumn>وضعیت</TableColumn>
+                <TableColumn>تاریخ ثبت</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {promoCodes.length > 0 ? (
+                  promoCodes.map((promoCode) => (
+                    <TableRow key={promoCode.id}>
+                      <TableCell>
+                        <div className="font-medium">
+                          {promoCode.promotion?.store?.name || "نامشخص"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium text-primary">
+                          {promoCode.promotion?.points || 0} امتیاز
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">
+                          {promoCode.promotion?.price
+                            ? `${promoCode.promotion.price.toLocaleString()} تومان`
+                            : "نامشخص"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-gray-600 max-w-[200px] truncate">
+                          {promoCode.promotion?.store?.address?.fullAddress ||
+                            "نامشخص"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">
+                          {promoCode.promotion?.store?.phoneNumber
+                            ? formatPhoneNumber(
+                                promoCode.promotion.store.phoneNumber
+                              )
+                            : "نامشخص"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          color={getStatusColor(promoCode.status)}
+                          variant="flat"
+                          size="sm"
+                        >
+                          {getStatusText(promoCode.status)}
+                        </Chip>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-gray-600">
+                          {promoCode.registeredAt
+                            ? formatDateToPersianJalali(
+                                promoCode.registeredAt
+                              )
+                            : "نامشخص"}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8">
+                      <div className="text-gray-500">
+                        کد پروموشنی یافت نشد.
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 };

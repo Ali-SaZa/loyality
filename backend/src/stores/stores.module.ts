@@ -7,6 +7,7 @@ import { User, UserSchema } from "../schemas/user.schema";
 import { Sms, SmsSchema } from "../schemas/sms.schema";
 import { Promotion, PromotionSchema } from "../schemas/promotion.schema";
 import { PromoCode, PromoCodeSchema } from "../schemas/promoCode.schema";
+import { Transaction, TransactionSchema } from "../schemas/transaction.schema";
 import { SmsModule } from "../sms/sms.module";
 import { TransactionsModule } from "../transactions/transactions.module";
 
@@ -18,6 +19,7 @@ import { TransactionsModule } from "../transactions/transactions.module";
       { name: Sms.name, schema: SmsSchema },
       { name: Promotion.name, schema: PromotionSchema },
       { name: PromoCode.name, schema: PromoCodeSchema },
+      { name: Transaction.name, schema: TransactionSchema },
     ]),
     SmsModule,
     TransactionsModule,

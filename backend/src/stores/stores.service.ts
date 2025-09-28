@@ -30,6 +30,10 @@ import {
 } from "../common/errors";
 import { SmsService } from "../sms/sms.service";
 import { TransactionsService } from "../transactions/transactions.service";
+import {
+  Transaction,
+  TransactionDocument,
+} from "../schemas/transaction.schema";
 import { calculateSmsCount } from "../common/utils/sms.utils";
 
 interface UserContext {
@@ -65,6 +69,8 @@ export class StoresService {
     private promotionModel: Model<PromotionDocument>,
     @InjectModel(PromoCode.name)
     private promoCodeModel: Model<PromoCodeDocument>,
+    @InjectModel(Transaction.name)
+    private transactionModel: Model<TransactionDocument>,
     private smsService: SmsService,
     private transactionsService: TransactionsService,
   ) {}
@@ -484,31 +490,28 @@ export class StoresService {
         ])
         .exec(),
 
-      // 3. Customers registered today (all customers, not store-specific)
-      this.userModel
-        .countDocuments({
-          role: "customer",
-          status: "active",
+      // 3. Customers registered today for this store
+      this.transactionModel
+        .distinct("customerId", {
+          storeId: storeObjectId,
           createdAt: { $gte: today, $lt: tomorrow },
         })
-        .exec(),
+        .then((customerIds) => customerIds.length),
 
-      // 4. Customers registered this month (all customers, not store-specific)
-      this.userModel
-        .countDocuments({
-          role: "customer",
-          status: "active",
+      // 4. Customers registered this month for this store
+      this.transactionModel
+        .distinct("customerId", {
+          storeId: storeObjectId,
           createdAt: { $gte: thisMonthStart, $lt: nextMonthStart },
         })
-        .exec(),
+        .then((customerIds) => customerIds.length),
 
-      // 5. Total customers (all time, all customers, not store-specific)
-      this.userModel
-        .countDocuments({
-          role: "customer",
-          status: "active",
+      // 5. Total customers for this store (all time)
+      this.transactionModel
+        .distinct("customerId", {
+          storeId: storeObjectId,
         })
-        .exec(),
+        .then((customerIds) => customerIds.length),
 
       // 6. Total messages sent by this store (using store user's ID)
       this.smsModel

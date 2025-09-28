@@ -37,6 +37,7 @@ export enum PromoCodeStatus {
   UNUSED = "unused",
   USED = "used",
   DELETED = "deleted",
+  REGISTERED = "registered",
 }
 
 export enum ScratchCardStatus {
@@ -196,6 +197,10 @@ export const PROMO_CODE_STATUS_CONFIG = {
   [PromoCodeStatus.DELETED]: {
     text: "حذف شده",
     color: "danger" as const,
+  },
+  [PromoCodeStatus.REGISTERED]: {
+    text: "ثبت شده",
+    color: "primary" as const,
   },
 };
 

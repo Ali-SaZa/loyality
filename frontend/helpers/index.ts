@@ -343,7 +343,7 @@ export const formatDateToPersianJalali = (date: Date | string): string => {
 
   // تبدیل به زمان ایران با استفاده از timeZone
   const iranDate = new Date(
-    dateObj.toLocaleString("en-US", { timeZone: "Asia/Mashhad" })
+    dateObj.toLocaleString("en-US", { timeZone: "Asia/Tehran" })
   );
 
   // تبدیل به تقویم جلالی

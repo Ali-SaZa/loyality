@@ -79,9 +79,9 @@ export default function LandingPageClient() {
                 size="lg"
                 color="secondary"
                 className="px-8 py-3 text-lg"
-                onClick={() => router.push('/auth')}
+                onClick={() => router.push('/auth/promo-registration')}
               >
-                همین الان شروع کنید
+                ثبت کد پروموشن
               </Button>
               <Button
                 size="lg"

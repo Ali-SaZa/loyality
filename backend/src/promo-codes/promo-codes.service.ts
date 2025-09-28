@@ -925,7 +925,12 @@ export class PromoCodesService {
 
     // Filter by status if provided
     if (status) {
-      query.status = status;
+      if (status === "unused") {
+        // When requesting unused, also include registered codes
+        query.status = { $in: ["unused", "registered"] };
+      } else {
+        query.status = status;
+      }
     } else {
       // If no status filter, show both registered and used codes (exclude unused and deleted)
       query.status = { $in: ["registered", "used"] };
