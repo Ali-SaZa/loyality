@@ -40,8 +40,15 @@ const WorkingHoursValidation = z
 
 // Store self-update validation (restricted fields only)
 export const StoreSelfUpdateValidation = z.object({
-  storeNameDisplay: z.string().optional(),
-  phoneNumberDisplay: z.string().optional(),
+  name: z
+    .string()
+    .min(2, "نام فروشگاه حداقل باید ۲ کاراکتر باشد.")
+    .max(100, "نام فروشگاه حداکثر ۱۰۰ کاراکتر باشد.")
+    .optional(),
+  phoneNumber: z
+    .string()
+    .regex(/^09\d{9}$/, "شماره تلفن معتبر نیست")
+    .optional(),
   address: StoreAddressValidation.optional(),
   logoUrl: z.string().url("آدرس لوگو معتبر نیست").optional().or(z.literal("")),
   description: z

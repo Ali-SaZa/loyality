@@ -52,19 +52,18 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
 
     return [
       {
-        name: "Doris Accessories",
+        name: "دوریس اکسسوری",
         phoneNumber: "09387114120",
         userId: storeUser1._id,
         address: {
-          province: "Mashhad",
-          city: "Mashhad",
-          fullAddress: "Valiasr Street, Mashhad, Iran",
+          province: "خراسان رضوی",
+          city: "مشهد",
+          fullAddress: "مشهد,خراسان رضوی, احمد آباد",
         },
         status: "active",
         planExpiryDate: new Date("2024-12-31"),
         logoUrl: "https://example.com/doris-accessories-logo.jpg",
-        description:
-          "Premium accessories store with comprehensive loyalty program",
+        description: "فروشگاه اکسسوری با برندهای معتبر و کیفیت بالا",
         socialLinks: {
           website: "https://dorisaccessories.ir",
           instagram: "@dorisaccessories",
@@ -110,18 +109,18 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         phoneNumber: "09933503158",
         userId: storeUser3._id,
         address: {
-          province: "Mashhad",
-          city: "Mashhad",
-          fullAddress: "Mashhad Mall, Mashhad, Iran",
+          province: "خراسان رضوی",
+          city: "مشهد",
+          fullAddress: "مشهد,خراسان رضوی, احمد آباد",
         },
         status: "active",
         planExpiryDate: new Date("2025-06-30"),
         logoUrl: "https://example.com/Mashhad-mall-logo.jpg",
-        description: "Sofa",
+        description: "فروشگاه بهداشتی و زیبایی",
         socialLinks: {
           website: "https://Sofa.ir",
-          instagram: "@Sofa",
-          telegram: "@Sofa",
+          instagram: "@SofaBeauty",
+          telegram: "@SofaBeauty",
         },
         workingHours: {
           open: "10:00",

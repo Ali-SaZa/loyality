@@ -13,13 +13,12 @@ import {
   StoreSelfUpdateData,
 } from "@/validation/storeSelfUpdate";
 import { getCurrentStore, updateCurrentStore, Store } from "@/services/stores";
-import useAlertModal from "@/hooks/useAlertModal";
 import useLoading from "@/hooks/useLoading";
 import SettingIcon from "@/components/icons/SettingIcon";
+import { toast } from "react-hot-toast";
 
 const StoreInformationPage = () => {
   const router = useRouter();
-  const { showAlert } = useAlertModal();
   const { setLoading } = useLoading();
   const [store, setStore] = useState<Store | null>(null);
 
@@ -45,10 +44,10 @@ const StoreInformationPage = () => {
 
         // Set form values
         reset({
-          storeNameDisplay: storeData.name,
-          phoneNumberDisplay: storeData.phoneNumber,
           address: storeData.address,
           logoUrl: storeData.logoUrl || "",
+          name: storeData.name || "",
+          phoneNumber: storeData.phoneNumber || "",
           description: storeData.description || "",
           socialLinks: storeData.socialLinks || {
             website: "",
@@ -61,24 +60,26 @@ const StoreInformationPage = () => {
           },
         });
       } catch (error) {
-        showAlert("خطا در بارگذاری اطلاعات فروشگاه");
+        toast.error("خطا در بارگذاری اطلاعات فروشگاه");
       } finally {
         setLoading(false);
       }
     };
 
     loadStore();
-  }, [reset, showAlert, setLoading]);
+  }, [reset, setLoading]);
 
   const onSubmit = async (data: StoreSelfUpdateData) => {
     try {
       setLoading(true);
 
-      // Clean up empty strings
+      // Clean up empty strings and remove display-only fields
       const cleanedData = {
-        ...data,
+        address: data.address,
         logoUrl: data.logoUrl || undefined,
-        description: data.description || undefined,
+        name: data.name || undefined,
+        phoneNumber: data.phoneNumber || undefined,
+        description: data.description,
         socialLinks: data.socialLinks
           ? {
               website: data.socialLinks.website || undefined,
@@ -86,14 +87,15 @@ const StoreInformationPage = () => {
               telegram: data.socialLinks.telegram || undefined,
             }
           : undefined,
+        workingHours: data.workingHours,
       };
 
       const updatedStore = await updateCurrentStore(cleanedData);
       setStore(updatedStore);
 
-      showAlert("اطلاعات فروشگاه با موفقیت به‌روزرسانی شد");
+      toast.success("اطلاعات فروشگاه با موفقیت به‌روزرسانی شد");
     } catch (error) {
-      showAlert("خطا در به‌روزرسانی اطلاعات فروشگاه");
+      toast.error("خطا در به‌روزرسانی اطلاعات فروشگاه");
     } finally {
       setLoading(false);
     }
@@ -134,47 +136,53 @@ const StoreInformationPage = () => {
               <h3 className="text-lg font-semibold">اطلاعات اصلی فروشگاه</h3>
             </CardHeader>
             <CardBody className="grid grid-cols-1 md:grid-cols-3 gap-4">
-               {/* Store Name (Read-only) */}
-               <Input
-                 generalType="input"
-                 name="storeNameDisplay"
-                 label="نام فروشگاه"
-                 placeholder="برادران حسن زاده"
-                 disabled={true}
-               />
+              <Input
+                generalType="input"
+                name="name"
+                label="نام فروشگاه"
+                placeholder="برادران حسن زاده"
+                required={true}
+              />
 
-               {/* Phone Number (Read-only) */}
-               <Input
-                 generalType="input"
-                 name="phoneNumberDisplay"
-                 label="شماره تلفن"
-                 placeholder="شماره تلفن"
-                 disabled={true}
-               />
+              <Input
+                generalType="input"
+                name="phoneNumber"
+                label="شماره تلفن"
+                placeholder="09123456789"
+                required={true}
+              />
+
+              <Input
+                generalType="textarea"
+                name="description"
+                label="توضیحات"
+                placeholder="توضیحات فروشگاه..."
+              />
 
               {/* Logo URL */}
-              <Input
+              {/* <Input
                 generalType="input"
                 name="logoUrl"
                 label="آدرس لوگو"
                 placeholder="https://example.com/logo.jpg"
-              />
+              /> */}
             </CardBody>
           </Card>
 
           {/* Address Information */}
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-semibold">اطلاعات آدرس و ساعتکاری</h3>
+              <h3 className="text-lg font-semibold">اطلاعات آدرس </h3>
             </CardHeader>
             <CardBody className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Province */}
                 <Input
                   generalType="input"
                   name="address.province"
                   label="استان"
                   placeholder="تهران"
+                  required={true}
                 />
 
                 {/* City */}
@@ -183,36 +191,40 @@ const StoreInformationPage = () => {
                   name="address.city"
                   label="شهر"
                   placeholder="تهران"
+                  required={true}
                 />
 
-                <Input
+                {/* <Input
                   generalType="input"
                   name="workingHours.open"
                   label="ساعت بازگشایی"
                   placeholder="09:00"
-                />
+                /> */}
 
                 {/* Closing Time */}
-                <Input
+                {/* <Input
                   generalType="input"
                   name="workingHours.close"
                   label="ساعت بسته شدن"
                   placeholder="21:00"
+                /> */}
+
+                <Input
+                  generalType="textarea"
+                  name="address.fullAddress"
+                  label="آدرس کامل"
+                  placeholder="آدرس کامل فروشگاه..."
+                  required={true}
                 />
               </div>
 
-              {/* Full Address */}
-              <Input
-                generalType="textarea"
-                name="address.fullAddress"
-                label="آدرس کامل"
-                placeholder="آدرس کامل فروشگاه..."
-              />
+            
+            
             </CardBody>
           </Card>
 
           {/* Social Links */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <h3 className="text-lg font-semibold">
                 لینک‌های شبکه‌های اجتماعی
@@ -220,7 +232,6 @@ const StoreInformationPage = () => {
             </CardHeader>
             <CardBody className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Website */}
                 <Input
                   generalType="input"
                   name="socialLinks.website"
@@ -228,7 +239,6 @@ const StoreInformationPage = () => {
                   placeholder="https://example.com"
                 />
 
-                {/* Instagram */}
                 <Input
                   generalType="input"
                   name="socialLinks.instagram"
@@ -236,7 +246,6 @@ const StoreInformationPage = () => {
                   placeholder="@username"
                 />
 
-                {/* Telegram */}
                 <Input
                   generalType="input"
                   name="socialLinks.telegram"
@@ -245,8 +254,7 @@ const StoreInformationPage = () => {
                 />
               </div>
             </CardBody>
-          </Card>
-          {/* Action Buttons */}
+          </Card> */}
           <div className="flex justify-end gap-4">
             <Button type="submit" color="primary" className="px-6">
               ذخیره تغییرات

@@ -346,6 +346,22 @@ export class UpdateSmsBalanceDto {
 }
 
 export class UpdateStoreSelfDto {
+  @ApiProperty({ description: "Store name", required: false })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  name?: string;
+
+  @ApiProperty({
+    description: "Iranian mobile number",
+    example: "09123456789",
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @Matches(/^09[0-9]{9}$/)
+  phoneNumber?: string;
+
   @ApiProperty({ description: "Store address", required: false })
   @IsOptional()
   @IsObject()
