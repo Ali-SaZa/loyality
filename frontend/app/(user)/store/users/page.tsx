@@ -225,7 +225,8 @@ const StoreUsers = () => {
               <TableColumn>عملیات</TableColumn>
             </TableHeader>
             <TableBody>
-              {customers.map((customer) => (
+              {customers.length > 0 ? (
+                customers.map((customer) => (
                 <TableRow key={customer.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -319,7 +320,16 @@ const StoreUsers = () => {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-8">
+                    <div className="text-gray-500">
+                      لیست مشتریان فروشگاه خالی است.
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardBody>

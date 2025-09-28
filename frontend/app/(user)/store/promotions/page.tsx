@@ -332,7 +332,8 @@ const StorePromotions = () => {
                 <TableColumn>عملیات</TableColumn>
               </TableHeader>
               <TableBody>
-                {promotions.map((promotion) => (
+                {promotions.length > 0 ? (
+                  promotions.map((promotion) => (
                   <TableRow
                     key={promotion.id}
                     className={
@@ -448,7 +449,16 @@ const StorePromotions = () => {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      <div className="text-gray-500">
+                        لیست پروموشن‌ها خالی است.
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
@@ -456,7 +466,8 @@ const StorePromotions = () => {
           {/* Mobile Card View */}
           <div className="md:hidden">
             <div className="space-y-4">
-              {promotions.map((promotion) => (
+              {promotions.length > 0 ? (
+                promotions.map((promotion) => (
                 <Card
                   key={promotion.id}
                   className={`border border-gray-200 ${promotion.status === "deleted" ? "opacity-60 bg-gray-50" : ""}`}
@@ -598,7 +609,14 @@ const StorePromotions = () => {
                     </div>
                   </CardBody>
                 </Card>
-              ))}
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500">
+                    لیست پروموشن‌ها خالی است.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardBody>

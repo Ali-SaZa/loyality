@@ -157,7 +157,8 @@ const SentMessagesPage = () => {
               <TableColumn>متن پیام</TableColumn>
             </TableHeader>
             <TableBody>
-              {smsHistory.data.map((sms: SmsHistoryItem) => (
+              {smsHistory.data.length > 0 ? (
+                smsHistory.data.map((sms: SmsHistoryItem) => (
                 <TableRow key={sms.id}>
                   <TableCell>
                     <div className="text-sm text-gray-600">
@@ -198,7 +199,16 @@ const SentMessagesPage = () => {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8">
+                    <div className="text-gray-500">
+                      پیامک‌های ارسالی خالی است.
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardBody>

@@ -24,8 +24,12 @@ export const CreatePromotionValidation = z.object({
     .string()
     .max(500, "توضیحات حداکثر ۵۰۰ کاراکتر باشد")
     .optional(),
-  price: z.number().min(1, "مبلغ خرید باید حداقل ۱ تومان باشد"),
-  points: z.number().min(1, "امتیاز باید حداقل ۱ باشد"),
+  price: z
+    .number({ message: "مبلغ خرید الزامی است" })
+    .min(1, "مبلغ خرید باید حداقل ۱ تومان باشد"),
+  points: z
+    .number({ message: "امتیاز الزامی است" })
+    .min(1, "امتیاز باید حداقل ۱ باشد"),
 });
 
 export const UpdatePromotionValidation = z.object({

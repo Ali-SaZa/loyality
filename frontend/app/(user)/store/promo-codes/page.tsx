@@ -203,7 +203,8 @@ const StorePromoCodes = () => {
               <TableColumn>تاریخ استفاده</TableColumn>
             </TableHeader>
             <TableBody>
-              {promoCodes.map((promoCode) => (
+              {promoCodes.length > 0 ? (
+                promoCodes.map((promoCode) => (
                 <TableRow key={promoCode.id}>
                   <TableCell>
                     <div className="font-mono font-bold text-lg text-primary">
@@ -271,7 +272,16 @@ const StorePromoCodes = () => {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8">
+                    <div className="text-gray-500">
+                      لیست کدهای پروموشن خالی است.
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
 

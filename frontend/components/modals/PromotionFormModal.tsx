@@ -53,8 +53,8 @@ const PromotionFormModal = ({
       storeId: "",
       title: "",
       description: "",
-      price: 0,
-      points: 0,
+      price: undefined,
+      points: undefined,
     },
   });
 
@@ -68,8 +68,8 @@ const PromotionFormModal = ({
           storeId: stores.length === 1 ? stores[0].id : "", // Auto-select if only one store
           title: "",
           description: "",
-          price: 0,
-          points: 0,
+          price: undefined,
+          points: undefined,
         });
       }
     }
@@ -211,23 +211,13 @@ const PromotionFormModal = ({
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
-              <Input
-                generalType="input"
-                name="description"
-                label="توضیحات"
-                placeholder="توضیحات پروموشن (اختیاری)"
-                inputType="text"
-              />
-            </div>
-
             {/* Price and Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
                 generalType="input"
                 name="price"
                 label="مبلغ خرید (تومان)"
-                placeholder="مثال: 100000"
+                placeholder="مثال: 100,000"
                 inputType="number"
                 description="مبلغی که مشتری باید خرید کند"
                 required={true}
@@ -238,11 +228,21 @@ const PromotionFormModal = ({
                 generalType="input"
                 name="points"
                 label="امتیاز اعطایی"
-                placeholder="مثال: 1"
+                placeholder="مثال: 10"
                 inputType="number"
                 description="تعداد امتیازی که برای این خرید اعطا می‌شود"
                 required={true}
                 disabled={isEditMode}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+              <Input
+                generalType="input"
+                name="description"
+                label="توضیحات"
+                placeholder="توضیحات پروموشن (اختیاری)"
+                inputType="text"
               />
             </div>
 
