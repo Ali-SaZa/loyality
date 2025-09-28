@@ -256,7 +256,7 @@ const StoreInformationPage = () => {
             </CardBody>
           </Card> */}
           <div className="flex justify-end gap-4">
-            <Button type="submit" color="primary" className="px-6">
+            <Button type="submit" color="primary" className="px-6 w-full md:w-auto">
               ذخیره تغییرات
             </Button>
           </div>
