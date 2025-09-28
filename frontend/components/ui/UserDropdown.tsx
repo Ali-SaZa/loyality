@@ -52,7 +52,7 @@ const UserDropdown = ({
         avatarSrc="/images/man-placeholder.webp"
         description={user?.phoneNumber}
         isOnDarkBackground={shouldUseDarkBackground}
-        name={user?.firstName || user?.phoneNumber || "کاربر"}
+        name={user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.firstName || user?.phoneNumber || "کاربر"}
       />
     );
 
