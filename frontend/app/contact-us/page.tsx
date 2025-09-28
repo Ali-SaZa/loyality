@@ -21,7 +21,7 @@ export default function ContactUsPage() {
     <>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        
+
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
           <div className="container mx-auto px-4 text-center">
@@ -56,13 +56,7 @@ export default function ContactUsPage() {
                 </h2>
                 <div className="space-y-2">
                   <p className="text-gray-700">
-                    <strong>اصلی:</strong> {contactUs.phone.primary}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>فرعی:</strong> {contactUs.phone.secondary}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>پشتیبانی:</strong> {contactUs.phone.support}
+                    <strong>پشتیبانی:</strong> {contactUs.phone.primary}
                   </p>
                 </div>
               </div>
@@ -130,7 +124,7 @@ export default function ContactUsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                     شماره تماس
@@ -143,7 +137,7 @@ export default function ContactUsPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                     موضوع
@@ -156,7 +150,7 @@ export default function ContactUsPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                     پیام
@@ -169,7 +163,7 @@ export default function ContactUsPage() {
                     required
                   ></textarea>
                 </div>
-                
+
                 <Button
                   type="submit"
                   color="primary"

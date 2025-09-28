@@ -80,9 +80,9 @@ const localBusinessSchema = {
   "address": {
     "@type": "PostalAddress",
     "addressCountry": "IR",
-    "addressRegion": "Tehran"
+    "addressRegion": "Mashhad"
   },
-  "telephone": "+98-21-12345678",
+  "telephone": "+98-921-5501953",
   "openingHours": "Mo-Fr 09:00-18:00"
 };
 ```

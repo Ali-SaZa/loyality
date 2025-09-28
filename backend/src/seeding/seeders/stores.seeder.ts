@@ -34,7 +34,7 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
     ); // Doris Accessories
     const storeUser2 = this.users.find(
       (user) => user.phoneNumber === "09215501953",
-    ); // Tehran Mall
+    ); // Mashhad Mall
 
     if (!storeUser1) {
       throw new Error("Store user (09387114120) not found");
@@ -49,9 +49,9 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         phoneNumber: "09387114120",
         userId: storeUser1._id,
         address: {
-          province: "Tehran",
-          city: "Tehran",
-          fullAddress: "Valiasr Street, Tehran, Iran",
+          province: "Mashhad",
+          city: "Mashhad",
+          fullAddress: "Valiasr Street, Mashhad, Iran",
         },
         status: "active",
         planExpiryDate: new Date("2024-12-31"),
@@ -72,23 +72,23 @@ export class StoresSeeder extends BaseSeeder<StoreDocument> {
         totalSmsSent: 0,
       },
       {
-        name: "Tehran Mall",
+        name: "Mashhad Mall",
         phoneNumber: "09215501953",
         userId: storeUser2._id,
         address: {
-          province: "Tehran",
-          city: "Tehran",
-          fullAddress: "Tehran Mall, Tehran, Iran",
+          province: "Mashhad",
+          city: "Mashhad",
+          fullAddress: "Mashhad Mall, Mashhad, Iran",
         },
         status: "active",
         planExpiryDate: new Date("2025-06-30"),
-        logoUrl: "https://example.com/tehran-mall-logo.jpg",
+        logoUrl: "https://example.com/Mashhad-mall-logo.jpg",
         description:
-          "Premium shopping mall in Tehran with comprehensive features",
+          "Premium shopping mall in Mashhad with comprehensive features",
         socialLinks: {
-          website: "https://tehranmall.ir",
-          instagram: "@tehranmall",
-          telegram: "@tehranmall",
+          website: "https://Mashhadmall.ir",
+          instagram: "@Mashhadmall",
+          telegram: "@Mashhadmall",
         },
         workingHours: {
           open: "10:00",

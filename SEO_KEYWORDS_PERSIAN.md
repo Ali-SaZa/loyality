@@ -133,7 +133,7 @@
 ## 🌐 کلیدواژه‌های جغرافیایی (Geographic Keywords)
 
 ### شهرهای ایران
-- **برنامه وفاداری مشتریان تهران** - Customer Loyalty Program Tehran
+- **برنامه وفاداری مشتریان تهران** - Customer Loyalty Program Mashhad
 - **سیستم وفاداری مشتریان اصفهان** - Customer Loyalty System Isfahan
 - **مدیریت وفاداری مشتریان شیراز** - Customer Loyalty Management Shiraz
 - **پلتفرم وفاداری مشتریان مشهد** - Customer Loyalty Platform Mashhad

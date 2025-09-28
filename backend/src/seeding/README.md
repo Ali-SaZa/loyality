@@ -19,16 +19,16 @@ This module provides comprehensive database seeding functionality for the Loyalt
 ### Users (4 users)
 - **Ali Sagheb** (09368024951) - System administrator with full permissions
 - **Saeid Kargaran** (09387114120) - Store administrator for Doris Accessories
-- **Saza Miri** (09215501953) - Store administrator for Tehran Mall
+- **Saza Miri** (09215501953) - Store administrator for Mashhad Mall
 - **مشتری تستی** (09051455365) - Regular customer for testing
 
 ### Stores (2 stores)
-- **Doris Accessories** - Premium accessories store in Tehran with comprehensive loyalty program (SMS Balance: 100)
-- **Tehran Mall** - Premium shopping mall in Tehran with comprehensive features (SMS Balance: 200)
+- **Doris Accessories** - Premium accessories store in Mashhad with comprehensive loyalty program (SMS Balance: 100)
+- **Mashhad Mall** - Premium shopping mall in Mashhad with comprehensive features (SMS Balance: 200)
 
 ### Promotions (8 promotions)
 - **Doris Accessories**: 4 promotions (percentage, cashback, loyalty points, coupon)
-- **Tehran Mall**: 4 promotions (fixed discount, referral, conditional, flash sale)
+- **Mashhad Mall**: 4 promotions (fixed discount, referral, conditional, flash sale)
 
 ### Promo Codes (Multiple codes)
 - Generated promo codes for coupon-type promotions

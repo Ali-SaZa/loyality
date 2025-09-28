@@ -17,7 +17,7 @@ export const ADVANCED_SCHEMA_MARKUP = {
     "foundingDate": "2024",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+98-21-12345678",
+      "telephone": "+98-921-5501953",
       "contactType": "customer service",
       "email": "info@gardou.ir",
       "availableLanguage": ["Persian", "English"]
@@ -25,9 +25,8 @@ export const ADVANCED_SCHEMA_MARKUP = {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "IR",
-      "addressRegion": "Tehran",
-      "addressLocality": "Tehran",
-      "postalCode": "1234567890"
+      "addressRegion": "Mashhad",
+      "addressLocality": "Mashhad",
     },
     "sameAs": [
       "https://www.instagram.com/gardou_ir",
@@ -104,13 +103,13 @@ export const ADVANCED_SCHEMA_MARKUP = {
     "name": "مانا",
     "description": "سیستم مدیریت وفاداری مشتریان برای کسب و کارهای ایرانی",
     "url": "https://www.gardou.ir",
-    "telephone": "+98-21-12345678",
+    "telephone": "+98-921-5501953",
     "email": "info@gardou.ir",
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "IR",
-      "addressRegion": "Tehran",
-      "addressLocality": "Tehran"
+      "addressRegion": "Mashhad",
+      "addressLocality": "Mashhad"
     },
     "openingHours": "Mo-Fr 09:00-18:00",
     "priceRange": "$$",
@@ -300,7 +299,7 @@ export const ADVANCED_SCHEMA_MARKUP = {
 // Generate comprehensive schema markup
 export const generateComprehensiveSchema = (pageType: string, data?: any) => {
   const schemas: any[] = [ADVANCED_SCHEMA_MARKUP.organization, ADVANCED_SCHEMA_MARKUP.softwareApplication];
-  
+
   switch (pageType) {
     case 'home':
       schemas.push(ADVANCED_SCHEMA_MARKUP.website, ADVANCED_SCHEMA_MARKUP.faq);
@@ -322,6 +321,6 @@ export const generateComprehensiveSchema = (pageType: string, data?: any) => {
       }
       break;
   }
-  
+
   return schemas;
 };

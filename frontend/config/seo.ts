@@ -4,43 +4,42 @@ export const SEO_CONFIG = {
   siteName: 'مانا - باشگاه وفاداری مشتریان',
   siteUrl: 'https://www.gardou.ir',
   siteDescription: 'سیستم مدیریت وفاداری مشتریان برای فروشگاه‌ها و کسب و کارهای ایرانی',
-  
+
   // Default Meta Tags
   defaultTitle: 'مانا - باشگاه وفاداری مشتریان',
   defaultDescription: 'سیستم مدیریت وفاداری مشتریان برای فروشگاه‌ها و کسب و کارهای ایرانی',
   defaultKeywords: 'مانا, باشگاه وفاداری, مشتریان, وفاداری, پاداش, سیستم مدیریت فروشگاه, کوپن تخفیف, برنامه وفاداری مشتریان',
-  
+
   // Social Media
   twitterHandle: '@gardou_ir',
   facebookAppId: 'your-facebook-app-id',
-  
+
   // Images
   defaultImage: '/images/og-image.jpg',
   logo: '/images/logo.png',
-  
+
   // Contact Information
   contactEmail: 'info@gardou.ir',
-  contactPhone: '+98-21-12345678',
-  
+  contactPhone: '+989215501953',
+
   // Business Information
   businessName: 'مانا',
   businessType: 'Software Company',
-  foundedYear: '2024',
-  
+  foundedYear: '2025',
+
   // Local SEO (Iran)
   country: 'Iran',
-  region: 'Tehran',
-  city: 'Tehran',
-  postalCode: '1234567890',
-  
+  region: 'Mashhad',
+  city: 'Mashhad',
+
   // Schema.org Types
   organizationType: 'SoftwareApplication',
   applicationCategory: 'BusinessApplication',
-  
+
   // Analytics
   googleAnalyticsId: 'G-RJ2YEVJJRP',
   googleSearchConsoleId: 'your-search-console-id',
-  
+
   // Additional SEO
   robots: 'index, follow',
   canonicalUrl: 'https://www.gardou.ir',
@@ -58,21 +57,21 @@ export const PAGE_SEO_CONFIG = {
     keywords: 'برنامه وفاداری مشتریان, سیستم وفاداری, مدیریت فروشگاه, کوپن تخفیف, باشگاه مشتریان',
     canonical: 'https://www.gardou.ir'
   },
-  
+
   auth: {
     title: 'ورود به مانا | باشگاه وفاداری مشتریان',
     description: 'ورود به سیستم مدیریت وفاداری مشتریان مانا. مدیریت فروشگاه، ایجاد کوپن تخفیف و تحلیل مشتریان.',
     keywords: 'ورود, لاگین, مانا, سیستم وفاداری, مدیریت فروشگاه',
     canonical: 'https://www.gardou.ir/auth'
   },
-  
+
   promoRegistration: {
     title: 'ثبت نام در باشگاه وفاداری مانا',
     description: 'ثبت نام در برنامه وفاداری مشتریان مانا. دریافت کوپن تخفیف و امتیازات ویژه.',
     keywords: 'ثبت نام, باشگاه وفاداری, کوپن تخفیف, امتیازات',
     canonical: 'https://www.gardou.ir/auth/promo-registration'
   }
-  
+
   // Note: Admin, Store, and Customer pages are PRIVATE and don't need SEO
   // They are behind authentication and not accessible to search engines
 };
@@ -90,22 +89,22 @@ export const STRUCTURED_DATA = {
     "foundingDate": "2024",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+98-21-12345678",
+      "telephone": "+98-921-550-1953",
       "contactType": "customer service",
       "email": "info@gardou.ir"
     },
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "IR",
-      "addressRegion": "Tehran",
-      "addressLocality": "Tehran"
+      "addressRegion": "Mashhad",
+      "addressLocality": "Mashhad"
     },
     "sameAs": [
       "https://www.instagram.com/gardou_ir",
       "https://t.me/gardou_ir"
     ]
   },
-  
+
   softwareApplication: {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -130,7 +129,7 @@ export const STRUCTURED_DATA = {
       "ratingCount": "150"
     }
   },
-  
+
   breadcrumbList: (items: Array<{name: string, url: string}>) => ({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

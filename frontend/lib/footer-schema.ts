@@ -17,7 +17,7 @@ export const FOOTER_SCHEMA_MARKUP = {
     "foundingDate": "2024",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+98-21-12345678",
+      "telephone": "+98-921-5501953",
       "contactType": "customer service",
       "email": "info@gardou.ir",
       "availableLanguage": ["Persian", "English"],
@@ -32,8 +32,8 @@ export const FOOTER_SCHEMA_MARKUP = {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "IR",
-      "addressRegion": "Tehran",
-      "addressLocality": "Tehran"
+      "addressRegion": "Mashhad",
+      "addressLocality": "Mashhad"
     },
     "sameAs": [
       "https://www.instagram.com/gardou_ir",
@@ -129,7 +129,7 @@ export const FOOTER_SCHEMA_MARKUP = {
       "name": "مانا",
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+98-21-12345678",
+        "telephone": "+98-921-5501953",
         "contactType": "customer service",
         "email": "info@gardou.ir",
         "availableLanguage": ["Persian", "English"]
@@ -137,8 +137,8 @@ export const FOOTER_SCHEMA_MARKUP = {
       "address": {
         "@type": "PostalAddress",
         "addressCountry": "IR",
-        "addressRegion": "Tehran",
-        "addressLocality": "Tehran"
+        "addressRegion": "Mashhad",
+        "addressLocality": "Mashhad"
       }
     }
   },
